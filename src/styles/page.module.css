@@ -1,0 +1,47 @@
+.container {
+  @apply flex flex-col items-center justify-center min-h-screen px-2 sm:px-4 md:px-10 bg-black text-white pt-6 pb-16;
+}
+
+.headerContainer {
+  @apply text-center flex flex-col items-center;
+}
+
+.headerContainerDesktop {
+  @apply mt-[-10vh];
+}
+
+.name {
+  @apply font-light-antialiased w-full max-w-[95vw] break-words-anywhere leading-[1.1];
+}
+
+.nameDesktop {
+  @apply mb-16;
+}
+
+.nameMobile {
+  @apply mb-8;
+}
+
+.title {
+  @apply text-gray-300 font-extralight-antialiased w-full max-w-[95vw] break-words leading-tight;
+}
+
+.titleDesktop {
+  @apply mb-[300px];
+}
+
+.titleMobile {
+  @apply mb-16;
+}
+
+.cardsContainer {
+  @apply flex justify-center;
+}
+
+.cardsContainerDesktop {
+  @apply gap-6;
+}
+
+.cardsContainerMobile {
+  @apply flex-col gap-3 w-full items-center px-2;
+}

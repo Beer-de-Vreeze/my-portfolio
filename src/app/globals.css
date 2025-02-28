@@ -3,19 +3,211 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --foreground-rgb: 255, 255, 255;
+  --background-rgb: 0, 0, 0;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+}
+
+/* Common utility classes */
+.gradient-text {
+  @apply bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 text-transparent bg-clip-text;
+}
+
+.card-hover {
+  @apply cursor-pointer transition-transform hover:scale-105;
+}
+
+/* New gradient styles */
+.gradient-bg {
+  @apply bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500;
+}
+
+.gradient-border {
+  @apply border-4 border-transparent bg-clip-padding;
+  background-image: linear-gradient(to right, #3b82f6, #8b5cf6, #ec4899);
+  background-origin: border-box;
+}
+
+/* Custom NProgress styling for gradient loading bar */
+#nprogress .bar {
+  background: linear-gradient(to right, #3b82f6, #8b5cf6, #ec4899);
+  height: 3px;
+}
+
+/* Grid background styled exactly like hollowww.dev */
+.grid-background {
+  background-size: 40px 40px;
+  background-image: linear-gradient(
+      to right,
+      rgba(39, 39, 42, 0.1) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(39, 39, 42, 0.1) 1px, transparent 1px);
+  background-attachment: fixed;
+}
+
+/* Form styling to match hollowww.dev */
+input,
+textarea {
+  background-color: transparent;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+}
+
+/* Subtle hover effect for buttons */
+button:hover:not(:disabled) {
+  transition: all 0.2s ease;
+}
+
+/* Remove browser default focus styles */
+*:focus {
+  outline: none;
+}
+
+/* Form focus styles */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: rgba(156, 163, 175, 0.5); /* gray-500 with reduced opacity */
+}
+
+/* Select dropdown styling */
+select option {
+  background-color: #000;
+  color: white;
+}
+
+/* Button hover animation for form */
+button:not(:disabled):hover {
+  background-image: linear-gradient(
+    to right,
+    rgba(59, 130, 246, 0.05),
+    rgba(139, 92, 246, 0.05),
+    rgba(236, 72, 153, 0.05)
+  );
+}
+
+.text-3xl {
+  font-size: 1.5rem; /* Equivalent to text-3xl in Tailwind CSS */
+  line-height: 2.25rem; /* Equivalent to text-3xl in Tailwind CSS */
+  white-space: nowrap;
+}
+
+input,
+textarea,
+select {
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid #333;
+  color: #fff;
+  padding: 0.5rem 0;
+  width: 100%;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-bottom-color: #555;
+}
+
+/* Responsive Layout */
+@media (max-width: 768px) {
+  .form-container {
+    padding: 1rem;
+  }
+}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-rgb: 0, 0, 0;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+}
+
+.grid-background {
+  background-size: 40px 40px;
+  background-image: linear-gradient(
+      to right,
+      rgba(39, 39, 42, 0.1) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(39, 39, 42, 0.1) 1px, transparent 1px);
+  background-attachment: fixed;
+}
+
+input,
+textarea,
+select {
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid #52525b;
+  color: white;
+  padding: 0.5rem 0;
+  width: 100%;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-bottom-color: #a1a1aa;
+}
+
+button {
+  background-color: transparent;
+  border: 1px solid #52525b;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+}
+
+button:hover:not(:disabled) {
+  background-color: white;
+  color: black;
+}
+
+button:disabled {
+  opacity: 0.5;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+label {
+  font-size: 0.875rem;
+  color: #a1a1aa;
+}
+
+h1 {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+  font-weight: 300;
+  margin-bottom: 0.75rem;
+}
+
+p {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  color: #a1a1aa;
+  font-weight: 200;
+  margin-bottom: 3rem;
 }
