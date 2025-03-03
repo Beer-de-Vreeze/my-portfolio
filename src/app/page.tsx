@@ -7,25 +7,16 @@ import ContactCard from "@/components/ContactCardMenu";
 import { useRouter } from "next/navigation";
 import styles from "@/styles/page.module.css";
 
-export default function Home() {
-  const router = useRouter();
-  const [hydrated, setHydrated] = useState(false);
+// Custom hook for window size with proper SSR handling
+function useWindowSize() {
+  // Initialize with undefined to handle SSR
   const [windowSize, setWindowSize] = useState({
-    width: 1024, // Default to desktop size for server rendering
-    height: 768,
+    width: undefined,
+    height: undefined,
   });
 
   useEffect(() => {
-    // Mark as hydrated
-    setHydrated(true);
-    
-    // Set actual window size
-    setWindowSize({
-      width: window.innerWidth,
-      height: window.innerHeight,
-    });
-    
-    // Handle window resize
+    // Handler to call on window resize
     function handleResize() {
       setWindowSize({
         width: window.innerWidth,
@@ -36,11 +27,27 @@ export default function Home() {
     // Add event listener
     window.addEventListener('resize', handleResize);
     
+    // Call handler right away so state gets updated with initial window size
+    handleResize();
+    
     // Remove event listener on cleanup
     return () => window.removeEventListener('resize', handleResize);
+  }, []); // Empty array ensures that effect is only run on mount and unmount
+
+  return windowSize;
+}
+
+export default function Home() {
+  const router = useRouter();
+  const { width } = useWindowSize();
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Handle hydration
+  useEffect(() => {
+    setIsMounted(true);
   }, []);
 
-  const handleNavigation = (path: string) => {
+  const handleNavigation = (path) => {
     router.push(path);
   };
 
@@ -56,50 +63,37 @@ export default function Home() {
     </div>,
   ];
 
-  // Calculate dynamic font size based on window width (only apply after hydration)
-  const nameSize = hydrated ? 
-                   (windowSize.width < 640 ? '2.5rem' : 
-                   windowSize.width < 768 ? '3.5rem' : 
-                   windowSize.width < 1024 ? '4.75rem' : '6rem')
-                   : '6rem'; // Default for server rendering
-  
-  const titleSize = hydrated ?
-                    (windowSize.width < 640 ? '1.25rem' :
-                    windowSize.width < 768 ? '1.6rem' :
-                    windowSize.width < 1024 ? '2.2rem' : '2.65rem')
-                    : '2.65rem'; // Default for server rendering
-                    
-  // Set breakpoint for mobile/desktop view
-  const mobileView = hydrated && windowSize.width < 1300;
+  // Responsive breakpoints
+  const isXSmall = width < 480;
+  const isSmall = width >= 480 && width < 640;
+  const isMedium = width >= 640 && width < 768;
+  const isLarge = width >= 768 && width < 1024;
+  const isXLarge = width >= 1024 && width < 1280;
+  const isXXLarge = width >= 1280;
 
-  // For SSR, these are the defaults
-  const desktopView = !hydrated || !mobileView;
+  // Determine layout based on screen size
+  const isMobile = isXSmall || isSmall || isMedium || isLarge;
+  const isDesktop = !isMobile;
+
+  // Only render UI if mounted (avoids hydration mismatch)
+  if (!isMounted) {
+    return null; // Return null on first render to avoid hydration mismatch
+  }
 
   return (
     <main className={styles.container}>
-      <div className={`${styles.headerContainer} ${desktopView ? styles.headerContainerDesktop : ''}`}>
-        <h1 className={`${styles.name} ${desktopView ? styles.nameDesktop : styles.nameMobile}`}
-            style={{ fontSize: nameSize }}>
+      <div className={`${styles.headerContainer} ${isDesktop ? styles.headerContainerDesktop : styles.headerContainerMobile}`}>
+        <h1 className={`${styles.name} ${isDesktop ? styles.nameDesktop : styles.nameMobile}`}>
           Beer de Vreeze
         </h1>
-        <h2 className={`${styles.title} ${desktopView ? styles.titleDesktop : styles.titleMobile}`}
-            style={{ fontSize: titleSize }}>
-          <span className="text-white">Netherlands-based</span>
-          {/* During SSR or when desktop, use a space. After hydration on mobile, use a <br> */}
-          {hydrated && windowSize.width < 900 ? <br /> : ' '}
-          <span className="gradient-text">
-            Game Developer
-          </span>
+        <h2 className={`${styles.title} ${isDesktop ? styles.titleDesktop : styles.titleMobile}`}>
+          <span className="text-white">Netherlands-based </span>
+          {width < 900 && <br />}
+          <span className="gradient-text" style={{ marginTop: '0.5rem' }}>Game Developer</span>
         </h2>
       </div>
 
-      {/* Desktop View */}
-      <div className={!mobileView ? `${styles.cardsContainer} ${styles.cardsContainerDesktop}` : "hidden"}>
-        {cards}
-      </div>
-
-      {/* Mobile View */}
-      <div className={mobileView ? `${styles.cardsContainer} ${styles.cardsContainerMobile}` : "hidden"}>
+      <div className={`${styles.cardsContainer} ${isDesktop ? styles.cardsContainerDesktop : styles.cardsContainerMobile}`}>
         {cards}
       </div>
     </main>

@@ -1,47 +1,113 @@
 .container {
   @apply flex flex-col items-center justify-center min-h-screen px-2 sm:px-4 md:px-10 bg-black text-white pt-6 pb-16;
+  width: 100%;
+  min-height: 100vh;
+  gap: 2rem;
 }
 
 .headerContainer {
   @apply text-center flex flex-col items-center;
+  margin-bottom: 2rem;
+  width: 100%;
 }
 
 .headerContainerDesktop {
   @apply mt-[-10vh];
+  margin-bottom: 4rem;
+}
+
+.headerContainerMobile {
+  margin-bottom: 2rem;
 }
 
 .name {
-  @apply font-light-antialiased w-full max-w-[95vw] break-words-anywhere leading-[1.1];
+  @apply font-light antialiased w-full max-w-[95vw] break-words-anywhere leading-[1.1];
+  font-weight: 300; /* Changed to lighter weight */
+  margin-bottom: 0.5rem;
+  line-height: 1.1;
+  transition: font-size 0.3s ease;
 }
 
 .nameDesktop {
-  @apply mb-16;
+  @apply mb-8; /* Changed from mb-16 to mb-8 */
+  font-size: clamp(
+    2.5rem,
+    3.5vw + 1rem,
+    5rem
+  ); /* Made the font size a little smaller */
 }
 
 .nameMobile {
-  @apply mb-8;
+  @apply mb-4; /* Changed from mb-8 to mb-4 */
+  font-size: clamp(2rem, 8vw, 4rem); /* Increased the font size */
 }
 
 .title {
-  @apply text-gray-300 font-extralight-antialiased w-full max-w-[95vw] break-words leading-tight;
+  @apply text-gray-300 font-light antialiased w-full max-w-[95vw] break-words leading-tight;
+  font-weight: 300; /* Changed to lighter weight */
+  line-height: 1.2;
+  transition: font-size 0.3s ease;
 }
 
 .titleDesktop {
-  @apply mb-[300px];
+  content: "\F1983";
+  @apply mb-8; /* Changed from mb-[300px] to mb-8 */
+  font-size: clamp(
+    1.25rem,
+    1.5vw + 0.5rem,
+    2rem
+  ); /* Made the font size a little smaller */
 }
 
 .titleMobile {
-  @apply mb-16;
+  @apply mb-4; /* Changed from mb-16 to mb-4 */
+  font-size: clamp(1.5rem, 5vw, 3rem); /* Increased the font size */
 }
 
 .cardsContainer {
   @apply flex justify-center;
+  display: flex;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  transition: all 0.3s ease;
 }
 
 .cardsContainerDesktop {
   @apply gap-6;
+  flex-direction: row;
+  justify-content: center;
+  align-items: stretch;
 }
 
 .cardsContainerMobile {
   @apply flex-col gap-3 w-full items-center px-2;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+:global(.card-hover) {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  border-radius: 8px;
+  overflow: hidden;
+  flex: 1;
+}
+
+:global(.card-hover:hover) {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 1rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    padding: 3rem 2rem;
+  }
 }
