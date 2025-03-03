@@ -13,7 +13,6 @@ export default function BaseCard({ children, href, className = "" }: BaseCardPro
       <div 
         className={`relative w-[95vw] max-w-[500px] h-[250px] md:w-[495px] md:h-[297px] bg-black border border-[#27272a] rounded-lg flex flex-col items-center justify-center transition-all duration-300 hover:border-[#71717a] ${className}`}
       >
-        {/* CSS Grid Background without the SVG */}
         <div 
           className="absolute inset-0 w-full h-full rounded-lg"
           style={{

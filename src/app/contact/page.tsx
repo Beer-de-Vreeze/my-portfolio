@@ -7,7 +7,14 @@ import { FaGithub, FaLinkedin, FaFileAlt } from 'react-icons/fa';
 
 export default function Contact() {
   return (
-    <div className="min-h-screen flex flex-col bg-black text-white grid-background">
+    <div className="min-h-screen flex flex-col bg-black text-white"           style={{
+      backgroundImage: `
+        linear-gradient(to right, rgba(9,9,9,0.8) 2px, transparent 1px),
+        linear-gradient(to bottom, rgba(9,9,9,0.8) 1px, transparent 1px)
+      `,
+      backgroundSize: '20.5px 21px',
+            backgroundAttachment: 'fixed'
+    }}>
       <Navbar />
       <main className="flex-grow flex flex-col max-w-2xl mx-auto pt-20 pb-32 px-8">
         <div className="select-content p-8 rounded-2xl shadow-lg w-full">
