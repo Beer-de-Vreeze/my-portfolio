@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiMongodb, SiPostgresql, SiDocker, SiKubernetes, SiGooglecloud, SiFirebase, SiRedux, SiNextdotjs, SiTailwindcss, SiDotnet } from 'react-icons/si'; // Import original logos
+import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiMongodb, SiPostgresql, SiDocker, SiKubernetes, SiGooglecloud, SiFirebase, SiRedux, SiNextdotjs, SiTailwindcss, SiDotnet, SiBlender, SiAdobephotoshop, SiAngular, SiSass, SiWebpack, SiJest, SiGraphql, SiMysql, SiPhp, SiPython, SiCplusplus, SiUnrealengine, SiGodotengine, SiElectron, SiFlutter, SiDart, SiSwift, SiKotlin, SiRust, SiGo, SiRuby, SiLaravel, SiDjango, SiSpring, SiExpress, SiFastapi, SiNestjs, SiWebassembly, SiTensorflow, SiPytorch, SiOpencv, SiVercel, SiNetlify, SiHeroku, SiDigitalocean, SiVim, SiIntellijidea, SiXcode, SiAndroidstudio } from 'react-icons/si'; // Import original logos
 
 interface ProjectCardProps {
   image: string;
@@ -32,6 +32,45 @@ const techIcons: { [key: string]: JSX.Element } = {
   "Next.js": <SiNextdotjs className="text-white text-lg mr-2" />,
   "Tailwind CSS": <SiTailwindcss className="text-blue-500 text-lg mr-2" />,
   "C#": <SiDotnet className="text-purple-500 text-lg mr-2" />,
+  "Blender": <SiBlender className="text-orange-600 text-lg mr-2" />,
+  "Photoshop": <SiAdobephotoshop className="text-blue-500 text-lg mr-2" />,
+  "Angular": <SiAngular className="text-red-600 text-lg mr-2" />,
+  "Sass": <SiSass className="text-pink-500 text-lg mr-2" />,
+  "Webpack": <SiWebpack className="text-blue-500 text-lg mr-2" />,
+  "Jest": <SiJest className="text-red-500 text-lg mr-2" />,
+  "GraphQL": <SiGraphql className="text-pink-500 text-lg mr-2" />,
+  "MySQL": <SiMysql className="text-blue-500 text-lg mr-2" />,
+  "PHP": <SiPhp className="text-purple-500 text-lg mr-2" />,
+  "Python": <SiPython className="text-yellow-500 text-lg mr-2" />,
+  "C++": <SiCplusplus className="text-blue-500 text-lg mr-2" />,
+  "Unreal Engine": <SiUnrealengine className="text-black text-lg mr-2" />,
+  "Godot": <SiGodotengine className="text-blue-500 text-lg mr-2" />,
+  "Electron": <SiElectron className="text-blue-500 text-lg mr-2" />,
+  "Flutter": <SiFlutter className="text-blue-500 text-lg mr-2" />,
+  "Dart": <SiDart className="text-blue-500 text-lg mr-2" />,
+  "Swift": <SiSwift className="text-orange-500 text-lg mr-2" />,
+  "Kotlin": <SiKotlin className="text-purple-500 text-lg mr-2" />,
+  "Rust": <SiRust className="text-black text-lg mr-2" />,
+  "Go": <SiGo className="text-blue-500 text-lg mr-2" />,
+  "Ruby": <SiRuby className="text-red-500 text-lg mr-2" />,
+  "Laravel": <SiLaravel className="text-red-500 text-lg mr-2" />,
+  "Django": <SiDjango className="text-green-500 text-lg mr-2" />,
+  "Spring": <SiSpring className="text-green-500 text-lg mr-2" />,
+  "Express": <SiExpress className="text-black text-lg mr-2" />,
+  "FastAPI": <SiFastapi className="text-green-500 text-lg mr-2" />,
+  "NestJS": <SiNestjs className="text-red-500 text-lg mr-2" />,
+  "WebAssembly": <SiWebassembly className="text-blue-500 text-lg mr-2" />,
+  "TensorFlow": <SiTensorflow className="text-orange-500 text-lg mr-2" />,
+  "PyTorch": <SiPytorch className="text-orange-500 text-lg mr-2" />,
+  "OpenCV": <SiOpencv className="text-blue-500 text-lg mr-2" />,
+  "Vercel": <SiVercel className="text-black text-lg mr-2" />,
+  "Netlify": <SiNetlify className="text-blue-500 text-lg mr-2" />,
+  "Heroku": <SiHeroku className="text-purple-500 text-lg mr-2" />,
+  "DigitalOcean": <SiDigitalocean className="text-blue-500 text-lg mr-2" />,
+  "Vim": <SiVim className="text-green-500 text-lg mr-2" />,
+  "IntelliJ IDEA": <SiIntellijidea className="text-black text-lg mr-2" />,
+  "Xcode": <SiXcode className="text-blue-500 text-lg mr-2" />,
+  "Android Studio": <SiAndroidstudio className="text-green-500 text-lg mr-2" />
 };
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ 

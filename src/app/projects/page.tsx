@@ -37,7 +37,7 @@ export default function Projects() {
             description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut purus eget."
             liveLink="https://google.com"
             githubLink="https://github.com"
-            contributors={["John Doe", "Jane Doe", "John Doe", "Jane Doe"]}
+            contributors={["John Doe", "Jane Doe", "John Doe", "Jane Doe","John Doe","John Doe", "Jane Doe", "John Doe", "Jane Doe",]}
           />
           <ProjectCard 
             image="/images/cat.jpg" 
