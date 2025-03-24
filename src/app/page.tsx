@@ -81,7 +81,7 @@ export default function Home() {
   }
 
   return (
-    <main className={styles.container}>
+    <main className={`${styles.container} grid-background`}>
       <div className={`${styles.headerContainer} ${isDesktop ? styles.headerContainerDesktop : styles.headerContainerMobile}`}>
         <h1 className={`${styles.name} ${isDesktop ? styles.nameDesktop : styles.nameMobile}`}>
           Beer de Vreeze

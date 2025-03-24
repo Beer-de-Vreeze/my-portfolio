@@ -77,12 +77,18 @@ const ContactForm = () => {
       <input id="email" type="email" value={formData.email} onChange={handleChange} placeholder="Email" className="select-content rounded-2xl w-full h-14 text-lg px-4" required />
       {errors.email && <p className="text-red-400 text-sm">{errors.email}</p>}
       
-      <select id="subject" value={formData.subject} onChange={handleChange} className="select-content rounded-2xl w-full h-14 text-lg px-4" required>
-        <option className="select-item">Coding related question</option>
-        <option className="select-item">Coding unrelated question</option>
-        <option className="select-item">Business talk invitation</option>
-        <option className="select-item">Job offer</option>
-        <option className="select-item">Other</option>
+      <select 
+        id="subject" 
+        value={formData.subject} 
+        onChange={handleChange} 
+        className="select-content rounded-2xl w-full h-14 text-lg px-4" 
+        required
+      >
+        <option className="select-item hover:bg-white hover:text-black">Coding related question</option>
+        <option className="select-item hover:bg-white hover:text-black">Coding unrelated question</option>
+        <option className="select-item hover:bg-white hover:text-black">Business talk invitation</option>
+        <option className="select-item hover:bg-white hover:text-black">Job offer</option>
+        <option className="select-item hover:bg-white hover:text-black">Other</option>
       </select>
 
       <textarea id="message" value={formData.message} onChange={handleChange} placeholder="Message" className="select-content rounded-2xl resize-none w-full h-32 text-lg px-4 py-2" maxLength={maxCharLimit} required></textarea>
