@@ -28,7 +28,11 @@ export default function Projects() {
       <div className="fixed top-0 left-0 w-full z-10">
         <Navbar />
       </div>
-      <main className="relative z-0 flex flex-col items-center flex-grow p-2 pt-40 pb-20">
+      <main className="relative z-0 flex flex-col items-center flex-grow p-2 pt-10 pb-20">
+        <div className="text-center mb-8 sm:mb-12 mt-4 sm:mt-0"> {/* Add margin-top for mobile */}
+          <h1 className="text-3xl sm:text-5xl font-bold">Beer de Vreeze</h1>
+          <p className="text-lg sm:text-2xl">Netherlands-based Game Developer</p>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl">
           <ProjectCard 
             image="/images/cat.jpg" 
