@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiMongodb, SiPostgresql, SiDocker, SiKubernetes, SiGooglecloud, SiFirebase, SiRedux, SiNextdotjs, SiTailwindcss, SiDotnet, SiBlender, SiAdobephotoshop, SiAngular, SiSass, SiWebpack, SiJest, SiGraphql, SiMysql, SiPhp, SiPython, SiCplusplus, SiUnrealengine, SiGodotengine, SiElectron, SiFlutter, SiDart, SiSwift, SiKotlin, SiRust, SiGo, SiRuby, SiLaravel, SiDjango, SiSpring, SiExpress, SiFastapi, SiNestjs, SiWebassembly, SiTensorflow, SiPytorch, SiOpencv, SiVercel, SiNetlify, SiHeroku, SiDigitalocean, SiVim, SiIntellijidea, SiXcode, SiAndroidstudio } from 'react-icons/si'; // Import original logos
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa'; // Import arrow icons
 
 // Define the media item type
 interface MediaItem {
@@ -172,6 +173,43 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       }
     }
   };
+  
+  const handleVideoEnd = () => {
+    setIsPlaying(false);
+  };
+  
+  const renderVideoControls = () => {
+    if (!isVideo) return null;
+
+    return (
+      <div 
+        className="absolute inset-0 z-20 flex items-center justify-center cursor-pointer"
+        onClick={handleVideoToggle}
+      >
+        {/* Play/Pause Overlay */}
+        {!isPlaying && (
+          <div 
+            className="bg-black/50 hover:bg-black/70 p-4 rounded-full 
+              transition-all duration-300 group"
+          >
+            <svg 
+              width="48" 
+              height="48" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              xmlns="http://www.w3.org/2000/svg"
+              className="text-white group-hover:scale-110 transition-transform"
+            >
+              <path 
+                d="M8 5V19L19 12L8 5Z" 
+                fill="currentColor" 
+              />
+            </svg>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   const goToMedia = (index: number) => {
     if (videoRef.current && !videoRef.current.paused) {
@@ -273,21 +311,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                           src={currentMedia.src} 
                           className="w-full h-full object-cover" 
                           controls={false}
-                          onClick={handleVideoToggle}
+                          onEnded={handleVideoEnd}
                         />
-                        {/* Video Play/Pause Button - Only show when not playing */}
-                        {!isPlaying && (
-                          <button 
-                            onClick={handleVideoToggle}
-                            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
-                              w-14 h-14 flex items-center justify-center rounded-full 
-                              bg-red-700/80 hover:bg-red-700 transition-colors z-10"
-                          >
-                            <svg className="w-23 h-24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M8 5V19L19 12L8 5Z" fill="white" />
-                            </svg>
-                          </button>
-                        )}
+                        {renderVideoControls()}
                       </>
                     ) : (
                       <Image 
@@ -303,23 +329,28 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     {/* Navigation Arrows - Only show if more than 1 media */}
                     {media.length > 1 && (
                       <>
+                        {/* Previous Media Button */}
                         <button 
                           onClick={(e) => { e.stopPropagation(); goToPreviousMedia(); }}
-                          className="absolute left-2 top-1/2 transform -translate-y-1/2 z-20 bg-black/60 hover:bg-black/80 rounded-full w-10 h-10 flex items-center justify-center transition-colors"
+                          className="absolute left-2 top-1/2 transform -translate-y-1/2 z-20 
+                            bg-black/60 hover:bg-black/80 rounded-full w-12 h-12 
+                            flex items-center justify-center transition-all duration-300 
+                            hover:scale-110 group"
                           aria-label="Previous media"
                         >
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M15 18L9 12L15 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
+                          <FaArrowLeft size={20} className="text-white group-hover:text-blue-400" />
                         </button>
+
+                        {/* Next Media Button */}
                         <button 
                           onClick={(e) => { e.stopPropagation(); goToNextMedia(); }}
-                          className="absolute right-2 top-1/2 transform -translate-y-1/2 z-20 bg-black/60 hover:bg-black/80 rounded-full w-10 h-10 flex items-center justify-center transition-colors"
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2 z-20 
+                            bg-black/60 hover:bg-black/80 rounded-full w-12 h-12 
+                            flex items-center justify-center transition-all duration-300 
+                            hover:scale-110 group"
                           aria-label="Next media"
                         >
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M9 6L15 12L9 18" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
+                          <FaArrowRight size={20} className="text-white group-hover:text-blue-400" />
                         </button>
                       </>
                     )}
@@ -348,7 +379,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
                   {/* Media type indicator */}
                   <div className="absolute top-3 right-3 bg-black/60 px-2 py-1 rounded text-xs text-white font-medium z-20">
-                    {isVideo ? 'Video' : 'Image'} {currentMediaIndex + 1}/{media.length}
+                    {currentMediaIndex + 1}/{media.length}
                   </div>
                 </div>
                 
