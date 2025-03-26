@@ -12,6 +12,46 @@ body {
   background: rgb(var(--background-rgb));
 }
 
+/* Custom scrollbar styles for all devices */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #111111;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a2a2a;
+  border-radius: 4px;
+  border: 2px solid #111111;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #3b82f6, #8b5cf6);
+}
+
+::-webkit-scrollbar-corner {
+  background: #111111;
+}
+
+/* Firefox scrollbar compatibility */
+.custom-scrollbar {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #2a2a2a #111111; /* Firefox: thumb track */
+}
+
+/* Make scrollbar slightly thinner on mobile */
+@media (max-width: 767px) {
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+}
+
 /* Common utility classes */
 .gradient-text {
   @apply bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 text-transparent bg-clip-text;

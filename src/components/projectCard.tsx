@@ -11,6 +11,7 @@ interface ProjectCardProps {
   liveLink?: string;
   githubLink?: string;
   contributors?: string[];
+  onModalStateChange?: (isOpen: boolean) => void; // Add callback prop
 }
 
 const techIcons: { [key: string]: JSX.Element } = {
@@ -81,7 +82,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   features = ["Feature one description", "Feature two description", "Feature three description"],
   liveLink = "#",
   githubLink: sourceLink = "#",
-  contributors = ["Developer Name"]
+  contributors = ["Developer Name"],
+  onModalStateChange // Add the callback
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
@@ -99,6 +101,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     setTimeout(() => {
       setIsModalOpen(false);
       setIsClosing(false);
+      onModalStateChange?.(false); // Notify parent component when modal closes
     }, 300);
   };
   
@@ -112,13 +115,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     if (isModalOpen) {
       document.body.style.overflow = 'hidden'; // Prevent body scroll on mobile
       document.addEventListener('keydown', handleEscKey);
+      onModalStateChange?.(true); // Notify parent component when modal opens
     }
     
     return () => {
       document.body.style.overflow = 'unset';
       document.removeEventListener('keydown', handleEscKey);
     };
-  }, [isModalOpen]);
+  }, [isModalOpen, onModalStateChange]);
 
   const handleTechIconClick = (tech: string) => {
     console.log(`${tech} icon clicked`);
@@ -173,49 +177,50 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         <div 
           className={`fixed inset-0 z-[1050] flex items-center justify-center bg-black/95 backdrop-blur-sm 
             ${isClosing ? 'animate-fadeOut' : 'animate-fadeIn'} 
-            transition-opacity duration-300 ease-in-out overflow-y-auto p-4 sm:p-6`}
+            transition-opacity duration-300 ease-in-out py-2 sm:py-4`} // Reduced vertical padding
           onClick={(e) => {
             if (e.target === e.currentTarget) closeModal();
           }}
         >
-          {/* Close button - Made more touch-friendly */}
+          {/* Close button - Fixed in viewport, scrolls with user */}
           <button 
             onClick={closeModal}
-            className="fixed top-16 right-4 sm:top-20 sm:right-6 text-gray-400 hover:text-white 
-              transition-colors z-[60] bg-black/50 rounded-full p-3 sm:p-2 
-              focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="fixed top-4 right-4 z-[1060] bg-black/70 hover:bg-black/90 
+              rounded-full p-3 w-10 h-10 flex items-center justify-center
+              text-gray-300 hover:text-white transition-all duration-200
+              shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             aria-label="Close modal"
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
 
           {/* Modal Content - Fully Responsive Layout */}
           <div 
-            className={`w-full max-w-7xl min-h-[100vh] sm:min-h-0 ${isClosing ? 'animate-fadeOut' : 'animate-fadeIn'} 
-              transition-transform duration-300 ease-in-out py-8 px-4`}
+            className={`w-full max-w-7xl ${isClosing ? 'animate-fadeOut' : 'animate-fadeIn'} 
+              transition-transform duration-300 ease-in-out py-6 overflow-y-auto 
+              max-h-[90vh] my-auto`} // Reduced top/bottom padding
           >
-            <div className="flex flex-col lg:flex-row gap-6 lg:gap-16">
+            <div className="flex flex-col lg:flex-row gap-6 lg:gap-16 px-4 sm:px-10"> {/* Added padding to content wrapper */}
               {/* Left Column - Responsive Image and Buttons */}
               <div className="lg:w-2/5 flex flex-col">
-                {/* Modal Image Container without fixed height */}
-                <div className="relative w-full h-auto rounded-xl overflow-visible border border-[#333333] mb-4">
+                {/* Modal Image Container with minimum height and proper overflow */}
+                <div className="relative w-full min-h-[250px] rounded-xl overflow-hidden border border-[#333333] mb-4">
                   <Image 
                     src={image} 
                     alt={title} 
-                    layout="responsive" 
-                    width={800}
-                    height={600}
-                    sizes="100vw"
-                    className="object-contain object-top rounded-xl"
-                    style={{ objectPosition: 'top center' }}
+                    fill
+                    priority
+                    sizes="(max-width: 768px) 100vw, 800px"
+                    className="object-cover rounded-xl"
                   />
                 </div>
                 
                 {/* Buttons - Full Width on Mobile, Stacked */}
                 <div className="flex flex-col sm:flex-row gap-4">
                   <a 
+
                     href={liveLink} 
                     target="_blank" 
                     rel="noopener noreferrer"
@@ -305,22 +310,28 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 <hr className="border-t border-[#2a2a2a] my-6" />
                 
                 {/* Contributors - Responsive Wrapping */}
-                <div className="flex flex-wrap gap-2.5">
-                  {contributors.map((contributor, index) => {
-                    const circleColor = contributorColors[index % contributorColors.length];
-                    return (
-                      <span 
-                        key={index} 
-                        className="inline-flex items-center gap-2 px-5 py-3 bg-black border border-[#27272a] rounded-full flex items-center justify-center text-gray-300 text-sm"
-                      >
+                <div className="mb-8">
+                  <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 
+                    bg-clip-text text-transparent">
+                    Contributors
+                  </h2>
+                  <div className="flex flex-wrap gap-2.5">
+                    {contributors.map((contributor, index) => {
+                      const circleColor = contributorColors[index % contributorColors.length];
+                      return (
                         <span 
-                          className="w-2 h-2 rounded-full" 
-                          style={{ backgroundColor: circleColor }}
-                        ></span>
-                        {contributor}
-                      </span>
-                    );
-                  })}
+                          key={index} 
+                          className="inline-flex items-center gap-2 px-5 py-3 bg-black border border-[#27272a] rounded-full flex items-center justify-center text-gray-300 text-sm"
+                        >
+                          <span 
+                            className="w-2 h-2 rounded-full" 
+                            style={{ backgroundColor: circleColor }}
+                          ></span>
+                          {contributor}
+                        </span>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </div>

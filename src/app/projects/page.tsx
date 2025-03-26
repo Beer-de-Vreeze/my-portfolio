@@ -6,12 +6,18 @@ import Footer from "@/components/Footer";
 
 export default function Projects() {
   const [backgroundAttachment, setBackgroundAttachment] = useState("fixed");
+  const [isAnyModalOpen, setIsAnyModalOpen] = useState(false);
 
   useEffect(() => {
     if (window.innerWidth < 768) {
       setBackgroundAttachment("scroll");
     }
   }, []);
+
+  // Handle modal state changes from the ProjectCard component
+  const handleModalStateChange = (isOpen: boolean) => {
+    setIsAnyModalOpen(isOpen);
+  };
 
   return (
     <div
@@ -25,14 +31,16 @@ export default function Projects() {
         backgroundAttachment: backgroundAttachment,
       }}
     >
-      <div className="fixed top-0 left-0 w-full z-10">
+      {/* Navbar with fade animation */}
+      <div 
+        className={`fixed top-0 left-0 w-full z-10 transition-all duration-300 ease-in-out ${
+          isAnyModalOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        }`}
+      >
         <Navbar />
       </div>
-      <main className="relative z-0 flex flex-col items-center flex-grow p-2 pt-10 pb-20">
-        <div className="text-center mb-8 sm:mb-12 mt-4 sm:mt-0"> {/* Add margin-top for mobile */}
-          <h1 className="text-3xl sm:text-5xl font-bold">Beer de Vreeze</h1>
-          <p className="text-lg sm:text-2xl">Netherlands-based Game Developer</p>
-        </div>
+
+      <main className="relative z-0 flex flex-col items-center flex-grow p-2 pt-20 pb-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl">
           <ProjectCard 
             image="/images/cat.jpg" 
@@ -41,7 +49,8 @@ export default function Projects() {
             description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut purus eget."
             liveLink="https://google.com"
             githubLink="https://github.com"
-            contributors={["John Doe", "Jane Doe", "John Doe", "Jane Doe","John Doe","John Doe", "Jane Doe", "John Doe", "Jane Doe",]}
+            contributors={["John Doe", "Jane Doe", "John Doe", "Jane Doe", "John Doe", "Jane Doe", "John Doe", "Jane Doe", "John Doe", "Jane Doe", "John Doe", "Jane Doe", "John Doe", "Jane Doe", "John Doe", "Jane Doe"]}
+            onModalStateChange={handleModalStateChange}
           />
           <ProjectCard 
             image="/images/cat.jpg" 
@@ -50,7 +59,8 @@ export default function Projects() {
             description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut purus eget."
             liveLink="https://google.com"
             githubLink="https://github.com"
-            contributors={["John Doe", "Jane Doe", "John Doe", "Jane Doe"]}
+            contributors={["John Doe", "Jane Doe", "John Doe", "Jane Doe", "John Doe", "Jane Doe", "John Doe", "Jane Doe", "John Doe"]}
+            onModalStateChange={handleModalStateChange}
           />
           <ProjectCard 
             image="/images/cat.jpg" 
@@ -59,20 +69,18 @@ export default function Projects() {
             description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut purus eget."
             liveLink="https://google.com"
             githubLink="https://github.com"
-            contributors={["John Doe", "Jane Doe", "John Doe", "Jane Doe"]}
-          />
-          <ProjectCard 
-            image="/images/cat.jpg" 
-            title="Project Title" 
-            techStack={["C#", "Unity"]} 
-            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut purus eget."
-            liveLink="https://google.com"
-            githubLink="https://github.com"
-            contributors={["John Doe", "Jane Doe", "John Doe", "Jane Doe"]}
+            contributors={["John Doe", "Jane Doe", "John Doe", "Jane Doe", "John Doe", "Jane Doe", "John Doe", "Jane Doe", "John Doe"]}
+            onModalStateChange={handleModalStateChange}
           />
         </div>
       </main>
-      <div className="fixed bottom-0 left-0 w-full z-10">
+
+      {/* Footer with fade animation */}
+      <div 
+        className={`fixed bottom-0 left-0 w-full z-10 transition-all duration-300 ease-in-out ${
+          isAnyModalOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        }`}
+      >
         <Footer />
       </div>
     </div>
