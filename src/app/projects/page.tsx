@@ -43,7 +43,7 @@ export default function Projects() {
       <main className="relative z-0 flex flex-col items-center flex-grow p-2 pt-20 pb-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl">
           <ProjectCard 
-            image="/images/cat.jpg" 
+            media={[{ type: 'image', src: "/images/cat.jpg", alt: "Project thumbnail" }, { type: 'video', src: "/videos/cat.mp4", alt: "Project thumbnail" }]}
             title="Project Title" 
             techStack={["C#", "Unity"]} 
             description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut purus eget."
@@ -53,7 +53,7 @@ export default function Projects() {
             onModalStateChange={handleModalStateChange}
           />
           <ProjectCard 
-            image="/images/cat.jpg" 
+            media={[{ type: 'image', src: "/images/cat.jpg", alt: "Project thumbnail" }]}
             title="Project Title" 
             techStack={["C#", "Unity"]} 
             description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut purus eget."
@@ -63,7 +63,7 @@ export default function Projects() {
             onModalStateChange={handleModalStateChange}
           />
           <ProjectCard 
-            image="/images/cat.jpg" 
+            media={[{ type: 'image', src: "/images/cat.jpg", alt: "Project thumbnail" }]}
             title="Project Title" 
             techStack={["C#", "Unity"]} 
             description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut purus eget."

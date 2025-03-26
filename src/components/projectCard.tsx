@@ -1,9 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiMongodb, SiPostgresql, SiDocker, SiKubernetes, SiGooglecloud, SiFirebase, SiRedux, SiNextdotjs, SiTailwindcss, SiDotnet, SiBlender, SiAdobephotoshop, SiAngular, SiSass, SiWebpack, SiJest, SiGraphql, SiMysql, SiPhp, SiPython, SiCplusplus, SiUnrealengine, SiGodotengine, SiElectron, SiFlutter, SiDart, SiSwift, SiKotlin, SiRust, SiGo, SiRuby, SiLaravel, SiDjango, SiSpring, SiExpress, SiFastapi, SiNestjs, SiWebassembly, SiTensorflow, SiPytorch, SiOpencv, SiVercel, SiNetlify, SiHeroku, SiDigitalocean, SiVim, SiIntellijidea, SiXcode, SiAndroidstudio } from 'react-icons/si'; // Import original logos
 
+// Define the media item type
+interface MediaItem {
+  type: 'image' | 'video';
+  src: string;
+  alt?: string; // Alt text for images, title for videos
+}
+
 interface ProjectCardProps {
-  image: string;
+  media: MediaItem[]; // Replace single image with array of media items
   title: string;
   techStack: string[];
   description?: string;
@@ -11,7 +18,7 @@ interface ProjectCardProps {
   liveLink?: string;
   githubLink?: string;
   contributors?: string[];
-  onModalStateChange?: (isOpen: boolean) => void; // Add callback prop
+  onModalStateChange?: (isOpen: boolean) => void;
 }
 
 const techIcons: { [key: string]: JSX.Element } = {
@@ -75,7 +82,7 @@ const techIcons: { [key: string]: JSX.Element } = {
 };
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ 
-  image = "/path/to/wip-image-library/placeholder.jpg", 
+  media = [{ type: 'image', src: "/path/to/wip-image-library/placeholder.jpg", alt: "Project thumbnail" }], 
   title, 
   techStack,
   description = "Project description goes here. This is a brief overview of the project and its main features.",
@@ -83,11 +90,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   liveLink = "#",
   githubLink: sourceLink = "#",
   contributors = ["Developer Name"],
-  onModalStateChange // Add the callback
+  onModalStateChange
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-  const [isClicked, setIsClicked] = useState(false); // Add state for click effect
+  const [isClicked, setIsClicked] = useState(false);
+  const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
   
   // Predefined color palette for contributor indicators
   const contributorColors = [
@@ -96,12 +106,19 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     '#FFC857', '#4E8FF7', '#FB5607', '#3A86FF', '#8AC926'
   ];
 
+  // Get the thumbnail image (first image or video thumbnail)
+  const thumbnailImage = media[0]?.src || "/path/to/wip-image-library/placeholder.jpg";
+
   const closeModal = () => {
+    if (videoRef.current && !videoRef.current.paused) {
+      videoRef.current.pause();
+    }
+    setIsPlaying(false);
     setIsClosing(true);
     setTimeout(() => {
       setIsModalOpen(false);
       setIsClosing(false);
-      onModalStateChange?.(false); // Notify parent component when modal closes
+      onModalStateChange?.(false);
     }, 300);
   };
   
@@ -113,9 +130,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     };
     
     if (isModalOpen) {
-      document.body.style.overflow = 'hidden'; // Prevent body scroll on mobile
+      document.body.style.overflow = 'hidden';
       document.addEventListener('keydown', handleEscKey);
-      onModalStateChange?.(true); // Notify parent component when modal opens
+      onModalStateChange?.(true);
     }
     
     return () => {
@@ -128,18 +145,57 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     console.log(`${tech} icon clicked`);
   };
 
+  const goToNextMedia = () => {
+    if (videoRef.current && !videoRef.current.paused) {
+      videoRef.current.pause();
+    }
+    setIsPlaying(false);
+    setCurrentMediaIndex((prevIndex) => (prevIndex + 1) % media.length);
+  };
+
+  const goToPreviousMedia = () => {
+    if (videoRef.current && !videoRef.current.paused) {
+      videoRef.current.pause();
+    }
+    setIsPlaying(false);
+    setCurrentMediaIndex((prevIndex) => (prevIndex - 1 + media.length) % media.length);
+  };
+
+  const handleVideoToggle = () => {
+    if (videoRef.current) {
+      if (videoRef.current.paused) {
+        videoRef.current.play();
+        setIsPlaying(true);
+      } else {
+        videoRef.current.pause();
+        setIsPlaying(false);
+      }
+    }
+  };
+
+  const goToMedia = (index: number) => {
+    if (videoRef.current && !videoRef.current.paused) {
+      videoRef.current.pause();
+    }
+    setIsPlaying(false);
+    setCurrentMediaIndex(index);
+  };
+
+  const currentMedia = media[currentMediaIndex];
+  const isVideo = currentMedia?.type === 'video';
+
   return (
     <>
       {/* Project Card - Improved Mobile Responsiveness */}
       <div 
         onClick={() => setIsModalOpen(true)}
-        onMouseDown={() => setIsClicked(true)} // Add mouse down event
-        onMouseUp={() => setIsClicked(false)} // Add mouse up event
-        className={`relative z-10 flex flex-col justify-between p-4 sm:p-5 bg-[#111111] border border-[#2a2a2a] rounded-lg transition-all duration-300 hover:border-[#4a4a4a] hover:translate-y-[-4px] overflow-hidden cursor-pointer w-full max-w-[500px] mx-auto h-48 sm:h-56 ${isClicked ? 'scale-95' : ''}`} // Add scale effect
+        onMouseDown={() => setIsClicked(true)}
+        onMouseUp={() => setIsClicked(false)}
+        className={`relative z-10 flex flex-col justify-between p-4 sm:p-5 bg-[#111111] border border-[#2a2a2a] rounded-lg transition-all duration-300 hover:border-[#4a4a4a] hover:translate-y-[-4px] overflow-hidden cursor-pointer w-full max-w-[500px] mx-auto h-48 sm:h-56 ${isClicked ? 'scale-95' : ''}`}
       >
         <div className="absolute top-0 left-0 w-full h-full z-0 opacity-20">
           <Image 
-            src={image} 
+            src={thumbnailImage} 
             alt={title} 
             fill 
             sizes="(max-width: 768px) 100vw, 400px"
@@ -147,6 +203,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           />
         </div>
         
+        {/* Card content - remains unchanged */}
         <div className="relative z-10">
           <h3 className="text-white text-xl sm:text-2xl font-medium mb-2 truncate">
             {title}
@@ -177,7 +234,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         <div 
           className={`fixed inset-0 z-[1050] flex items-center justify-center bg-black/95 backdrop-blur-sm 
             ${isClosing ? 'animate-fadeOut' : 'animate-fadeIn'} 
-            transition-opacity duration-300 ease-in-out py-2 sm:py-4`} // Reduced vertical padding
+            transition-opacity duration-300 ease-in-out py-2 sm:py-4`}
           onClick={(e) => {
             if (e.target === e.currentTarget) closeModal();
           }}
@@ -200,27 +257,104 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           <div 
             className={`w-full max-w-7xl ${isClosing ? 'animate-fadeOut' : 'animate-fadeIn'} 
               transition-transform duration-300 ease-in-out py-6 overflow-y-auto 
-              max-h-[90vh] my-auto`} // Reduced top/bottom padding
+              max-h-[90vh] my-auto`}
           >
-            <div className="flex flex-col lg:flex-row gap-6 lg:gap-16 px-4 sm:px-10"> {/* Added padding to content wrapper */}
-              {/* Left Column - Responsive Image and Buttons */}
+            <div className="flex flex-col lg:flex-row gap-6 lg:gap-16 px-4 sm:px-10">
+              {/* Left Column - Slideshow media and Buttons */}
               <div className="lg:w-2/5 flex flex-col">
-                {/* Modal Image Container with minimum height and proper overflow */}
-                <div className="relative w-full min-h-[250px] rounded-xl overflow-hidden border border-[#333333] mb-4">
-                  <Image 
-                    src={image} 
-                    alt={title} 
-                    fill
-                    priority
-                    sizes="(max-width: 768px) 100vw, 800px"
-                    className="object-cover rounded-xl"
-                  />
+                {/* Media Slideshow Container */}
+                <div className="relative w-full rounded-xl overflow-hidden border border-[#333333] mb-4">
+                  {/* Media Content */}
+                  <div className="relative aspect-video w-full">
+                    {isVideo ? (
+                      <>
+                        <video 
+                          ref={videoRef}
+                          src={currentMedia.src} 
+                          className="w-full h-full object-cover" 
+                          controls={false}
+                          onClick={handleVideoToggle}
+                        />
+                        {/* Video Play/Pause Button - Only show when not playing */}
+                        {!isPlaying && (
+                          <button 
+                            onClick={handleVideoToggle}
+                            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+                              w-14 h-14 flex items-center justify-center rounded-full 
+                              bg-red-700/80 hover:bg-red-700 transition-colors z-10"
+                          >
+                            <svg className="w-23 h-24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M8 5V19L19 12L8 5Z" fill="white" />
+                            </svg>
+                          </button>
+                        )}
+                      </>
+                    ) : (
+                      <Image 
+                        src={currentMedia.src} 
+                        alt={currentMedia.alt || title} 
+                        fill
+                        priority
+                        sizes="(max-width: 768px) 100vw, 800px"
+                        className="object-cover"
+                      />
+                    )}
+
+                    {/* Navigation Arrows - Only show if more than 1 media */}
+                    {media.length > 1 && (
+                      <>
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); goToPreviousMedia(); }}
+                          className="absolute left-2 top-1/2 transform -translate-y-1/2 z-20 bg-black/60 hover:bg-black/80 rounded-full w-10 h-10 flex items-center justify-center transition-colors"
+                          aria-label="Previous media"
+                        >
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15 18L9 12L15 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </button>
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); goToNextMedia(); }}
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2 z-20 bg-black/60 hover:bg-black/80 rounded-full w-10 h-10 flex items-center justify-center transition-colors"
+                          aria-label="Next media"
+                        >
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 6L15 12L9 18" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </button>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Indicators for multiple media */}
+                  {media.length > 1 && (
+                    <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2 z-20">
+                      {media.map((_, index) => (
+                        <button
+                          key={index}
+                          onClick={(e) => { 
+                            e.stopPropagation();
+                            goToMedia(index);
+                          }}
+                          className={`w-2 h-2 rounded-full transition-all ${
+                            index === currentMediaIndex 
+                              ? 'bg-white scale-125' 
+                              : 'bg-white/50 hover:bg-white/80'
+                          }`}
+                          aria-label={`Go to media ${index + 1}`}
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Media type indicator */}
+                  <div className="absolute top-3 right-3 bg-black/60 px-2 py-1 rounded text-xs text-white font-medium z-20">
+                    {isVideo ? 'Video' : 'Image'} {currentMediaIndex + 1}/{media.length}
+                  </div>
                 </div>
                 
                 {/* Buttons - Full Width on Mobile, Stacked */}
                 <div className="flex flex-col sm:flex-row gap-4">
                   <a 
-
                     href={liveLink} 
                     target="_blank" 
                     rel="noopener noreferrer"
@@ -251,7 +385,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 </div>
               </div>
               
-              {/* Right Column - Responsive Typography and Layout */}
+              {/* Right Column - Remains mostly unchanged */}
               <div className="lg:w-3/5 mt-4 lg:mt-0">
                 {/* Title and Description */}
                 <div className="mb-8">
@@ -264,6 +398,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                   </p>
                 </div>
                 
+                {/* Rest of the content - features, tech stack, contributors remains the same */}
                 <hr className="border-t border-[#2a2a2a] my-6" />
                 
                 {/* Features - Compact and Readable */}
