@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, TouchEvent } from 'react';
 import Image from 'next/image';
-import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiMongodb, SiPostgresql, SiDocker, SiKubernetes, SiGooglecloud, SiFirebase, SiRedux, SiNextdotjs, SiTailwindcss, SiDotnet, SiBlender, SiAdobephotoshop, SiAngular, SiSass, SiWebpack, SiJest, SiGraphql, SiMysql, SiPhp, SiPython, SiCplusplus, SiUnrealengine, SiGodotengine, SiElectron, SiFlutter, SiDart, SiSwift, SiKotlin, SiRust, SiGo, SiRuby, SiLaravel, SiDjango, SiSpring, SiExpress, SiFastapi, SiNestjs, SiWebassembly, SiTensorflow, SiPytorch, SiOpencv, SiVercel, SiNetlify, SiHeroku, SiDigitalocean, SiVim, SiIntellijidea, SiXcode, SiAndroidstudio } from 'react-icons/si'; // Import original logos
-import { FaArrowLeft, FaArrowRight } from 'react-icons/fa'; // Import arrow icons
+import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiMongodb, SiPostgresql, SiDocker, SiKubernetes, SiGooglecloud, SiFirebase, SiRedux, SiNextdotjs, SiTailwindcss, SiDotnet, SiBlender, SiAdobephotoshop, SiAngular, SiSass, SiWebpack, SiJest, SiGraphql, SiMysql, SiPhp, SiPython, SiCplusplus, SiUnrealengine, SiGodotengine, SiElectron, SiFlutter, SiDart, SiSwift, SiKotlin, SiRust, SiGo, SiRuby, SiLaravel, SiDjango, SiSpring, SiExpress, SiFastapi, SiNestjs, SiWebassembly, SiTensorflow, SiPytorch, SiOpencv, SiVercel, SiNetlify, SiHeroku, SiDigitalocean, SiVim, SiIntellijidea, SiXcode, SiAndroidstudio } from 'react-icons/si';
+
+
 
 // Define the media item type
 interface MediaItem {
@@ -11,9 +12,10 @@ interface MediaItem {
 }
 
 interface ProjectCardProps {
-  media: MediaItem[]; // Replace single image with array of media items
+  media: MediaItem[];
   title: string;
   techStack: string[];
+  coverImage?: string; 
   description?: string;
   features?: string[];
   liveLink?: string;
@@ -86,6 +88,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   media = [{ type: 'image', src: "/path/to/wip-image-library/placeholder.jpg", alt: "Project thumbnail" }], 
   title, 
   techStack,
+  coverImage,
   description = "Project description goes here. This is a brief overview of the project and its main features.",
   features = ["Feature one description", "Feature two description", "Feature three description"],
   liveLink = "#",
@@ -98,6 +101,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const [isClicked, setIsClicked] = useState(false);
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [autoplay, setAutoplay] = useState(true); // Add autoplay state
   const videoRef = useRef<HTMLVideoElement>(null);
   
   // Predefined color palette for contributor indicators
@@ -107,8 +111,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     '#FFC857', '#4E8FF7', '#FB5607', '#3A86FF', '#8AC926'
   ];
 
-  // Get the thumbnail image (first image or video thumbnail)
-  const thumbnailImage = media[0]?.src || "/path/to/wip-image-library/placeholder.jpg";
+  // Get the thumbnail image (use coverImage if provided, otherwise use first media item or fallback)
+  const thumbnailImage = coverImage || media[0]?.src || "/path/to/wip-image-lib rary/placeholder.jpg";
 
   const closeModal = () => {
     if (videoRef.current && !videoRef.current.paused) {
@@ -144,6 +148,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
   const handleTechIconClick = (tech: string) => {
     console.log(`${tech} icon clicked`);
+    // how to add image
+    // /path/
   };
 
   const goToNextMedia = () => {
@@ -167,15 +173,18 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       if (videoRef.current.paused) {
         videoRef.current.play();
         setIsPlaying(true);
+        setAutoplay(false); // Disable autoplay when video starts playing
       } else {
         videoRef.current.pause();
         setIsPlaying(false);
+        setAutoplay(true); // Re-enable autoplay when video is paused
       }
     }
   };
   
   const handleVideoEnd = () => {
     setIsPlaying(false);
+    setAutoplay(true); // Re-enable autoplay when video ends
   };
   
   const renderVideoControls = () => {
@@ -186,27 +195,28 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         className="absolute inset-0 z-20 flex items-center justify-center cursor-pointer"
         onClick={handleVideoToggle}
       >
-        {/* Play/Pause Overlay */}
-        {!isPlaying && (
-          <div 
-            className="bg-black/50 hover:bg-black/70 p-4 rounded-full 
-              transition-all duration-300 group"
+        {/* Play/Pause Overlay - Added fade effect */}
+        <div 
+          className={`${!isPlaying 
+            ? 'opacity-100 scale-100' 
+            : 'opacity-0 scale-90 pointer-events-none'} 
+            bg-black/50 hover:bg-black/70 p-4 rounded-full 
+            transition-all duration-300 ease-in-out group`}
+        >
+          <svg 
+            width="48" 
+            height="48" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            xmlns="http://www.w3.org/2000/svg"
+            className="text-white group-hover:scale-110 transition-transform"
           >
-            <svg 
-              width="48" 
-              height="48" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              xmlns="http://www.w3.org/2000/svg"
-              className="text-white group-hover:scale-110 transition-transform"
-            >
-              <path 
-                d="M8 5V19L19 12L8 5Z" 
-                fill="currentColor" 
-              />
-            </svg>
-          </div>
-        )}
+            <path 
+              d="M8 5V19L19 12L8 5Z" 
+              fill="currentColor" 
+            />
+          </svg>
+        </div>
       </div>
     );
   };
@@ -217,10 +227,73 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     }
     setIsPlaying(false);
     setCurrentMediaIndex(index);
+    // Reset autoplay timer when manually changing slides
+    setAutoplay(true);
   };
 
   const currentMedia = media[currentMediaIndex];
   const isVideo = currentMedia?.type === 'video';
+
+  // Add touch handling state
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  
+  // Minimum swipe distance in pixels
+  const minSwipeDistance = 50;
+  
+  // Handle touch start
+  const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+    setAutoplay(false); // Temporarily disable autoplay during touch interaction
+  };
+  
+  // Handle touch move
+  const handleTouchMove = (e: TouchEvent<HTMLDivElement>) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+  
+  // Handle touch end
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    // Calculate distance
+    const distance = touchStart - touchEnd;
+    const isSwipe = Math.abs(distance) > minSwipeDistance;
+    
+    // Handle swipe based on direction
+    if (isSwipe && !isPlaying) {
+      if (distance > 0) {
+        // Swiped left, go to next
+        goToNextMedia();
+      } else {
+        // Swiped right, go to previous
+        goToPreviousMedia();
+      }
+    }
+    
+    // Reset values
+    setTouchStart(null);
+    setTouchEnd(null);
+    setAutoplay(true); // Re-enable autoplay after touch interaction
+  };
+
+  // Add an effect for automatic slideshow
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+    
+    // Only autoplay when modal is open, autoplay is enabled, and no video is playing
+    if (isModalOpen && autoplay && !isPlaying && media.length > 1) {
+      intervalId = setInterval(() => {
+        goToNextMedia();
+      }, 5000); // Change slide every 5 seconds
+    }
+    
+    // Cleanup function to clear the interval when dependencies change
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [isModalOpen, autoplay, isPlaying, currentMediaIndex, media.length]);
 
   return (
     <>
@@ -302,8 +375,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               <div className="lg:w-2/5 flex flex-col">
                 {/* Media Slideshow Container */}
                 <div className="relative w-full rounded-xl overflow-hidden border border-[#333333] mb-4">
-                  {/* Media Content */}
-                  <div className="relative aspect-video w-full">
+                  {/* Media Content - Add touch handlers */}
+                  <div 
+                    className="relative aspect-video w-full"
+                    onTouchStart={handleTouchStart}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}
+                  >
                     {isVideo ? (
                       <>
                         <video 
@@ -326,39 +404,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                       />
                     )}
 
-                    {/* Navigation Arrows - Only show if more than 1 media */}
-                    {media.length > 1 && (
-                      <>
-                        {/* Previous Media Button */}
-                        <button 
-                          onClick={(e) => { e.stopPropagation(); goToPreviousMedia(); }}
-                          className="absolute left-2 top-1/2 transform -translate-y-1/2 z-20 
-                            bg-black/60 hover:bg-black/80 rounded-full w-12 h-12 
-                            flex items-center justify-center transition-all duration-300 
-                            hover:scale-110 group"
-                          aria-label="Previous media"
-                        >
-                          <FaArrowLeft size={20} className="text-white group-hover:text-blue-400" />
-                        </button>
-
-                        {/* Next Media Button */}
-                        <button 
-                          onClick={(e) => { e.stopPropagation(); goToNextMedia(); }}
-                          className="absolute right-2 top-1/2 transform -translate-y-1/2 z-20 
-                            bg-black/60 hover:bg-black/80 rounded-full w-12 h-12 
-                            flex items-center justify-center transition-all duration-300 
-                            hover:scale-110 group"
-                          aria-label="Next media"
-                        >
-                          <FaArrowRight size={20} className="text-white group-hover:text-blue-400" />
-                        </button>
-                      </>
-                    )}
+                    {/* Navigation arrows removed as requested */}
                   </div>
 
                   {/* Indicators for multiple media */}
                   {media.length > 1 && (
-                    <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2 z-20">
+                    <div className="absolute bottom-3 left-0 right-0 flex justify-center flex-wrap gap-1 z-20 px-2 max-w-full overflow-hidden">
                       {media.map((_, index) => (
                         <button
                           key={index}
@@ -366,7 +417,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                             e.stopPropagation();
                             goToMedia(index);
                           }}
-                          className={`w-2 h-2 rounded-full transition-all ${
+                          className={`rounded-full transition-all ${
+                            media.length > 8 
+                              ? 'w-0.5 h-0.5 gap-0.5' 
+                              : media.length > 5 
+                                ? 'w-0.5 h-0.5' 
+                                : 'w-1 h-1'
+                          } ${
                             index === currentMediaIndex 
                               ? 'bg-white scale-125' 
                               : 'bg-white/50 hover:bg-white/80'
@@ -378,7 +435,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                   )}
 
                   {/* Media type indicator */}
-                  <div className="absolute top-3 right-3 bg-black/60 px-2 py-1 rounded text-xs text-white font-medium z-20">
+                  <div className={`absolute top-3 right-3 bg-black/60 px-2 py-1 rounded text-xs text-white font-medium z-20
+                    ${(isVideo && isPlaying) ? 'opacity-0 pointer-events-none' : 'opacity-100'}
+                    transition-opacity duration-300 ease-in-out`}>
                     {currentMediaIndex + 1}/{media.length}
                   </div>
                 </div>
