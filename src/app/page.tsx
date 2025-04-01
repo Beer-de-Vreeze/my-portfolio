@@ -69,7 +69,8 @@ export default function Home() {
   const isMedium = width >= 640 && width < 768;
   const isLarge = width >= 768 && width < 1024;
   const isXLarge = width >= 1024 && width < 1280;
-  const isXXLarge = width >= 1280;
+  const isXXLarge = width >= 1280 && width < 1536;
+
 
   // Determine layout based on screen size
   const isMobile = isXSmall || isSmall || isMedium || isLarge;
@@ -81,13 +82,13 @@ export default function Home() {
   }
 
   return (
-    <main className={`${styles.container} grid-background`}>
+    <main className={`${styles.container}`}>
       <div className={`${styles.headerContainer} ${isDesktop ? styles.headerContainerDesktop : styles.headerContainerMobile}`}>
         <h1 className={`${styles.name} ${isDesktop ? styles.nameDesktop : styles.nameMobile}`}>
           Beer de Vreeze
         </h1>
         <h2 className={`${styles.title} ${isDesktop ? styles.titleDesktop : styles.titleMobile}`}>
-          <span className="text-white">Netherlands-based </span>
+          <span className="text-white">Dutch-based </span>
           {width < 900 && <br />}
           <span className="gradient-text" style={{ marginTop: '0.5rem' }}>Game Developer</span>
         </h2>

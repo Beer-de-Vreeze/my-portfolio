@@ -31,7 +31,6 @@ export default function Projects() {
         backgroundAttachment: backgroundAttachment,
       }}
     >
-      {/* Navbar with fade animation */}
       <div 
         className={`fixed top-0 left-0 w-full z-10 transition-all duration-300 ease-in-out ${
           isAnyModalOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'
@@ -53,9 +52,29 @@ export default function Projects() {
             title="Frans is hele goeie web developer" 
             techStack={["C#", "Unity", "Blender", "Python"]} 
             description="Hij is er echt heel goed in sirieus ik lieg niet zou ik nooit doen"
+            features={[
+              {
+                title: "Feature 1",
+                description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+              },
+              {
+                title: "Feature 2",
+                description: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+              },
+              {
+                title: "Feature 3",
+                description: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.",
+              }
+            ]}
             liveLink="https://google.com"
             githubLink="https://github.com"
-            contributors={["Frans", "Jane Doe", "John Doe", "Jane Doe", "John Doe", "Jane Doe", "John Doe", "Jane Doe", "John Doe", "Jane Doe", "John Doe", "Jane Doe", "John Doe", "Jane Doe", "John Doe", "Jane Doe"]}
+            contributors={[
+            { name: "John Doe", role: "Developer" },
+            { name: "Jane Doe", role: "Designer" },
+            { name: "John Doe", role: "Artist" },
+            { name: "Jane Doe", role: "Audio" },
+            { name: "John Doe", role: "Other" },
+            ]}
             onModalStateChange={handleModalStateChange}
           />
           <ProjectCard 
@@ -65,7 +84,14 @@ export default function Projects() {
             description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut purus eget."
             liveLink="https://google.com"
             githubLink="https://github.com"
-            contributors={["John Doe", "Jane Doe", "John Doe", "Jane Doe", "John Doe", "Jane Doe", "John Doe", "Jane Doe", "John Doe"]}
+            contributors={
+              [
+                { name: "John Doe", role: "Developer" },
+                { name: "Jane Doe", role: "Designer" },
+                { name: "John Doe", role: "Artist" },
+                { name: "Jane Doe", role: "Audio" },
+                { name: "John Doe", role: "Other" },
+              ]}
             onModalStateChange={handleModalStateChange}
           />
           <ProjectCard 
@@ -75,13 +101,18 @@ export default function Projects() {
             description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut purus eget."
             liveLink="https://google.com"
             githubLink="https://github.com"
-            contributors={["John Doe", "Jane Doe", "John Doe", "Jane Doe", "John Doe", "Jane Doe", "John Doe", "Jane Doe", "John Doe"]}
+            contributors={[
+              { name: "John Doe", role: "Developer" },
+              { name: "Jane Doe", role: "Designer" },
+              { name: "John Doe", role: "Artist" },
+              { name: "Jane Doe", role: "Audio" },
+              { name: "John Doe", role: "Other" },
+            ]}
             onModalStateChange={handleModalStateChange}
           />
         </div>
       </main>
 
-      {/* Footer with fade animation */}
       <div 
         className={`fixed bottom-0 left-0 w-full z-10 transition-all duration-300 ease-in-out ${
           isAnyModalOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'

@@ -1,14 +1,18 @@
 import React, { useState, useEffect, useRef, TouchEvent } from 'react';
 import Image from 'next/image';
 import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiMongodb, SiPostgresql, SiDocker, SiKubernetes, SiGooglecloud, SiFirebase, SiRedux, SiNextdotjs, SiTailwindcss, SiDotnet, SiBlender, SiAdobephotoshop, SiAngular, SiSass, SiWebpack, SiJest, SiGraphql, SiMysql, SiPhp, SiPython, SiCplusplus, SiUnrealengine, SiGodotengine, SiElectron, SiFlutter, SiDart, SiSwift, SiKotlin, SiRust, SiGo, SiRuby, SiLaravel, SiDjango, SiSpring, SiExpress, SiFastapi, SiNestjs, SiWebassembly, SiTensorflow, SiPytorch, SiOpencv, SiVercel, SiNetlify, SiHeroku, SiDigitalocean, SiVim, SiIntellijidea, SiXcode, SiAndroidstudio } from 'react-icons/si';
+import { FaCode, FaPaintBrush, FaMusic, FaGamepad, FaTools } from 'react-icons/fa'; // Add icons for roles
 
-
-
-// Define the media item type
 interface MediaItem {
   type: 'image' | 'video';
   src: string;
-  alt?: string; // Alt text for images, title for videos
+  alt?: string;
+}
+
+interface Contributor {
+  name: string;
+  role: 'Developer' | 'Artist' | 'Audio' | 'Designer' | 'Other'; // Add roles
+  icon?: JSX.Element; // Optional icon for the contributor
 }
 
 interface ProjectCardProps {
@@ -17,10 +21,10 @@ interface ProjectCardProps {
   techStack: string[];
   coverImage?: string; 
   description?: string;
-  features?: string[];
+  features?: { title: string; description: string }[]; // Update features type
   liveLink?: string;
   githubLink?: string;
-  contributors?: string[];
+  contributors?: Contributor[];
   onModalStateChange?: (isOpen: boolean) => void;
 }
 
@@ -84,16 +88,29 @@ const techIcons: { [key: string]: JSX.Element } = {
   "Android Studio": <SiAndroidstudio className="text-green-500 text-lg mr-2" />
 };
 
+// Predefined role icons with colors
+const roleIcons: { [key: string]: JSX.Element } = {
+  Developer: <FaCode className="text-blue-500 text-lg" />,
+  Artist: <FaPaintBrush className="text-orange-500 text-lg" />,
+  Audio: <FaMusic className="text-purple-500 text-lg" />,
+  Designer: <FaGamepad className="text-green-500 text-lg" />,
+  Other: <FaTools className="text-gray-500 text-lg" />
+};
+
 const ProjectCard: React.FC<ProjectCardProps> = ({ 
   media = [{ type: 'image', src: "/path/to/wip-image-library/placeholder.jpg", alt: "Project thumbnail" }], 
   title, 
   techStack,
   coverImage,
   description = "Project description goes here. This is a brief overview of the project and its main features.",
-  features = ["Feature one description", "Feature two description", "Feature three description"],
+  features = [
+    { title: "Feature One", description: "Description for feature one" },
+    { title: "Feature Two", description: "Description for feature two" },
+    { title: "Feature Three", description: "Description for feature three" }
+  ],
   liveLink = "#",
   githubLink: sourceLink = "#",
-  contributors = ["Developer Name"],
+  contributors = [{ name: "Developer Name", role: "Developer" }],
   onModalStateChange
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -111,7 +128,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     '#FFC857', '#4E8FF7', '#FB5607', '#3A86FF', '#8AC926'
   ];
 
-  // Get the thumbnail image (use coverImage if provided, otherwise use first media item or fallback)
   const thumbnailImage = coverImage || media[0]?.src || "/path/to/wip-image-lib rary/placeholder.jpg";
 
   const closeModal = () => {
@@ -499,13 +515,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                   </h2>
                   <ul className="grid grid-cols-1 gap-3">
                     {features.map((feature, index) => (
-                      <li key={index} className="flex items-start gap-3">
-                        <span className="text-purple-500 mt-1 flex-shrink-0">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
+                      <li key={index} className="flex flex-col gap-1">
+                        <span className="text-purple-500 font-semibold text-sm sm:text-base bg-gradient-to-r from-blue-500 to-purple-600 
+                          bg-clip-text text-transparent">
+                          {feature.title}
                         </span>
-                        <span className="text-gray-300 text-sm sm:text-base">{feature}</span>
+                        <span className="text-gray-300 text-sm sm:text-base">
+                          {feature.description}
+                        </span>
                       </li>
                     ))}
                   </ul>
@@ -542,17 +559,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                   </h2>
                   <div className="flex flex-wrap gap-2.5">
                     {contributors.map((contributor, index) => {
-                      const circleColor = contributorColors[index % contributorColors.length];
+                      const roleIcon = contributor.icon || roleIcons[contributor.role] || null; // Use provided icon or default role icon
                       return (
                         <span 
                           key={index} 
                           className="inline-flex items-center gap-2 px-5 py-3 bg-black border border-[#27272a] rounded-full flex items-center justify-center text-gray-300 text-sm"
                         >
-                          <span 
-                            className="w-2 h-2 rounded-full" 
-                            style={{ backgroundColor: circleColor }}
-                          ></span>
-                          {contributor}
+                          {roleIcon} {contributor.name}
                         </span>
                       );
                     })}

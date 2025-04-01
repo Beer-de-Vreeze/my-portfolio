@@ -25,16 +25,6 @@ export default function Contact() {
 
           <div className="flex justify-center space-x-6 mt-8">
             <motion.a 
-              href="/path/to/cv.pdf" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="text-3xl"
-              whileHover={{ scale: 1.2 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <FaFileAlt />
-            </motion.a>
-            <motion.a 
               href="https://github.com/FemBear" 
               target="_blank" 
               rel="noopener noreferrer" 
