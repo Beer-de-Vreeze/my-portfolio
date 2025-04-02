@@ -25,7 +25,7 @@ interface TechStackProps {
   title?: string;
 }
 
-const TechStack: React.FC<TechStackProps> = ({ title = "Tech Stack" }) => {
+const SkillCard: React.FC<TechStackProps> = ({ title = "Tech Stack" }) => {
   const [activeCategory, setActiveCategory] = useState('Coding');
 
   const categories = [
@@ -92,4 +92,4 @@ const TechStack: React.FC<TechStackProps> = ({ title = "Tech Stack" }) => {
   );
 };
 
-export default TechStack;
+export default SkillCard;
