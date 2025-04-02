@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, TouchEvent } from 'react';
 import Image from 'next/image';
 import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiMongodb, SiPostgresql, SiDocker, SiKubernetes, SiGooglecloud, SiFirebase, SiRedux, SiNextdotjs, SiTailwindcss, SiDotnet, SiBlender, SiAdobephotoshop, SiAngular, SiSass, SiWebpack, SiJest, SiGraphql, SiMysql, SiPhp, SiPython, SiCplusplus, SiUnrealengine, SiGodotengine, SiElectron, SiFlutter, SiDart, SiSwift, SiKotlin, SiRust, SiGo, SiRuby, SiLaravel, SiDjango, SiSpring, SiExpress, SiFastapi, SiNestjs, SiWebassembly, SiTensorflow, SiPytorch, SiOpencv, SiVercel, SiNetlify, SiHeroku, SiDigitalocean, SiVim, SiIntellijidea, SiXcode, SiAndroidstudio } from 'react-icons/si';
-import { FaCode, FaPaintBrush, FaMusic, FaGamepad, FaTools } from 'react-icons/fa'; // Add icons for roles
+import { FaCode, FaPaintBrush, FaMusic, FaGamepad, FaTools, FaExpand, FaCompress } from 'react-icons/fa'; // Added FaExpand and FaCompress
 
 interface MediaItem {
   type: 'image' | 'video';
@@ -12,7 +12,7 @@ interface MediaItem {
 interface Contributor {
   name: string;
   role: 'Developer' | 'Artist' | 'Audio' | 'Designer' | 'Other'; // Add roles
-  icon?: JSX.Element; // Optional icon for the contributor
+  icon?: JSX.Element; 
 }
 
 interface ProjectCardProps {
@@ -120,6 +120,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [autoplay, setAutoplay] = useState(true); // Add autoplay state
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   
   // Predefined color palette for contributor indicators
   const contributorColors = [
@@ -203,6 +204,76 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     setAutoplay(true); // Re-enable autoplay when video ends
   };
   
+  const toggleFullscreen = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!videoRef.current) return;
+    
+    try {
+      if (!document.fullscreenElement) {
+        // Enter fullscreen
+        if (videoRef.current.requestFullscreen) {
+          videoRef.current.requestFullscreen().then(() => {
+            setIsFullscreen(true);
+          }).catch(err => {
+            console.error(`Error attempting to enable fullscreen: ${err.message}`);
+          });
+        } else if ((videoRef.current as any).webkitRequestFullscreen) { // Safari
+          (videoRef.current as any).webkitRequestFullscreen();
+          setIsFullscreen(true);
+        } else if ((videoRef.current as any).msRequestFullscreen) { // IE11
+          (videoRef.current as any).msRequestFullscreen();
+          setIsFullscreen(true);
+        }
+      } else {
+        // Exit fullscreen
+        if (document.exitFullscreen) {
+          document.exitFullscreen().then(() => {
+            setIsFullscreen(false);
+          }).catch(err => {
+            console.error(`Error attempting to exit fullscreen: ${err.message}`);
+          });
+        } else if ((document as any).webkitExitFullscreen) { // Safari
+          (document as any).webkitExitFullscreen();
+          setIsFullscreen(false);
+        } else if ((document as any).msExitFullscreen) { // IE11
+          (document as any).msExitFullscreen();
+          setIsFullscreen(false);
+        }
+      }
+    } catch (err) {
+      console.error('Fullscreen API error:', err);
+    }
+  };
+  
+  // Listen for fullscreen change events
+  useEffect(() => {
+    const onFullscreenChange = () => {
+      const wasFullscreen = isFullscreen;
+      const isNowFullscreen = !!document.fullscreenElement;
+      
+      setIsFullscreen(isNowFullscreen);
+      
+      // If exiting fullscreen and the video was playing, pause it
+      if (wasFullscreen && !isNowFullscreen && videoRef.current && !videoRef.current.paused) {
+        videoRef.current.pause();
+        setIsPlaying(false);
+        setAutoplay(true); // Re-enable autoplay when exiting fullscreen
+      }
+    };
+    
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', onFullscreenChange);
+    document.addEventListener('mozfullscreenchange', onFullscreenChange);
+    document.addEventListener('MSFullscreenChange', onFullscreenChange);
+    
+    return () => {
+      document.removeEventListener('fullscreenchange', onFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', onFullscreenChange);
+      document.removeEventListener('mozfullscreenchange', onFullscreenChange);
+      document.removeEventListener('MSFullscreenChange', onFullscreenChange);
+    };
+  }, [isFullscreen]); // Added isFullscreen as a dependency to access its current value
+
   const renderVideoControls = () => {
     if (!isVideo) return null;
 
@@ -233,6 +304,20 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             />
           </svg>
         </div>
+        
+        {/* Fullscreen button with new icons - Always visible */}
+        <button
+          onClick={toggleFullscreen}
+          className="absolute bottom-3 right-3 z-30 bg-black/60 hover:bg-black/80 rounded-full p-2.5
+            text-white transition-all duration-200 focus:outline-none opacity-100"
+          aria-label="Toggle fullscreen"
+        >
+          {isFullscreen ? (
+            <FaCompress className="text-white text-lg" />
+          ) : (
+            <FaExpand className="text-white text-lg" />
+          )}
+        </button>
       </div>
     );
   };
@@ -298,8 +383,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
     
-    // Only autoplay when modal is open, autoplay is enabled, and no video is playing
-    if (isModalOpen && autoplay && !isPlaying && media.length > 1) {
+    // Only autoplay when modal is open, autoplay is enabled, no video is playing, and not in fullscreen mode
+    if (isModalOpen && autoplay && !isPlaying && !isFullscreen && media.length > 1) {
       intervalId = setInterval(() => {
         goToNextMedia();
       }, 5000); // Change slide every 5 seconds
@@ -309,7 +394,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  }, [isModalOpen, autoplay, isPlaying, currentMediaIndex, media.length]);
+  }, [isModalOpen, autoplay, isPlaying, isFullscreen, currentMediaIndex, media.length]);
 
   return (
     <>

@@ -11,7 +11,7 @@ const EducationCard = () => {
       name: 'MMCSchool',
       logo: '/api/placeholder/100/100',
       subtitle: 'Frontend Course',
-      finishedDate: '07.2023',
+      finishedDate: '08.2023',
       program: [
         'Creating responsive websites with HTML5 & CSS3',
         'Discovering basics of JavaScript and Bootstrap',
