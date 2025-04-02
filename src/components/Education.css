@@ -1,0 +1,25 @@
+/* ...existing code... */
+
+.education-container {
+  display: flex;
+  flex-direction: column;
+  gap: 25px; /* Creates space between flex items */
+}
+/* ...existing code... */
+/* ...existing code... */
+
+.education-card {
+  margin-bottom: 30px; /* Increase spacing between cards */
+  position: relative;
+  clear: both; /* Ensures cards don't float next to each other */
+  width: 100%; /* Make sure cards take full width */
+  overflow: hidden; /* Contain all content within the card */
+}
+
+/* Ensure proper spacing in mobile view */
+@media (max-width: 768px) {
+  .education-card {
+    margin-bottom: 20px;
+  }
+}
+/* ...existing code... */

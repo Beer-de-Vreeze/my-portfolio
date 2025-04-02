@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, TouchEvent } from 'react';
 import Image from 'next/image';
 import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiMongodb, SiPostgresql, SiDocker, SiKubernetes, SiGooglecloud, SiFirebase, SiRedux, SiNextdotjs, SiTailwindcss, SiDotnet, SiBlender, SiAdobephotoshop, SiAngular, SiSass, SiWebpack, SiJest, SiGraphql, SiMysql, SiPhp, SiPython, SiCplusplus, SiUnrealengine, SiGodotengine, SiElectron, SiFlutter, SiDart, SiSwift, SiKotlin, SiRust, SiGo, SiRuby, SiLaravel, SiDjango, SiSpring, SiExpress, SiFastapi, SiNestjs, SiWebassembly, SiTensorflow, SiPytorch, SiOpencv, SiVercel, SiNetlify, SiHeroku, SiDigitalocean, SiVim, SiIntellijidea, SiXcode, SiAndroidstudio } from 'react-icons/si';
-import { FaCode, FaPaintBrush, FaMusic, FaGamepad, FaTools } from 'react-icons/fa'; // Add icons for roles
+import { FaCode, FaPaintBrush, FaMusic, FaGamepad, FaTools } from 'react-icons/fa';
 
 interface MediaItem {
   type: 'image' | 'video';
@@ -11,8 +11,8 @@ interface MediaItem {
 
 interface Contributor {
   name: string;
-  role: 'Developer' | 'Artist' | 'Audio' | 'Designer' | 'Other'; // Add roles
-  icon?: JSX.Element; // Optional icon for the contributor
+  role: 'Developer' | 'Artist' | 'Audio' | 'Designer' | 'Other';
+  icon?: JSX.Element; 
 }
 
 interface ProjectCardProps {
@@ -87,6 +87,7 @@ const techIcons: { [key: string]: JSX.Element } = {
   "Xcode": <SiXcode className="text-blue-500 text-lg mr-2" />,
   "Android Studio": <SiAndroidstudio className="text-green-500 text-lg mr-2" />
 };
+
 
 // Predefined role icons with colors
 const roleIcons: { [key: string]: JSX.Element } = {
@@ -465,7 +466,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="w-full sm:flex-1 text-center py-3 bg-gradient-to-r from-blue-600 to-purple-600 
-                      hover:from-blue-700 hover:to-purple-700 text-white rounded-md text-sm font-medium 
+                      hover:from-blue-700 hover:to-purple-700 rounded-md text-sm font-medium 
                       transition-all flex items-center justify-center gap-2"
                   >
                     Live Demo
@@ -495,29 +496,24 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               <div className="lg:w-3/5 mt-4 lg:mt-0">
                 {/* Title and Description */}
                 <div className="mb-8">
-                  <h2 className="text-2xl sm:text-3xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 
-                    bg-clip-text text-transparent leading-tight">
+                  <h2 className="text-2xl sm:text-3xl font-bold mb-4 gradient-text leading-tight">
                     {title}
                   </h2>
                   <p className="text-gray-300 leading-relaxed text-base sm:text-[1rem]">
                     {description}
                   </p>
                 </div>
-                
-                {/* Rest of the content - features, tech stack, contributors remains the same */}
+
+                {/* Features */}
                 <hr className="border-t border-[#2a2a2a] my-6" />
-                
-                {/* Features - Compact and Readable */}
                 <div className="mb-8">
-                  <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 
-                    bg-clip-text text-transparent">
+                  <h2 className="text-xl font-bold mb-4 gradient-text">
                     Features
                   </h2>
                   <ul className="grid grid-cols-1 gap-3">
                     {features.map((feature, index) => (
                       <li key={index} className="flex flex-col gap-1">
-                        <span className="text-purple-500 font-semibold text-sm sm:text-base bg-gradient-to-r from-blue-500 to-purple-600 
-                          bg-clip-text text-transparent">
+                        <span className="font-semibold text-sm sm:text-base gradient-text">
                           {feature.title}
                         </span>
                         <span className="text-gray-300 text-sm sm:text-base">
@@ -527,13 +523,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     ))}
                   </ul>
                 </div>
-                
+
+                {/* Tech Stack */}
                 <hr className="border-t border-[#2a2a2a] my-6" />
-                
-                {/* Tech Stack - Flexible Wrapping */}
                 <div className="mb-8">
-                  <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 
-                    bg-clip-text text-transparent">
+                  <h2 className="text-xl font-bold mb-4 gradient-text">
                     Built with
                   </h2>
                   <div className="flex flex-wrap gap-2">
@@ -548,22 +542,20 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     ))}
                   </div>
                 </div>
-                
+
+                {/* Contributors */}
                 <hr className="border-t border-[#2a2a2a] my-6" />
-                
-                {/* Contributors - Responsive Wrapping */}
                 <div className="mb-8">
-                  <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 
-                    bg-clip-text text-transparent">
+                  <h2 className="text-xl font-bold mb-4 gradient-text">
                     Contributors
                   </h2>
                   <div className="flex flex-wrap gap-2.5">
                     {contributors.map((contributor, index) => {
-                      const roleIcon = contributor.icon || roleIcons[contributor.role] || null; // Use provided icon or default role icon
+                      const roleIcon = contributor.icon || roleIcons[contributor.role] || null;
                       return (
                         <span 
                           key={index} 
-                          className="inline-flex items-center gap-2 px-5 py-3 bg-black border border-[#27272a] rounded-full flex items-center justify-center text-gray-300 text-sm"
+                          className="inline-flex items-center gap-2 px-5 py-3 bg-black border border-[#27272a] rounded-full text-gray-300 text-sm"
                         >
                           {roleIcon} {contributor.name}
                         </span>

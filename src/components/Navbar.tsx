@@ -8,7 +8,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-black/80 backdrop-blur-md border-b border-[#27272a]">
+    <nav className="fixed top-0 left-0 w-full bg-black/80 backdrop-blur-md border-b border-[#27272a] z-50">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 flex items-center justify-between h-16">
         <Link href="/" className="text-xl font-bold gradient-text">
           Beer de Vreeze

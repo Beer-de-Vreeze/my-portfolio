@@ -54,7 +54,7 @@ body {
 
 /* Common utility classes */
 .gradient-text {
-  @apply bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 text-transparent bg-clip-text;
+  @apply bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 text-transparent bg-clip-text transition-all duration-150;
 }
 
 .card-hover {
@@ -240,7 +240,7 @@ p {
 
 /* Custom scrollbar styles */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 12px;
+  width: 20px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
