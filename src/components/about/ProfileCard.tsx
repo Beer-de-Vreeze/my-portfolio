@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaMapMarkerAlt, FaGlobe, FaGamepad, FaLightbulb, FaFish } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaGlobe, FaGamepad, FaLightbulb, FaFish, FaMedkit } from 'react-icons/fa';
 
 interface Bubble {
   icon: JSX.Element;
@@ -40,6 +40,11 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
       icon: <FaLightbulb className="w-4 h-4 text-white" />, 
       label: "Tech Enthusiast",
       additionalInfo: "More than just a hobby - constantly exploring new technologies" 
+    },
+    { 
+      icon: <FaMedkit className="w-4 h-4 text-white" />, 
+      label: "EHBO",
+      additionalInfo: "Certified first aid provider" 
     },
     { 
       icon: <FaFish className="w-4 h-4 text-white" />, 
@@ -84,7 +89,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   };
 
   return (
-    <div className="w-full max-w-[500px] h-auto md:w-[495px] bg-black border border-[#27272a] rounded-lg p-4">
+    <div className="w-full max-w-[500px] h-auto md:w-[495px] bg-black border border-[#27272a] rounded-lg shadow-lg p-4">
       <div className="w-full">
         <div className="flex items-center justify-start gap-3 mb-0">
           <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-900 border-2 border-gray-600 shadow-md">
@@ -104,7 +109,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             {bubbles.map((bubble, index) => (
               <div 
                 key={index} 
-                className="px-3 py-1 bg-black border border-[#27272a] rounded-full flex items-center gap-1.5 relative cursor-pointer"
+                className="px-3 py-1 bg-black border border-[#27272a] rounded-full flex items-center gap-1.5 relative cursor-pointer shadow-md transition-transform duration-300 hover:scale-105"
                 onMouseEnter={() => setHoveredBubble(index)}
                 onMouseLeave={() => setHoveredBubble(null)}
                 onClick={() => handleBubbleClick(index)}

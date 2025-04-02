@@ -16,7 +16,9 @@ const TechItem: React.FC<TechItemProps> = ({ icon, name }) => {
       <div className="text-white text-5xl flex items-center justify-center">
         {icon}
       </div>
-      <div className="text-white mt-2 text-sm font-light">{name}</div>
+      <div className="text-white mt-2 text-xs font-light text-center w-full break-words hyphens-auto">
+        {name}
+      </div>
     </div>
   );
 };
@@ -37,7 +39,6 @@ const SkillCard: React.FC<TechStackProps> = ({ title = "Tech Stack" }) => {
   ];
 
   const technologies = [
-    { icon: <SiReact />, name: 'React', category: 'Frontend' },
     { icon: <SiJavascript />, name: 'JavaScript', category: 'Coding' },
     { icon: <SiTypescript />, name: 'TypeScript', category: 'Coding' },
     { icon: <SiCss3 />, name: 'CSS', category: 'Frontend' },
@@ -49,10 +50,10 @@ const SkillCard: React.FC<TechStackProps> = ({ title = "Tech Stack" }) => {
     { icon: <SiGooglecloud />, name: 'Cloud', category: 'DevOps' },
     { icon: <SiGithub />, name: 'Git', category: 'DevOps' },
     { icon: <SiNodedotjs />, name: 'Node.js', category: 'Backend' },
+    { icon: <SiReact />, name: 'React', category: 'Frontend' },
     { icon: <SiReact />, name: 'React Native', category: 'Frontend' },
     { icon: <SiGooglecloud />, name: 'Azure', category: 'DevOps' },
     { icon: <FiRefreshCw />, name: 'SCRUM', category: 'DevOps' },
-    { icon: <SiPytorch />, name: 'Pytorch', category: 'Coding' },
     { icon: <SiPhp />, name: 'PHP', category: 'Backend' },
     { icon: <SiMysql />, name: 'SQL', category: 'Backend' },
     { icon: <SiFirebase />, name: 'Google Firebase', category: 'Backend' },

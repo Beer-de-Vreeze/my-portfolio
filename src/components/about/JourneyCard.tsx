@@ -54,7 +54,11 @@ const JourneyCard: React.FC<JourneyCardProps> = ({
     // Add the back arrow if not at the first step
     if (activeStep > 1) {
       steps.push(
-        <div key="back" className="text-white opacity-80">
+        <div 
+          key="back" 
+          className="text-white opacity-80 cursor-pointer hover:opacity-100"
+          onClick={() => handleStepClick(activeStep - 1)}
+        >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M15 19L8 12L15 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
@@ -72,7 +76,7 @@ const JourneyCard: React.FC<JourneyCardProps> = ({
         ></div>
         {/* Add the smaller black circle with a reduced white border to indicate the current position */}
         <div
-          className="w-6 h-6 rounded-full border-2 border-white bg-black absolute z-20 transition-all duration-300"
+          className="w-6 h-6 rounded-full border-2 border-white bg-black absolute z-20 shadow-md transition-all duration-300"
           style={{ left: progressWidth, transform: 'translateX(-50%)' }}
         ></div>
         {Array.from({ length: totalSteps }).map((_, index) => (
@@ -91,7 +95,11 @@ const JourneyCard: React.FC<JourneyCardProps> = ({
     // Add the forward arrow if not at the last step
     if (activeStep < totalSteps) {
       steps.push(
-        <div key="forward" className="text-white opacity-80">
+        <div 
+          key="forward" 
+          className="text-white opacity-80 cursor-pointer hover:opacity-100"
+          onClick={() => handleStepClick(activeStep + 1)}
+        >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M9 19L16 12L9 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
@@ -103,30 +111,34 @@ const JourneyCard: React.FC<JourneyCardProps> = ({
   };
 
   return (
-    <div className="max-w-2xl mx-auto font-sans">
-      <div className="text-4xl font-light mb-6 gradient-text">Journey</div>
-      
-      <div className="flex items-center gap-2 mb-8">
-        {renderProgressSteps()}
-      </div>
-      
-      <div className="border border-[#27272a] rounded-lg p-6 bg-black bg-opacity-50">
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex gap-4 items-center">
-            <div className="text-white text-2xl font-medium">{title}</div>
-            <div
-              className={`px-4 py-1 rounded-full text-sm ${
-                categoryColors[category] || "bg-[#27272a] text-white"
-              }`}
-            >
-              {category}
-            </div>
-          </div>
-          <div className="text-[#71717a]">{date}</div>
+    <div className="w-full max-w-[800px]">
+      <div className="w-full max-w-[800px] bg-black border border-[#27272a] rounded-lg shadow-lg p-4">
+        <div className="flex justify-between items-center border-b border-[#27272a] pb-3 mb-4">
+          <h1 className="text-xl font-semibold text-white gradient-text">Journey</h1>
         </div>
-        
-        <div className="text-white text-opacity-90 leading-relaxed">
-          {description}
+
+        <div className="flex items-center gap-2 mb-8">
+          {renderProgressSteps()}
+        </div>
+
+        <div className="border border-[#27272a] rounded-lg p-6 bg-black bg-opacity-50 shadow-lg">
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex gap-4 items-center">
+              <div className="text-white text-lg font-semibold">{title}</div>
+              <div
+                className={`px-4 py-1 rounded-full text-sm ${
+                  categoryColors[category] || "bg-[#27272a] text-white"
+                }`}
+              >
+                {category}
+              </div>
+            </div>
+            <div className="text-[#71717a] text-sm">{date}</div>
+          </div>
+
+          <div className="text-gray-300 text-sm leading-relaxed font-light">
+            {description}
+          </div>
         </div>
       </div>
     </div>
