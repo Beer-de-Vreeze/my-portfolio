@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiTailwindcss,
-  SiDotnet, SiPython, SiGooglecloud, SiPytorch, SiPhp, SiMysql, SiFirebase, SiLua, SiRoblox
+  SiDotnet, SiPython, SiGooglecloud, SiPhp, SiMysql, SiFirebase, SiLua, SiRoblox
 } from 'react-icons/si';
 import { FiRefreshCw } from 'react-icons/fi';
 
@@ -69,19 +69,20 @@ const SkillCard: React.FC<TechStackProps> = ({ title = "Tech Stack" }) => {
     <div className="w-full max-w-[800px] bg-black border border-[#27272a] rounded-lg shadow-lg p-4">
       <div className="flex justify-between items-center border-b border-[#27272a] pb-3 mb-4">
         <h1 className="text-xl font-semibold text-white gradient-text">{title}</h1>
-        <div className="flex space-x-3">
-          {categories.map((category, index) => (
-            <div
-              key={index}
-              onClick={() => setActiveCategory(category.name)}
-              className={`cursor-pointer text-sm font-light text-gray-400 ${
-                category.active ? 'border-b-2 border-white text-white' : ''
-              }`}
-            >
-              {category.name}
-            </div>
-          ))}
-        </div>
+      </div>
+      
+      <div className="flex space-x-3 overflow-x-auto scrollbar-hide whitespace-nowrap pb-1 mb-4" style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
+        {categories.map((category, index) => (
+          <div
+            key={index}
+            onClick={() => setActiveCategory(category.name)}
+            className={`cursor-pointer text-sm font-light text-gray-400 flex-shrink-0 ${
+              category.active ? 'border-b-2 border-white text-white' : ''
+            }`}
+          >
+            {category.name}
+          </div>
+        ))}
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">

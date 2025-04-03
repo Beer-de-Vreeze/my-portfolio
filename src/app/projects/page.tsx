@@ -48,6 +48,7 @@ export default function Projects() {
               { type: 'video', src: "/videos/cat.mp4", alt: "Project thumbnail 3" },
               { type: 'image', src: "/images/cat.jpg", alt: "Project thumbnail 4" },
               { type: 'image', src: "/images/cat.jpg", alt: "Project thumbnail 5" },
+              { type: 'image', src: "/images/nyan-cat.avif", alt: "Project thumbnail 6"},
             ]}
             title="Frans is hele goeie web developer" 
             techStack={["C#", "Unity", "Blender", "Python"]} 

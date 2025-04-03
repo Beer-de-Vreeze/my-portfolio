@@ -6,6 +6,8 @@ import Footer from "@/components/Footer";
 import ProfileCard from "@/components/about/ProfileCard";
 import Stack from "@/components/about/Stack";
 
+
+
 export default function About() {
   return (
     <>
