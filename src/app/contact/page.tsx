@@ -25,7 +25,7 @@ export default function Contact() {
 
           <div className="flex justify-center space-x-6 mt-8">
             <motion.a 
-              href="https://github.com/FemBear" 
+              href="https://github.com/Beer-de-Vreeze" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="text-3xl"

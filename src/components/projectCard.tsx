@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, TouchEvent } from 'react';
 import Image from 'next/image';
-import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiMongodb, SiPostgresql, SiDocker, SiKubernetes, SiGooglecloud, SiFirebase, SiRedux, SiNextdotjs, SiTailwindcss, SiDotnet, SiBlender, SiAdobephotoshop, SiAngular, SiSass, SiWebpack, SiJest, SiGraphql, SiMysql, SiPhp, SiPython, SiCplusplus, SiUnrealengine, SiGodotengine, SiElectron, SiFlutter, SiDart, SiSwift, SiKotlin, SiRust, SiGo, SiRuby, SiLaravel, SiDjango, SiSpring, SiExpress, SiFastapi, SiNestjs, SiWebassembly, SiTensorflow, SiPytorch, SiOpencv, SiVercel, SiNetlify, SiHeroku, SiDigitalocean, SiVim, SiIntellijidea, SiXcode, SiAndroidstudio } from 'react-icons/si';
-import { FaCode, FaPaintBrush, FaMusic, FaGamepad, FaTools, FaExpand, FaCompress } from 'react-icons/fa'; // Added FaExpand and FaCompress
+import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiApple, SiDocker, SiGooglecloud, SiNextdotjs, SiTailwindcss, SiDotnet, SiBlender, SiAdobephotoshop, SiMysql, SiPhp, SiPython, SiCplusplus, SiUnrealengine, SiGodotengine, SiTensorflow, SiPytorch, SiAndroidstudio } from 'react-icons/si';
+import { FaCode, FaPaintBrush, FaMusic, FaGamepad, FaTools, FaExpand, FaCompress } from 'react-icons/fa';
 
 interface MediaItem {
   type: 'image' | 'video';
@@ -21,7 +21,7 @@ interface ProjectCardProps {
   techStack: string[];
   coverImage?: string; 
   description?: string;
-  features?: { title: string; description: string }[]; // Update features type
+  features?: { title: string; description: string }[];
   liveLink?: string;
   githubLink?: string;
   contributors?: Contributor[];
@@ -37,55 +37,23 @@ const techIcons: { [key: string]: JSX.Element } = {
   "HTML5": <SiHtml5 className="text-orange-500 text-lg mr-2" />,
   "CSS3": <SiCss3 className="text-blue-500 text-lg mr-2" />,
   "Node.js": <SiNodedotjs className="text-green-500 text-lg mr-2" />,
-  "MongoDB": <SiMongodb className="text-green-500 text-lg mr-2" />,
-  "PostgreSQL": <SiPostgresql className="text-blue-500 text-lg mr-2" />,
   "Docker": <SiDocker className="text-blue-500 text-lg mr-2" />,
-  "Kubernetes": <SiKubernetes className="text-blue-500 text-lg mr-2" />,
   "Google Cloud": <SiGooglecloud className="text-blue-500 text-lg mr-2" />,
-  "Firebase": <SiFirebase className="text-yellow-500 text-lg mr-2" />,
-  "Redux": <SiRedux className="text-purple-500 text-lg mr-2" />,
   "Next.js": <SiNextdotjs className="text-white text-lg mr-2" />,
   "Tailwind CSS": <SiTailwindcss className="text-blue-500 text-lg mr-2" />,
   "C#": <SiDotnet className="text-purple-500 text-lg mr-2" />,
   "Blender": <SiBlender className="text-orange-600 text-lg mr-2" />,
   "Photoshop": <SiAdobephotoshop className="text-blue-500 text-lg mr-2" />,
-  "Angular": <SiAngular className="text-red-600 text-lg mr-2" />,
-  "Sass": <SiSass className="text-pink-500 text-lg mr-2" />,
-  "Webpack": <SiWebpack className="text-blue-500 text-lg mr-2" />,
-  "Jest": <SiJest className="text-red-500 text-lg mr-2" />,
-  "GraphQL": <SiGraphql className="text-pink-500 text-lg mr-2" />,
   "MySQL": <SiMysql className="text-blue-500 text-lg mr-2" />,
   "PHP": <SiPhp className="text-purple-500 text-lg mr-2" />,
   "Python": <SiPython className="text-yellow-500 text-lg mr-2" />,
   "C++": <SiCplusplus className="text-blue-500 text-lg mr-2" />,
   "Unreal Engine": <SiUnrealengine className="text-black text-lg mr-2" />,
   "Godot": <SiGodotengine className="text-blue-500 text-lg mr-2" />,
-  "Electron": <SiElectron className="text-blue-500 text-lg mr-2" />,
-  "Flutter": <SiFlutter className="text-blue-500 text-lg mr-2" />,
-  "Dart": <SiDart className="text-blue-500 text-lg mr-2" />,
-  "Swift": <SiSwift className="text-orange-500 text-lg mr-2" />,
-  "Kotlin": <SiKotlin className="text-purple-500 text-lg mr-2" />,
-  "Rust": <SiRust className="text-black text-lg mr-2" />,
-  "Go": <SiGo className="text-blue-500 text-lg mr-2" />,
-  "Ruby": <SiRuby className="text-red-500 text-lg mr-2" />,
-  "Laravel": <SiLaravel className="text-red-500 text-lg mr-2" />,
-  "Django": <SiDjango className="text-green-500 text-lg mr-2" />,
-  "Spring": <SiSpring className="text-green-500 text-lg mr-2" />,
-  "Express": <SiExpress className="text-black text-lg mr-2" />,
-  "FastAPI": <SiFastapi className="text-green-500 text-lg mr-2" />,
-  "NestJS": <SiNestjs className="text-red-500 text-lg mr-2" />,
-  "WebAssembly": <SiWebassembly className="text-blue-500 text-lg mr-2" />,
   "TensorFlow": <SiTensorflow className="text-orange-500 text-lg mr-2" />,
   "PyTorch": <SiPytorch className="text-orange-500 text-lg mr-2" />,
-  "OpenCV": <SiOpencv className="text-blue-500 text-lg mr-2" />,
-  "Vercel": <SiVercel className="text-black text-lg mr-2" />,
-  "Netlify": <SiNetlify className="text-blue-500 text-lg mr-2" />,
-  "Heroku": <SiHeroku className="text-purple-500 text-lg mr-2" />,
-  "DigitalOcean": <SiDigitalocean className="text-blue-500 text-lg mr-2" />,
-  "Vim": <SiVim className="text-green-500 text-lg mr-2" />,
-  "IntelliJ IDEA": <SiIntellijidea className="text-black text-lg mr-2" />,
-  "Xcode": <SiXcode className="text-blue-500 text-lg mr-2" />,
-  "Android Studio": <SiAndroidstudio className="text-green-500 text-lg mr-2" />
+  "Android Studio": <SiAndroidstudio className="text-green-500 text-lg mr-2" />,
+  "Apple": <SiApple className="text-gray-800 text-lg mr-2" />,
 };
 
 // Predefined role icons with colors
@@ -165,8 +133,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
   const handleTechIconClick = (tech: string) => {
     console.log(`${tech} icon clicked`);
-    // how to add image
-    // /path/
   };
 
   const goToNextMedia = () => {
@@ -272,7 +238,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       document.removeEventListener('mozfullscreenchange', onFullscreenChange);
       document.removeEventListener('MSFullscreenChange', onFullscreenChange);
     };
-  }, [isFullscreen]); // Added isFullscreen as a dependency to access its current value
+  }, [isFullscreen]);
 
   const renderVideoControls = () => {
     if (!isVideo) return null;
@@ -358,32 +324,22 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const handleTouchEnd = () => {
     if (!touchStart || !touchEnd) return;
     
-    // Calculate distance
     const distance = touchStart - touchEnd;
     const isSwipe = Math.abs(distance) > minSwipeDistance;
-    
-    // Handle swipe based on direction
     if (isSwipe && !isPlaying) {
       if (distance > 0) {
-        // Swiped left, go to next
         goToNextMedia();
       } else {
-        // Swiped right, go to previous
         goToPreviousMedia();
       }
     }
-    
-    // Reset values
     setTouchStart(null);
     setTouchEnd(null);
-    setAutoplay(true); // Re-enable autoplay after touch interaction
+    setAutoplay(true);
   };
 
-  // Add an effect for automatic slideshow
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
-    
-    // Only autoplay when modal is open, autoplay is enabled, no video is playing, and not in fullscreen mode
     if (isModalOpen && autoplay && !isPlaying && !isFullscreen && media.length > 1) {
       intervalId = setInterval(() => {
         goToNextMedia();

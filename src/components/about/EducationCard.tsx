@@ -8,23 +8,47 @@ const EducationCard = () => {
 
   const schools = [
     {
-      name: 'MMCSchool',
-      logo: '/api/placeholder/100/100',
-      subtitle: 'Frontend Course',
-      finishedDate: '08.2023',
+      name: 'Lek en Linge',
+      educationType: 'VMBO-TL',
+      logo: '/images/lek-en-linge.webp',
+      subtitle: 'High School',
+      finishedDate: '06.2021',
+    },
+    {
+      name: 'ROC Midden Nederland',
+      educationType: 'MBO',
+      logo: '/images/roc.webp',
+      subtitle: 'Chef Training',
+      finishedDate: '09.2022 till 09.2023',
       program: [
-        'Creating responsive websites with HTML5 & CSS3',
-        'Discovering basics of JavaScript and Bootstrap',
-        'Diving into advanced JavaScript, UI/UX practices, Git & Github',
-        'Making projects "that works" - Gulp, Webpack, SEO'
+        'Menu Planning and Preparation: Designing and executing diverse menus.',
+        'Advanced Cooking Techniques: Mastering methods such as sautéing, grilling, roasting, and steaming.',
+        'Kitchen Management: Handling orders, inventory control, and ensuring quality standards.',
+        'Hygiene and Safety: Adhering to HACCP guidelines and maintaining a safe kitchen environment.',
+        'Practical Experience: Extensive hands-on training in professional kitchen settings under expert guidance.'
       ],
-      technologies: ['HTML5', 'CSS3', 'JavaScript', 'UI/UX', 'Git', 'Github', 'Gulp', 'Webpack', 'SEO']
+      technologies: [
+        'Culinary Expertise',
+        'Creativity',
+        'Organizational Skills',
+        'Hygiene and Safety Compliance',
+        'Independence'
+      ]
     },
     {
       name: 'GLU',
-      logo: 'images/glu.webp',
-      subtitle: 'Game Development MBO',
-      finishedDate: '09/2023 until present',
+      educationType: 'MBO',
+      logo: '/images/GLU.webp',
+      subtitle: 'Game Development',
+      finishedDate: '09.2023 till present',
+      program: [
+        'Learning programming languages like C#​',
+        "Exploring game design and development principles",
+        'Building immersive experiences with Unity and industry-standard tools',
+        'Developing engaging games – Unity, Git and SCRUM',
+        'Collaborating effectively between programmers, artists, and designers'
+      ],
+      technologies: ['Unity', 'C#', 'Git',"Game Design", 'SCRUM',],
     }
   ];
 
@@ -37,7 +61,7 @@ const EducationCard = () => {
       setIsAnimatingOut(true);
       setTimeout(() => {
         setIsModalOpen(false);
-      }, 300); // Match this with transition duration
+      }, 300);
     }
   };
 
@@ -68,7 +92,7 @@ const EducationCard = () => {
           {schools.map((school, index) => (
             <div 
               key={index}
-              className="flex items-center p-3 bg-black border border-[#27272a] rounded-lg shadow-md transition-transform duration-300 hover:scale-105 cursor-pointer"
+              className="relative flex items-center p-3 pb-8 bg-black border border-[#27272a] rounded-lg shadow-md transition-transform duration-300 hover:scale-105 cursor-pointer"
               onClick={() => toggleModal(school)}
             >
               <div className="rounded-lg mr-4">
@@ -77,6 +101,11 @@ const EducationCard = () => {
               <div className="flex-1">
                 <h3 className="text-white font-semibold">{school.name}</h3>
                 <p className="text-gray-400 text-sm font-light">{school.subtitle}</p>
+              </div>
+              <div className="absolute bottom-2 right-2">
+                <span className="px-2 py-0.5 text-xs bg-black border border-[#27272a] rounded-full text-gray-300">
+                  {school.educationType || 'Education'}
+                </span>
               </div>
             </div>
           ))}
@@ -97,24 +126,40 @@ const EducationCard = () => {
             }`}
             onClick={(e) => e.stopPropagation()} // Prevent clicks on modal content from closing
           >
+            {/* Close button moved inside the modal border */}
             <button 
-              onClick={() => toggleModal(null)} 
-              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+              onClick={() => toggleModal(null)}
+              className="absolute top-4 right-4 z-10 bg-black/70 hover:bg-black/90 
+                rounded-full p-3 w-10 h-10 flex items-center justify-center
+                text-gray-300 hover:text-white transition-all duration-200
+                shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-label="Close modal"
             >
-              <IoClose size={20} />
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </button>
             
-            <div className="p-6">
+            <div className="p-6 relative">
               <div className="flex items-start mb-4">
                 <div className="rounded-lg mr-4">
                   <img src={activeSchool.logo} alt={`${activeSchool.name} logo`} className="w-24 h-24" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold text-white">{activeSchool.name}</h2>
-                  <p className="text-gray-400 font-light">{activeSchool.subtitle}</p>
-                  {activeSchool.finishedDate && (
-                    <p className="text-sm text-gray-400 font-light mt-1">{activeSchool.finishedDate}</p>
-                  )}
+                  <div className="flex items-center gap-3 mb-1">
+                    <h2 className="text-xl font-semibold text-white">{activeSchool.name}</h2>
+                    {activeSchool.educationType && (
+                      <span className="px-2 py-0.5 text-xs bg-black border border-[#27272a] rounded-full text-gray-300 shadow-md">
+                        {activeSchool.educationType}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-gray-400 font-light">
+                    {activeSchool.subtitle}
+                    {activeSchool.finishedDate && (
+                      <span className="ml-2 text-sm">• {activeSchool.finishedDate}</span>
+                    )}
+                  </p>
                 </div>
               </div>
               

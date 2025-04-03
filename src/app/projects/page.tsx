@@ -50,23 +50,8 @@ export default function Projects() {
               { type: 'image', src: "/images/cat.jpg", alt: "Project thumbnail 5" },
               { type: 'image', src: "/images/nyan-cat.avif", alt: "Project thumbnail 6"},
             ]}
-            title="Frans is hele goeie web developer" 
             techStack={["C#", "Unity", "Blender", "Python"]} 
             description="Hij is er echt heel goed in sirieus ik lieg niet zou ik nooit doen"
-            features={[
-              {
-                title: "Feature 1",
-                description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-              },
-              {
-                title: "Feature 2",
-                description: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-              },
-              {
-                title: "Feature 3",
-                description: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.",
-              }
-            ]}
             liveLink="https://google.com"
             githubLink="https://github.com"
             contributors={[

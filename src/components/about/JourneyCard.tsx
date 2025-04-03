@@ -122,18 +122,18 @@ const JourneyCard: React.FC<JourneyCardProps> = ({
         </div>
 
         <div className="border border-[#27272a] rounded-lg p-6 bg-black bg-opacity-50 shadow-lg">
-          <div className="flex justify-between items-center mb-6">
-            <div className="flex gap-4 items-center">
+          <div className="flex justify-between items-start mb-6">
+            <div>
               <div className="text-white text-lg font-semibold">{title}</div>
+              <div className="text-[#71717a] text-sm">{date}</div>
+            </div>
+            <div className="flex gap-4 items-center">
               <div
-                className={`px-4 py-1 rounded-full text-sm ${
-                  categoryColors[category] || "bg-[#27272a] text-white"
-                }`}
+                className={`px-4 py-1 rounded-full text-sm ${categoryColors[category] || "bg-[#27272a] text-white"}`}
               >
                 {category}
               </div>
             </div>
-            <div className="text-[#71717a] text-sm">{date}</div>
           </div>
 
           <div className="text-gray-300 text-sm leading-relaxed font-light">

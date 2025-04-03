@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaMapMarkerAlt, FaGlobe, FaGamepad, FaLightbulb, FaFish, FaMedkit } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaGlobe, FaGamepad, FaLightbulb, FaFish, FaMedkit, FaUtensils } from 'react-icons/fa';
 
 interface Bubble {
   icon: JSX.Element;
@@ -33,7 +33,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
     },
     { 
       icon: <FaGamepad className="w-4 h-4 text-white" />, 
-      label: "Gamer",
+      label: "Gaming",
       additionalInfo: "Passionate about gaming" 
     },
     { 
@@ -50,6 +50,11 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
       icon: <FaFish className="w-4 h-4 text-white" />, 
       label: "Scuba Diver",
       additionalInfo: "Certified diver exploring underwater worlds" 
+    },
+    { 
+      icon: <FaUtensils className="w-4 h-4 text-white" />, 
+      label: "Cooking",
+      additionalInfo: "Passionate about culinary arts" 
     }
   ]
 }) => {
@@ -96,9 +101,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             <img 
               src="/images/Beer.webp" 
               alt="Profile" 
-              className="w-full h-full object-cover"
-            />
-          </div>
+              className="w-full h-full object-cover object-center"
+            />          </div>
           <div className="flex flex-col justify-start gap-0.5 pt-8">
             <h2 className="text-2xl font-bold text-white tracking-tighter">{name}</h2>
             <p className="text-base text-gray-400 tracking-tighter font-extralight">{username}</p>
