@@ -96,6 +96,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   return (
     <div className="w-full max-w-[500px] h-auto md:w-[495px] bg-black border border-[#27272a] rounded-lg shadow-lg p-4">
       <div className="w-full">
+        {/* Profile header - existing code */}
         <div className="flex items-center justify-start gap-3 mb-0">
           <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-900 border-2 border-gray-600 shadow-md">
             <img 
@@ -108,18 +109,22 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             <p className="text-base text-gray-400 tracking-tighter font-extralight">{username}</p>
           </div>
         </div>
+        
+        {/* Bubbles section - modified for better fit */}
         <div className="border-t border-[#27272a] mt-1 py-3">
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 w-full">
             {bubbles.map((bubble, index) => (
               <div 
                 key={index} 
-                className="px-3 py-1 bg-black border border-[#27272a] rounded-full flex items-center gap-1.5 relative cursor-pointer shadow-md transition-transform duration-300 hover:scale-105"
+                className="px-3 py-1 bg-black border border-[#27272a] rounded-full flex items-center gap-1.5 relative cursor-pointer shadow-md transition-transform duration-200 hover:scale-[1.03] overflow-hidden max-w-[calc(50%-0.5rem)] md:max-w-[calc(33.333%-0.75rem)]"
                 onMouseEnter={() => setHoveredBubble(index)}
                 onMouseLeave={() => setHoveredBubble(null)}
                 onClick={() => handleBubbleClick(index)}
               >
-                {bubble.icon}
-                <span className="tracking-tighter font-extralight text-sm text-white">{bubble.label}</span>
+                <div className="flex-shrink-0">
+                  {bubble.icon}
+                </div>
+                <span className="tracking-tighter font-extralight text-sm text-white truncate">{bubble.label}</span>
                 
                 {(hoveredBubble === index || fadingBubble === index) && bubble.additionalInfo && (
                   <div 
