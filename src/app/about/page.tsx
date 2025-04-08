@@ -25,13 +25,13 @@ export default function About() {
         }}
       >
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16 relative">
-            <div className="md:col-span-2 md:h-full">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-12 mb-16 relative">
+            <div className="lg:col-span-2 lg:h-full">
               <div className="h-full flex flex-col justify-between">
                 <ProfileCard />
               </div>
             </div>
-            <div className="md:col-span-2 md:flex md:flex-col md:gap-4">
+            <div className="lg:col-span-2 lg:flex lg:flex-col lg:gap-4 mt-8 lg:mt-0">
               <Stack />
             </div>
           </div>

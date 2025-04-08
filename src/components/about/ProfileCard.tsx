@@ -61,6 +61,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   const [hoveredBubble, setHoveredBubble] = useState<number | null>(null);
   const [fadingBubble, setFadingBubble] = useState<number | null>(null);
   const [animatingBubble, setAnimatingBubble] = useState<number | null>(null);
+  const [isTooltipVisible, setIsTooltipVisible] = useState<boolean>(false);
 
   // Clear fading bubble after animation completes
   useEffect(() => {
@@ -76,6 +77,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   // Handle pop-up animation on hover
   useEffect(() => {
     if (hoveredBubble !== null) {
+      setIsTooltipVisible(true);
       setAnimatingBubble(hoveredBubble);
       // Reset animation state after animation completes
       const timer = setTimeout(() => {
@@ -83,10 +85,23 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
       }, 300);
       
       return () => clearTimeout(timer);
+    } else {
+      setIsTooltipVisible(false);
     }
   }, [hoveredBubble]);
 
+  const handleMouseEnter = (index: number) => {
+    console.log('Mouse enter on bubble:', index);
+    setHoveredBubble(index);
+  };
+
+  const handleMouseLeave = () => {
+    console.log('Mouse leave');
+    setHoveredBubble(null);
+  };
+
   const handleBubbleClick = (index: number) => {
+    console.log('Bubble clicked:', index);
     if (hoveredBubble === index) {
       setFadingBubble(index);
       setTimeout(() => setHoveredBubble(null), 300);
@@ -116,9 +131,9 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             {bubbles.map((bubble, index) => (
               <div 
                 key={index} 
-                className="px-3 py-1 bg-black border border-[#27272a] rounded-full flex items-center gap-1.5 relative cursor-pointer shadow-md transition-transform duration-200 hover:scale-[1.03] overflow-hidden max-w-[calc(50%-0.5rem)] md:max-w-[calc(33.333%-0.75rem)]"
-                onMouseEnter={() => setHoveredBubble(index)}
-                onMouseLeave={() => setHoveredBubble(null)}
+                className="px-3 py-1 bg-black border border-[#27272a] rounded-full flex items-center gap-1.5 relative cursor-pointer shadow-md transition-transform duration-200 hover:scale-[1.03] overflow-visible max-w-[calc(50%-0.5rem)] md:max-w-[calc(33.333%-0.75rem)]"
+                onMouseEnter={() => handleMouseEnter(index)}
+                onMouseLeave={handleMouseLeave}
                 onClick={() => handleBubbleClick(index)}
               >
                 <div className="flex-shrink-0">
@@ -126,16 +141,21 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                 </div>
                 <span className="tracking-tighter font-extralight text-sm text-white truncate">{bubble.label}</span>
                 
-                {(hoveredBubble === index || fadingBubble === index) && bubble.additionalInfo && (
+                {bubble.additionalInfo && hoveredBubble === index && (
                   <div 
                     className={`
-                      absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-2.5 
+                      fixed transform -translate-x-1/2 
                       bg-gray-800 border border-[#27272a] rounded-xl 
                       text-white text-xs w-max max-w-[180px] shadow-lg z-50 
-                      transition-all duration-300 
+                      transition-all duration-300 p-2.5
                       ${fadingBubble === index ? 'opacity-0' : 'opacity-100'}
-                      ${animatingBubble === index ? 'animate-tooltip-popup' : ''}
+                      tooltip-popup
                     `}
+                    style={{
+                      bottom: 'calc(100% + 8px)',
+                      left: '50%',
+                      pointerEvents: 'none'
+                    }}
                   >
                     {bubble.additionalInfo}
                     <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-gray-800 border-r border-b border-[#27272a]"></div>
@@ -145,13 +165,19 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             ))}
           </div>
         </div>
+        {/* Debug indicator */}
+        <div className="hidden">{hoveredBubble !== null ? `Hovering bubble ${hoveredBubble}` : 'Not hovering'}</div>
       </div>
     </div>
   );
 };
 
-// Add a style block for the custom animation
+// Replace dynamic style injection with a static class
 const tooltipStyles = `
+  .tooltip-popup {
+    animation: tooltipPopup 0.3s forwards;
+  }
+  
   @keyframes tooltipPopup {
     0% {
       opacity: 0;
@@ -164,10 +190,6 @@ const tooltipStyles = `
       opacity: 1;
       transform: translate(-50%, 0) scale(1);
     }
-  }
-
-  .animate-tooltip-popup {
-    animation: tooltipPopup 0.3s forwards;
   }
 `;
 
