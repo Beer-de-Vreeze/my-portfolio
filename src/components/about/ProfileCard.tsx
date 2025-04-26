@@ -131,7 +131,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             {bubbles.map((bubble, index) => (
               <div 
                 key={index} 
-                className="px-3 py-1 bg-black border border-[#27272a] rounded-full flex items-center gap-1.5 relative cursor-pointer shadow-md transition-transform duration-200 hover:scale-[1.03] overflow-visible max-w-[calc(50%-0.5rem)] md:max-w-[calc(33.333%-0.75rem)]"
+                className="px-3 py-1 bg-black border border-[#27272a] rounded-full flex items-center gap-1.5 relative cursor-pointer shadow-md transition-transform duration-200 hover:scale-[1.03] overflow-visible"
                 onMouseEnter={() => handleMouseEnter(index)}
                 onMouseLeave={handleMouseLeave}
                 onClick={() => handleBubbleClick(index)}
@@ -139,7 +139,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                 <div className="flex-shrink-0">
                   {bubble.icon}
                 </div>
-                <span className="tracking-tighter font-extralight text-sm text-white truncate">{bubble.label}</span>
+                <span className="tracking-tighter font-extralight text-sm text-white">{bubble.label}</span>
                 
                 {bubble.additionalInfo && hoveredBubble === index && (
                   <div 
