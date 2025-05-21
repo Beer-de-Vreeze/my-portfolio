@@ -3,6 +3,10 @@ import { useState, useEffect } from "react";
 import ProjectCard from "@/components/projectCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+// Add highlight.js import and style
+import 'highlight.js/styles/monokai.css';
+// Import custom highlighting styles
+import '@/styles/code-highlight.css';
 
 export default function Projects() {
   const [backgroundAttachment, setBackgroundAttachment] = useState("fixed");
@@ -42,6 +46,13 @@ export default function Projects() {
       <main className="relative z-0 flex flex-col items-center flex-grow p-2 pt-20 pb-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl">
           <ProjectCard 
+            title="Audio Previewer"
+              description="A powerful Unity Editor tool for previewing and managing AudioClips with waveform visualization, real-time playback control, loop toggles, volume adjustment, drag-and-drop, and folder-based organization. Built for sound designers and developers to speed up audio workflows directly in the Unity Editor."
+            downloadLink={{
+              url: "/downloads/audio-previewer.zip",
+              filename: "audio-previewer.zip",
+              fileSize: "2.4 MB"
+            }}
             media={[
               { type: 'image', src: "/images/cat.jpg", alt: "Project thumbnail 1" },
               { type: 'image', src: "/images/cat.jpg", alt: "Project thumbnail 2" },
@@ -50,10 +61,30 @@ export default function Projects() {
               { type: 'image', src: "/images/cat.jpg", alt: "Project thumbnail 5" },
               { type: 'image', src: "/images/nyan-cat.avif", alt: "Project thumbnail 6"},
             ]}
-            techStack={["C#", "Unity", "Blender", "Python"]} 
-            description="Hij is er echt heel goed in sirieus ik lieg niet zou ik nooit doen"
-            liveLink="https://google.com"
-            githubLink="https://github.com"
+
+            techStack={["C#", "Unity",]} 
+features={[
+  {
+    title: "Waveform Visualization",
+    description: "Visualize audio waveforms in real-time for better understanding of sound dynamics.",
+  },
+  {
+    title: "Real-time Playback Control",
+    description: "Play, pause, and scrub through audio clips directly in the Unity Editor.",
+  },
+  {
+    title: "Loop Toggle",
+    description: "Easily toggle looping for audio clips to test seamless transitions.",
+  },
+  {
+    title: "Drag-and-Drop Functionality",
+    description: "Quickly add audio files to the previewer with simple drag-and-drop.",
+  },
+  {
+    title: "Folder-based Organization",
+    description: "Organize your audio files into folders for easy access and management.",
+  }
+]}
             contributors={[
             { name: "John Doe", role: "Developer" },
             { name: "Jane Doe", role: "Designer" },

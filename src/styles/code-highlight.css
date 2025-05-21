@@ -1,0 +1,40 @@
+/* Custom styling for code blocks */
+pre code {
+  color: #f8f8f2; /* Default text color for Monokai */
+}
+
+/* Ensure proper color contrast for code elements */
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 1em;
+  background: #272822;
+  color: #f8f8f2;
+}
+
+/* Make sure code stands out on dark backgrounds */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-tag {
+  color: #f92672;
+}
+
+.hljs-string,
+.hljs-attribute {
+  color: #a6e22e;
+}
+
+.hljs-comment {
+  color: #75715e;
+}
+
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-type {
+  color: #66d9ef;
+}
+
+.hljs-literal,
+.hljs-number {
+  color: #ae81ff;
+}

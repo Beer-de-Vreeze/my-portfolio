@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, TouchEvent } from 'react';
 import Image from 'next/image';
 import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiApple, SiDocker, SiGooglecloud, SiNextdotjs, SiTailwindcss, SiDotnet, SiBlender, SiAdobephotoshop, SiMysql, SiPhp, SiPython, SiCplusplus, SiUnrealengine, SiGodotengine, SiTensorflow, SiPytorch, SiAndroidstudio } from 'react-icons/si';
 import { FaCode, FaPaintBrush, FaMusic, FaGamepad, FaTools, FaExpand, FaCompress } from 'react-icons/fa';
+import hljs from 'highlight.js';
 
 interface MediaItem {
   type: 'image' | 'video';
@@ -15,13 +16,23 @@ interface Contributor {
   icon?: JSX.Element; 
 }
 
+interface CodeSnippet {
+  code: string;
+  language: string;
+  title?: string;
+}
+
 interface ProjectCardProps {
   media: MediaItem[];
   title: string;
   techStack: string[];
   coverImage?: string; 
   description?: string;
-  features?: { title: string; description: string }[];
+  features?: { 
+    title: string; 
+    description: string;
+    codeSnippet?: CodeSnippet; 
+  }[];
   liveLink?: string;
   githubLink?: string;
   contributors?: Contributor[];
@@ -352,6 +363,16 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     };
   }, [isModalOpen, autoplay, isPlaying, isFullscreen, currentMediaIndex, media.length]);
 
+  // Add this effect to highlight code snippets when they're rendered or updated
+  useEffect(() => {
+    if (isModalOpen && features.some(feature => feature.codeSnippet)) {
+      // Initialize syntax highlighting on all code blocks
+      document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightElement(block as HTMLElement);
+      });
+    }
+  }, [isModalOpen, features, currentMediaIndex]);
+
   return (
     <>
       {/* Project Card - Improved Mobile Responsiveness */}
@@ -532,7 +553,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 </div>
               </div>
               
-              {/* Right Column - Remains mostly unchanged */}
+              {/* Right Column - Updated to include code snippets */}
               <div className="lg:w-3/5 mt-4 lg:mt-0">
                 {/* Title and Description */}
                 <div className="mb-8">
@@ -545,25 +566,55 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                   </p>
                 </div>
                 
-                {/* Rest of the content - features, tech stack, contributors remains the same */}
-                <hr className="border-t border-[#2a2a2a] my-6" />
-                
-                {/* Features - Compact and Readable */}
+                {/* Features - Updated to include code snippets */}
                 <div className="mb-8">
                   <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 
                     bg-clip-text text-transparent">
                     Features
                   </h2>
-                  <ul className="grid grid-cols-1 gap-3">
+                  <ul className="grid grid-cols-1 gap-6">
                     {features.map((feature, index) => (
-                      <li key={index} className="flex flex-col gap-1">
+                      <li key={index} className="flex flex-col gap-3">
                         <span className="text-purple-500 font-semibold text-sm sm:text-base bg-gradient-to-r from-blue-500 to-purple-600 
                           bg-clip-text text-transparent">
                           {feature.title}
                         </span>
-                        <span className="text-gray-300 text-sm sm:text-base">
+                        <span className="text-gray-300 text-sm sm:text-base leading-relaxed">
                           {feature.description}
                         </span>
+                        
+                        {/* Display code snippet if available */}
+                        {feature.codeSnippet && (
+                          <div className="mt-3 w-full">
+                            {feature.codeSnippet.title && (
+                              <div className="text-sm text-gray-300 mb-2 px-1 font-medium">
+                                {feature.codeSnippet.title}
+                              </div>
+                            )}
+                            <div className="relative rounded-md overflow-hidden">
+                              <pre className="w-full overflow-x-auto p-5 text-sm sm:text-[14px] leading-relaxed bg-[#1e1e1e] rounded-md border border-[#333] scrollbar-thin scrollbar-thumb-gray-600">
+                                <code className={`${feature.codeSnippet.language || 'javascript'} font-mono`}>
+                                  {feature.codeSnippet.code}
+                                </code>
+                              </pre>
+                              {/* Copy button */}
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigator.clipboard.writeText(feature.codeSnippet!.code);
+                                  // Could add a "copied!" notification here
+                                }}
+                                className="absolute top-2 right-2 bg-black/70 hover:bg-black/90 p-2 rounded-md text-gray-200 text-xs hover:text-white transition-colors"
+                                aria-label="Copy code"
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                        )}
                       </li>
                     ))}
                   </ul>
