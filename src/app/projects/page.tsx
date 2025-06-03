@@ -8,6 +8,7 @@ import 'highlight.js/styles/monokai.css';
 // Import custom highlighting styles
 import '@/styles/code-highlight.css';
 
+
 export default function Projects() {
   const [backgroundAttachment, setBackgroundAttachment] = useState("fixed");
   const [isAnyModalOpen, setIsAnyModalOpen] = useState(false);
@@ -49,8 +50,8 @@ export default function Projects() {
             title="Audio Previewer"
               description="A powerful Unity Editor tool for previewing and managing AudioClips with waveform visualization, real-time playback control, loop toggles, volume adjustment, drag-and-drop, and folder-based organization. Built for sound designers and developers to speed up audio workflows directly in the Unity Editor."
             downloadLink={{
-              url: "/downloads/audio-previewer.zip",
-              filename: "audio-previewer.zip",
+              url: "/assets/downloads/audio-previewer.zip",
+              filename: "Audio Previewer",
               fileSize: "2.4 MB"
             }}
             media={[
@@ -62,7 +63,7 @@ export default function Projects() {
               { type: 'image', src: "/images/nyan-cat.avif", alt: "Project thumbnail 6"},
             ]}
 
-            techStack={["C#", "Unity",]} 
+            techStack={["C#", "Unity", "Blender"]} 
 features={[
   {
     title: "Waveform Visualization",
@@ -92,25 +93,93 @@ features={[
             { name: "Jane Doe", role: "Audio" },
             { name: "John Doe", role: "Other" },
             ]}
+
+            codeSnippet={{
+              code: `public class AudioPreviewer : EditorWindow
+{
+    [MenuItem("Window/Audio Previewer")]
+    public static void ShowWindow()
+    {
+        GetWindow<AudioPreviewer>("Audio Previewer");
+    }
+    private AudioClip currentClip;
+    private void OnGUI()
+    {
+        GUILayout.Label("Audio Previewer", EditorStyles.boldLabel); 
+        currentClip = (AudioClip)EditorGUILayout.ObjectField("Audio Clip", currentClip, typeof(AudioClip), false);
+        if (currentClip != null)
+        {
+            if (GUILayout.Button("Play"))
+            {
+                AudioSource.PlayClipAtPoint(currentClip, Vector3.zero);
+            }
+            if (GUILayout.Button("Stop"))
+            {
+                AudioSource.Stop();
+            }
+            if (GUILayout.Button("Loop"))
+            {
+                // Implement loop functionality
+            }
+        }
+    }
+}`
+              ,}
+          }
             onModalStateChange={handleModalStateChange}
           />
-          <ProjectCard 
-            media={[{ type: 'image', src: "/images/cat.jpg", alt: "Project thumbnail" }]}
-            title="Project Title" 
-            techStack={["C#", "Unity"]} 
-            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut purus eget."
-            liveLink="https://google.com"
-            githubLink="https://github.com"
-            contributors={
-              [
-                { name: "John Doe", role: "Developer" },
-                { name: "Jane Doe", role: "Designer" },
-                { name: "John Doe", role: "Artist" },
-                { name: "Jane Doe", role: "Audio" },
-                { name: "John Doe", role: "Other" },
-              ]}
-            onModalStateChange={handleModalStateChange}
-          />
+<ProjectCard 
+  media={[{ type: 'image', src: "/images/sketchin-spells.png", alt: "Sketchin' Spells gameplay screenshot" }]}
+  title="Sketchin' Spells DEMO" 
+  techStack={["C#", "Unity", "2D"]} 
+  description="A magical drawing-based adventure game where your imagination is your weapon! Created for a school project, Sketchin' Spells lets players draw spells, weapons, and tools to defeat a dark sorcerer and save the world. Designed to spark creativity and let players interact with hand-drawn magic in turn-based battles."
+  codeSnippet={{
+    code: `public class SpellSketcher : MonoBehaviour
+{
+    // Capture player drawings and convert them into usable magic spells
+    public void CastSpell(Texture2D drawing) {
+        // Analyze sketch and summon its power!
+    }
+}`,
+    language: "csharp",
+    title: "Drawing-Based Spell System"
+  }}
+  liveLink="https://beerv.itch.io/sketchin-spells"
+  githubLink="https://github.com/beerv/sketchin-spells"
+  contributors={[
+    { name: "Beer de Vreeze", role: "Developer" },
+  ]}
+ features={[
+  {
+    title: "Draw-to-Cast System",
+    description: "Sketch your own spells and tools directly in-game to influence combat.",
+  },
+  {
+    title: "Creative Turn-Based Combat",
+    description: "Strategically outplay enemies using your custom-drawn weapons and magical effects.",
+  },
+  {
+    title: "Dynamic Drawing Input",
+    description: "Use a custom drawing system to create unique spells and items.",
+  },
+  {
+    title: "Story-Driven Adventure",
+    description: "Join a magical journey to defeat the Dark Lord, with sketch-powered solutions to narrative challenges.",
+  },
+  {
+    title: "Save & Reuse Drawings",
+    description: "Store and reuse your favorite creations across battles and game sessions.",
+  },
+  {
+    title: "Designed for Creativity",
+    description: "Built to celebrate artistic freedom, whether you're a casual doodler or a detail-loving artist.",
+  }
+]}
+
+  onModalStateChange={handleModalStateChange}
+/>
+
+
           <ProjectCard 
             media={[{ type: 'image', src: "/images/cat.jpg", alt: "Project thumbnail" }]}
             title="Project Title" 

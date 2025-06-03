@@ -32,7 +32,7 @@ export default function Contact() {
               whileHover={{ scale: 1.2 }}
               whileTap={{ scale: 0.9 }}
             >
-              <FaGithub />
+              <FaGithub />;
             </motion.a>
             <motion.a 
               href="https://www.linkedin.com/in/beer-de-vreeze-59040919a/" 

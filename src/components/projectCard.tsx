@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, TouchEvent } from 'react';
 import Image from 'next/image';
 import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiApple, SiDocker, SiGooglecloud, SiNextdotjs, SiTailwindcss, SiDotnet, SiBlender, SiAdobephotoshop, SiMysql, SiPhp, SiPython, SiCplusplus, SiUnrealengine, SiGodotengine, SiTensorflow, SiPytorch, SiAndroidstudio } from 'react-icons/si';
-import { FaCode, FaPaintBrush, FaMusic, FaGamepad, FaTools, FaExpand, FaCompress } from 'react-icons/fa';
+import { FaCode, FaPaintBrush, FaMusic, FaGamepad, FaTools, FaExpand, FaCompress, FaDownload, FaFileArchive, FaFileVideo, FaFileImage, FaFilePdf, FaWindows } from 'react-icons/fa';
 import hljs from 'highlight.js';
 
 interface MediaItem {
@@ -22,17 +22,25 @@ interface CodeSnippet {
   title?: string;
 }
 
+interface DownloadLinkObject {
+  url: string;
+  filename: string;
+  fileSize?: string;
+}
+
 interface ProjectCardProps {
   media: MediaItem[];
   title: string;
   techStack: string[];
   coverImage?: string; 
   description?: string;
+  downloadLink?: string | DownloadLinkObject;
   features?: { 
     title: string; 
     description: string;
     codeSnippet?: CodeSnippet; 
   }[];
+  codeSnippet?: CodeSnippet;
   liveLink?: string;
   githubLink?: string;
   contributors?: Contributor[];
@@ -82,6 +90,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   techStack,
   coverImage,
   description = "Project description goes here. This is a brief overview of the project and its main features.",
+  downloadLink,
   features = [
     { title: "Feature One", description: "Description for feature one" },
     { title: "Feature Two", description: "Description for feature two" },
@@ -90,6 +99,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   liveLink = "#",
   githubLink: sourceLink = "#",
   contributors = [{ name: "Developer Name", role: "Developer" }],
+  codeSnippet, // Make sure codeSnippet is destructured here
   onModalStateChange
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -365,13 +375,110 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
   // Add this effect to highlight code snippets when they're rendered or updated
   useEffect(() => {
-    if (isModalOpen && features.some(feature => feature.codeSnippet)) {
-      // Initialize syntax highlighting on all code blocks
-      document.querySelectorAll('pre code').forEach((block) => {
-        hljs.highlightElement(block as HTMLElement);
-      });
+    if (isModalOpen && ((features && features.some(feature => feature.codeSnippet)) || codeSnippet)) {
+      // Use setTimeout to ensure the DOM has updated before highlighting
+      setTimeout(() => {
+        document.querySelectorAll('pre code').forEach((block) => {
+          hljs.highlightElement(block as HTMLElement);
+        });
+      }, 100);
     }
-  }, [isModalOpen, features, currentMediaIndex]);
+  }, [isModalOpen, features, codeSnippet, currentMediaIndex]);
+
+  // Add utility function to determine file type from URL - Updated to use white React Icons
+  const getFileTypeInfo = (downloadLink: string | DownloadLinkObject | undefined) => {
+    if (!downloadLink) return { type: 'unknown', icon: null, label: 'Download' };
+    
+    // Extract the URL from the download link (either string or object)
+    const url = typeof downloadLink === 'string' ? downloadLink : downloadLink.url;
+    
+    if (!url) return { type: 'unknown', icon: null, label: 'Download' };
+    
+    const extension = url.split('.').pop()?.toLowerCase();
+    
+    switch (extension) {
+      case 'zip':
+        return { 
+          type: 'zip', 
+          icon: <FaFileArchive className="text-white mr-1" size={16} />,
+          label: 'Download ZIP'
+        };
+      case 'rar':
+        return { 
+          type: 'rar', 
+          icon: <FaFileArchive className="text-white mr-1" size={16} />,
+          label: 'Download RAR'
+        };
+      case '7z':
+        return { 
+          type: '7z', 
+          icon: <FaFileArchive className="text-white mr-1" size={16} />,
+          label: 'Download 7Z'
+        };
+      case 'exe':
+        return { 
+          type: 'exe', 
+          icon: <FaWindows className="text-white mr-1" size={16} />,
+          label: 'Download EXE'
+        };
+      case 'pdf':
+        return { 
+          type: 'pdf', 
+          icon: <FaFilePdf className="text-white mr-1" size={16} />,
+          label: 'Download PDF'
+        };
+      case 'mp4':
+      case 'mov':
+      case 'avi':
+        return { 
+          type: 'video', 
+          icon: <FaFileVideo className="text-white mr-1" size={16} />,
+          label: 'Download Video'
+        };
+      case 'jpg':
+      case 'png':
+      case 'gif':
+      case 'webp':
+        return { 
+          type: 'image', 
+          icon: <FaFileImage className="text-white mr-1" size={16} />,
+          label: 'Download Image'
+        };
+      default:
+        return { 
+          type: 'file', 
+          icon: <FaDownload className="text-white mr-1" size={16} />,
+          label: 'Download'
+        };
+    }
+  };
+
+  // Get download URL and label
+  const getDownloadInfo = () => {
+    if (!downloadLink) return { url: '', label: 'Download' };
+    
+    if (typeof downloadLink === 'string') {
+      return { url: downloadLink, label: downloadFileInfo.label };
+    } else {
+      // Make sure filename is prefixed with "Download" if not already
+      let displayLabel = downloadLink.filename || downloadFileInfo.label;
+      
+      // Only add "Download" prefix if it doesn't already start with it
+      if (!displayLabel.toLowerCase().startsWith('download')) {
+        displayLabel = `Download ${displayLabel}`;
+      }
+      
+      return { 
+        url: downloadLink.url, 
+        label: displayLabel,
+        fileSize: downloadLink.fileSize
+      };
+    }
+  };
+
+  // Get file info for download link
+  const downloadFileInfo = getFileTypeInfo(downloadLink);
+  const downloadInfo = getDownloadInfo();
 
   return (
     <>
@@ -520,37 +627,67 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                   </div>
                 </div>
                 
-                {/* Buttons - Full Width on Mobile, Stacked */}
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <a 
-                    href={liveLink} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="w-full sm:flex-1 text-center py-3 bg-gradient-to-r from-blue-600 to-purple-600 
-                      hover:from-blue-700 hover:to-purple-700 text-white rounded-md text-sm font-medium 
-                      transition-all flex items-center justify-center gap-2"
-                  >
-                    Live Demo
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M15 5L21 12L15 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M3 12H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </a>
-                  <a 
-                    href={sourceLink} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="w-full sm:flex-1 text-center py-3 bg-[#1a1a1a] border border-[#333333] 
-                      hover:border-[#555555] text-white rounded-md text-sm font-medium 
-                      transition-colors flex items-center justify-center gap-2"
-                  >
-                    Source Code
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M16 18L22 12L16 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M8 6L2 12L8 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </a>
-                </div>
+                {/* Buttons - Only show if they have valid links */}
+                {(downloadLink || (liveLink && liveLink !== "#") || (sourceLink && sourceLink !== "#")) && (
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    {/* Only render the download button if downloadLink exists - Enhanced with file type indicators */}
+                    {downloadLink && (
+                      <a 
+                        href={downloadInfo.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        download
+                        className="w-full sm:flex-1 text-center py-3 bg-gradient-to-r from-green-600 to-teal-600 
+                          hover:from-green-700 hover:to-teal-700 text-white rounded-md text-sm font-medium 
+                          transition-all flex items-center justify-center gap-2"
+                      >
+                        {downloadFileInfo.icon}
+                        <span>
+                          {downloadInfo.label}
+                          {downloadInfo.fileSize && (
+                            <span className="text-xs opacity-75 ml-1">({downloadInfo.fileSize})</span>
+                          )}
+                        </span>
+                      </a>
+                    )}
+                    
+                    {/* Only render the Live Demo button if liveLink exists and is not the default value */}
+                    {liveLink && liveLink !== "#" && (
+                      <a 
+                        href={liveLink} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="w-full sm:flex-1 text-center py-3 bg-gradient-to-r from-blue-600 to-purple-600 
+                          hover:from-blue-700 hover:to-purple-700 text-white rounded-md text-sm font-medium 
+                          transition-all flex items-center justify-center gap-2"
+                      >
+                        Live Demo
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M15 5L21 12L15 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M3 12H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </a>
+                    )}
+                    
+                    {/* Only render the Source Code button if sourceLink exists and is not the default value */}
+                    {sourceLink && sourceLink !== "#" && (
+                      <a 
+                        href={sourceLink} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="w-full sm:flex-1 text-center py-3 bg-[#1a1a1a] border border-[#333333] 
+                          hover:border-[#555555] text-white rounded-md text-sm font-medium 
+                          transition-colors flex items-center justify-center gap-2"
+                      >
+                        Source Code
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M16 18L22 12L16 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M8 6L2 12L8 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </a>
+                    )}
+                  </div>
+                )}
               </div>
               
               {/* Right Column - Updated to include code snippets */}
@@ -593,7 +730,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                             )}
                             <div className="relative rounded-md overflow-hidden">
                               <pre className="w-full overflow-x-auto p-5 text-sm sm:text-[14px] leading-relaxed bg-[#1e1e1e] rounded-md border border-[#333] scrollbar-thin scrollbar-thumb-gray-600">
-                                <code className={`${feature.codeSnippet.language || 'javascript'} font-mono`}>
+                                <code className={`language-${feature.codeSnippet.language || 'javascript'} font-mono`}>
                                   {feature.codeSnippet.code}
                                 </code>
                               </pre>
@@ -621,6 +758,45 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 </div>
                 
                 <hr className="border-t border-[#2a2a2a] my-6" />
+                
+                {/* Project Code Snippet - MOVED ABOVE TECH STACK */}
+                {codeSnippet && (
+                  <div className="mb-8">
+                    <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 
+                      bg-clip-text text-transparent">
+                      Code Snippet
+                    </h2>
+                    <div className="relative rounded-md overflow-hidden">
+                      {codeSnippet.title && (
+                        <div className="text-sm text-gray-300 mb-2 px-1 font-medium">
+                          {codeSnippet.title}
+                        </div>
+                      )}
+                      <pre className="w-full overflow-x-auto p-5 text-sm sm:text-[14px] leading-relaxed bg-[#1e1e1e] rounded-md border border-[#333] scrollbar-thin scrollbar-thumb-gray-600">
+                        <code className={`language-${codeSnippet.language || 'javascript'} font-mono`}>
+                          {codeSnippet.code}
+                        </code>
+                      </pre>
+                      {/* Copy button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigator.clipboard.writeText(codeSnippet.code);
+                        }}
+                        className="absolute top-2 right-2 bg-black/70 hover:bg-black/90 p-2 rounded-md text-gray-200 text-xs hover:text-white transition-colors"
+                        aria-label="Copy code"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Add HR after code snippet if it exists */}
+                {codeSnippet && <hr className="border-t border-[#2a2a2a] my-6" />}
                 
                 {/* Tech Stack - Flexible Wrapping */}
                 <div className="mb-8">
