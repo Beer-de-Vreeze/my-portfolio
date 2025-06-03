@@ -55,15 +55,12 @@ export default function Projects() {
               fileSize: "2.4 MB"
             }}
             media={[
-              { type: 'image', src: "/images/cat.jpg", alt: "Project thumbnail 1" },
-              { type: 'image', src: "/images/cat.jpg", alt: "Project thumbnail 2" },
-              { type: 'video', src: "/videos/cat.mp4", alt: "Project thumbnail 3" },
-              { type: 'image', src: "/images/cat.jpg", alt: "Project thumbnail 4" },
-              { type: 'image', src: "/images/cat.jpg", alt: "Project thumbnail 5" },
-              { type: 'image', src: "/images/nyan-cat.avif", alt: "Project thumbnail 6"},
+              { type: 'image', src: "/images/AudioPreviewer 1.webp", alt: "AudioPreviewer" },
+              { type: 'image', src: "/images/AudioPreviewer 2.webp", alt: "AudioPreviewer FULL" },
+              { type: 'video', src: "/assets/videos/audio-previewer-demo.mp4", alt: "Audio Previewer Demo" }
             ]}
 
-            techStack={["C#", "Unity", "Blender"]} 
+            techStack={["C#", "Unity", "Editor Scripting", "Audio"]} 
 features={[
   {
     title: "Waveform Visualization",
@@ -86,13 +83,6 @@ features={[
     description: "Organize your audio files into folders for easy access and management.",
   }
 ]}
-            contributors={[
-            { name: "John Doe", role: "Developer" },
-            { name: "Jane Doe", role: "Designer" },
-            { name: "John Doe", role: "Artist" },
-            { name: "Jane Doe", role: "Audio" },
-            { name: "John Doe", role: "Other" },
-            ]}
 
             codeSnippet={{
               code: `public class AudioPreviewer : EditorWindow
@@ -102,26 +92,191 @@ features={[
     {
         GetWindow<AudioPreviewer>("Audio Previewer");
     }
+    
     private AudioClip currentClip;
+    private Texture2D waveformTexture;
+    private Vector2 scrollPosition;
+    private bool isPlaying = false;
+    private bool isLooping = false;
+    
+    [Serializable]
+    private struct WaveformSettings
+    {
+        public int width;
+        public int height;
+        public Color colorStart;
+        public Color colorMiddle;
+        public Color colorEnd;
+    }
+    
+    private WaveformSettings waveformSettings = new WaveformSettings 
+    {
+        width = 512,
+        height = 128,
+        colorStart = new Color(0.2f, 0.4f, 0.85f), // Blue
+        colorMiddle = new Color(0.3f, 0.85f, 0.3f), // Green
+        colorEnd = new Color(0.85f, 0.4f, 0.2f)     // Orange
+    };
+    
     private void OnGUI()
     {
         GUILayout.Label("Audio Previewer", EditorStyles.boldLabel); 
+        EditorGUI.BeginChangeCheck();
         currentClip = (AudioClip)EditorGUILayout.ObjectField("Audio Clip", currentClip, typeof(AudioClip), false);
+        if (EditorGUI.EndChangeCheck() && currentClip != null)
+        {
+            // Generate waveform when audio clip changes
+            waveformTexture = GenerateWaveformTexture(currentClip);
+        }
+        
         if (currentClip != null)
         {
-            if (GUILayout.Button("Play"))
+            // Display waveform visualization
+            if (waveformTexture != null)
             {
-                AudioSource.PlayClipAtPoint(currentClip, Vector3.zero);
+                Rect rect = GUILayoutUtility.GetRect(waveformSettings.width, waveformSettings.height);
+                EditorGUI.DrawPreviewTexture(rect, waveformTexture);
             }
-            if (GUILayout.Button("Stop"))
+            
+            // Playback controls
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button(isPlaying ? "Pause" : "Play", GUILayout.Width(80)))
+            {
+                if (isPlaying)
+                {
+                    AudioSource.Stop();
+                    isPlaying = false;
+                }
+                else
+                {
+                    AudioSource.PlayClipAtPoint(currentClip, Vector3.zero);
+                    isPlaying = true;
+                }
+            }
+            
+            if (GUILayout.Button("Stop", GUILayout.Width(80)))
             {
                 AudioSource.Stop();
+                isPlaying = false;
             }
-            if (GUILayout.Button("Loop"))
+            
+            isLooping = GUILayout.Toggle(isLooping, "Loop", GUILayout.Width(80));
+            EditorGUILayout.EndHorizontal();
+        }
+    }
+    
+    /// <summary>
+    /// Generates a texture visualizing the waveform of an audio clip with color gradients.
+    /// </summary>
+    private Texture2D GenerateWaveformTexture(AudioClip clip)
+    {
+        int width = waveformSettings.width;
+        int height = waveformSettings.height;
+
+        // Create new texture with dark background
+        Texture2D texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+        Color[] clearPixels = new Color[width * height];
+        for (int i = 0; i < clearPixels.Length; i++)
+        {
+            clearPixels[i] = new Color(0.1f, 0.1f, 0.1f, 0.3f);
+        }
+        texture.SetPixels(clearPixels);
+
+        // Get audio sample data
+        float[] samples = GetAudioSamples(clip);
+        if (samples == null || samples.Length == 0)
+        {
+            texture.Apply();
+            return texture;
+        }
+
+        int channelCount = clip.channels;
+        int sampleCount = samples.Length / channelCount;
+        float samplesPerPixel = (float)sampleCount / width;
+
+        // Generate waveform visualization
+        for (int x = 0; x < width; x++)
+        {
+            float maxValue = 0f;
+
+            // Find peak amplitude for this pixel column
+            int sampleOffset = (int)(x * samplesPerPixel) * channelCount;
+            int samplesToCheck = Mathf.Min(
+                (int)samplesPerPixel * channelCount,
+                samples.Length - sampleOffset
+            );
+
+            for (int i = 0; i < samplesToCheck; i += channelCount)
             {
-                // Implement loop functionality
+                float sampleValue = Mathf.Abs(samples[sampleOffset + i]);
+                if (sampleValue > maxValue)
+                {
+                    maxValue = sampleValue;
+                }
+            }
+
+            int waveformHeight = Mathf.RoundToInt(maxValue * height);
+
+            // Create gradient color based on position
+            float colorPosition = (float)x / width;
+            Color waveformColor;
+
+            if (colorPosition < 0.5f)
+            {
+                waveformColor = Color.Lerp(
+                    waveformSettings.colorStart,  // Blue
+                    waveformSettings.colorMiddle, // Green
+                    colorPosition * 2f
+                );
+            }
+            else
+            {
+                waveformColor = Color.Lerp(
+                    waveformSettings.colorMiddle, // Green
+                    waveformSettings.colorEnd,    // Orange
+                    (colorPosition - 0.5f) * 2f
+                );
+            }
+
+            // Draw amplitude on texture with soft edges
+            int midPoint = height / 2;
+            int minY = midPoint - waveformHeight / 2;
+            int maxY = midPoint + waveformHeight / 2;
+
+            for (int y = 0; y < height; y++)
+            {
+                if (y >= minY && y <= maxY)
+                {
+                    float distanceFromMiddle = Mathf.Abs(
+                        (y - midPoint) / (float)(waveformHeight / 2)
+                    );
+                    float alpha = 1f - Mathf.Pow(distanceFromMiddle, 2);
+                    Color pixelColor = new Color(
+                        waveformColor.r,
+                        waveformColor.g,
+                        waveformColor.b,
+                        alpha
+                    );
+                    texture.SetPixel(x, y, pixelColor);
+                }
             }
         }
+
+        texture.Apply();
+        return texture;
+    }
+    
+    /// <summary>
+    /// Extracts audio samples from an AudioClip.
+    /// </summary>
+    private float[] GetAudioSamples(AudioClip clip)
+    {
+        if (clip == null)
+            return null;
+            
+        float[] samples = new float[clip.samples * clip.channels];
+        clip.GetData(samples, 0);
+        return samples;
     }
 }`
               ,}
@@ -146,9 +301,6 @@ features={[
   }}
   liveLink="https://beerv.itch.io/sketchin-spells"
   githubLink="https://github.com/beerv/sketchin-spells"
-  contributors={[
-    { name: "Beer de Vreeze", role: "Developer" },
-  ]}
  features={[
   {
     title: "Draw-to-Cast System",
@@ -187,13 +339,6 @@ features={[
             description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut purus eget."
             liveLink="https://google.com"
             githubLink="https://github.com"
-            contributors={[
-              { name: "John Doe", role: "Developer" },
-              { name: "Jane Doe", role: "Designer" },
-              { name: "John Doe", role: "Artist" },
-              { name: "Jane Doe", role: "Audio" },
-              { name: "John Doe", role: "Other" },
-            ]}
             onModalStateChange={handleModalStateChange}
           />
         </div>

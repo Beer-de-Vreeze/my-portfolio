@@ -1,19 +1,13 @@
 import React, { useState, useEffect, useRef, TouchEvent } from 'react';
 import Image from 'next/image';
-import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiApple, SiDocker, SiGooglecloud, SiNextdotjs, SiTailwindcss, SiDotnet, SiBlender, SiAdobephotoshop, SiMysql, SiPhp, SiPython, SiCplusplus, SiUnrealengine, SiGodotengine, SiTensorflow, SiPytorch, SiAndroidstudio } from 'react-icons/si';
-import { FaCode, FaPaintBrush, FaMusic, FaGamepad, FaTools, FaExpand, FaCompress, FaDownload, FaFileArchive, FaFileVideo, FaFileImage, FaFilePdf, FaWindows } from 'react-icons/fa';
+import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiApple, SiDocker, SiGooglecloud, SiNextdotjs, SiTailwindcss, SiDotnet, SiBlender, SiAdobephotoshop, SiMysql, SiPhp, SiPython, SiCplusplus, SiUnrealengine, SiGodotengine, SiTensorflow, SiPytorch, SiAndroidstudio, SiVisualstudiocode, SiAudacity } from 'react-icons/si';
+import {FaExpand, FaCompress, FaDownload, FaFileArchive, FaFileVideo, FaFileImage, FaFilePdf, FaWindows, FaCode, FaVolumeUp } from 'react-icons/fa';
 import hljs from 'highlight.js';
 
 interface MediaItem {
   type: 'image' | 'video';
   src: string;
   alt?: string;
-}
-
-interface Contributor {
-  name: string;
-  role: 'Developer' | 'Artist' | 'Audio' | 'Designer' | 'Other'; // Add roles
-  icon?: JSX.Element; 
 }
 
 interface CodeSnippet {
@@ -43,7 +37,6 @@ interface ProjectCardProps {
   codeSnippet?: CodeSnippet;
   liveLink?: string;
   githubLink?: string;
-  contributors?: Contributor[];
   onModalStateChange?: (isOpen: boolean) => void;
 }
 
@@ -73,15 +66,8 @@ const techIcons: { [key: string]: JSX.Element } = {
   "PyTorch": <SiPytorch className="text-orange-500 text-lg mr-2" />,
   "Android Studio": <SiAndroidstudio className="text-green-500 text-lg mr-2" />,
   "Apple": <SiApple className="text-gray-800 text-lg mr-2" />,
-};
-
-// Predefined role icons with colors
-const roleIcons: { [key: string]: JSX.Element } = {
-  Developer: <FaCode className="text-blue-500 text-lg" />,
-  Artist: <FaPaintBrush className="text-orange-500 text-lg" />,
-  Audio: <FaMusic className="text-purple-500 text-lg" />,
-  Designer: <FaGamepad className="text-green-500 text-lg" />,
-  Other: <FaTools className="text-gray-500 text-lg" />
+  "Editor Scripting": <FaCode className="text-purple-400 text-lg mr-2" />,
+  "Audio": <FaVolumeUp className="text-green-400 text-lg mr-2" />,
 };
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ 
@@ -98,8 +84,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   ],
   liveLink = "#",
   githubLink: sourceLink = "#",
-  contributors = [{ name: "Developer Name", role: "Developer" }],
-  codeSnippet, // Make sure codeSnippet is destructured here
+  codeSnippet, 
   onModalStateChange
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -110,13 +95,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const [autoplay, setAutoplay] = useState(true); // Add autoplay state
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  
-  // Predefined color palette for contributor indicators
-  const contributorColors = [
-    '#FF6B6B', '#48BEFF', '#4ECB71', '#FFD93D', '#B983FF', 
-    '#FF9F45', '#3DEFE9', '#FF78C4', '#7158E2', '#17C3B2', 
-    '#FFC857', '#4E8FF7', '#FB5607', '#3A86FF', '#8AC926'
-  ];
 
   const thumbnailImage = coverImage || media[0]?.src || "/path/to/wip-image-lib rary/placeholder.jpg";
 
@@ -688,6 +666,25 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     )}
                   </div>
                 )}
+                
+                {/* Tech Stack - Moved from right column to below buttons */}
+                <div className="mt-8 mb-4">
+                  <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 
+                    bg-clip-text text-transparent">
+                    Built with
+                  </h2>
+                  <div className="flex flex-wrap gap-2">
+                    {techStack.map((tech, index) => (
+                      <span 
+                        key={index} 
+                        className="px-5 py-3 bg-black border border-[#27272a] rounded-full flex items-center justify-center text-gray-300 text-sm"
+                        onClick={() => handleTechIconClick(tech)}
+                      >
+                        {techIcons[tech] || null} {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
               
               {/* Right Column - Updated to include code snippets */}
@@ -798,47 +795,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 {/* Add HR after code snippet if it exists */}
                 {codeSnippet && <hr className="border-t border-[#2a2a2a] my-6" />}
                 
-                {/* Tech Stack - Flexible Wrapping */}
-                <div className="mb-8">
-                  <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 
-                    bg-clip-text text-transparent">
-                    Built with
-                  </h2>
-                  <div className="flex flex-wrap gap-2">
-                    {techStack.map((tech, index) => (
-                      <span 
-                        key={index} 
-                        className="px-5 py-3 bg-black border border-[#27272a] rounded-full flex items-center justify-center text-gray-300 text-sm"
-                        onClick={() => handleTechIconClick(tech)}
-                      >
-                        {techIcons[tech] || null} {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                
-                <hr className="border-t border-[#2a2a2a] my-6" />
-                
-                {/* Contributors - Responsive Wrapping */}
-                <div className="mb-8">
-                  <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 
-                    bg-clip-text text-transparent">
-                    Contributors
-                  </h2>
-                  <div className="flex flex-wrap gap-2.5">
-                    {contributors.map((contributor, index) => {
-                      const roleIcon = contributor.icon || roleIcons[contributor.role] || null; // Use provided icon or default role icon
-                      return (
-                        <span 
-                          key={index} 
-                          className="inline-flex items-center gap-2 px-5 py-3 bg-black border border-[#27272a] rounded-full flex items-center justify-center text-gray-300 text-sm"
-                        >
-                          {roleIcon} {contributor.name}
-                        </span>
-                      );
-                    })}
-                  </div>
-                </div>
+                {/* Tech Stack section has been moved to the left column */}
               </div>
             </div>
           </div>
