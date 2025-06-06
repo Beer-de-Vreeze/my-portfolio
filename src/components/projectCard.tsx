@@ -4,42 +4,60 @@ import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3
 import {FaExpand, FaCompress, FaDownload, FaFileArchive, FaFileVideo, FaFileImage, FaFilePdf, FaWindows, FaCode, FaVolumeUp } from 'react-icons/fa';
 import hljs from 'highlight.js';
 
+/**
+ * Interface for media items that can be displayed in the project card
+ * Supports both images and videos
+ */
 interface MediaItem {
   type: 'image' | 'video';
   src: string;
   alt?: string;
 }
 
+/**
+ * Interface for code snippets to be displayed with syntax highlighting
+ */
 interface CodeSnippet {
   code: string;
   language: string;
   title?: string;
 }
 
+/**
+ * Interface for structured download link objects
+ * Allows providing additional metadata like filename and file size
+ */
 interface DownloadLinkObject {
   url: string;
   filename: string;
   fileSize?: string;
 }
 
+/**
+ * Main props interface for the ProjectCard component
+ */
 interface ProjectCardProps {
-  media: MediaItem[];
-  title: string;
-  techStack: string[];
-  coverImage?: string; 
-  description?: string;
-  downloadLink?: string | DownloadLinkObject;
-  features?: { 
+  media: MediaItem[];                           // Array of media items (images/videos)
+  title: string;                                // Project title
+  techStack: string[];                          // Array of technologies used
+  coverImage?: string;                          // Optional cover image override
+  description?: string;                         // Project description
+  downloadLink?: string | DownloadLinkObject;   // Optional download link
+  features?: {                                  // Optional features list
     title: string; 
     description: string;
-    codeSnippet?: CodeSnippet; 
+    codeSnippet?: CodeSnippet;                  // Optional code snippet per feature
   }[];
-  codeSnippet?: CodeSnippet;
-  liveLink?: string;
-  githubLink?: string;
-  onModalStateChange?: (isOpen: boolean) => void;
+  codeSnippet?: CodeSnippet;                    // Optional main code snippet
+  liveLink?: string;                            // Optional demo link
+  githubLink?: string;                          // Optional source code link
+  onModalStateChange?: (isOpen: boolean) => void; // Callback for modal state changes
 }
 
+/**
+ * Mapping of technology names to their corresponding React icons
+ * Used to display visual indicators for tech stack items
+ */
 const techIcons: { [key: string]: JSX.Element } = {
   "React": <SiReact className="text-blue-500 text-lg mr-2" />,
   "Unity": <SiUnity className="text-white text-lg mr-2" />,
@@ -70,6 +88,18 @@ const techIcons: { [key: string]: JSX.Element } = {
   "Audio": <FaVolumeUp className="text-green-400 text-lg mr-2" />,
 };
 
+/**
+ * ProjectCard Component
+ * 
+ * A card component that displays project information with an expandable modal view.
+ * Features include:
+ * - Responsive layout for both card and modal
+ * - Image/video carousel with touch gesture support
+ * - Video playback controls including fullscreen support
+ * - Code snippet display with syntax highlighting
+ * - Download button with file type detection
+ * - Tech stack visualization
+ */
 const ProjectCard: React.FC<ProjectCardProps> = ({ 
   media = [{ type: 'image', src: "/path/to/wip-image-library/placeholder.jpg", alt: "Project thumbnail" }], 
   title, 
@@ -87,17 +117,32 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   codeSnippet, 
   onModalStateChange
 }) => {
+  // Modal state management
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
+  
+  // Media carousel state
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [autoplay, setAutoplay] = useState(true); // Add autoplay state
+  const [autoplay, setAutoplay] = useState(true);
+  
+  // Video and fullscreen references/state
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  const thumbnailImage = coverImage || media[0]?.src || "/path/to/wip-image-lib rary/placeholder.jpg";
+  /**
+   * Determine the thumbnail image with fallback options:
+   * 1. Use coverImage if provided
+   * 2. Otherwise use first media item's src if available
+   * 3. Fall back to placeholder image if neither exists
+   */
+  const thumbnailImage = coverImage || media[0]?.src || "/path/to/wip-image-library/placeholder.jpg";
 
+  /**
+   * Handles closing the modal with animation
+   * Pauses any playing video and calls the onModalStateChange callback
+   */
   const closeModal = () => {
     if (videoRef.current && !videoRef.current.paused) {
       videoRef.current.pause();
@@ -111,6 +156,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     }, 300);
   };
   
+  /**
+   * Effect for handling ESC key press and body scroll locking
+   * when the modal is open
+   */
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -119,21 +168,28 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     };
     
     if (isModalOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden'; // Prevent background scrolling
       document.addEventListener('keydown', handleEscKey);
       onModalStateChange?.(true);
     }
     
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = 'unset'; // Restore scrolling
       document.removeEventListener('keydown', handleEscKey);
     };
   }, [isModalOpen, onModalStateChange]);
 
+  /**
+   * Handler for tech stack icon clicks
+   */
   const handleTechIconClick = (tech: string) => {
     console.log(`${tech} icon clicked`);
   };
 
+  /**
+   * Navigate to next media item in the carousel
+   * Pauses any playing video before changing slide
+   */
   const goToNextMedia = () => {
     if (videoRef.current && !videoRef.current.paused) {
       videoRef.current.pause();
@@ -142,6 +198,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     setCurrentMediaIndex((prevIndex) => (prevIndex + 1) % media.length);
   };
 
+  /**
+   * Navigate to previous media item in the carousel
+   * Pauses any playing video before changing slide
+   */
   const goToPreviousMedia = () => {
     if (videoRef.current && !videoRef.current.paused) {
       videoRef.current.pause();
@@ -150,6 +210,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     setCurrentMediaIndex((prevIndex) => (prevIndex - 1 + media.length) % media.length);
   };
 
+  /**
+   * Toggles video playback state
+   * Updates autoplay setting based on video state
+   */
   const handleVideoToggle = () => {
     if (videoRef.current) {
       if (videoRef.current.paused) {
@@ -164,11 +228,19 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     }
   };
   
+  /**
+   * Handler for video end event
+   * Resets playing state and enables autoplay
+   */
   const handleVideoEnd = () => {
     setIsPlaying(false);
     setAutoplay(true); // Re-enable autoplay when video ends
   };
   
+  /**
+   * Toggle fullscreen mode with cross-browser compatibility
+   * Handles both entering and exiting fullscreen mode
+   */
   const toggleFullscreen = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!videoRef.current) return;
@@ -210,7 +282,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     }
   };
   
-  // Listen for fullscreen change events
+  /**
+   * Effect for monitoring fullscreen state changes
+   * Handles browser-initiated fullscreen exits
+   */
   useEffect(() => {
     const onFullscreenChange = () => {
       const wasFullscreen = isFullscreen;
@@ -226,12 +301,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       }
     };
     
+    // Add event listeners for all browser variants of fullscreen change
     document.addEventListener('fullscreenchange', onFullscreenChange);
     document.addEventListener('webkitfullscreenchange', onFullscreenChange);
     document.addEventListener('mozfullscreenchange', onFullscreenChange);
     document.addEventListener('MSFullscreenChange', onFullscreenChange);
     
     return () => {
+      // Clean up event listeners
       document.removeEventListener('fullscreenchange', onFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', onFullscreenChange);
       document.removeEventListener('mozfullscreenchange', onFullscreenChange);
@@ -239,6 +316,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     };
   }, [isFullscreen]);
 
+  /**
+   * Renders video controls overlay for play/pause and fullscreen
+   * Only shown for video media types
+   */
   const renderVideoControls = () => {
     if (!isVideo) return null;
 
@@ -247,7 +328,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         className="absolute inset-0 z-20 flex items-center justify-center cursor-pointer"
         onClick={handleVideoToggle}
       >
-        {/* Play/Pause Overlay - Added fade effect */}
+        {/* Play/Pause Overlay with fade effect */}
         <div 
           className={`${!isPlaying 
             ? 'opacity-100 scale-100' 
@@ -270,7 +351,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           </svg>
         </div>
         
-        {/* Fullscreen button with new icons - Always visible */}
+        {/* Fullscreen button - always visible */}
         <button
           onClick={toggleFullscreen}
           className="absolute bottom-3 right-3 z-30 bg-black/60 hover:bg-black/80 rounded-full p-2.5
@@ -287,6 +368,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     );
   };
 
+  /**
+   * Navigate to a specific media index
+   * Used by the media indicator dots
+   */
   const goToMedia = (index: number) => {
     if (videoRef.current && !videoRef.current.paused) {
       videoRef.current.pause();
@@ -297,29 +382,39 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     setAutoplay(true);
   };
 
+  // Get current media item and determine if it's a video
   const currentMedia = media[currentMediaIndex];
   const isVideo = currentMedia?.type === 'video';
 
-  // Add touch handling state
+  // Touch gesture handling state
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   
-  // Minimum swipe distance in pixels
+  // Minimum swipe distance threshold in pixels
   const minSwipeDistance = 50;
   
-  // Handle touch start
+  /**
+   * Handler for touch start event
+   * Captures initial touch position and disables autoplay
+   */
   const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
     setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);
     setAutoplay(false); // Temporarily disable autoplay during touch interaction
   };
   
-  // Handle touch move
+  /**
+   * Handler for touch move event
+   * Tracks finger position during swipe
+   */
   const handleTouchMove = (e: TouchEvent<HTMLDivElement>) => {
     setTouchEnd(e.targetTouches[0].clientX);
   };
   
-  // Handle touch end
+  /**
+   * Handler for touch end event
+   * Calculates swipe direction and changes media if threshold is met
+   */
   const handleTouchEnd = () => {
     if (!touchStart || !touchEnd) return;
     
@@ -327,18 +422,24 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     const isSwipe = Math.abs(distance) > minSwipeDistance;
     if (isSwipe && !isPlaying) {
       if (distance > 0) {
-        goToNextMedia();
+        goToNextMedia(); // Swipe left, go to next
       } else {
-        goToPreviousMedia();
+        goToPreviousMedia(); // Swipe right, go to previous
       }
     }
     setTouchStart(null);
     setTouchEnd(null);
-    setAutoplay(true);
+    setAutoplay(true); // Re-enable autoplay after interaction
   };
 
+  /**
+   * Effect for handling autoplay carousel functionality
+   * Changes slides automatically when conditions are met
+   */
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
+    // Only autoplay when modal is open, autoplay is enabled, video is not playing,
+    // not in fullscreen, and there are multiple media items
     if (isModalOpen && autoplay && !isPlaying && !isFullscreen && media.length > 1) {
       intervalId = setInterval(() => {
         goToNextMedia();
@@ -351,7 +452,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     };
   }, [isModalOpen, autoplay, isPlaying, isFullscreen, currentMediaIndex, media.length]);
 
-  // Add this effect to highlight code snippets when they're rendered or updated
+  /**
+   * Effect for applying syntax highlighting to code snippets
+   * Uses highlight.js to enhance code display
+   */
   useEffect(() => {
     if (isModalOpen && ((features && features.some(feature => feature.codeSnippet)) || codeSnippet)) {
       // Use setTimeout to ensure the DOM has updated before highlighting
@@ -363,7 +467,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     }
   }, [isModalOpen, features, codeSnippet, currentMediaIndex]);
 
-  // Add utility function to determine file type from URL - Updated to use white React Icons
+  /**
+   * Helper function to determine file type information from URL
+   * Used to display appropriate icons and labels for download buttons
+   */
   const getFileTypeInfo = (downloadLink: string | DownloadLinkObject | undefined) => {
     if (!downloadLink) return { type: 'unknown', icon: null, label: 'Download' };
     
@@ -374,6 +481,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     
     const extension = url.split('.').pop()?.toLowerCase();
     
+    // Return appropriate icon and label based on file extension
     switch (extension) {
       case 'zip':
         return { 
@@ -431,7 +539,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     }
   };
 
-  // Get download URL and label
+  /**
+   * Helper function to get download URL and label information
+   * Handles both string and object download link formats
+   */
   const getDownloadInfo = () => {
     if (!downloadLink) return { url: '', label: 'Download' };
     
@@ -454,19 +565,20 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     }
   };
 
-  // Get file info for download link
+  // Get file type information and download details for the UI
   const downloadFileInfo = getFileTypeInfo(downloadLink);
   const downloadInfo = getDownloadInfo();
 
   return (
     <>
-      {/* Project Card - Improved Mobile Responsiveness */}
+      {/* Project Card with mobile-responsive design */}
       <div 
         onClick={() => setIsModalOpen(true)}
         onMouseDown={() => setIsClicked(true)}
         onMouseUp={() => setIsClicked(false)}
         className={`relative z-10 flex flex-col justify-between p-4 sm:p-5 bg-[#111111] border border-[#2a2a2a] rounded-lg transition-all duration-300 hover:border-[#4a4a4a] hover:translate-y-[-4px] overflow-hidden cursor-pointer w-full max-w-[500px] mx-auto h-48 sm:h-56 ${isClicked ? 'scale-95' : ''}`}
       >
+        {/* Background thumbnail image with blur effect */}
         <div className="absolute top-0 left-0 w-full h-full z-0 opacity-20">
           <Image 
             src={thumbnailImage} 
@@ -477,7 +589,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           />
         </div>
         
-        {/* Card content - remains unchanged */}
+        {/* Card content - title and description */}
         <div className="relative z-10">
           <h3 className="text-white text-xl sm:text-2xl font-medium mb-2 truncate">
             {title}
@@ -485,6 +597,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           <p className="text-gray-400 text-sm line-clamp-2 mb-3">{description.split('.')[0]}.</p>
         </div>
         
+        {/* Tech stack tags - limited to first 4 with counter for remaining */}
         <div className="relative z-10 flex flex-wrap gap-1.5 mt-auto">
           {techStack.slice(0, 4).map((tech, index) => (
             <span 
@@ -503,7 +616,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         </div>
       </div>
 
-      {/* Modal - Improved Mobile Responsiveness */}
+      {/* Modal with animation - shown when card is clicked */}
       {(isModalOpen || isClosing) && (
         <div 
           className={`fixed inset-0 z-[1050] flex items-center justify-center bg-black/95 backdrop-blur-sm 
@@ -513,7 +626,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             if (e.target === e.currentTarget) closeModal();
           }}
         >
-          {/* Close button - Fixed in viewport, scrolls with user */}
+          {/* Close button - fixed position for better UX */}
           <button 
             onClick={closeModal}
             className="fixed top-4 right-4 z-[1060] bg-black/70 hover:bg-black/90 
@@ -527,18 +640,18 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             </svg>
           </button>
 
-          {/* Modal Content - Fully Responsive Layout */}
+          {/* Modal Content - Responsive layout with scrolling */}
           <div 
             className={`w-full max-w-7xl ${isClosing ? 'animate-fadeOut' : 'animate-fadeIn'} 
               transition-transform duration-300 ease-in-out py-6 overflow-y-auto 
               max-h-[90vh] my-auto`}
           >
             <div className="flex flex-col lg:flex-row gap-6 lg:gap-16 px-4 sm:px-10">
-              {/* Left Column - Slideshow media and Buttons */}
+              {/* Left Column - Media carousel and action buttons */}
               <div className="lg:w-2/5 flex flex-col">
                 {/* Media Slideshow Container */}
                 <div className="relative w-full rounded-xl overflow-hidden border border-[#333333] mb-4">
-                  {/* Media Content - Add touch handlers */}
+                  {/* Media Content with touch gesture support */}
                   <div 
                     className="relative aspect-video w-full"
                     onTouchStart={handleTouchStart}
@@ -566,11 +679,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                         className="object-cover"
                       />
                     )}
-
-                    {/* Navigation arrows removed as requested */}
                   </div>
 
-                  {/* Indicators for multiple media */}
+                  {/* Indicators for multiple media items */}
                   {media.length > 1 && (
                     <div className="absolute bottom-3 left-0 right-0 flex justify-center flex-wrap gap-1 z-20 px-2 max-w-full overflow-hidden">
                       {media.map((_, index) => (
@@ -597,7 +708,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     </div>
                   )}
 
-                  {/* Media type indicator */}
+                  {/* Media counter indicator */}
                   <div className={`absolute top-3 right-3 bg-black/60 px-2 py-1 rounded text-xs text-white font-medium z-20
                     ${(isVideo && isPlaying) ? 'opacity-0 pointer-events-none' : 'opacity-100'}
                     transition-opacity duration-300 ease-in-out`}>
@@ -605,10 +716,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                   </div>
                 </div>
                 
-                {/* Buttons - Only show if they have valid links */}
+                {/* Action buttons - Conditionally rendered based on available links */}
                 {(downloadLink || (liveLink && liveLink !== "#") || (sourceLink && sourceLink !== "#")) && (
                   <div className="flex flex-col sm:flex-row gap-4">
-                    {/* Only render the download button if downloadLink exists - Enhanced with file type indicators */}
+                    {/* Download button with file type indicator */}
                     {downloadLink && (
                       <a 
                         href={downloadInfo.url} 
@@ -629,7 +740,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                       </a>
                     )}
                     
-                    {/* Only render the Live Demo button if liveLink exists and is not the default value */}
+                    {/* Live Demo button - only if valid link provided */}
                     {liveLink && liveLink !== "#" && (
                       <a 
                         href={liveLink} 
@@ -647,7 +758,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                       </a>
                     )}
                     
-                    {/* Only render the Source Code button if sourceLink exists and is not the default value */}
+                    {/* Source Code button - only if valid link provided */}
                     {sourceLink && sourceLink !== "#" && (
                       <a 
                         href={sourceLink} 
@@ -667,7 +778,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                   </div>
                 )}
                 
-                {/* Tech Stack - Moved from right column to below buttons */}
+                {/* Tech Stack section - moved from right column */}
                 <div className="mt-8 mb-4">
                   <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 
                     bg-clip-text text-transparent">
@@ -687,7 +798,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 </div>
               </div>
               
-              {/* Right Column - Updated to include code snippets */}
+              {/* Right Column - Project details and features */}
               <div className="lg:w-3/5 mt-4 lg:mt-0">
                 {/* Title and Description */}
                 <div className="mb-8">
@@ -700,7 +811,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                   </p>
                 </div>
                 
-                {/* Features - Updated to include code snippets */}
+                {/* Features section with code snippets support */}
                 <div className="mb-8">
                   <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 
                     bg-clip-text text-transparent">
@@ -717,7 +828,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                           {feature.description}
                         </span>
                         
-                        {/* Display code snippet if available */}
+                        {/* Feature-specific code snippet if available */}
                         {feature.codeSnippet && (
                           <div className="mt-3 w-full">
                             {feature.codeSnippet.title && (
@@ -731,12 +842,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                                   {feature.codeSnippet.code}
                                 </code>
                               </pre>
-                              {/* Copy button */}
+                              {/* Copy button for code snippet */}
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   navigator.clipboard.writeText(feature.codeSnippet!.code);
-                                  // Could add a "copied!" notification here
                                 }}
                                 className="absolute top-2 right-2 bg-black/70 hover:bg-black/90 p-2 rounded-md text-gray-200 text-xs hover:text-white transition-colors"
                                 aria-label="Copy code"
@@ -756,7 +866,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 
                 <hr className="border-t border-[#2a2a2a] my-6" />
                 
-                {/* Project Code Snippet - MOVED ABOVE TECH STACK */}
+                {/* Main code snippet section if available */}
                 {codeSnippet && (
                   <div className="mb-8">
                     <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 
@@ -774,7 +884,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                           {codeSnippet.code}
                         </code>
                       </pre>
-                      {/* Copy button */}
+                      {/* Copy button for main code snippet */}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -792,10 +902,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                   </div>
                 )}
                 
-                {/* Add HR after code snippet if it exists */}
+                {/* Visual separator after code snippet */}
                 {codeSnippet && <hr className="border-t border-[#2a2a2a] my-6" />}
-                
-                {/* Tech Stack section has been moved to the left column */}
               </div>
             </div>
           </div>
