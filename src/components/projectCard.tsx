@@ -1,8 +1,21 @@
-import React, { useState, useEffect, useRef, TouchEvent } from 'react';
+import React, { useState, useEffect, useRef, TouchEvent, useCallback } from 'react';
 import Image from 'next/image';
-import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiApple, SiDocker, SiGooglecloud, SiNextdotjs, SiTailwindcss, SiDotnet, SiBlender, SiAdobephotoshop, SiMysql, SiPhp, SiPython, SiCplusplus, SiUnrealengine, SiGodotengine, SiTensorflow, SiPytorch, SiAndroidstudio, SiVisualstudiocode, SiAudacity } from 'react-icons/si';
-import {FaExpand, FaCompress, FaDownload, FaFileArchive, FaFileVideo, FaFileImage, FaFilePdf, FaWindows, FaCode, FaVolumeUp } from 'react-icons/fa';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiApple, SiDocker, SiGooglecloud, SiNextdotjs, SiTailwindcss, SiDotnet, SiBlender, SiAdobephotoshop, SiMysql, SiPhp, SiPython, SiCplusplus, SiUnrealengine, SiGodotengine, SiTensorflow, SiPytorch, SiAndroidstudio } from 'react-icons/si';
+import { FaExpand, FaCompress, FaDownload, FaFileArchive, FaFileVideo, FaFileImage, FaFilePdf, FaWindows, FaCode, FaVolumeUp, FaRobot, FaPalette, FaGamepad, FaBrain, FaMusic } from 'react-icons/fa';
 import hljs from 'highlight.js';
+
+// Extend HTMLVideoElement interface for fullscreen API compatibility
+interface ExtendedHTMLVideoElement extends HTMLVideoElement {
+  webkitRequestFullscreen?: () => void;
+  msRequestFullscreen?: () => void;
+}
+
+// Extend Document interface for fullscreen API compatibility
+interface ExtendedDocument extends Document {
+  webkitExitFullscreen?: () => void;
+  msExitFullscreen?: () => void;
+}
 
 /**
  * Interface for media items that can be displayed in the project card
@@ -25,18 +38,29 @@ interface CodeSnippet {
 
 /**
  * Interface for structured download link objects
- * Allows providing additional metadata like filename and file size
+ * Allows providing additional metadata like filename
+ * File size is now always automatically detected
  */
 interface DownloadLinkObject {
   url: string;
   filename: string;
-  fileSize?: string;
+  // fileSize is no longer used - auto-detection is always enabled
+  fileSize?: string; // Kept for backward compatibility but no longer used
+}
+
+/**
+ * Interface for file size response
+ */
+interface FileSizeResponse {
+  size: number;
+  formattedSize: string;
 }
 
 /**
  * Main props interface for the ProjectCard component
  */
 interface ProjectCardProps {
+  projectId: string;                            // Unique identifier for URL routing
   media: MediaItem[];                           // Array of media items (images/videos)
   title: string;                                // Project title
   techStack: string[];                          // Array of technologies used
@@ -58,7 +82,7 @@ interface ProjectCardProps {
  * Mapping of technology names to their corresponding React icons
  * Used to display visual indicators for tech stack items
  */
-const techIcons: { [key: string]: JSX.Element } = {
+const techIcons: { [key: string]: React.JSX.Element } = {
   "React": <SiReact className="text-blue-500 text-lg mr-2" />,
   "Unity": <SiUnity className="text-white text-lg mr-2" />,
   "GitHub": <SiGithub className="text-gray-800 text-lg mr-2" />,
@@ -82,10 +106,29 @@ const techIcons: { [key: string]: JSX.Element } = {
   "Godot": <SiGodotengine className="text-blue-500 text-lg mr-2" />,
   "TensorFlow": <SiTensorflow className="text-orange-500 text-lg mr-2" />,
   "PyTorch": <SiPytorch className="text-orange-500 text-lg mr-2" />,
+  "Pytorch": <SiPytorch className="text-orange-500 text-lg mr-2" />,
+  "ML-Agents": <FaRobot className="text-pink-400 text-lg mr-2" />,
   "Android Studio": <SiAndroidstudio className="text-green-500 text-lg mr-2" />,
   "Apple": <SiApple className="text-gray-800 text-lg mr-2" />,
-  "Editor Scripting": <FaCode className="text-purple-400 text-lg mr-2" />,
-  "Audio": <FaVolumeUp className="text-green-400 text-lg mr-2" />,
+  "Editor Scripting": <FaCode className="text-purple-400 text-lg mr-2" />,  "Audio": <FaVolumeUp className="text-green-400 text-lg mr-2" />,
+  // Additional commonly used technologies
+  "Windows": <FaWindows className="text-blue-500 text-lg mr-2" />,
+  "C": <SiCplusplus className="text-blue-600 text-lg mr-2" />,
+  "Java": <SiJavascript className="text-red-500 text-lg mr-2" />,
+  "Game Development": <FaRobot className="text-green-500 text-lg mr-2" />,
+  "3D Modeling": <SiBlender className="text-orange-500 text-lg mr-2" />,
+  "UI/UX": <FaCode className="text-purple-500 text-lg mr-2" />,
+  "Web Development": <SiHtml5 className="text-orange-400 text-lg mr-2" />,
+  "Mobile Development": <SiAndroidstudio className="text-green-400 text-lg mr-2" />,
+  "Machine Learning": <SiTensorflow className="text-orange-400 text-lg mr-2" />,
+  "AI": <FaRobot className="text-blue-400 text-lg mr-2" />,
+  "Database": <SiMysql className="text-blue-600 text-lg mr-2" />,
+  "Cloud": <SiGooglecloud className="text-blue-400 text-lg mr-2" />,
+  // Missing icons from projects page
+  "Audio Processing": <FaMusic className="text-purple-400 text-lg mr-2" />,
+  "2D Graphics": <FaPalette className="text-pink-400 text-lg mr-2" />,
+  "Game Design": <FaGamepad className="text-orange-400 text-lg mr-2" />,
+  "Reinforcement Learning": <FaBrain className="text-green-400 text-lg mr-2" />,
 };
 
 /**
@@ -98,9 +141,11 @@ const techIcons: { [key: string]: JSX.Element } = {
  * - Video playback controls including fullscreen support
  * - Code snippet display with syntax highlighting
  * - Download button with file type detection
+ * - Automatic file size detection for download links (always enabled)
  * - Tech stack visualization
  */
 const ProjectCard: React.FC<ProjectCardProps> = ({ 
+  projectId,
   media = [{ type: 'image', src: "/path/to/wip-image-library/placeholder.jpg", alt: "Project thumbnail" }], 
   title, 
   techStack,
@@ -117,6 +162,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   codeSnippet, 
   onModalStateChange
 }) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
   // Modal state management
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
@@ -127,10 +175,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [autoplay, setAutoplay] = useState(true);
   
+  // File size state
+  const [autoFileSize, setAutoFileSize] = useState<string | null>(null);
+  
   // Video and fullscreen references/state
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
-
   /**
    * Determine the thumbnail image with fallback options:
    * 1. Use coverImage if provided
@@ -140,21 +190,48 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const thumbnailImage = coverImage || media[0]?.src || "/path/to/wip-image-library/placeholder.jpg";
 
   /**
-   * Handles closing the modal with animation
+   * Opens the modal and updates the URL with the project ID
+   */
+  const openModal = useCallback(() => {
+    setIsModalOpen(true);
+    const url = new URL(window.location.href);
+    url.searchParams.set('project', projectId);
+    router.push(url.pathname + url.search);
+    onModalStateChange?.(true);
+  }, [projectId, router, onModalStateChange]);
+
+  /**
+   * Handles closing the modal with animation and removes project from URL
    * Pauses any playing video and calls the onModalStateChange callback
    */
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     if (videoRef.current && !videoRef.current.paused) {
       videoRef.current.pause();
     }
     setIsPlaying(false);
     setIsClosing(true);
+    
+    // Remove project parameter from URL
+    const url = new URL(window.location.href);
+    url.searchParams.delete('project');
+    router.push(url.pathname + url.search);
+    
     setTimeout(() => {
       setIsModalOpen(false);
       setIsClosing(false);
       onModalStateChange?.(false);
     }, 300);
-  };
+  }, [onModalStateChange, router]);
+  /**
+   * Effect to check URL parameters on component mount and handle direct links
+   */
+  useEffect(() => {
+    const currentProject = searchParams?.get('project');
+    if (currentProject === projectId && !isModalOpen) {
+      setIsModalOpen(true);
+      onModalStateChange?.(true);
+    }
+  }, [searchParams, projectId, isModalOpen, onModalStateChange]);
   
   /**
    * Effect for handling ESC key press and body scroll locking
@@ -177,7 +254,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       document.body.style.overflow = 'unset'; // Restore scrolling
       document.removeEventListener('keydown', handleEscKey);
     };
-  }, [isModalOpen, onModalStateChange]);
+  }, [isModalOpen, onModalStateChange, closeModal]);
 
   /**
    * Handler for tech stack icon clicks
@@ -185,18 +262,17 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const handleTechIconClick = (tech: string) => {
     console.log(`${tech} icon clicked`);
   };
-
   /**
    * Navigate to next media item in the carousel
    * Pauses any playing video before changing slide
    */
-  const goToNextMedia = () => {
+  const goToNextMedia = useCallback(() => {
     if (videoRef.current && !videoRef.current.paused) {
       videoRef.current.pause();
     }
     setIsPlaying(false);
     setCurrentMediaIndex((prevIndex) => (prevIndex + 1) % media.length);
-  };
+  }, [media.length]);
 
   /**
    * Navigate to previous media item in the carousel
@@ -253,12 +329,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             setIsFullscreen(true);
           }).catch(err => {
             console.error(`Error attempting to enable fullscreen: ${err.message}`);
-          });
-        } else if ((videoRef.current as any).webkitRequestFullscreen) { // Safari
-          (videoRef.current as any).webkitRequestFullscreen();
+          });        } else if ((videoRef.current as ExtendedHTMLVideoElement).webkitRequestFullscreen) { // Safari
+          (videoRef.current as ExtendedHTMLVideoElement).webkitRequestFullscreen?.();
           setIsFullscreen(true);
-        } else if ((videoRef.current as any).msRequestFullscreen) { // IE11
-          (videoRef.current as any).msRequestFullscreen();
+        } else if ((videoRef.current as ExtendedHTMLVideoElement).msRequestFullscreen) { // IE11
+          (videoRef.current as ExtendedHTMLVideoElement).msRequestFullscreen?.();
           setIsFullscreen(true);
         }
       } else {
@@ -268,12 +343,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             setIsFullscreen(false);
           }).catch(err => {
             console.error(`Error attempting to exit fullscreen: ${err.message}`);
-          });
-        } else if ((document as any).webkitExitFullscreen) { // Safari
-          (document as any).webkitExitFullscreen();
+          });        } else if ((document as ExtendedDocument).webkitExitFullscreen) { // Safari
+          (document as ExtendedDocument).webkitExitFullscreen?.();
           setIsFullscreen(false);
-        } else if ((document as any).msExitFullscreen) { // IE11
-          (document as any).msExitFullscreen();
+        } else if ((document as ExtendedDocument).msExitFullscreen) { // IE11
+          (document as ExtendedDocument).msExitFullscreen?.();
           setIsFullscreen(false);
         }
       }
@@ -450,7 +524,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  }, [isModalOpen, autoplay, isPlaying, isFullscreen, currentMediaIndex, media.length]);
+  }, [isModalOpen, autoplay, isPlaying, isFullscreen, currentMediaIndex, media.length, goToNextMedia]);
 
   /**
    * Effect for applying syntax highlighting to code snippets
@@ -501,11 +575,47 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           icon: <FaFileArchive className="text-white mr-1" size={16} />,
           label: 'Download 7Z'
         };
+      case 'tar':
+      case 'gz':
+      case 'tar.gz':
+        return { 
+          type: 'archive', 
+          icon: <FaFileArchive className="text-white mr-1" size={16} />,
+          label: 'Download Archive'
+        };
       case 'exe':
+      case 'msi':
         return { 
           type: 'exe', 
           icon: <FaWindows className="text-white mr-1" size={16} />,
-          label: 'Download EXE'
+          label: 'Download Application'
+        };
+      case 'dmg':
+      case 'pkg':
+        return { 
+          type: 'mac', 
+          icon: <FaDownload className="text-white mr-1" size={16} />,
+          label: 'Download for Mac'
+        };
+      case 'deb':
+      case 'rpm':
+      case 'appimage':
+        return { 
+          type: 'linux', 
+          icon: <FaDownload className="text-white mr-1" size={16} />,
+          label: 'Download for Linux'
+        };
+      case 'apk':
+        return { 
+          type: 'android', 
+          icon: <FaDownload className="text-white mr-1" size={16} />,
+          label: 'Download APK'
+        };
+      case 'ipa':
+        return { 
+          type: 'ios', 
+          icon: <FaDownload className="text-white mr-1" size={16} />,
+          label: 'Download for iOS'
         };
       case 'pdf':
         return { 
@@ -513,23 +623,71 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           icon: <FaFilePdf className="text-white mr-1" size={16} />,
           label: 'Download PDF'
         };
+      case 'doc':
+      case 'docx':
+        return { 
+          type: 'document', 
+          icon: <FaDownload className="text-white mr-1" size={16} />,
+          label: 'Download Document'
+        };
+      case 'txt':
+      case 'md':
+      case 'readme':
+        return { 
+          type: 'text', 
+          icon: <FaDownload className="text-white mr-1" size={16} />,
+          label: 'Download Text'
+        };
       case 'mp4':
       case 'mov':
       case 'avi':
+      case 'mkv':
+      case 'webm':
         return { 
           type: 'video', 
           icon: <FaFileVideo className="text-white mr-1" size={16} />,
           label: 'Download Video'
         };
+      case 'mp3':
+      case 'wav':
+      case 'ogg':
+      case 'flac':
+        return { 
+          type: 'audio', 
+          icon: <FaVolumeUp className="text-white mr-1" size={16} />,
+          label: 'Download Audio'
+        };
       case 'jpg':
+      case 'jpeg':
       case 'png':
       case 'gif':
       case 'webp':
+      case 'svg':
+      case 'bmp':
         return { 
           type: 'image', 
           icon: <FaFileImage className="text-white mr-1" size={16} />,
           label: 'Download Image'
         };
+      case 'js':
+      case 'ts':
+      case 'jsx':
+      case 'tsx':
+      case 'py':
+      case 'cpp':
+      case 'c':
+      case 'cs':
+      case 'java':
+      case 'php':
+      case 'rb':
+      case 'go':
+      case 'rs':
+        return { 
+          type: 'code', 
+          icon: <FaCode className="text-white mr-1" size={16} />,
+          label: 'Download Source Code'
+        };
+      // ...existing case statements...
       default:
         return { 
           type: 'file', 
@@ -538,6 +696,81 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         };
     }
   };
+  /**
+   * Function to format bytes into human-readable file size
+   * @param bytes - The size in bytes
+   * @returns Formatted string like "1.23 MB"
+   */
+  const formatFileSize = useCallback((bytes: number): string => {
+    if (bytes === 0) return '0 Bytes';
+    
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    
+    return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + ' ' + sizes[i];
+  }, []);
+
+  /**
+   * Function to fetch the file size from a URL
+   * @param url - The URL of the file
+   * @returns Promise with file size information
+   */
+  const fetchFileSize = useCallback(async (url: string): Promise<FileSizeResponse> => {
+    try {
+      // Only attempt to fetch size for files on the same origin
+      if (url.startsWith('/') || url.startsWith(window.location.origin)) {
+        const response = await fetch(url, { method: 'HEAD' });
+        
+        if (response.ok) {
+          const contentLength = response.headers.get('content-length');
+          const size = contentLength ? parseInt(contentLength, 10) : 0;
+          return { 
+            size, 
+            formattedSize: formatFileSize(size) 
+          };
+        }
+      }
+      
+      // For external URLs or if there was an error, return zero size
+      return { size: 0, formattedSize: '' };
+    } catch (error) {
+      console.error('Error fetching file size:', error);
+      return { size: 0, formattedSize: '' };
+    }
+  }, [formatFileSize]);  /**
+   * Helper function to get file size for a download link
+   */  const getDownloadFileSize = useCallback(async () => {
+    if (downloadLink) {
+      const url = typeof downloadLink === 'string' ? downloadLink : downloadLink.url;
+      
+      // Don't fetch if the link is external or invalid
+      if (!url || !url.startsWith('/')) return;
+      
+      // Always fetch the file size, regardless of whether a manual size was provided
+      const { formattedSize } = await fetchFileSize(url);
+      if (formattedSize) {
+        setAutoFileSize(formattedSize);
+      }
+    }
+  }, [downloadLink, fetchFileSize]);
+
+  /**
+   * Effect to fetch file size when the component mounts
+   * This ensures the file size is available on page load
+   */
+  useEffect(() => {
+    getDownloadFileSize();
+  }, [getDownloadFileSize]);
+  
+  /**
+   * Effect to fetch file size when modal is opened
+   * This ensures the file size is updated if it wasn't loaded initially
+   */
+  useEffect(() => {
+    if (isModalOpen) {
+      getDownloadFileSize();
+    }
+  }, [isModalOpen, getDownloadFileSize]);
 
   /**
    * Helper function to get download URL and label information
@@ -545,22 +778,24 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
    */
   const getDownloadInfo = () => {
     if (!downloadLink) return { url: '', label: 'Download' };
-    
-    if (typeof downloadLink === 'string') {
-      return { url: downloadLink, label: downloadFileInfo.label };
+      if (typeof downloadLink === 'string') {
+      return { 
+        url: downloadLink, 
+        label: downloadFileInfo.label,
+        fileSize: autoFileSize // Always use auto-detected file size
+      };
     } else {
       // Make sure filename is prefixed with "Download" if not already
       let displayLabel = downloadLink.filename || downloadFileInfo.label;
       
       // Only add "Download" prefix if it doesn't already start with it
       if (!displayLabel.toLowerCase().startsWith('download')) {
-        displayLabel = `Download ${displayLabel}`;
+        displayLabel = `${downloadFileInfo.label}: ${displayLabel}`;
       }
-      
-      return { 
+        return { 
         url: downloadLink.url, 
         label: displayLabel,
-        fileSize: downloadLink.fileSize
+        fileSize: autoFileSize
       };
     }
   };
@@ -573,43 +808,42 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     <>
       {/* Project Card with mobile-responsive design */}
       <div 
-        onClick={() => setIsModalOpen(true)}
+        onClick={openModal}
         onMouseDown={() => setIsClicked(true)}
         onMouseUp={() => setIsClicked(false)}
         className={`relative z-10 flex flex-col justify-between p-4 sm:p-5 bg-[#111111] border border-[#2a2a2a] rounded-lg transition-all duration-300 hover:border-[#4a4a4a] hover:translate-y-[-4px] overflow-hidden cursor-pointer w-full max-w-[500px] mx-auto h-48 sm:h-56 ${isClicked ? 'scale-95' : ''}`}
-      >
-        {/* Background thumbnail image with blur effect */}
-        <div className="absolute top-0 left-0 w-full h-full z-0 opacity-20">
+      >        {/* Background thumbnail image with improved visibility */}
+        <div className="absolute top-0 left-0 w-full h-full z-0 opacity-60">
           <Image 
             src={thumbnailImage} 
             alt={title} 
             fill 
             sizes="(max-width: 768px) 100vw, 400px"
-            className="blur-[2px] object-cover" 
+            className="object-cover" 
           />
+          {/* Dark gradient overlay for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20"></div>
         </div>
-        
-        {/* Card content - title and description */}
+          {/* Card content - title and description with enhanced readability */}
         <div className="relative z-10">
-          <h3 className="text-white text-xl sm:text-2xl font-medium mb-2 truncate">
+          <h3 className="text-white text-xl sm:text-2xl font-bold mb-2 truncate drop-shadow-lg">
             {title}
           </h3>
-          <p className="text-gray-400 text-sm line-clamp-2 mb-3">{description.split('.')[0]}.</p>
+          <p className="text-gray-200 text-sm line-clamp-2 mb-3 drop-shadow-md">{description.split('.')[0]}.</p>
         </div>
-        
-        {/* Tech stack tags - limited to first 4 with counter for remaining */}
+          {/* Tech stack tags - enhanced visibility with backdrop */}
         <div className="relative z-10 flex flex-wrap gap-1.5 mt-auto">
           {techStack.slice(0, 4).map((tech, index) => (
             <span 
               key={index} 
-              className="px-4 py-2 bg-black border border-[#27272a] rounded-full flex items-center justify-center text-gray-300 text-xs"
+              className="px-4 py-2 bg-black/80 backdrop-blur-sm border border-[#27272a] rounded-full flex items-center justify-center text-gray-300 text-xs shadow-lg"
               onClick={() => handleTechIconClick(tech)}
             >
               {techIcons[tech] || null} {tech}
             </span>
           ))}
           {techStack.length > 4 && (
-            <span className="px-4 py-2 bg-black border border-[#27272a] rounded-full flex items-center justify-center text-gray-300 text-xs">
+            <span className="px-4 py-2 bg-black/80 backdrop-blur-sm border border-[#27272a] rounded-full flex items-center justify-center text-gray-300 text-xs shadow-lg">
               +{techStack.length - 4}
             </span>
           )}

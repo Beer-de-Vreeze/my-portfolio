@@ -10,7 +10,10 @@ import styles from "@/styles/page.module.css";
 // Custom hook for window size with proper SSR handling
 function useWindowSize() {
   // Initialize with undefined to handle SSR
-  const [windowSize, setWindowSize] = useState({
+  const [windowSize, setWindowSize] = useState<{
+    width: number | undefined;
+    height: number | undefined;
+  }>({
     width: undefined,
     height: undefined,
   });
@@ -47,29 +50,28 @@ export default function Home() {
     setIsMounted(true);
   }, []);
 
-  const handleNavigation = (path) => {
+  const handleNavigation = (path: string) => {
     router.push(path);
   };
-
   const cards = [
-    <div key="about" onClick={() => handleNavigation('/about')} className="card-hover">
+    <div key="about" onClick={() => handleNavigation('/about')} className={styles.cardHover}>
       <AboutCard />
     </div>,
-    <div key="project" onClick={() => handleNavigation('/projects')} className="card-hover">
+    <div key="project" onClick={() => handleNavigation('/projects')} className={styles.cardHover}>
       <ProjectCard />
     </div>,
-    <div key="contact" onClick={() => handleNavigation('/contact')} className="card-hover">
+    <div key="contact" onClick={() => handleNavigation('/contact')} className={styles.cardHover}>
       <ContactCard />
     </div>,
   ];
-
   // Responsive breakpoints
-  const isXSmall = width < 480;
-  const isSmall = width >= 480 && width < 640;
-  const isMedium = width >= 640 && width < 768;
-  const isLarge = width >= 768 && width < 1024;
-  const isXLarge = width >= 1024 && width < 1280;
-  const isXXLarge = width >= 1280 && width < 1536;
+  const isXSmall = width !== undefined && width < 480;
+  const isSmall = width !== undefined && width >= 480 && width < 640;
+  const isMedium = width !== undefined && width >= 640 && width < 768;
+  const isLarge = width !== undefined && width >= 768 && width < 1024;
+  // These variables are declared but not used, keeping them for future use
+  // const isXLarge = width !== undefined && width >= 1024 && width < 1280;
+  // const isXXLarge = width !== undefined && width >= 1280 && width < 1536;
 
 
   // Determine layout based on screen size
@@ -86,10 +88,9 @@ export default function Home() {
       <div className={`${styles.headerContainer} ${isDesktop ? styles.headerContainerDesktop : styles.headerContainerMobile}`}>
         <h1 className={`${styles.name} ${isDesktop ? styles.nameDesktop : styles.nameMobile}`}>
           Beer de Vreeze
-        </h1>
-        <h2 className={`${styles.title} ${isDesktop ? styles.titleDesktop : styles.titleMobile}`}>
+        </h1>        <h2 className={`${styles.title} ${isDesktop ? styles.titleDesktop : styles.titleMobile}`}>
           <span className="text-white">Dutch-based </span>
-          {width < 900 && <br />}
+          {width !== undefined && width < 900 && <br />}
           <span className="gradient-text" style={{ marginTop: '0.5rem' }}>Game Developer</span>
         </h2>
       </div>

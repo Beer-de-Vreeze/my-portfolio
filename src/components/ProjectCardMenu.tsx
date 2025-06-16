@@ -18,21 +18,21 @@ export default function ProjectsCard() {
             `}
             style={{
               zIndex: 10 - index,
-              width: '160px',
-              height: '160px',
+              width: 'clamp(160px, 20vw, 220px)',
+              height: 'clamp(160px, 20vw, 220px)',
               transform: `translate(${index * 6 + (index * 2)}px, ${index * 3}px)`,
               opacity: index === 0 ? 1 : 0.85 - (index * 0.07),
               transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease, border-color 0.3s ease',
             }}
           >
             {index === 0 && (
-              <FolderIcon className="w-16 h-16 sm:w-20 sm:h-20 md:w-20 md:h-20 text-white transition-transform duration-300 group-hover:scale-110" />
+              <FolderIcon className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 text-white transition-transform duration-300 group-hover:scale-110" />
             )}
           </div>
         ))}
       </div>
 
-      <span className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 text-white text-xl sm:text-2xl md:text-3xl tracking-tighter font-extralight antialiased">
+      <span className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl tracking-tighter font-extralight antialiased">
         Projects
       </span>
 

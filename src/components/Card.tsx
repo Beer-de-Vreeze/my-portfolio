@@ -26,7 +26,7 @@ export default function BaseCard({ children, href, className = "" }: BaseCardPro
       onMouseEnter={handleMouseEnter}
     >
       <div 
-        className={`relative w-[95vw] max-w-[500px] h-[250px] md:w-[495px] md:h-[297px] bg-black border border-[#27272a] rounded-lg flex flex-col items-center justify-center transition-all duration-300 hover:border-[#71717a] ${isClicked ? 'scale-95' : ''} ${className}`}
+        className={`relative w-[95vw] max-w-[600px] h-[250px] md:w-[600px] md:h-[297px] lg:w-[650px] lg:h-[330px] xl:w-[700px] xl:h-[360px] 2xl:w-[750px] 2xl:h-[390px] bg-black border border-[#27272a] rounded-lg flex flex-col items-center justify-center transition-all duration-300 hover:border-[#71717a] ${isClicked ? 'scale-95' : ''} ${className}`}
       >
         <div 
           className="absolute inset-0 w-full h-full rounded-lg"

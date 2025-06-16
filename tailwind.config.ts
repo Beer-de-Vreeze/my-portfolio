@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import type { PluginAPI } from "tailwindcss/types/config";
 
 export default {
   content: [
@@ -29,7 +30,7 @@ export default {
     },
   },
   plugins: [
-    function({ addUtilities }: { addUtilities: (utilities: Record<string, { [key: string]: string | number }>) => void }) {
+    function({ addUtilities }: PluginAPI) {
       const newUtilities = {
         '.font-light-antialiased': {
           'font-weight': '300',

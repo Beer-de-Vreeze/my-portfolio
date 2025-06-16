@@ -43,7 +43,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
     },
     { 
       icon: <FaMedkit className="w-4 h-4 text-white" />, 
-      label: "EHBO",
+      label: "First Aid",
       additionalInfo: "Certified first aid provider" 
     },
     { 
