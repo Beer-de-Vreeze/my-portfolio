@@ -1,12 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { IoClose } from 'react-icons/io5';
+import React, { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 
 const EducationCard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isAnimatingOut, setIsAnimatingOut] = useState(false);
-  const [activeSchool, setActiveSchool] = useState(null);
+  const [isAnimatingOut, setIsAnimatingOut] = useState(false);  // Define School type
+  type School = {
+    name: string;
+    educationType: string;
+    logo: string;
+    subtitle: string;
+    finishedDate: string;
+    program?: string[];
+    technologies?: string[];
+  };
 
-  const schools = [
+  const [activeSchool, setActiveSchool] = useState<School | null>(null);
+
+  const schools: School[] = [
     {
       name: 'Lek en Linge',
       educationType: 'VMBO-TL',
@@ -51,8 +61,8 @@ const EducationCard = () => {
       technologies: ['Unity', 'C#', 'Git',"Game Design", 'SCRUM',],
     }
   ];
-
-  const toggleModal = (school) => {
+  
+  const toggleModal = useCallback((school: School | null) => {
     if (school) {
       setActiveSchool(school);
       setIsAnimatingOut(false);
@@ -60,13 +70,11 @@ const EducationCard = () => {
     } else {
       setIsAnimatingOut(true);
       setTimeout(() => {
-        setIsModalOpen(false);
-      }, 300);
+        setIsModalOpen(false);      }, 300);
     }
-  };
+  }, []);
 
-  useEffect(() => {
-    const handleKeyDown = (e) => {
+  useEffect(() => {    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         toggleModal(null);
       }
@@ -79,7 +87,7 @@ const EducationCard = () => {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isModalOpen]);
+  }, [isModalOpen, toggleModal]);
 
   return (
     <div className="w-full max-w-[800px]">
@@ -96,7 +104,7 @@ const EducationCard = () => {
               onClick={() => toggleModal(school)}
             >
               <div className="rounded-lg mr-4">
-                <img src={school.logo} alt={`${school.name} logo`} className="w-20 h-20" />
+                <Image src={school.logo} alt={`${school.name} logo`} width={80} height={80} className="object-cover" />
               </div>
               <div className="flex-1">
                 <h3 className="text-white font-semibold">{school.name}</h3>
@@ -143,7 +151,7 @@ const EducationCard = () => {
             <div className="p-6 relative">
               <div className="flex items-start mb-4">
                 <div className="rounded-lg mr-4">
-                  <img src={activeSchool.logo} alt={`${activeSchool.name} logo`} className="w-24 h-24" />
+                  <Image src={activeSchool.logo} alt={`${activeSchool.name} logo`} width={96} height={96} className="object-cover" />
                 </div>
                 <div>
                   <div className="flex items-center gap-3 mb-1">
@@ -173,17 +181,17 @@ const EducationCard = () => {
                       ))}
                     </ul>
                   </div>
-                
+                  {activeSchool.technologies && (
                   <div className="mt-6 flex flex-wrap gap-2">
                     {activeSchool.technologies.map((tech) => (
                       <div 
                         key={tech} 
                         className="px-3 py-1 bg-black border border-[#27272a] rounded-full flex items-center gap-1.5 shadow-md"
                       >
-                        <span className="text-sm font-light text-gray-300">{tech}</span>
-                      </div>
+                        <span className="text-sm font-light text-gray-300">{tech}</span>                      </div>
                     ))}
                   </div>
+                  )}
                 </>
               )}
             </div>

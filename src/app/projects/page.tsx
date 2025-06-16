@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import ProjectCard from "@/components/projectCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -7,6 +7,20 @@ import Footer from "@/components/Footer";
 import 'highlight.js/styles/monokai.css';
 // Import custom highlighting styles
 import '@/styles/code-highlight.css';
+
+// Loading component for Suspense fallback
+const ProjectCardLoading = () => (
+  <div className="w-full h-96 bg-gray-800 rounded-lg animate-pulse flex items-center justify-center">
+    <div className="text-gray-400">Loading project...</div>
+  </div>
+);
+
+// Wrapper component to handle Suspense for ProjectCard
+const SuspenseProjectCard = (props: React.ComponentProps<typeof ProjectCard>) => (
+  <Suspense fallback={<ProjectCardLoading />}>
+    <ProjectCard {...props} />
+  </Suspense>
+);
 
 
 export default function Projects() {
@@ -45,7 +59,7 @@ export default function Projects() {
       </div>
 
       <main className="relative z-0 flex flex-col items-center flex-grow p-2 pt-20 pb-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl">          <ProjectCard 
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl">          <SuspenseProjectCard 
             projectId="better-tetris"
             title="Better Tetris"
             description="A Unity-based Tetris clone featuring classic gameplay with enhanced visual effects, scoring systems, and modern gaming elements. This project implements a complete Tetris game with Super Rotation System (SRS), wall kicks, and audio feedback."
@@ -121,7 +135,7 @@ private bool TestWallKicks(int rotationIndex, int rotationDirection)
 }`
             }}
             onModalStateChange={handleModalStateChange}
-          />          <ProjectCard 
+          />          <SuspenseProjectCard 
             projectId="bearly-stealthy"
             title="Bearly Stealthy"
             description="A stealth game where you play as a bear trying to gather food while remaining undetected. Navigate through various environments, use special bear abilities, and avoid detection from rangers and other enemies."
@@ -215,7 +229,7 @@ public class EnemyDetection : MonoBehaviour
 }`
             }}
             onModalStateChange={handleModalStateChange}
-          /><ProjectCard 
+          /><SuspenseProjectCard 
             projectId="unity-audio-previewer"
             title="Unity Audio Previewer"
               description="A comprehensive Unity Editor extension designed to streamline audio workflow for game developers and sound designers. Features advanced waveform visualization, intuitive playback controls, and seamless asset management capabilities that integrate directly into the Unity development environment."            downloadLink={{
@@ -459,7 +473,7 @@ features={[
           }
             onModalStateChange={handleModalStateChange}
           />
-<ProjectCard 
+<SuspenseProjectCard 
   projectId="sketchin-spells"
   media={[{ type: 'image', src: "/images/sketchin-spells.png", alt: "Sketchin' Spells gameplay screenshot" }]}
   title="Sketchin' Spells"
@@ -516,7 +530,7 @@ features={[
 ]}
 
   onModalStateChange={handleModalStateChange}          />
-<ProjectCard
+<SuspenseProjectCard
             projectId="jerry-ai-evolution"
             media={[
               { type: 'image', src: '/images/Jerry_Move.gif', alt: 'Jerry V1 Movement' },
@@ -553,7 +567,7 @@ features={[
                 description: 'Specialized survival AI implementation featuring dynamic threat assessment, weapon handling, and strategic positioning in high-pressure combat scenarios against multiple adversaries.' 
               },
             ]}
-            onModalStateChange={handleModalStateChange}          />          <ProjectCard 
+            onModalStateChange={handleModalStateChange}          />          <SuspenseProjectCard 
             projectId="portfolio-website"
             media={[{ type: 'image', src: "/images/portfolio-preview.webp", alt: "Portfolio website showcase" }]}
             title="Interactive Portfolio Website"
@@ -570,9 +584,8 @@ features={[
                   code: `// Responsive layout component with Tailwind CSS
 const ProjectGrid: React.FC = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl">
-      {projects.map((project, index) => (
-        <ProjectCard 
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl">      {projects.map((project, index) => (
+        <SuspenseProjectCard 
           key={index}
           {...project}
           onModalStateChange={handleModalStateChange}
@@ -868,9 +881,8 @@ export default function Projects() {
       {/* Main content grid */}
       <main className="relative z-0 flex flex-col items-center flex-grow p-2 pt-20 pb-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl">
-          {/* Project cards with modal state management */}
-          {projects.map((project, index) => (
-            <ProjectCard 
+          {/* Project cards with modal state management */}          {projects.map((project, index) => (
+            <SuspenseProjectCard 
               key={project.id}
               {...project}
               onModalStateChange={handleModalStateChange}

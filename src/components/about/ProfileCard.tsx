@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { FaMapMarkerAlt, FaGlobe, FaGamepad, FaLightbulb, FaFish, FaMedkit, FaUtensils } from 'react-icons/fa';
 
 interface Bubble {
-  icon: JSX.Element;
+  icon: React.JSX.Element;
   label: string;
   additionalInfo?: string;
 }
@@ -60,9 +61,6 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
 }) => {
   const [hoveredBubble, setHoveredBubble] = useState<number | null>(null);
   const [fadingBubble, setFadingBubble] = useState<number | null>(null);
-  const [animatingBubble, setAnimatingBubble] = useState<number | null>(null);
-  const [isTooltipVisible, setIsTooltipVisible] = useState<boolean>(false);
-
   // Clear fading bubble after animation completes
   useEffect(() => {
     if (fadingBubble !== null) {
@@ -73,22 +71,6 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
       return () => clearTimeout(timer);
     }
   }, [fadingBubble]);
-
-  // Handle pop-up animation on hover
-  useEffect(() => {
-    if (hoveredBubble !== null) {
-      setIsTooltipVisible(true);
-      setAnimatingBubble(hoveredBubble);
-      // Reset animation state after animation completes
-      const timer = setTimeout(() => {
-        setAnimatingBubble(null);
-      }, 300);
-      
-      return () => clearTimeout(timer);
-    } else {
-      setIsTooltipVisible(false);
-    }
-  }, [hoveredBubble]);
 
   const handleMouseEnter = (index: number) => {
     console.log('Mouse enter on bubble:', index);
@@ -111,14 +93,16 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   return (
     <div className="w-full max-w-[500px] h-auto md:w-[495px] bg-black border border-[#27272a] rounded-lg shadow-lg p-4">
       <div className="w-full">
-        {/* Profile header - existing code */}
-        <div className="flex items-center justify-start gap-3 mb-0">
+        {/* Profile header - existing code */}        <div className="flex items-center justify-start gap-3 mb-0">
           <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-900 border-2 border-gray-600 shadow-md">
-            <img 
+            <Image 
               src="/images/Beer.webp" 
               alt="Profile" 
+              width={80}
+              height={80}
               className="w-full h-full object-cover object-center"
-            />          </div>
+            />
+          </div>
           <div className="flex flex-col justify-start gap-0.5 pt-8">
             <h2 className="text-2xl font-bold text-white tracking-tighter">{name}</h2>
             <p className="text-base text-gray-400 tracking-tighter font-extralight">{username}</p>
