@@ -38,18 +38,14 @@ export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
-}) {
-  return (
-    <html lang="en" style={{ height: '100%', WebkitTextSizeAdjust: '100%' }}>
+}) {  return (
+    <html lang="en">
       <head>
         <meta name="theme-color" content="#000000" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
-      <body className="bg-black text-white custom-scrollbar" style={{ 
-        minHeight: '-webkit-fill-available',
-        WebkitOverflowScrolling: 'touch'
-      }}>
+      <body className="bg-black text-white custom-scrollbar">
         <LoadingBar />
         {children}
       </body>
