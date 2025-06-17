@@ -52,10 +52,11 @@ const JourneyCard: React.FC<JourneyCardProps> = ({
     const steps = [];
     
     // Add the back arrow if not at the first step
-    if (activeStep > 1) {      steps.push(
+    if (activeStep > 1) {
+      steps.push(
         <div 
           key="back" 
-          className="text-white opacity-80 cursor-pointer hover:opacity-100 p-2 sm:p-1 -m-2 sm:-m-1 flex items-center justify-center"
+          className="text-white opacity-80 cursor-pointer hover:opacity-100"
           onClick={() => handleStepClick(activeStep - 1)}
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -77,28 +78,26 @@ const JourneyCard: React.FC<JourneyCardProps> = ({
         <div
           className="w-6 h-6 rounded-full border-2 border-white bg-black absolute z-20 shadow-md transition-all duration-300"
           style={{ left: progressWidth, transform: 'translateX(-50%)' }}
-        ></div>        {Array.from({ length: totalSteps }).map((_, index) => (
+        ></div>
+        {Array.from({ length: totalSteps }).map((_, index) => (
           <div 
             key={`step-${index}`} 
-            className="absolute z-10 cursor-pointer p-2 sm:p-1 -m-2 sm:-m-1 flex items-center justify-center"
-            style={{ left: `${(index / (totalSteps - 1)) * 100}%`, transform: 'translateX(-50%)' }}
+            className={`w-3 h-3 rounded-full absolute z-10 cursor-pointer ${
+              index + 1 <= activeStep ? 'bg-white' : 'bg-[#71717a]'
+            }`}
+            style={{ left: `${(index / (totalSteps - 1)) * 100}%` }}
             onClick={() => handleStepClick(index + 1)}
-          >
-            <div 
-              className={`w-4 h-4 sm:w-3 sm:h-3 rounded-full ${
-                index + 1 <= activeStep ? 'bg-white' : 'bg-[#71717a]'
-              }`}
-            ></div>
-          </div>
+          ></div>
         ))}
       </div>
     );
 
     // Add the forward arrow if not at the last step
-    if (activeStep < totalSteps) {      steps.push(
+    if (activeStep < totalSteps) {
+      steps.push(
         <div 
           key="forward" 
-          className="text-white opacity-80 cursor-pointer hover:opacity-100 p-2 sm:p-1 -m-2 sm:-m-1 flex items-center justify-center"
+          className="text-white opacity-80 cursor-pointer hover:opacity-100"
           onClick={() => handleStepClick(activeStep + 1)}
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

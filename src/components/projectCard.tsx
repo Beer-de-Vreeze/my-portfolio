@@ -174,11 +174,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [autoplay, setAutoplay] = useState(true);
-    // File size state
-  const [autoFileSize, setAutoFileSize] = useState<string | null>(null);
   
-  // Code snippet collapse state - starts closed for all snippets
-  const [collapsedCodeSnippets, setCollapsedCodeSnippets] = useState<{ [key: string]: boolean }>({});
+  // File size state
+  const [autoFileSize, setAutoFileSize] = useState<string | null>(null);
   
   // Video and fullscreen references/state
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -190,9 +188,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
    * 3. Fall back to placeholder image if neither exists
    */
   const thumbnailImage = coverImage || media[0]?.src || "/path/to/wip-image-library/placeholder.jpg";
+
   /**
    * Opens the modal and updates the URL with the project ID
-   * Also initializes all code snippets to be collapsed
    */
   const openModal = useCallback(() => {
     setIsModalOpen(true);
@@ -200,18 +198,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     url.searchParams.set('project', projectId);
     router.push(url.pathname + url.search);
     onModalStateChange?.(true);
-      // Initialize feature code snippets as collapsed, main snippet as open
-    const initialCollapsedState: { [key: string]: boolean } = {};
-    features.forEach((feature, index) => {
-      if (feature.codeSnippet) {
-        initialCollapsedState[`feature-${index}`] = true;
-      }
-    });
-    if (codeSnippet) {
-      initialCollapsedState['main'] = false; // Main snippet starts open
-    }
-    setCollapsedCodeSnippets(initialCollapsedState);
-  }, [projectId, router, onModalStateChange, features, codeSnippet]);
+  }, [projectId, router, onModalStateChange]);
 
   /**
    * Handles closing the modal with animation and removes project from URL
@@ -234,7 +221,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       setIsClosing(false);
       onModalStateChange?.(false);
     }, 300);
-  }, [onModalStateChange, router]);  /**
+  }, [onModalStateChange, router]);
+  /**
    * Effect to check URL parameters on component mount and handle direct links
    */
   useEffect(() => {
@@ -242,19 +230,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     if (currentProject === projectId && !isModalOpen) {
       setIsModalOpen(true);
       onModalStateChange?.(true);
-        // Initialize feature code snippets as collapsed, main snippet as open when opening via URL
-      const initialCollapsedState: { [key: string]: boolean } = {};
-      features.forEach((feature, index) => {
-        if (feature.codeSnippet) {
-          initialCollapsedState[`feature-${index}`] = true;
-        }
-      });
-      if (codeSnippet) {
-        initialCollapsedState['main'] = false; // Main snippet starts open
-      }
-      setCollapsedCodeSnippets(initialCollapsedState);
     }
-  }, [searchParams, projectId, isModalOpen, onModalStateChange, features, codeSnippet]);
+  }, [searchParams, projectId, isModalOpen, onModalStateChange]);
   
   /**
    * Effect for handling ESC key press and body scroll locking
@@ -278,21 +255,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       document.removeEventListener('keydown', handleEscKey);
     };
   }, [isModalOpen, onModalStateChange, closeModal]);
+
   /**
    * Handler for tech stack icon clicks
    */
   const handleTechIconClick = (tech: string) => {
     console.log(`${tech} icon clicked`);
-  };
-
-  /**
-   * Toggle code snippet collapse state
-   */
-  const toggleCodeSnippet = (snippetId: string) => {
-    setCollapsedCodeSnippets(prev => ({
-      ...prev,
-      [snippetId]: !prev[snippetId]
-    }));
   };
   /**
    * Navigate to next media item in the carousel
@@ -1092,52 +1060,36 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                         </span>
                         <span className="text-gray-300 text-sm sm:text-base leading-relaxed">
                           {feature.description}
-                        </span>                          {/* Feature-specific code snippet if available */}
+                        </span>
+                        
+                        {/* Feature-specific code snippet if available */}
                         {feature.codeSnippet && (
-                          <div className="mt-6 w-full">                            {/* Collapsible header */}
-                            <button
-                              onClick={() => toggleCodeSnippet(`feature-${index}`)}
-                              className="w-full flex items-center justify-between p-3 bg-[#1a1a1a] hover:bg-[#222] border border-[#333] transition-colors text-left rounded-none"
-                            >
-                              <span className="text-sm text-gray-300 font-medium">
-                                {feature.codeSnippet.title || 'Code Example'}
-                              </span>
-                              <svg 
-                                className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${
-                                  collapsedCodeSnippets[`feature-${index}`] ? 'rotate-0' : 'rotate-180'
-                                }`}
-                                fill="none" 
-                                stroke="currentColor" 
-                                viewBox="0 0 24 24"
-                              >
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                              </svg>
-                            </button>                              {/* Collapsible content */}
-                            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                              collapsedCodeSnippets[`feature-${index}`] ? 'max-h-0' : 'max-h-[72rem]'
-                            }`}>                              <div className="relative overflow-hidden border-x border-b border-[#333]">
-                                <div className="max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
-                                  <pre className="w-full overflow-x-auto p-5 text-sm sm:text-[14px] leading-relaxed bg-[#1e1e1e]">
-                                    <code className={`language-${feature.codeSnippet.language || 'javascript'} font-mono`}>
-                                      {feature.codeSnippet.code}
-                                    </code>
-                                  </pre>
-                                </div>
-                                {/* Copy button for code snippet */}
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    navigator.clipboard.writeText(feature.codeSnippet!.code);
-                                  }}
-                                  className="absolute top-2 right-2 bg-black/70 hover:bg-black/90 p-2 rounded-md text-gray-200 text-xs hover:text-white transition-colors"
-                                  aria-label="Copy code"
-                                >
-                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                  </svg>
-                                </button>
+                          <div className="mt-3 w-full">
+                            {feature.codeSnippet.title && (
+                              <div className="text-sm text-gray-300 mb-2 px-1 font-medium">
+                                {feature.codeSnippet.title}
                               </div>
+                            )}
+                            <div className="relative rounded-md overflow-hidden">
+                              <pre className="w-full overflow-x-auto p-5 text-sm sm:text-[14px] leading-relaxed bg-[#1e1e1e] rounded-md border border-[#333] scrollbar-thin scrollbar-thumb-gray-600">
+                                <code className={`language-${feature.codeSnippet.language || 'javascript'} font-mono`}>
+                                  {feature.codeSnippet.code}
+                                </code>
+                              </pre>
+                              {/* Copy button for code snippet */}
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigator.clipboard.writeText(feature.codeSnippet!.code);
+                                }}
+                                className="absolute top-2 right-2 bg-black/70 hover:bg-black/90 p-2 rounded-md text-gray-200 text-xs hover:text-white transition-colors"
+                                aria-label="Copy code"
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                              </button>
                             </div>
                           </div>
                         )}
@@ -1147,56 +1099,39 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 </div>
                 
                 <hr className="border-t border-[#2a2a2a] my-6" />
-                  {/* Main code snippet section if available */}
+                
+                {/* Main code snippet section if available */}
                 {codeSnippet && (
-                  <div className="mb-8">                    <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 
+                  <div className="mb-8">
+                    <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 
                       bg-clip-text text-transparent">
                       Code Snippet
-                    </h2>                    {/* Collapsible header */}
-                    <button
-                      onClick={() => toggleCodeSnippet('main')}
-                      className="w-full flex items-center justify-between p-3 bg-[#1a1a1a] hover:bg-[#222] border border-[#333] transition-colors text-left rounded-none"
-                    >
-                      <span className="text-sm text-gray-300 font-medium">
-                        {codeSnippet.title || 'Main Code Example'}
-                      </span>
-                      <svg 
-                        className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${
-                          collapsedCodeSnippets['main'] ? 'rotate-0' : 'rotate-180'
-                        }`}
-                        fill="none" 
-                        stroke="currentColor" 
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>                      {/* Collapsible content */}
-                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                      collapsedCodeSnippets['main'] ? 'max-h-0' : 'max-h-[72rem]'
-                    }`}>
-                      <div className="relative overflow-hidden border-x border-b border-[#333]">
-                        <div className="max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
-                          <pre className="w-full overflow-x-auto p-5 text-sm sm:text-[14px] leading-relaxed bg-[#1e1e1e]">
-                            <code className={`language-${codeSnippet.language || 'javascript'} font-mono`}>
-                              {codeSnippet.code}
-                            </code>
-                          </pre>
+                    </h2>
+                    <div className="relative rounded-md overflow-hidden">
+                      {codeSnippet.title && (
+                        <div className="text-sm text-gray-300 mb-2 px-1 font-medium">
+                          {codeSnippet.title}
                         </div>
-                        {/* Copy button for main code snippet */}
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigator.clipboard.writeText(codeSnippet.code);
-                          }}
-                          className="absolute top-2 right-2 bg-black/70 hover:bg-black/90 p-2 rounded-md text-gray-200 text-xs hover:text-white transition-colors"
-                          aria-label="Copy code"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                          </svg>
-                        </button>
-                      </div>
+                      )}
+                      <pre className="w-full overflow-x-auto p-5 text-sm sm:text-[14px] leading-relaxed bg-[#1e1e1e] rounded-md border border-[#333] scrollbar-thin scrollbar-thumb-gray-600">
+                        <code className={`language-${codeSnippet.language || 'javascript'} font-mono`}>
+                          {codeSnippet.code}
+                        </code>
+                      </pre>
+                      {/* Copy button for main code snippet */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigator.clipboard.writeText(codeSnippet.code);
+                        }}
+                        className="absolute top-2 right-2 bg-black/70 hover:bg-black/90 p-2 rounded-md text-gray-200 text-xs hover:text-white transition-colors"
+                        aria-label="Copy code"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                      </button>
                     </div>
                   </div>
                 )}

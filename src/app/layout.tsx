@@ -5,13 +5,6 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: "Beer de Vreeze - Portfolio",
   description: "Game Developer Portfolio",
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-    viewportFit: 'cover', // Important for iPhone X and newer
-  },
   icons: {
     icon: [
       { url: '/favicon/favicon.ico', sizes: 'any' },
@@ -27,11 +20,6 @@ export const metadata: Metadata = {
     ]
   },
   manifest: '/favicon/site.webmanifest',
-  other: {
-    'apple-mobile-web-app-capable': 'yes',
-    'apple-mobile-web-app-status-bar-style': 'black-translucent',
-    'format-detection': 'telephone=no',
-  },
 };
 
 export default function RootLayout({
@@ -40,16 +28,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" style={{ height: '100%', WebkitTextSizeAdjust: '100%' }}>
-      <head>
-        <meta name="theme-color" content="#000000" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-      </head>
-      <body className="bg-black text-white custom-scrollbar" style={{ 
-        minHeight: '-webkit-fill-available',
-        WebkitOverflowScrolling: 'touch'
-      }}>
+    <html lang="en">
+      <body className="bg-black text-white custom-scrollbar">
         <LoadingBar />
         {children}
       </body>
