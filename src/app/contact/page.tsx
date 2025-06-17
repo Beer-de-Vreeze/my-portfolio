@@ -3,7 +3,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ContactForm from '@/components/ContactForm';
 import { motion } from 'framer-motion';
-import { FaGithub, FaLinkedin,} from 'react-icons/fa';
+import { FaGithub, FaLinkedin, FaFileAlt } from 'react-icons/fa';
 
 export default function Contact() {
   return (
@@ -40,6 +40,16 @@ export default function Contact() {
               whileTap={{ scale: 0.9 }}
             >
               <FaLinkedin />
+            </motion.a>            <motion.a 
+              href="/downloads/Beer%20de%20Vreeze%20CV.pdf" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-2xl sm:text-3xl"
+              whileHover={{ scale: 1.2 }}
+              whileTap={{ scale: 0.9 }}
+              title="View CV"
+            >
+              <FaFileAlt />
             </motion.a>
           </div>
         </div>
