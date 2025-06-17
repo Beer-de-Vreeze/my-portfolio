@@ -38,12 +38,36 @@
 }
 
 .headerContainerDesktop {
-  margin-top: -10vh;
-  margin-bottom: 4rem;
+  margin-top: -5vh; /* Increased from -10vh to move lower */
+  margin-bottom: 2rem; /* Reduced from 4rem */
 }
 
 .headerContainerMobile {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem; /* Reduced from 2rem */
+}
+
+/* Adjust header position for smaller screens and laptops */
+@media (max-width: 1023px) {
+  .headerContainerDesktop {
+    margin-top: 5vh; /* Increased from -2vh to move much lower */
+    margin-bottom: 1.5rem; /* Reduced from 3rem */
+  }
+}
+
+/* For tablets/small laptops */
+@media (max-width: 1200px) and (min-width: 768px) {
+  .headerContainerDesktop {
+    margin-top: 8vh; /* Increased from 2vh to move even lower */
+    margin-bottom: 1.5rem; /* Reduced from 3rem */
+  }
+}
+
+/* For mobile screens */
+@media (max-width: 767px) {
+  .headerContainerMobile {
+    margin-top: 8vh; /* Increased from 4vh to move lower */
+    margin-bottom: 1rem; /* Reduced from 2rem */
+  }
 }
 
 .name {
