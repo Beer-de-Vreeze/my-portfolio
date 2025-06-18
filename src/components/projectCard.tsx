@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, TouchEvent, useCallback } from 'rea
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiApple, SiDocker, SiGooglecloud, SiNextdotjs, SiTailwindcss, SiDotnet, SiBlender, SiAdobephotoshop, SiMysql, SiPhp, SiPython, SiCplusplus, SiUnrealengine, SiGodotengine, SiTensorflow, SiPytorch, SiAndroidstudio } from 'react-icons/si';
-import { FaExpand, FaCompress, FaDownload, FaFileArchive, FaFileVideo, FaFileImage, FaFilePdf, FaWindows, FaCode, FaVolumeUp, FaRobot, FaPalette, FaGamepad, FaBrain, FaMusic } from 'react-icons/fa';
+import { FaExpand, FaCompress, FaDownload, FaFileArchive, FaFileVideo, FaFileImage, FaFilePdf, FaWindows, FaCode, FaVolumeUp, FaRobot, FaPalette, FaGamepad, FaBrain, FaMusic, FaNetworkWired, FaImage, FaPaintBrush, FaDesktop, FaLayerGroup, FaCogs, FaMicrochip } from 'react-icons/fa';
 import hljs from 'highlight.js';
 
 // Extend HTMLVideoElement interface for fullscreen API compatibility
@@ -123,12 +123,21 @@ const techIcons: { [key: string]: React.JSX.Element } = {
   "Machine Learning": <SiTensorflow className="text-orange-400 text-lg mr-2" />,
   "AI": <FaRobot className="text-blue-400 text-lg mr-2" />,
   "Database": <SiMysql className="text-blue-600 text-lg mr-2" />,
-  "Cloud": <SiGooglecloud className="text-blue-400 text-lg mr-2" />,
-  // Missing icons from projects page
+  "Cloud": <SiGooglecloud className="text-blue-400 text-lg mr-2" />,  // Missing icons from projects page
   "Audio Processing": <FaMusic className="text-purple-400 text-lg mr-2" />,
   "2D Graphics": <FaPalette className="text-pink-400 text-lg mr-2" />,
   "Game Design": <FaGamepad className="text-orange-400 text-lg mr-2" />,
   "Reinforcement Learning": <FaBrain className="text-green-400 text-lg mr-2" />,
+  // Newly added missing icons
+  "NavMesh AI": <FaNetworkWired className="text-cyan-400 text-lg mr-2" />,
+  "Texture Generation": <FaImage className="text-pink-500 text-lg mr-2" />,
+  "Unity ML-Agents": <FaRobot className="text-pink-400 text-lg mr-2" />,
+  "ONNX": <FaMicrochip className="text-blue-400 text-lg mr-2" />,
+  "CUDA": <FaMicrochip className="text-green-500 text-lg mr-2" />,
+  "Real-time Drawing": <FaPaintBrush className="text-purple-500 text-lg mr-2" />,
+  "UI Systems": <FaDesktop className="text-blue-400 text-lg mr-2" />,
+  "Tilemap System": <FaLayerGroup className="text-orange-500 text-lg mr-2" />,
+  "State Machine": <FaCogs className="text-gray-400 text-lg mr-2" />,
 };
 
 /**
