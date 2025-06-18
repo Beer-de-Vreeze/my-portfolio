@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, TouchEvent, useCallback } from 'react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiApple, SiDocker, SiGooglecloud, SiNextdotjs, SiTailwindcss, SiDotnet, SiBlender, SiAdobephotoshop, SiMysql, SiPhp, SiPython, SiCplusplus, SiUnrealengine, SiGodotengine, SiTensorflow, SiPytorch, SiAndroidstudio } from 'react-icons/si';
+import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiApple, SiDocker, SiGooglecloud, SiNextdotjs, SiTailwindcss, SiBlender, SiAdobephotoshop, SiMysql, SiPhp, SiPython, SiCplusplus, SiUnrealengine, SiGodotengine, SiTensorflow, SiPytorch, SiAndroidstudio, SiVercel, SiDotnet } from 'react-icons/si';
 import { FaExpand, FaCompress, FaDownload, FaFileArchive, FaFileVideo, FaFileImage, FaFilePdf, FaWindows, FaCode, FaVolumeUp, FaRobot, FaPalette, FaGamepad, FaBrain, FaMusic, FaNetworkWired, FaImage, FaPaintBrush, FaDesktop, FaLayerGroup, FaCogs, FaMicrochip } from 'react-icons/fa';
 import hljs from 'highlight.js';
 
@@ -92,10 +92,9 @@ const techIcons: { [key: string]: React.JSX.Element } = {
   "CSS3": <SiCss3 className="text-blue-500 text-lg mr-2" />,
   "Node.js": <SiNodedotjs className="text-green-500 text-lg mr-2" />,
   "Docker": <SiDocker className="text-blue-500 text-lg mr-2" />,
-  "Google Cloud": <SiGooglecloud className="text-blue-500 text-lg mr-2" />,
-  "Next.js": <SiNextdotjs className="text-white text-lg mr-2" />,
+  "Google Cloud": <SiGooglecloud className="text-blue-500 text-lg mr-2" />,  "Next.js": <SiNextdotjs className="text-white text-lg mr-2" />,
   "Tailwind CSS": <SiTailwindcss className="text-blue-500 text-lg mr-2" />,
-  "C#": <SiDotnet className="text-purple-500 text-lg mr-2" />,
+  "C#": <SiDotnet className="text-purple-600 text-lg mr-2" />,
   "Blender": <SiBlender className="text-orange-600 text-lg mr-2" />,
   "Photoshop": <SiAdobephotoshop className="text-blue-500 text-lg mr-2" />,
   "MySQL": <SiMysql className="text-blue-500 text-lg mr-2" />,
@@ -136,8 +135,8 @@ const techIcons: { [key: string]: React.JSX.Element } = {
   "CUDA": <FaMicrochip className="text-green-500 text-lg mr-2" />,
   "Real-time Drawing": <FaPaintBrush className="text-purple-500 text-lg mr-2" />,
   "UI Systems": <FaDesktop className="text-blue-400 text-lg mr-2" />,
-  "Tilemap System": <FaLayerGroup className="text-orange-500 text-lg mr-2" />,
-  "State Machine": <FaCogs className="text-gray-400 text-lg mr-2" />,
+  "Tilemap": <FaLayerGroup className="text-orange-500 text-lg mr-2" />,  "State Machine": <FaCogs className="text-gray-400 text-lg mr-2" />,
+  "Vercel": <SiVercel className="text-black text-lg mr-2" />
 };
 
 /**
@@ -185,9 +184,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const [autoplay, setAutoplay] = useState(true);
     // File size state
   const [autoFileSize, setAutoFileSize] = useState<string | null>(null);
-  
   // Code snippet collapse state - starts closed for all snippets
   const [collapsedCodeSnippets, setCollapsedCodeSnippets] = useState<{ [key: string]: boolean }>({});
+  
+  // Copy button states
+  const [pressedButton, setPressedButton] = useState<string | null>(null);
   
   // Video and fullscreen references/state
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -838,6 +839,20 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         label: displayLabel,
         fileSize: autoFileSize
       };
+    }  };
+
+  /**
+   * Handle copying code to clipboard with notification and press effect
+   */
+  const handleCopyCode = async (code: string, buttonId: string) => {
+    try {
+      // Add press effect
+      setPressedButton(buttonId);
+      setTimeout(() => setPressedButton(null), 150);
+        // Copy to clipboard
+      await navigator.clipboard.writeText(code);
+    } catch (error) {
+      console.error('Failed to copy to clipboard:', error);
     }
   };
 
@@ -1106,13 +1121,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                           <div className="mt-6 w-full">                            {/* Collapsible header */}
                             <button
                               onClick={() => toggleCodeSnippet(`feature-${index}`)}
-                              className="w-full flex items-center justify-between p-3 bg-[#1a1a1a] hover:bg-[#222] border border-[#333] transition-colors text-left rounded-none"
+                              className="group w-full flex items-center justify-between p-3 bg-[#1a1a1a] hover:bg-black border border-[#333] transition-colors text-left rounded-none"
                             >
-                              <span className="text-sm text-gray-300 font-medium">
+                              <span className="text-sm text-gray-300 font-medium group-hover:text-black transition-colors">
                                 {feature.codeSnippet.title || 'Code Example'}
                               </span>
                               <svg 
-                                className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${
+                                className={`w-4 h-4 text-gray-400 group-hover:text-black transition-all duration-200 ${
                                   collapsedCodeSnippets[`feature-${index}`] ? 'rotate-0' : 'rotate-180'
                                 }`}
                                 fill="none" 
@@ -1131,14 +1146,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                                       {feature.codeSnippet.code}
                                     </code>
                                   </pre>
-                                </div>
-                                {/* Copy button for code snippet */}
+                                </div>                                {/* Copy button for code snippet */}
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    navigator.clipboard.writeText(feature.codeSnippet!.code);
+                                    handleCopyCode(feature.codeSnippet!.code, `feature-${index}`);
                                   }}
-                                  className="absolute top-2 right-2 bg-black/70 hover:bg-black/90 p-2 rounded-md text-gray-200 text-xs hover:text-white transition-colors"
+                                  className={`absolute top-2 right-2 bg-black/70 hover:bg-black/90 p-2 rounded-md text-gray-200 text-xs hover:text-white transition-all duration-150 ${
+                                    pressedButton === `feature-${index}` ? 'scale-90 bg-black/95' : ''
+                                  }`}
                                   aria-label="Copy code"
                                 >
                                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1164,13 +1180,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     </h2>                    {/* Collapsible header */}
                     <button
                       onClick={() => toggleCodeSnippet('main')}
-                      className="w-full flex items-center justify-between p-3 bg-[#1a1a1a] hover:bg-[#222] border border-[#333] transition-colors text-left rounded-none"
+                      className="group w-full flex items-center justify-between p-3 bg-[#1a1a1a] hover:bg-[#222] border border-[#333] transition-colors text-left rounded-none"
                     >
-                      <span className="text-sm text-gray-300 font-medium">
+                      <span className="text-sm text-gray-300 font-medium group-hover:text-black transition-colors">
                         {codeSnippet.title || 'Main Code Example'}
                       </span>
                       <svg 
-                        className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${
+                        className={`w-4 h-4 text-gray-400 group-hover:text-black transition-all duration-200 ${
                           collapsedCodeSnippets['main'] ? 'rotate-0' : 'rotate-180'
                         }`}
                         fill="none" 
@@ -1190,14 +1206,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                               {codeSnippet.code}
                             </code>
                           </pre>
-                        </div>
-                        {/* Copy button for main code snippet */}
+                        </div>                        {/* Copy button for main code snippet */}
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            navigator.clipboard.writeText(codeSnippet.code);
+                            handleCopyCode(codeSnippet.code, 'main-code');
                           }}
-                          className="absolute top-2 right-2 bg-black/70 hover:bg-black/90 p-2 rounded-md text-gray-200 text-xs hover:text-white transition-colors"
+                          className={`absolute top-2 right-2 bg-black/70 hover:bg-black/90 p-2 rounded-md text-gray-200 text-xs hover:text-white transition-all duration-150 ${
+                            pressedButton === 'main-code' ? 'scale-90 bg-black/95' : ''
+                          }`}
                           aria-label="Copy code"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1215,8 +1232,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               </div>
             </div>
           </div>
-        </div>
-      )}
+        </div>      )}
     </>
   );
 };
