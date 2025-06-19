@@ -509,21 +509,42 @@ public class AudioPreviewerWindow : EditorWindow
           />{" "}
           <SuspenseProjectCard
             projectId="ML-Agents"
-            title="Unity ML-Agents Training Environment's"
+            title="Unity ML-Agents Training"
             description="An advanced Unity-based machine learning training environment featuring multiple AI scenarios and intelligent agent systems. Built with Unity ML-Agents framework to create sophisticated AI behaviors including zombie survival scenarios, hunter-prey dynamics, and pellet collection challenges. This project demonstrates comprehensive reinforcement learning implementations with reward systems, observation spaces, and neural network training pipelines for accelerating AI development and research."
-            githubLink="https://github.com/Beer-de-Vreeze/AI-FOR-VERSNELLEN"
-            media={[
-              {
-                type: "image",
-                src: "/images/ai-versnellen-1.webp",
-                alt: "AI Training Environment Overview",
-              },
-              {
-                type: "video",
-                src: "/assets/videos/ai-training-demo.mp4",
-                alt: "AI Training Demo",
-              },
-            ]}
+            githubLink="https://github.com/Beer-de-Vreeze/ML-Agents-Training"
+           media={[
+    {
+      type: "image",
+      src: "/images/AI Images/Title.webp",
+      alt: "Title",
+    },
+    {
+      type: "video",
+      src: "/images/AI Images/Jerry Move.webm",
+      alt: "Move 1 first itteration",
+    },
+    {
+      type: "video",
+      src: "/images/AI Images/Jerry MoveWithVision.webm",
+      alt: "Move with raycast training",
+    },
+    {
+      type: "video",
+      src: "/images/AI Images/Jerry MoveWithFEEDBACKV2.webm",
+      alt: "Training with feedback",
+    },
+    {
+      type: "video",
+      src: "/images/AI Images/Jerry MoveWithFEEDBACKTRAINING2.webm",
+      alt: "Training with Timer",
+    },
+        {
+      type: "video",
+      src: "/images/AI Images/HUNTERVSPREY.webm",
+      alt: "Hunter VS Prey simulation",
+    },
+  
+  ]}
             techStack={[
               "Unity",
               "Unity ML-Agents",
@@ -1246,10 +1267,11 @@ public class ZombieController : MonoBehaviour
             onModalStateChange={handleModalStateChange}
           />
 <SuspenseProjectCard
-  projectId="BearlyStealthy"
+  projectId="Bearly-Stealthy"
   title="Bearly Stealthy"
   description="A sophisticated Unity-based stealth game featuring a bear protagonist navigating through shadowy environments. Built with advanced AI systems, dynamic noise detection, and multi-layered stealth mechanics. The game showcases professional-grade enemy behavior patterns, complex state management, and immersive audio-visual feedback systems that create tension-filled gameplay experiences where every movement matters."
   githubLink="https://github.com/Beer-de-Vreeze/Bearly-Stealthy"
+  liveLink="https://bjeerpeer.itch.io/bearly-stealthy"
   media={[
     {
       type: "image",
@@ -1687,18 +1709,45 @@ public class BaseEnemy : MonoBehaviour
           />{" "}
           <SuspenseProjectCard
             projectId="portfolio-website"
-            media={[
-              {
-                type: "image",
-                src: "/images/portfolio-preview.webp",
-                alt: "Portfolio website showcase",
-              },
-            ]}
-            title="Interactive Portfolio Website"
+            coverImage="/images/Website Images/Web3.webp"
+
+media={[
+    {
+      type: "image",
+      src: "/images/Website Images/Web1.webp",
+      alt: "Title Screen",
+    },
+    {
+      type: "image",
+      src: "/images/Website Images/Web2.webp",
+      alt: "About me",
+    },
+        {
+      type: "image",
+      src: "/images/Website Images/Web3.webp",
+      alt: "ProjectModa;",
+    },
+        {
+      type: "image",
+      src: "/images/Website Images/Web4.webp",
+      alt: "Contact Page",
+    },
+    {
+      type: "image",
+      src: "/images/Website Images/Web5.webp",
+      alt: "VideoPlayer",
+    },    
+        {
+      type: "image",
+      src: "/images/Website Images/Web6.webp",
+      alt: "CodeSnippet",
+    },
+  ]}
+            title="Portfolio Website"
             techStack={["Next.js", "TypeScript", "React", "Tailwind CSS","Vercel"]}
             description="A modern, responsive portfolio website built with cutting-edge web technologies. Features dynamic project showcases, interactive UI components, and optimized performance for seamless user experience across all devices."
-            githubLink="https://github.com/beerv/my-gameportfolio"
-            liveLink="https://beer-portfolio.vercel.app"
+            githubLink="https://github.com/Beer-de-Vreeze/my-gameportfolio"
+            liveLink="https://www.beerdevreeze.com/"
             features={[
               {
                 title: "Responsive Design Architecture",
@@ -2037,16 +2086,32 @@ export default function Projects() {
           />
           <SuspenseProjectCard
             projectId="sketchin-spells"
+            coverImage="/images/SketchinSpells Images/Spell2.webp"
             media={[
               {
                 type: "image",
-                src: "/images/sketchin-spells.png",
+                src: "/images/SketchinSpells Images/Spell1.webp",
+                alt: "Sketchin' Spells drawing tool interface",
+              },
+                            {
+                type: "image",
+                src: "/images/SketchinSpells Images/Spell2.webp",
+                alt: "Sketchin' Spells drawing tool interface",
+              },
+                            {
+                type: "image",
+                src: "/images/SketchinSpells Images/Spell3.webp",
+                alt: "Sketchin' Spells drawing tool interface",
+              },
+                            {
+                type: "image",
+                src: "/images/SketchinSpells Images/Spell4.webp",
                 alt: "Sketchin' Spells drawing tool interface",
               },
             ]}
-            title="Sketchin' Spells - Drawing Tool System"
+            title="Sketchin' Spells"
             techStack={["Unity", "C#", "Real-time Drawing", "UI Systems"]}
-            description="A sophisticated real-time drawing tool system built in Unity, featuring advanced canvas manipulation, multi-touch input handling, and dynamic symmetry modes. This technical implementation demonstrates complex UI interaction patterns, efficient pixel-level operations, and real-time texture generation for creative digital art applications."
+            description="A sophisticated real-time drawing game built in Unity, featuring advanced canvas manipulation, multi-touch input handling, and dynamic symmetry modes. This technical implementation demonstrates complex UI interaction patterns and efficient pixel-level operations."
             codeSnippet={{
               code: `public class Sketcher : MonoBehaviour
 {
@@ -2095,7 +2160,7 @@ export default function Projects() {
               language: "csharp",
               title: "Core Drawing Tool Implementation",
             }}
-            liveLink="https://beerv.itch.io/sketchin-spells"
+            liveLink="https://bjeerpeer.itch.io/sketchin-spells"
             githubLink="https://github.com/Beer-de-Vreeze/Sketchin-Spells"
             features={[
               {
@@ -2299,15 +2364,21 @@ export default function Projects() {
           />
           
           <SuspenseProjectCard
-            projectId="BetterTetris"
+            projectId="Better-Tetris"
             title="Better Tetris"
             description="A meticulously crafted Unity-based Tetris implementation that brings authentic arcade-quality gameplay to modern platforms. This professional-grade recreation features the industry-standard Super Rotation System (SRS), comprehensive audio feedback, ghost piece visualization, and a sophisticated scoring system. Built with clean architecture principles using Unity's advanced systems including Tilemaps for efficient rendering, ScriptableObjects for data management, and modular component design for maintainability."
             githubLink="https://github.com/Beer-de-Vreeze/Better-Tetris"
+            liveLink="https://bjeerpeer.itch.io/better-tetris"
             media={[
               {
                 type: "image",
-                src: "/images/better-tetris-1.webp",
+                src: "/images/BetterTetris Images/Tetris1.webp",
                 alt: "Better Tetris Game Screenshot 1",
+              },
+                            {
+                type: "image",
+                src: "/images/BetterTetris Images/Tetris2.webp",
+                alt: "Better Tetris Game Screenshot 2",
               },
             ]}
             techStack={["Unity", "C#", "Tilemap","Game Design"]}

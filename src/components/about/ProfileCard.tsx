@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { FaMapMarkerAlt, FaGlobe, FaGamepad, FaLightbulb, FaFish, FaMedkit, FaUtensils } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaGlobe, FaGamepad, FaLightbulb, FaFish, FaMedkit, FaUtensils, FaGithub, FaLinkedin, FaFileAlt } from 'react-icons/fa';
 
 interface Bubble {
   icon: React.JSX.Element;
@@ -105,7 +105,25 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
           </div>
           <div className="flex flex-col justify-start gap-0.5 pt-8">
             <h2 className="text-2xl font-bold text-white tracking-tighter">{name}</h2>
-            <p className="text-base text-gray-400 tracking-tighter font-extralight">{username}</p>
+            <p className="text-base text-gray-400 tracking-tighter font-extralight flex items-center gap-2">
+              {username}
+              <span className="flex items-center gap-2 ml-2">
+                <a href="https://github.com/Beer-de-Vreeze" target="_blank" rel="noopener noreferrer" className="hover:text-white text-gray-400 transition-colors text-lg">
+                  <FaGithub />
+                </a>
+                <a href="https://www.linkedin.com/in/beer-de-vreeze-59040919a/" target="_blank" rel="noopener noreferrer" className="hover:text-white text-gray-400 transition-colors text-lg">
+                  <FaLinkedin />
+                </a>
+                <a href="https://bjeerpeer.itch.io/" target="_blank" rel="noopener noreferrer" className="hover:text-white text-gray-400 transition-colors text-lg">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="currentColor" width="1em" height="1em">
+                    <path d="M8 12C5.79086 12 4 13.7909 4 16V48C4 50.2091 5.79086 52 8 52H56C58.2091 52 60 50.2091 60 48V16C60 13.7909 58.2091 12 56 12H8ZM8 16H56V48H8V16ZM16 20C13.7909 20 12 21.7909 12 24V40C12 42.2091 13.7909 44 16 44H48C50.2091 44 52 42.2091 52 40V24C52 21.7909 50.2091 20 48 20H16ZM16 24H48V40H16V24ZM20 28V36H24V32H40V36H44V28H40V32H24V28H20Z"/>
+                  </svg>
+                </a>
+                <a href="/downloads/Beer%20de%20Vreeze%20CV.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-white text-gray-400 transition-colors text-lg">
+                  <FaFileAlt />
+                </a>
+              </span>
+            </p>
           </div>
         </div>
         

@@ -193,6 +193,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   // Video and fullscreen references/state
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  // State to control object-fit for media
+  const [mediaObjectFit] = useState<'cover' | 'contain'>('contain');
+  const mediaContainerRef = useRef<HTMLDivElement>(null);
   /**
    * Determine the thumbnail image with fallback options:
    * 1. Use coverImage if provided
@@ -860,6 +863,43 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const downloadFileInfo = getFileTypeInfo(downloadLink);
   const downloadInfo = getDownloadInfo();
 
+  // State for image zoom modal
+  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
+  const [isZoomClosing, setIsZoomClosing] = useState(false);
+
+  // Handler to open zoom modal
+  const handleImageZoom = (src: string) => {
+    setZoomedImage(src);
+    setIsZoomClosing(false);
+  };
+  // Handler to close zoom modal with animation
+  const closeZoomModal = () => {
+    setIsZoomClosing(true);
+    setTimeout(() => {
+      setZoomedImage(null);
+      setIsZoomClosing(false);
+    }, 300); // match animation duration
+  };
+  // ESC key closes zoom modal
+  useEffect(() => {
+    if (!zoomedImage) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeZoomModal();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [zoomedImage]);
+
+  // Pause carousel autoplay when zoomedImage is open
+  useEffect(() => {
+    if (zoomedImage) {
+      setAutoplay(false);
+    } else if (isModalOpen) {
+      setAutoplay(true);
+    }
+    // Only run when zoomedImage or isModalOpen changes
+  }, [zoomedImage, isModalOpen]);
+
   return (
     <>
       {/* Project Card with mobile-responsive design */}
@@ -943,6 +983,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 <div className="relative w-full rounded-xl overflow-hidden border border-[#333333] mb-4">
                   {/* Media Content with touch gesture support */}
                   <div 
+                    ref={mediaContainerRef}
                     className="relative aspect-video w-full"
                     onTouchStart={handleTouchStart}
                     onTouchMove={handleTouchMove}
@@ -953,7 +994,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                         <video 
                           ref={videoRef}
                           src={currentMedia.src} 
-                          className="w-full h-full object-cover" 
+                          className={`w-full h-full object-${mediaObjectFit}`} 
                           controls={false}
                           onEnded={handleVideoEnd}
                         />
@@ -966,7 +1007,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                         fill
                         priority
                         sizes="(max-width: 768px) 100vw, 800px"
-                        className="object-cover"
+                        className={`object-${mediaObjectFit} cursor-zoom-in`}
+                        onClick={() => handleImageZoom(currentMedia.src)}
                       />
                     )}
                   </div>
@@ -1030,7 +1072,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                       </a>
                     )}
                     
-                    {/* Live Demo button - only if valid link provided */}
+                    {/* Live Link button - only if valid link provided */}
                     {liveLink && liveLink !== "#" && (
                       <a 
                         href={liveLink} 
@@ -1040,7 +1082,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                           hover:from-blue-700 hover:to-purple-700 text-white rounded-md text-sm font-medium 
                           transition-all flex items-center justify-center gap-2"
                       >
-                        Live Demo
+                        Live Link
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M15 5L21 12L15 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                           <path d="M3 12H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -1233,6 +1275,37 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             </div>
           </div>
         </div>      )}
+
+      {/* Image zoom modal - shown when an image is clicked */}
+      {zoomedImage && (
+        <div
+          className={`fixed inset-0 z-[2000] flex items-center justify-center bg-black/95 backdrop-blur-sm 
+            ${isZoomClosing ? 'animate-fadeOut' : 'animate-fadeIn'}`}
+          onClick={closeZoomModal}
+          style={{ cursor: 'zoom-out' }}
+        >
+          <button
+            onClick={closeZoomModal}
+            className="fixed top-4 right-4 z-[2010] bg-black/70 hover:bg-black/90 rounded-full p-3 w-10 h-10 flex items-center justify-center text-gray-300 hover:text-white transition-all duration-200 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            aria-label="Close zoomed image"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          <div className="relative w-full h-full flex items-center justify-center">
+            <Image
+              src={zoomedImage}
+              alt="Zoomed preview"
+              fill
+              className="max-w-full max-h-full object-contain drop-shadow-2xl"
+              style={{ pointerEvents: 'none' }}
+              sizes="100vw"
+              priority
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 };
