@@ -169,13 +169,13 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
               </div>
             ))}          </div>
         </div>          {/* About Me section */}
-        <div className="border-t border-[#27272a] mt-1 pt-1 pb-0">          <h3 className="text-base font-semibold text-white mb-1 tracking-tight">About Me</h3>
+        <div className="border-t border-[#27272a] mt-1 pt-1 pb-0">
           <div>
             <p className="text-base text-gray-300 leading-tight tracking-tight mb-3">
               I&apos;m a software enthusiast driven by a love for clean code, creative problem-solving, and constant learning. I get a kick out of debugging, building systems that just work, and experimenting with the latest in tech.
             </p>
             <p className="text-base text-gray-300 leading-tight tracking-tight mb-3">
-              I&apos;m always looking to grow—whether that&apos;s diving into a new framework, collaborating with a team, or literally scuba diving (yes, I&apos;m certified). I&apos;m a gamer and someone who finds joy in cooking from scratch.
+              I&apos;m always looking to grow—whether that&apos;s diving into a new framework, collaborating with a team, or literally scuba diving (yes, I do that too). I&apos;m a gamer and someone who finds joy in cooking from scratch.
             </p>
             <p className="text-base text-gray-300 leading-tight tracking-tight mb-0">
               I thrive in environments where curiosity, teamwork, and hands-on building meet. If there&apos;s a challenge, I&apos;m all in.
