@@ -81,11 +81,6 @@ export default function Projects() {
                 src: "/images/AudioPreviewer 2.webp",
                 alt: "AudioPreviewer FULL",
               },
-              {
-                type: "video",
-                src: "/assets/videos/audio-previewer-demo.mp4",
-                alt: "Audio Previewer Demo",
-              },
             ]}
             techStack={[
               "Unity",
