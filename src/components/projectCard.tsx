@@ -196,6 +196,35 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   // State to control object-fit for media
   const [mediaObjectFit] = useState<'cover' | 'contain'>('contain');
   const mediaContainerRef = useRef<HTMLDivElement>(null);
+    // Image preloading state and refs
+  const preloadedImages = useRef<Set<string>>(new Set());
+
+  /**
+   * Preload all images in the media array for smoother carousel experience
+   */
+  const preloadImages = useCallback(() => {
+    const imageUrls = media
+      .filter(item => item.type === 'image')
+      .map(item => item.src)
+      .filter(src => !preloadedImages.current.has(src));
+
+    if (imageUrls.length === 0) {
+      return;
+    }
+
+    imageUrls.forEach(src => {
+      const img = document.createElement('img');
+      img.onload = () => {
+        preloadedImages.current.add(src);
+      };
+      img.onerror = () => {
+        // Log error but don't prevent other images from loading
+        console.warn(`Failed to preload image: ${src}`);
+      };
+      img.src = src;
+    });
+  }, [media]);
+
   /**
    * Determine the thumbnail image with fallback options:
    * 1. Use coverImage if provided
@@ -223,8 +252,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     if (codeSnippet) {
       initialCollapsedState['main'] = false; // Main snippet starts open
     }
-    setCollapsedCodeSnippets(initialCollapsedState);
-  }, [projectId, router, onModalStateChange, features, codeSnippet]);
+    setCollapsedCodeSnippets(initialCollapsedState);    // Preload images for smoother carousel experience
+    preloadImages();
+  }, [projectId, router, onModalStateChange, features, codeSnippet, preloadImages]);
 
   /**
    * Handles closing the modal with animation and removes project from URL
@@ -249,12 +279,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     }, 300);
   }, [onModalStateChange, router]);  /**
    * Effect to check URL parameters on component mount and handle direct links
-   */
-  useEffect(() => {
+   */  useEffect(() => {
     const currentProject = searchParams?.get('project');
     if (currentProject === projectId && !isModalOpen) {
       setIsModalOpen(true);
       onModalStateChange?.(true);
+      
+      // Preload images for smoother carousel experience
+      preloadImages();
+      
         // Initialize feature code snippets as collapsed, main snippet as open when opening via URL
       const initialCollapsedState: { [key: string]: boolean } = {};
       features.forEach((feature, index) => {
@@ -267,7 +300,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       }
       setCollapsedCodeSnippets(initialCollapsedState);
     }
-  }, [searchParams, projectId, isModalOpen, onModalStateChange, features, codeSnippet]);
+  }, [searchParams, projectId, isModalOpen, onModalStateChange, features, codeSnippet, preloadImages]);
   
   /**
    * Effect for handling ESC key press and body scroll locking

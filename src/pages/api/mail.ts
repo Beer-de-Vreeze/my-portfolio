@@ -28,9 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (!tokenResponse?.accessToken) {
       throw new Error('Failed to obtain access token');
-    }
-
-    // Create beautifully formatted HTML email content
+    }    // Create email content styled to match your portfolio site
     const htmlContent = `
       <!DOCTYPE html>
       <html lang="en">
@@ -42,36 +40,58 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            color: #333;
+            color: #ffffff;
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #f8f9fa;
+            background-color: #000000;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: antialiased;
           }
           .container {
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-color: #000000;
+            border: 1px solid #27272a;
+            border-radius: 8px;
             overflow: hidden;
+            position: relative;
+          }
+          .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+              linear-gradient(to right, rgba(39,39,42,0.5) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(39,39,42,0.5) 1px, transparent 1px);
+            background-size: 20.5px 21px;
+            pointer-events: none;
+            border-radius: 8px;
           }
           .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
             color: white;
             padding: 30px;
             text-align: center;
+            position: relative;
+            z-index: 1;
           }
           .header h1 {
             margin: 0;
             font-size: 24px;
-            font-weight: 600;
+            font-weight: 300;
+            letter-spacing: 0.025em;
           }
           .content {
             padding: 30px;
+            position: relative;
+            z-index: 1;
           }
           .field {
-            margin-bottom: 20px;
-            border-bottom: 1px solid #e9ecef;
-            padding-bottom: 15px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid #27272a;
+            padding-bottom: 20px;
           }
           .field:last-child {
             border-bottom: none;
@@ -79,47 +99,59 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           }
           .label {
             display: inline-block;
-            font-weight: 600;
-            color: #495057;
-            margin-bottom: 5px;
+            font-weight: 200;
+            color: #a1a1aa;
+            margin-bottom: 8px;
             font-size: 14px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.05em;
           }
           .value {
             font-size: 16px;
-            color: #212529;
+            color: #ffffff;
             word-wrap: break-word;
+            font-weight: 300;
           }
           .message-content {
-            background-color: #f8f9fa;
-            border-left: 4px solid #667eea;
+            background-color: #111111;
+            border: 1px solid #27272a;
+            border-left: 4px solid #3b82f6;
             padding: 20px;
             border-radius: 6px;
-            margin-top: 10px;
-            font-style: italic;
+            margin-top: 12px;
             white-space: pre-wrap;
+            font-weight: 300;
+            background-image: 
+              linear-gradient(to right, rgba(39,39,42,0.3) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(39,39,42,0.3) 1px, transparent 1px);
+            background-size: 15px 15px;
           }
           .footer {
-            background-color: #f8f9fa;
+            background-color: #111111;
+            border-top: 1px solid #27272a;
             padding: 20px 30px;
             text-align: center;
             font-size: 12px;
-            color: #6c757d;
-            border-top: 1px solid #e9ecef;
-          }
-          .contact-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 5px;
+            color: #71717a;
+            position: relative;
+            z-index: 1;
           }
           .email-link {
-            color: #667eea;
+            color: #3b82f6;
             text-decoration: none;
+            transition: color 0.2s ease;
           }
           .email-link:hover {
-            text-decoration: underline;
+            background: linear-gradient(to right, #3b82f6, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+          }
+          .gradient-text {
+            background: linear-gradient(to right, #3b82f6, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
           }
           @media (max-width: 600px) {
             body {
@@ -180,7 +212,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               minute: '2-digit',
               timeZoneName: 'short'
             })}</p>
-            <p>Sent from your portfolio contact form</p>
+            <p class="gradient-text">Sent from your portfolio contact form</p>
           </div>
         </div>
       </body>
