@@ -512,12 +512,8 @@ public class AudioPreviewerWindow : EditorWindow
             title="Unity ML-Agents Training"
             description="An advanced Unity-based machine learning training environment featuring multiple AI scenarios and intelligent agent systems. Built with Unity ML-Agents framework to create sophisticated AI behaviors including zombie survival scenarios, hunter-prey dynamics, and pellet collection challenges. This project demonstrates comprehensive reinforcement learning implementations with reward systems, observation spaces, and neural network training pipelines for accelerating AI development and research."
             githubLink="https://github.com/Beer-de-Vreeze/ML-Agents-Training"
+            coverImage="/images/AI Images/Title.webp"
            media={[
-    {
-      type: "image",
-      src: "/images/AI Images/Title.webp",
-      alt: "Title",
-    },
     {
       type: "video",
       src: "/images/AI Images/Jerry Move.webm",
@@ -2374,11 +2370,6 @@ export default function Projects() {
                 type: "image",
                 src: "/images/BetterTetris Images/Tetris1.webp",
                 alt: "Better Tetris Game Screenshot 1",
-              },
-                            {
-                type: "image",
-                src: "/images/BetterTetris Images/Tetris2.webp",
-                alt: "Better Tetris Game Screenshot 2",
               },
             ]}
             techStack={["Unity", "C#", "Tilemap","Game Design"]}
