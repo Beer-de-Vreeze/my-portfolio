@@ -9,7 +9,7 @@ const Stack = () => {
           title: 'Completed High School at Lek en Linge',
           category: 'Education',
           date: '06.2021',
-          description: 'Graduated from Lek en Linge, gaining proficiency in both Dutch and English, with a strong foundation in critical thinking, creativity, and global citizenship.',
+          description: 'Graduated from Lek en Linge, gaining proficiency in both Dutch and English, with a strong foundation in critical thinking and creativity.',
         },
         {
           title: 'Started Chef Training at ROC Midden Nederland',
