@@ -60,11 +60,11 @@ export default function Projects() {
       </div>
 
       <main className="relative z-0 flex flex-col items-center flex-grow p-2 pt-20 pb-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl">
-          <SuspenseProjectCard
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl">          <SuspenseProjectCard
             projectId="Unity Audio Previewer"
             title="Unity Audio Previewer"
-            description="A sophisticated Unity Editor extension that revolutionizes audio workflow for game developers and sound designers. Built with advanced waveform visualization algorithms, reflection-based Unity AudioUtil integration, and comprehensive project scanning capabilities. Features intelligent caching systems, drag-and-drop functionality, and real-time audio processing that seamlessly integrates into the Unity development environment."
+            description="A powerful Unity Editor extension that makes working with audio way easier for game developers and sound designers. It brings advanced waveform visualizations, smart Unity audio integration, and thorough project scanning right into the Unity Editor, helping you manage and preview audio assets without leaving your workflow."
+            coverImage="/images/CoverImageSound.webp"
             downloadLink={{
               url: "/assets/downloads/audio-previewer.zip",
               filename: "Unity Audio Previewer v1.2",
@@ -93,12 +93,11 @@ export default function Projects() {
               "Editor Scripting",
               "Audio Processing",
               "Texture Generation",
-            ]}
-            features={[
+            ]}            features={[
               {
-                title: "Advanced Waveform Visualization Engine",
+                title: "Cool Waveform Visuals",
                 description:
-                  "Real-time audio waveform rendering with sophisticated amplitude mapping and gradient color schemes. Features dynamic texture generation with configurable width/height settings, anti-aliased soft edges, and color interpolation across three-point gradients (blue-green-orange). Implements efficient sample processing with peak detection algorithms and visual amplitude representation.",
+                  "See real-time audio waveforms with smooth amplitude mapping and vibrant three-color gradients (blue, green, orange). The waveforms have clean, soft edges and are generated efficiently with peak detection for a clear, accurate visual representation of your sounds.",
                 codeSnippet: {
                   title: "Waveform Texture Generation Algorithm",
                   language: "csharp",
@@ -161,11 +160,10 @@ export default function Projects() {
     return texture;
 }`,
                 },
-              },
-              {
-                title: "Reflection-Based Unity AudioUtil Integration",
+              },              {
+                title: "Deep Unity Integration",
                 description:
-                  "Advanced Unity Editor audio integration using System.Reflection to access internal Unity AudioUtil methods. Features automatic method discovery, parameter adaptation for multiple Unity versions, and fallback mechanisms for cross-version compatibility. Supports PlayPreviewClip, StopAllPreviewClips, SetPreviewClipSamplePosition, and looping controls with robust error handling.",
+                  "Uses reflection to tap into Unity’s hidden AudioUtil methods for playing, stopping, looping, and seeking audio clips. It automatically adapts to different Unity versions, making sure your audio preview works reliably across updates.",
                 codeSnippet: {
                   title: "Cross-Version AudioUtil Reflection System",
                   language: "csharp",
@@ -243,7 +241,7 @@ private void SeekToTime(AudioClip clip, float timeInSeconds)
               {
                 title: "Intelligent Project Scanning & Asset Management",
                 description:
-                  "Comprehensive project-wide audio asset discovery using Unity's AssetDatabase API. Features automatic GUID-based scanning, path resolution, duplicate detection, and intelligent folder organization. Implements advanced filtering systems with case-insensitive search across clip names and folder paths, plus hierarchical folder grouping with visual organization.",
+                  "Scans your whole project for audio clips using Unity’s AssetDatabase, detects duplicates, and organizes them by folders. You can easily search and filter clips by name or folder, making it simple to find exactly what you need.",
                 codeSnippet: {
                   title: "Project Audio Asset Discovery System",
                   language: "csharp",
@@ -313,7 +311,7 @@ private void OrganizeClipsByFolder()
               {
                 title: "Advanced Caching & Performance Optimization",
                 description:
-                  "Multi-layered caching system for waveform textures and audio sample data with intelligent memory management. Features Dictionary-based caching for generated waveforms, audio sample preprocessing, and EditorPrefs persistence for user settings and clip configurations. Implements lazy loading patterns and automatic cache invalidation for optimal performance.",
+                  "Caches waveform textures and audio samples with smart memory management to keep performance smooth. Uses lazy loading and stores user settings so you don’t have to wait for everything to load every time.",
                 codeSnippet: {
                   title: "Dual-Layer Caching System",
                   language: "csharp",
@@ -377,7 +375,7 @@ private void SaveClips()
               {
                 title: "Interactive UI & Drag-Drop System",
                 description:
-                  "Sophisticated Unity Editor GUI implementation with drag-and-drop functionality, progress bars, and interactive controls. Features real-time playback progress tracking, seeking capabilities, visual playback indicators, and comprehensive mouse interaction handling. Includes foldout folder organization, search filtering, and responsive layout scaling.",
+                  "A user-friendly Editor GUI with drag-and-drop support, playback progress bars, seeking controls, and responsive layouts. Includes folder foldouts and search filters to help you manage audio assets quickly and intuitively.",
               },
             ]}
             codeSnippet={{
@@ -510,7 +508,7 @@ public class AudioPreviewerWindow : EditorWindow
           <SuspenseProjectCard
             projectId="ML-Agents"
             title="Unity ML-Agents Training"
-            description="An advanced Unity-based machine learning training environment featuring multiple AI scenarios and intelligent agent systems. Built with Unity ML-Agents framework to create sophisticated AI behaviors including zombie survival scenarios, hunter-prey dynamics, and pellet collection challenges. This project demonstrates comprehensive reinforcement learning implementations with reward systems, observation spaces, and neural network training pipelines for accelerating AI development and research."
+            description="An advanced Unity-based machine learning setup featuring multiple AI scenarios and smart agent systems. Built with the Unity ML-Agents framework, this project showcases complex AI behaviors like zombie survival, hunter-prey dynamics, and pellet collection challenges. It highlights reinforcement learning techniques with reward systems, observation spaces, and neural network training pipelines designed to speed up AI development and research."
             githubLink="https://github.com/Beer-de-Vreeze/ML-Agents-Training"
             coverImage="/images/AI Images/Title.webp"
            media={[
@@ -747,7 +745,7 @@ public class MechAgentController : Agent
               {
                 title: "Zombie Survival ML-Agent with Real-Time Detection",
                 description:
-                  "Advanced mech agent controller that uses Unity ML-Agents to learn survival strategies against zombie hordes. Features sophisticated observation collection with real-time zombie detection within a configurable radius, weapon systems with precise shooting mechanics, and comprehensive reward systems. The agent learns optimal movement patterns, target prioritization, and survival tactics through reinforcement learning episodes.",
+                  "A mech agent that learns to survive zombie hordes using Unity ML-Agents. It observes zombies within a configurable radius, uses weapon systems with accurate shooting, and learns survival strategies through rewards. The agent picks up on smart movement, target priorities, and how to stay alive during training.",
                 codeSnippet: {
                   title: "MechAgentController - Observation and Action Systems",
                   language: "csharp",
@@ -850,7 +848,7 @@ public class MechAgentController : Agent
               {
                 title: "Hunter-Prey Multi-Agent System",
                 description:
-                  "Dynamic predator-prey ecosystem featuring two competing AI agents with opposing objectives. The hunter agent learns to track and capture prey while the prey agent develops evasion strategies. Both agents utilize continuous action spaces for movement, collision detection systems, and sophisticated reward mechanisms that create emergent behaviors and adaptive strategies.",
+                  "A dynamic predator-prey setup where two AI agents compete — the hunter learns to track and catch, while the prey figures out how to evade. Both agents move fluidly using continuous actions, detect collisions, and develop smart strategies through rewards, creating natural and adaptive behaviors.",
                 codeSnippet: {
                   title: "Hunter Agent with Strategic Positioning",
                   language: "csharp",
@@ -935,7 +933,7 @@ public class MechAgentController : Agent
                 title:
                   "Intelligent Pellet Collection with Spatial Optimization",
                 description:
-                  "Multi-objective reinforcement learning environment where agents learn efficient resource collection strategies. Features dynamic pellet spawning with spatial optimization algorithms, overlap detection systems to prevent clustering, and time-based episodic challenges. Agents develop pathfinding strategies, resource prioritization, and optimal collection patterns through trial and error learning.",
+                  "An environment where agents learn how to efficiently collect resources. It features smart pellet spawning with spatial checks to avoid overlap and timed challenges. Agents develop pathfinding and prioritization skills by learning through trial and error. Features dynamic pellet spawning with spatial optimization algorithms, overlap detection systems to prevent clustering, and time-based episodic challenges. Agents develop pathfinding strategies, resource prioritization, and optimal collection patterns through trial and error learning.",
                 codeSnippet: {
                   title: "Spatial-Aware Pellet Generation System",
                   language: "csharp",
@@ -1040,7 +1038,7 @@ public class MechAgentController : Agent
               {
                 title: "NavMesh-Based Zombie AI with Health Systems",
                 description:
-                  "Advanced enemy AI system utilizing Unity's NavMesh for realistic zombie pathfinding and behavior. Features dynamic target following with configurable update intervals, health systems with visual damage feedback, and performance-optimized movement patterns. Zombies exhibit emergent group behaviors and adaptive pathfinding around obstacles while maintaining realistic movement speeds and collision detection.",
+                  "Zombie AI uses Unity’s NavMesh for realistic movement and pathfinding. Zombies follow targets dynamically, show health and damage visually, and move efficiently around obstacles. They behave in groups with adaptive pathfinding and realistic speeds.",
                 codeSnippet: {
                   title: "Intelligent Zombie Controller with Health System",
                   language: "csharp",
@@ -1152,7 +1150,7 @@ public class ZombieController : MonoBehaviour
               {
                 title: "Performance-Optimized World Management System",
                 description:
-                  "Sophisticated environment controller that manages AI training scenarios with performance optimization and scalable zombie spawning systems. Features batch processing for large-scale simulations, cleanup mechanisms for memory management, and configurable spawn patterns. The system maintains stable frame rates while supporting hundreds of AI entities through intelligent update scheduling and spatial optimization.",
+                  "Manages large-scale AI training with optimized performance. Supports batch processing, cleans up memory, and handles flexible zombie spawn patterns. Keeps frame rates stable even with hundreds of AI agents by scheduling updates smartly and using spatial optimizations.",
                 codeSnippet: {
                   title: "Scalable Zombie Spawning and Management",
                   language: "csharp",
@@ -1265,7 +1263,7 @@ public class ZombieController : MonoBehaviour
 <SuspenseProjectCard
   projectId="Bearly-Stealthy"
   title="Bearly Stealthy"
-  description="A sophisticated Unity-based stealth game featuring a bear protagonist navigating through shadowy environments. Built with advanced AI systems, dynamic noise detection, and multi-layered stealth mechanics. The game showcases professional-grade enemy behavior patterns, complex state management, and immersive audio-visual feedback systems that create tension-filled gameplay experiences where every movement matters."
+  description="A cool Unity stealth game where you play as a bear sneaking through shadowy environments. It’s built with advanced AI, dynamic noise detection, and layered stealth mechanics that make every move count. The game features smart enemy behavior and complex state management that keep the tension high throughout gameplay."
   githubLink="https://github.com/Beer-de-Vreeze/Bearly-Stealthy"
   liveLink="https://bjeerpeer.itch.io/bearly-stealthy"
   media={[
@@ -1299,7 +1297,7 @@ public class ZombieController : MonoBehaviour
             features={[
               {
                 title: "Advanced Enemy AI with Multi-State Behavior",
-                description: "Sophisticated enemy AI system featuring patrol, wandering, investigating, and chasing states. Enemies utilize NavMesh pathfinding, dynamic waypoint systems, and advanced detection algorithms. Each enemy type (BasePatrolEnemy, BaseWanderingEnemy) has unique behavioral patterns with configurable parameters for vision cones, hearing ranges, and investigation mechanics.",
+                description: "Enemies have smart AI with patrol, wandering, investigating, and chasing states. They use NavMesh pathfinding and dynamic waypoints. Each enemy type (like BasePatrolEnemy and BaseWanderingEnemy) has unique behaviors, with adjustable vision cones, hearing ranges, and investigation settings.",
                 codeSnippet: {
                   title: "BaseEnemy Vision Detection System",
                   language: "csharp",
@@ -1344,7 +1342,7 @@ public class ZombieController : MonoBehaviour
               {
                 title: "Dynamic Noise Generation & Sound Propagation",
                 description:
-                  "Comprehensive noise system where player actions generate different noise levels (stealth: 2.0, walking: 5.0, running: 10.0, roaring: 100.0). The NoiseManager singleton handles sound propagation to all registered enemies, triggering investigation behaviors when noise exceeds hearing thresholds. Features noise decay over time and distance-based attenuation.",
+                  "Player actions create different noise levels—stealth is quiet, running is loud, and a bear roar is huge. The NoiseManager handles spreading the noise to nearby enemies, triggering their investigation if it’s loud enough. Noise fades over time and distance to keep things realistic.",
                 codeSnippet: {
                   title: "Player Noise Generation System",
                   language: "csharp",
@@ -1382,7 +1380,7 @@ public class ZombieController : MonoBehaviour
               {
                 title: "Intelligent Patrol & Wandering Systems",
                 description:
-                  "Modular enemy movement systems with BasePatrolEnemy featuring configurable patrol routes with loop/back-and-forth patterns, and BaseWanderingEnemy using confined area exploration. Both systems integrate seamlessly with investigation and chase behaviors, utilizing Unity's NavMesh for obstacle avoidance and realistic pathfinding through complex 3D environments.",
+                  "Enemies move using modular systems: patrols follow set routes (loops or back-and-forth), while wanderers explore confined areas. Both connect with investigation and chase behaviors and use Unity’s NavMesh for smooth pathfinding and obstacle avoidance.",
                 codeSnippet: {
                   title: "Patrol Pattern Implementation",
                   language: "csharp",
@@ -1419,7 +1417,7 @@ private void PatrolLoopMethod()
               {
                 title: "Interactive Object System & Bear Abilities",
                 description:
-                  "Complete player interaction framework supporting object pickup, throwing for distraction, and special bear abilities. Features the iconic Bear Roar ability that generates massive noise (100.0 units) for enemy distraction, stealth movement modes, and physics-based object manipulation. All controlled through Unity's new Input System with multi-platform support.",
+                  "Players can pick up objects to distract enemies. The bear’s special roar ability creates a huge noise burst to draw attention. Movement modes include stealth, and physics-based object interactions make gameplay feel alive. Controls are built with Unity’s new Input System and work on multiple platforms.",
                 codeSnippet: {
                   title: "Bear Roar Distraction System",
                   language: "csharp",
@@ -1458,7 +1456,7 @@ private void HandleObjectInteraction()
               {
                 title: "Sophisticated Investigation Mechanics",
                 description:
-                  "Multi-layered investigation system where enemies react to disturbances with realistic behavior patterns. When enemies hear sounds, they transition to investigation state, move to the noise source, perform 360-degree searches, and gradually return to patrol patterns. Features configurable investigation timers, sound decay, and intelligent state transitions.",
+                  "When enemies hear a noise, they switch to investigation: moving to the source, searching around, then returning to patrol if nothing’s found. This system uses timers, sound decay, and smart state changes to keep enemy behavior believable.",
                 codeSnippet: {
                   title: "Enemy Sound Investigation Coroutine",
                   language: "csharp",
@@ -1496,7 +1494,7 @@ private void HandleObjectInteraction()
               {
                 title: "Dynamic State Machine Architecture",
                 description:
-                  "Robust finite state machine implementation managing enemy behaviors across four primary states: Patrolling, Investigating, Chasing, and Wandering. Each state has specific entry/exit conditions, update logic, and transition rules. Features state persistence, debug visualization, and seamless state switching with proper cleanup and initialization.",
+                  "Enemy behavior is managed with a solid finite state machine covering patrolling, investigating, chasing, and wandering. Each state has clear rules for entering, updating, and exiting, with debug tools to visualize state changes and ensure smooth transitions.",
                 codeSnippet: {
                   title: "Enemy State Management System",
                   language: "csharp",
@@ -1543,7 +1541,7 @@ protected virtual void Update()
               {
                 title: "Advanced Physics-Based Movement System",
                 description:
-                  "Comprehensive player movement system utilizing Unity's Rigidbody physics for realistic bear locomotion. Features variable speed states (stealth, walk, sprint), smooth directional transitions, animation state synchronization, and terrain-adaptive movement. Integrates seamlessly with the noise generation system and input handling.",
+                  "The bear moves realistically using Rigidbody physics, with different speeds for stealth, walking, and sprinting. Direction changes are smooth, animations sync nicely, and movement adapts to the terrain. This system works tightly with noise generation and player input.",
                 codeSnippet: {
                   title: "Player Movement & Animation System",
                   language: "csharp",
@@ -1741,14 +1739,14 @@ media={[
   ]}
             title="Portfolio Website"
             techStack={["Next.js", "TypeScript", "React", "Tailwind CSS","Vercel"]}
-            description="A modern, responsive portfolio website built with cutting-edge web technologies. Features dynamic project showcases, interactive UI components, and optimized performance for seamless user experience across all devices."
+            description="A sleek, modern portfolio website built with the latest web tech. It offers dynamic ways to showcase projects, interactive UI elements, and smooth performance that works great on any device."
             githubLink="https://github.com/Beer-de-Vreeze/my-gameportfolio"
             liveLink="https://www.beerdevreeze.com/"
             features={[
               {
                 title: "Responsive Design Architecture",
                 description:
-                  "Mobile-first design approach with fluid layouts that adapt seamlessly across desktop, tablet, and mobile devices using modern CSS Grid and Flexbox techniques.",
+                  "Designed mobile-first with flexible layouts that adjust effortlessly across desktops, tablets, and phones using CSS Grid and Flexbox.",
                 codeSnippet: {
                   title: "Responsive Grid Layout System",
                   language: "typescript",
@@ -1787,7 +1785,7 @@ useEffect(() => {
               {
                 title: "Interactive Project Showcases",
                 description:
-                  "Dynamic modal-based project presentations with image carousels, video playback, and syntax-highlighted code snippets for comprehensive project documentation.",
+                  "Project presentations come alive with modals featuring image carousels, video playback, and syntax-highlighted code snippets for clear, engaging demos.",
                 codeSnippet: {
                   title: "Advanced Modal System with Media Carousel",
                   language: "typescript",
@@ -1845,7 +1843,7 @@ const ProjectModal: React.FC<ModalProps> = ({ isOpen, onClose, project }) => {
               {
                 title: "Performance Optimization",
                 description:
-                  "Implemented advanced optimization techniques including lazy loading, image optimization, and code splitting for lightning-fast page load times and smooth user interactions.",
+                  "Fast loading thanks to lazy loading, image optimization, and code splitting — so browsing your work feels seamless and snappy.",
                 codeSnippet: {
                   title: "Next.js Image Optimization & Lazy Loading",
                   language: "typescript",
@@ -1913,7 +1911,7 @@ const LazyProjectCard = dynamic(() => import('@/components/ProjectCard'), {
               {
                 title: "Modern Tech Stack Integration",
                 description:
-                  "Built with TypeScript for type safety, Next.js for server-side rendering, and Tailwind CSS for utility-first styling, ensuring maintainable and scalable code architecture.",
+                  "Built using TypeScript for safety, Next.js for server rendering, and Tailwind CSS for easy, scalable styling and maintenance.",
                 codeSnippet: {
                   title: "Type-Safe API Integration & State Management",
                   language: "typescript",
@@ -2084,11 +2082,6 @@ export default function Projects() {
             projectId="sketchin-spells"
             coverImage="/images/SketchinSpells Images/Spell2.webp"
             media={[
-              {
-                type: "image",
-                src: "/images/SketchinSpells Images/Spell1.webp",
-                alt: "Sketchin' Spells drawing tool interface",
-              },
                             {
                 type: "image",
                 src: "/images/SketchinSpells Images/Spell2.webp",
@@ -2107,7 +2100,7 @@ export default function Projects() {
             ]}
             title="Sketchin' Spells"
             techStack={["Unity", "C#", "Real-time Drawing", "UI Systems"]}
-            description="A sophisticated real-time drawing game built in Unity, featuring advanced canvas manipulation, multi-touch input handling, and dynamic symmetry modes. This technical implementation demonstrates complex UI interaction patterns and efficient pixel-level operations."
+            description="A polished real-time drawing game made in Unity, packed with advanced canvas controls, multi-touch support, and cool symmetry modes. It’s a technical showcase of smooth UI interactions and pixel-level efficiency for a great drawing experience."
             codeSnippet={{
               code: `public class Sketcher : MonoBehaviour
 {
@@ -2162,7 +2155,7 @@ export default function Projects() {
               {
                 title: "Multi-Touch Canvas System",
                 description:
-                  "Advanced touch input processing with support for multiple simultaneous touch points, pressure sensitivity, and gesture recognition. Features optimized coordinate transformation between world space and pixel space for precise drawing operations.",
+                  "Handles multiple touches at once with pressure sensitivity and gesture recognition. Converts coordinates between world space and pixel space perfectly for precise drawing.",
                 codeSnippet: {
                   title: "Touch Input Handler",
                   language: "csharp",
@@ -2195,7 +2188,7 @@ export default function Projects() {
               {
                 title: "Dynamic Symmetry Engine",
                 description:
-                  "Real-time symmetry system supporting horizontal, vertical, and radial symmetry modes. Uses matrix transformations and reflection algorithms to mirror drawing operations across multiple axes simultaneously, creating complex symmetric patterns.",
+                  "Supports horizontal, vertical, and radial symmetry in real time. Uses smart matrix math and reflection to mirror your strokes across several axes for beautiful symmetric designs.",
                 codeSnippet: {
                   title: "Symmetry Drawing Logic",
                   language: "csharp",
@@ -2233,7 +2226,7 @@ export default function Projects() {
               {
                 title: "Advanced Erasing System",
                 description:
-                  "Intelligent erasing functionality with multiple erase modes including point erasing, area erasing, and selective color erasing. Features undo/redo operations with efficient memory management and state preservation for complex drawing sessions.",
+                  "Multiple erase modes—point, area, and selective color erasing. Includes undo/redo with smart memory use to keep your drawing sessions smooth and flexible.",
                 codeSnippet: {
                   title: "Smart Erasing Implementation",
                   language: "csharp",
@@ -2265,7 +2258,7 @@ export default function Projects() {
               {
                 title: "Efficient Line Rendering",
                 description:
-                  "Optimized line drawing algorithm using Bresenham's line algorithm for smooth, anti-aliased lines between touch points. Implements efficient pixel manipulation with minimal texture updates and smooth interpolation for fluid drawing experience.",
+                  "Uses Bresenham's algorithm for smooth, anti-aliased lines between touches. Optimizes pixel updates for fluid, lag-free drawing.",
                 codeSnippet: {
                   title: "Smooth Line Drawing",
                   language: "csharp",
@@ -2292,7 +2285,7 @@ export default function Projects() {
               {
                 title: "Canvas State Management",
                 description:
-                  "Comprehensive canvas state system with save/load functionality, layer management, and persistent storage. Features PNG export with transparency, canvas clearing operations, and memory-efficient texture management for large drawing surfaces.",
+                  "Full save/load support, layer handling, and persistent storage. Export your art as transparent PNGs and clear the canvas easily—all managed with memory-friendly texture handling.",
                 codeSnippet: {
                   title: "Canvas Save System",
                   language: "csharp",
@@ -2318,7 +2311,7 @@ export default function Projects() {
               {
                 title: "Performance-Optimized Rendering",
                 description:
-                  "High-performance texture manipulation system using Unity's native texture operations and GPU-accelerated rendering. Features batched pixel operations, efficient memory allocation, and optimized update cycles for smooth real-time drawing on mobile devices.",
+                  "Leverages Unity’s native texture features and GPU acceleration for fast, batched pixel updates. Keeps drawing smooth even on mobile devices.",
                 codeSnippet: {
                   title: "Optimized Texture Operations",
                   language: "csharp",
@@ -2361,10 +2354,11 @@ export default function Projects() {
           
           <SuspenseProjectCard
             projectId="Better-Tetris"
-            title="Better Tetris"
-            description="A meticulously crafted Unity-based Tetris implementation that brings authentic arcade-quality gameplay to modern platforms. This professional-grade recreation features the industry-standard Super Rotation System (SRS), comprehensive audio feedback, ghost piece visualization, and a sophisticated scoring system. Built with clean architecture principles using Unity's advanced systems including Tilemaps for efficient rendering, ScriptableObjects for data management, and modular component design for maintainability."
+            title="Tetris"
+            description="A carefully crafted Unity version of Tetris that delivers classic arcade gameplay on modern platforms. This professional-quality remake includes the official Super Rotation System, rich audio feedback, ghost piece previews, and a smart scoring system. It’s built with clean, modular code using Unity’s Tilemaps, ScriptableObjects, and solid design principles to keep things maintainable."
             githubLink="https://github.com/Beer-de-Vreeze/Better-Tetris"
             liveLink="https://bjeerpeer.itch.io/better-tetris"
+            coverImage="/images/BetterTetris Images/Tetris3.webp"
             media={[
               {
                 type: "image",
@@ -2377,7 +2371,7 @@ export default function Projects() {
               {
                 title: "Super Rotation System (SRS) Implementation",
                 description:
-                  "Complete implementation of the industry-standard Super Rotation System with authentic wall kick algorithms for all seven tetromino pieces. Features precise rotation mechanics, collision detection, and the complex wall kick patterns that define professional Tetris gameplay.",
+                  "Fully implements the official Super Rotation System with authentic wall kicks for all seven tetrominoes. Rotation is precise, collisions are spot on, and the complex wall kick patterns make gameplay feel just right.",
                 codeSnippet: {
                   title: "Advanced Rotation with Wall Kick System",
                   language: "csharp",
@@ -2453,7 +2447,7 @@ private void ApplyRotationMatrix(int direction)
               {
                 title: "Efficient Tilemap-Based Board System",
                 description:
-                  "High-performance game board implementation using Unity's Tilemap system for optimal rendering and memory usage. Features intelligent line clearing algorithms, precise collision detection, and efficient piece validation that scales seamlessly with gameplay intensity.",
+                  "Uses Unity’s Tilemap for fast, efficient board rendering and memory use. Includes smart line clearing, accurate collision checks, and validation that keeps up with fast-paced play.",
                 codeSnippet: {
                   title: "Optimized Line Clearing Algorithm",
                   language: "csharp",
@@ -2538,7 +2532,7 @@ public void LineClear(int row)
               {
                 title: "Real-Time Ghost Piece Preview",
                 description:
-                  "Sophisticated ghost piece system that provides instant visual feedback showing where the current piece will land. Uses optimized drop simulation algorithms and transparent rendering to enhance player decision-making without impacting performance.",
+                  "Shows exactly where your piece will land with a transparent ghost preview. Uses optimized drop simulation so you get instant, clear feedback without any lag.",
                 codeSnippet: {
                   title: "Ghost Piece Drop Simulation",
                   language: "csharp",
@@ -2627,7 +2621,7 @@ public void LineClear(int row)
               {
                 title: "Comprehensive Scoring & Progression System",
                 description:
-                  "Advanced scoring system with authentic Tetris point values and multipliers. Features persistent high score tracking, real-time UI updates, and escalating rewards that encourage strategic line clearing combinations for maximum points.",
+                  "Authentic Tetris scoring with points and multipliers. Tracks high scores persistently, updates the UI live, and rewards combo line clears to encourage strategic play.",
                 codeSnippet: {
                   title: "Multi-Level Scoring Algorithm",
                   language: "csharp",
@@ -2691,7 +2685,7 @@ public void GameOver()
               {
                 title: "Comprehensive Input & Movement System",
                 description:
-                  "Responsive input handling with customizable controls supporting both keyboard and potential gamepad input. Features smooth movement with proper delays, hard drop mechanics, soft drop acceleration, and intuitive piece manipulation controls.",
+                  "Responsive controls with customizable keyboard support and potential gamepad compatibility. Features smooth piece movement, hard and soft drops, and intuitive handling.",
                 codeSnippet: {
                   title: "Advanced Input Processing System",
                   language: "csharp",
@@ -2784,7 +2778,7 @@ private bool Move(Vector2Int translation, bool isHardDrop = false)
               {
                 title: "Data-Driven Tetromino Architecture",
                 description:
-                  "Elegant data structure system using static dictionaries and mathematical rotation matrices to define all seven tetromino types. Implements authentic piece shapes, rotation behaviors, and wall kick patterns through clean, maintainable code architecture.",
+                  "Uses clean data structures with rotation matrices and static dictionaries for all tetromino shapes and wall kicks. Keeps the code tidy and easy to maintain.",
                 codeSnippet: {
                   title: "Tetromino Data & Rotation Mathematics",
                   language: "csharp",

@@ -110,13 +110,17 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
               <span className="flex items-center gap-2 ml-2">
                 <a href="https://github.com/Beer-de-Vreeze" target="_blank" rel="noopener noreferrer" className="hover:text-white text-gray-400 transition-colors text-lg">
                   <FaGithub />
-                </a>
-                <a href="https://www.linkedin.com/in/beer-de-vreeze-59040919a/" target="_blank" rel="noopener noreferrer" className="hover:text-white text-gray-400 transition-colors text-lg">
+                </a>                <a href="https://www.linkedin.com/in/beer-de-vreeze-59040919a/" target="_blank" rel="noopener noreferrer" className="hover:text-white text-gray-400 transition-colors text-lg">
                   <FaLinkedin />
-                </a>
-                <a href="https://bjeerpeer.itch.io/" target="_blank" rel="noopener noreferrer" className="hover:text-white text-gray-400 transition-colors text-lg">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="currentColor" width="1em" height="1em">
-                    <path d="M8 12C5.79086 12 4 13.7909 4 16V48C4 50.2091 5.79086 52 8 52H56C58.2091 52 60 50.2091 60 48V16C60 13.7909 58.2091 12 56 12H8ZM8 16H56V48H8V16ZM16 20C13.7909 20 12 21.7909 12 24V40C12 42.2091 13.7909 44 16 44H48C50.2091 44 52 42.2091 52 40V24C52 21.7909 50.2091 20 48 20H16ZM16 24H48V40H16V24ZM20 28V36H24V32H40V36H44V28H40V32H24V28H20Z"/>
+                </a>                <a href="https://bjeerpeer.itch.io/" target="_blank" rel="noopener noreferrer" className="hover:text-white text-gray-400 transition-colors text-lg">
+                  <svg 
+                    width="18" 
+                    height="18" 
+                    viewBox="0 0 512 512" 
+                    fill="currentColor"
+                    className="w-[1em] h-[1em]"
+                  >
+                    <path d="M118 95c-16 10-49 47-49 56v16c0 21 19 38 36 38 21 0 38-17 38-37 0 20 17 37 38 37 20 0 36-17 36-37 0 20 18 37 39 37s39-17 39-37c0 20 16 37 36 37 21 0 38-17 38-37 0 20 17 37 38 37 17 0 36-17 36-38v-16c0-9-33-46-49-56a3511 3511 0 00-276 0zm99 101l-7 9a43 43 0 01-68-9l-7 9c-8 8-19 13-31 13l-4-1-2 46v18c0 36-4 118 16 138 30 7 86 10 142 10s112-3 142-10c20-20 16-102 16-138v-18l-2-46-4 1c-12 0-23-5-31-13l-7-9-7 9a43 43 0 01-68-9 43 43 0 01-38 22h-1-1a43 43 0 01-38-22zm-31 40c12 0 23 0 37 15l33-2 33 2c14-15 25-15 37-15 6 0 29 0 45 46l18 63c13 46-4 47-26 47-31-1-49-24-49-47a371 371 0 01-117 0c1 23-17 46-48 47-22 0-39-1-26-47l18-63c16-46 39-46 45-46zm70 36s-33 31-39 42l22-1v19h34v-19l22 1c-6-11-39-42-39-42z"/>
                   </svg>
                 </a>
                 <a href="/downloads/Beer%20de%20Vreeze%20CV.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-white text-gray-400 transition-colors text-lg">
@@ -124,8 +128,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                 </a>
               </span>
             </p>
-          </div>
-        </div>
+          </div>        </div>
         
         {/* Bubbles section - modified for better fit */}
         <div className="border-t border-[#27272a] mt-1 py-3">
@@ -164,9 +167,22 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                   </div>
                 )}
               </div>
-            ))}
+            ))}          </div>
+        </div>          {/* About Me section */}
+        <div className="border-t border-[#27272a] mt-1 pt-1 pb-0">          <h3 className="text-base font-semibold text-white mb-1 tracking-tight">About Me</h3>
+          <div>
+            <p className="text-base text-gray-300 leading-tight tracking-tight mb-3">
+              I&apos;m a software enthusiast driven by a love for clean code, creative problem-solving, and constant learning. I get a kick out of debugging, building systems that just work, and experimenting with the latest in tech.
+            </p>
+            <p className="text-base text-gray-300 leading-tight tracking-tight mb-3">
+              I&apos;m always looking to grow—whether that&apos;s diving into a new framework, collaborating with a team, or literally scuba diving (yes, I&apos;m certified). I&apos;m a gamer and someone who finds joy in cooking from scratch.
+            </p>
+            <p className="text-base text-gray-300 leading-tight tracking-tight mb-0">
+              I thrive in environments where curiosity, teamwork, and hands-on building meet. If there&apos;s a challenge, I&apos;m all in.
+            </p>
           </div>
         </div>
+        
         {/* Debug indicator */}
         <div className="hidden">{hoveredBubble !== null ? `Hovering bubble ${hoveredBubble}` : 'Not hovering'}</div>
       </div>
