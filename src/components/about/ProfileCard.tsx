@@ -117,8 +117,9 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
 
   const handleMouseEnter = (index: number) => {
     if (!isMobile) {
-      setHoveredBubble(index);
+      // Clear any pending fade animation
       setFadingBubble(null);
+      setHoveredBubble(index);
     }
   };
 
@@ -127,10 +128,11 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
       setHoveredBubble(prev => {
         if (prev !== null) {
           setFadingBubble(prev);
+          // Reduced timeout for faster transitions
           setTimeout(() => {
-            setHoveredBubble(null);
             setFadingBubble(null);
           }, 200);
+          return null; // Immediately set to null instead of returning prev
         }
         return prev;
       });
@@ -147,10 +149,9 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         if (prev === index) {
           setFadingBubble(index);
           setTimeout(() => {
-            setHoveredBubble(null);
             setFadingBubble(null);
           }, 200);
-          return prev;
+          return null; // Return null immediately
         } else {
           setFadingBubble(null);
           return index;
@@ -162,9 +163,9 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         if (prev === index) {
           setFadingBubble(index);
           setTimeout(() => {
-            setHoveredBubble(null);
             setFadingBubble(null);
           }, 200);
+          return null; // Return null immediately
         }
         return prev;
       });
