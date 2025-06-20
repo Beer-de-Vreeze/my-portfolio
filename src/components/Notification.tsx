@@ -19,6 +19,21 @@ const Notification = ({ message, type, isVisible, onClose, duration = 5000 }: No
       return () => clearTimeout(timer);
     }
   }, [isVisible, duration, onClose]);
+  useEffect(() => {
+    const handleClickOutside = () => {
+      if (isVisible) {
+        onClose();
+      }
+    };
+
+    if (isVisible) {
+      document.addEventListener('click', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [isVisible, onClose]);
 
   return (
     <AnimatePresence>
@@ -32,6 +47,7 @@ const Notification = ({ message, type, isVisible, onClose, duration = 5000 }: No
             damping: 30,
             duration: 0.3 
           }}          className="fixed top-4 sm:top-6 left-1/2 transform -translate-x-1/2 z-50 max-w-md sm:max-w-lg w-auto mx-2 sm:mx-4"
+          onClick={(e) => e.stopPropagation()}
         >
           <div className={`
             flex items-center justify-between p-4 sm:p-5 rounded-2xl shadow-lg backdrop-blur-sm border

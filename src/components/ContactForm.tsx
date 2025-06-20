@@ -27,13 +27,96 @@ const ContactForm = ({ onEmailSent }: ContactFormProps) => {
     isVisible: false,
   });
   const maxCharLimit = 500;
-
-  const validateEmail = (email: string) => /\S+@\S+\.\S+/.test(email);
-  const validatePhone = (phone: string) => {
+  const validateEmail = (email: string) => /\S+@\S+\.\S+/.test(email);  const validatePhone = (phone: string) => {
     // Optional phone validation - only validate if provided
     if (!phone.trim()) return true; // Empty phone is valid since it's optional
-    // Basic phone validation - allows various formats
-    return /^[\+]?[1-9][\d]{0,15}$/.test(phone.replace(/[\s\-\(\)]/g, ''));
+    
+    // Remove all non-digit characters except + at the beginning
+    const cleanPhone = phone.replace(/[\s\-\(\)\.]/g, '');
+      // Check for valid phone number patterns
+    const phonePatterns = [
+      // International format: +1234567890 (7-15 digits after country code)
+      /^\+[1-9]\d{6,14}$/,
+      
+      // DUTCH NUMBERS
+      // Dutch mobile: +31612345678 or +316xxxxxxxx (8 digits after 6)
+      /^\+316\d{8}$/,
+      // Dutch landline: +31201234567 or +31xx....... (8-9 digits after area code)
+      /^\+31[1-9]\d{7,8}$/,
+      // Dutch mobile without country code: 06xxxxxxxx (10 digits starting with 06)
+      /^06\d{8}$/,
+      // Dutch landline without country code: 0xx....... (9-10 digits starting with 0, not 06)
+      /^0[1-9]\d{7,8}$/,
+      
+      // GERMAN NUMBERS
+      // German mobile: +491701234567 (country code 49, mobile starts with 15x, 16x, 17x)
+      /^\+49(15\d|16\d|17\d)\d{7,8}$/,
+      // German landline: +4930123456 (country code 49, area code, 6-8 digits)
+      /^\+49[1-9]\d{1,4}\d{4,8}$/,
+      // German without country code: 01701234567 (mobile) or area code format
+      /^0(15\d|16\d|17\d)\d{7,8}$/,
+      /^0[1-9]\d{1,4}\d{4,8}$/,
+      
+      // FRENCH NUMBERS  
+      // French mobile: +33612345678 (country code 33, mobile starts with 6 or 7)
+      /^\+33[67]\d{8}$/,
+      // French landline: +33123456789 (country code 33, landline starts with 1-5, 8, 9)
+      /^\+33[1-58-9]\d{8}$/,
+      // French without country code: 0612345678
+      /^0[1-9]\d{8}$/,
+      
+      // ITALIAN NUMBERS
+      // Italian mobile: +393123456789 (country code 39, mobile starts with 3)
+      /^\+393\d{8,9}$/,
+      // Italian landline: +390212345678 (country code 39, various area codes)
+      /^\+39[0-9]\d{6,10}$/,
+      // Italian without country code: 3123456789 or 0212345678
+      /^3\d{8,9}$/,
+      /^0[1-9]\d{6,9}$/,
+      
+      // SPANISH NUMBERS
+      // Spanish mobile: +34612345678 (country code 34, mobile starts with 6, 7, 8, 9)
+      /^\+34[6-9]\d{8}$/,
+      // Spanish landline: +34912345678 (country code 34, landline starts with 8, 9)
+      /^\+34[89]\d{8}$/,
+      // Spanish without country code: 612345678
+      /^[6-9]\d{8}$/,
+      
+      // UK NUMBERS
+      // UK mobile: +447123456789 (country code 44, mobile starts with 7)
+      /^\+447\d{9}$/,
+      // UK landline: +441234567890 (country code 44, various formats)
+      /^\+44[1-9]\d{8,9}$/,
+      // UK without country code: 07123456789 or 01234567890
+      /^07\d{9}$/,
+      /^0[1-9]\d{8,9}$/,
+      
+      // BELGIAN NUMBERS
+      // Belgian mobile: +32471234567 (country code 32, mobile 4xx)
+      /^\+32[4]\d{8}$/,
+      // Belgian landline: +3223456789 (country code 32, landline)
+      /^\+32[1-9]\d{7,8}$/,
+      // Belgian without country code: 0471234567
+      /^0[1-9]\d{7,8}$/,
+      
+      // SWISS NUMBERS
+      // Swiss mobile: +41791234567 (country code 41, mobile 7x, 8x)
+      /^\+41[78]\d{8}$/,
+      // Swiss landline: +41311234567 (country code 41, various area codes)
+      /^\+41[1-6]\d{7,8}$/,
+      // Swiss without country code: 0791234567
+      /^0[1-9]\d{8}$/,
+      
+      // US format: 1234567890 (10 digits)
+      /^[2-9]\d{2}[2-9]\d{2}\d{4}$/,
+      // US format with country code: 11234567890 (11 digits starting with 1)
+      /^1[2-9]\d{2}[2-9]\d{2}\d{4}$/,
+      // General international format: 7-15 digits
+      /^\d{7,15}$/
+    ];
+    
+    // Test against any of the valid patterns
+    return phonePatterns.some(pattern => pattern.test(cleanPhone));
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -43,19 +126,39 @@ const ContactForm = ({ onEmailSent }: ContactFormProps) => {
     if (id === 'message') setCharCount(value.length);
     setErrors((prevErrors) => ({ ...prevErrors, [id]: '' }));
   };
-
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const newErrors = { name: '', email: '', phone: '', subject: '', message: '' };
+    const errorMessages: string[] = [];
 
-    if (!formData.name.trim()) newErrors.name = 'Name is required.';
-    if (!formData.email.trim() || !validateEmail(formData.email)) newErrors.email = 'Valid email is required.';
-    if (!validatePhone(formData.phone)) newErrors.phone = 'Please enter a valid phone number.';
-    if (!formData.subject.trim()) newErrors.subject = 'Subject is required.';
-    if (!formData.message.trim()) newErrors.message = 'Message cannot be empty.';
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required.';
+      errorMessages.push('Name is required');
+    }
+    if (!formData.email.trim() || !validateEmail(formData.email)) {
+      newErrors.email = 'Valid email is required.';
+      errorMessages.push('Valid email is required');
+    }
+    if (!validatePhone(formData.phone)) {
+      newErrors.phone = 'Please enter a valid phone number (e.g., +31 6 12345678, 06 12345678, or +1 234 567 8901).';
+      errorMessages.push('Please enter a valid phone number (e.g., +31 6 12345678, 06 12345678, or +1 234 567 8901)');
+    }
+    if (!formData.subject.trim()) {
+      newErrors.subject = 'Subject is required.';
+      errorMessages.push('Subject is required');
+    }
+    if (!formData.message.trim()) {
+      newErrors.message = 'Message cannot be empty.';
+      errorMessages.push('Message cannot be empty');
+    }
 
-    if (newErrors.name || newErrors.email || newErrors.phone || newErrors.subject || newErrors.message) {
+    if (errorMessages.length > 0) {
       setErrors(newErrors);
+      setNotification({
+        message: errorMessages.length === 1 ? errorMessages[0] : `Please fix the following: ${errorMessages.join(', ')}`,
+        type: 'error',
+        isVisible: true,
+      });
       return;
     }
 

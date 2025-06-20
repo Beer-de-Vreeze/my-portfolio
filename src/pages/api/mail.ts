@@ -47,46 +47,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             background-color: #000000;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: antialiased;
-          }
-          .container {
+          }          .container {
             background-color: #000000;
             border: 1px solid #27272a;
             border-radius: 8px;
             overflow: hidden;
-            position: relative;
-          }
-          .container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: 
-              linear-gradient(to right, rgba(39,39,42,0.5) 1px, transparent 1px),
-              linear-gradient(to bottom, rgba(39,39,42,0.5) 1px, transparent 1px);
-            background-size: 20.5px 21px;
-            pointer-events: none;
-            border-radius: 8px;
-          }
-          .header {
+          }          .header {
             background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
             color: white;
             padding: 30px;
             text-align: center;
-            position: relative;
-            z-index: 1;
           }
           .header h1 {
             margin: 0;
             font-size: 24px;
             font-weight: 300;
             letter-spacing: 0.025em;
-          }
-          .content {
+          }          .content {
             padding: 30px;
-            position: relative;
-            z-index: 1;
           }
           .field {
             margin-bottom: 24px;
@@ -96,11 +74,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           .field:last-child {
             border-bottom: none;
             margin-bottom: 0;
-          }
-          .label {
+          }          .label {
             display: inline-block;
             font-weight: 200;
-            color: #a1a1aa;
+            color: #ffffff;
             margin-bottom: 8px;
             font-size: 14px;
             text-transform: uppercase;
@@ -111,8 +88,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             color: #ffffff;
             word-wrap: break-word;
             font-weight: 300;
-          }
-          .message-content {
+          }.message-content {
             background-color: #111111;
             border: 1px solid #27272a;
             border-left: 4px solid #3b82f6;
@@ -121,20 +97,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             margin-top: 12px;
             white-space: pre-wrap;
             font-weight: 300;
-            background-image: 
-              linear-gradient(to right, rgba(39,39,42,0.3) 1px, transparent 1px),
-              linear-gradient(to bottom, rgba(39,39,42,0.3) 1px, transparent 1px);
-            background-size: 15px 15px;
-          }
-          .footer {
+            color: #ffffff;
+          }          .footer {
             background-color: #111111;
             border-top: 1px solid #27272a;
             padding: 20px 30px;
             text-align: center;
             font-size: 12px;
-            color: #71717a;
-            position: relative;
-            z-index: 1;
+            color: #ffffff;
           }
           .email-link {
             color: #3b82f6;
