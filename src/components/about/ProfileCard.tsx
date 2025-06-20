@@ -81,10 +81,17 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
 
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       const target = event.target as Element;
-      // Check if click is outside bubble area
       if (!target.closest('.bubble-container')) {
-        setHoveredBubble(null);
-        setFadingBubble(null);
+        setHoveredBubble(prev => {
+          if (prev !== null) {
+            setFadingBubble(prev);
+            setTimeout(() => {
+              setHoveredBubble(null);
+              setFadingBubble(null);
+            }, 200);
+          }
+          return prev;
+        });
       }
     };
 
@@ -95,7 +102,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
       document.removeEventListener('touchstart', handleClickOutside);
       document.removeEventListener('click', handleClickOutside);
     };
-  }, [isMobile]);
+  }, [isMobile]); // Remove hoveredBubble from dependencies
 
   // Clear fading bubble after animation completes
   useEffect(() => {
@@ -110,7 +117,6 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
 
   const handleMouseEnter = (index: number) => {
     if (!isMobile) {
-      console.log('Mouse enter on bubble:', index);
       setHoveredBubble(index);
       setFadingBubble(null);
     }
@@ -118,70 +124,52 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
 
   const handleMouseLeave = () => {
     if (!isMobile) {
-      console.log('Mouse leave');
-      if (hoveredBubble !== null) {
-        setFadingBubble(hoveredBubble);
-        setTimeout(() => {
-          setHoveredBubble(null);
-          setFadingBubble(null);
-        }, 200);
-      }
-    }
-  };
-
-  const handleBubbleClick = (index: number, event: React.MouseEvent | React.TouchEvent) => {
-    event.stopPropagation();
-    console.log('Bubble clicked:', index);
-    
-    if (isMobile) {
-      // On mobile, toggle the tooltip
-      if (hoveredBubble === index) {
-        setFadingBubble(index);
-        setTimeout(() => {
-          setHoveredBubble(null);
-          setFadingBubble(null);
-        }, 200);
-      } else {
-        setHoveredBubble(index);
-        setFadingBubble(null);
-      }
-    } else {
-      // Desktop behavior - click to close
-      if (hoveredBubble === index) {
-        setFadingBubble(index);
-        setTimeout(() => {
-          setHoveredBubble(null);
-          setFadingBubble(null);
-        }, 200);
-      }
-    }
-  };
-
-  // Modified handleClickOutside for smoother closing
-  useEffect(() => {
-    if (!isMobile) return;
-
-    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-      const target = event.target as Element;
-      if (!target.closest('.bubble-container')) {
-        if (hoveredBubble !== null) {
-          setFadingBubble(hoveredBubble);
+      setHoveredBubble(prev => {
+        if (prev !== null) {
+          setFadingBubble(prev);
           setTimeout(() => {
             setHoveredBubble(null);
             setFadingBubble(null);
           }, 200);
         }
-      }
-    };
+        return prev;
+      });
+    }
+  };
 
-    document.addEventListener('touchstart', handleClickOutside);
-    document.addEventListener('click', handleClickOutside);
+  const handleBubbleInteraction = (index: number, event: React.MouseEvent | React.TouchEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
     
-    return () => {
-      document.removeEventListener('touchstart', handleClickOutside);
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, [isMobile, hoveredBubble]);
+    if (isMobile) {
+      // On mobile, toggle the tooltip
+      setHoveredBubble(prev => {
+        if (prev === index) {
+          setFadingBubble(index);
+          setTimeout(() => {
+            setHoveredBubble(null);
+            setFadingBubble(null);
+          }, 200);
+          return prev;
+        } else {
+          setFadingBubble(null);
+          return index;
+        }
+      });
+    } else {
+      // Desktop behavior - click to close
+      setHoveredBubble(prev => {
+        if (prev === index) {
+          setFadingBubble(index);
+          setTimeout(() => {
+            setHoveredBubble(null);
+            setFadingBubble(null);
+          }, 200);
+        }
+        return prev;
+      });
+    }
+  };
 
   return (
     <div className="w-full max-w-[500px] h-auto md:w-[495px] bg-black border border-[#27272a] rounded-lg shadow-lg p-4">
@@ -236,8 +224,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                 className="px-3 py-1 bg-black border border-[#27272a] rounded-full flex items-center gap-1.5 relative cursor-pointer shadow-md transition-transform duration-200 hover:scale-[1.03] overflow-visible"
                 onMouseEnter={() => handleMouseEnter(index)}
                 onMouseLeave={handleMouseLeave}
-                onClick={(e) => handleBubbleClick(index, e)}
-                onTouchEnd={(e) => handleBubbleClick(index, e)}
+                onTouchStart={(e) => handleBubbleInteraction(index, e)}
+                onClick={(e) => !isMobile && handleBubbleInteraction(index, e)}
               >
                 <div className="flex-shrink-0">
                   {bubble.icon}
@@ -247,7 +235,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                 {bubble.additionalInfo && hoveredBubble === index && (
                   <div 
                     className={`
-                      fixed transform -translate-x-1/2 
+                      absolute transform -translate-x-1/2 
                       bg-gray-800 border border-[#27272a] rounded-xl 
                       text-white text-xs w-max max-w-[180px] shadow-lg z-50 
                       transition-all duration-200 p-2.5
@@ -260,7 +248,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                     }}
                   >
                     {bubble.additionalInfo}
-                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-gray-800 border-r border-b border-[#27272a]"></div>
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-45 w-2 h-2 bg-gray-800 border-r border-b border-[#27272a]"></div>
                   </div>
                 )}
               </div>
@@ -290,7 +278,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   );
 };
 
-// Enhanced tooltip styles with close animation
+// Enhanced tooltip styles with close animation - moved outside component
 const tooltipStyles = `
   .tooltip-popup {
     animation: tooltipPopup 0.2s ease-out forwards;
@@ -329,9 +317,10 @@ const tooltipStyles = `
   }
 `;
 
-// Add the styles to the document
-if (typeof document !== 'undefined') {
+// Add styles only once
+if (typeof document !== 'undefined' && !document.querySelector('#profile-card-styles')) {
   const style = document.createElement('style');
+  style.id = 'profile-card-styles';
   style.type = 'text/css';
   style.appendChild(document.createTextNode(tooltipStyles));
   document.head.appendChild(style);
