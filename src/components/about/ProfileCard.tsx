@@ -61,32 +61,86 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
 }) => {
   const [hoveredBubble, setHoveredBubble] = useState<number | null>(null);
   const [fadingBubble, setFadingBubble] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect if device is mobile/touch
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile('ontouchstart' in window || navigator.maxTouchPoints > 0);
+    };
+    
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+    
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
+
+  // Handle clicks outside of bubbles to close tooltips on mobile
+  useEffect(() => {
+    if (!isMobile) return;
+
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Element;
+      // Check if click is outside bubble area
+      if (!target.closest('.bubble-container')) {
+        setHoveredBubble(null);
+        setFadingBubble(null);
+      }
+    };
+
+    document.addEventListener('touchstart', handleClickOutside);
+    document.addEventListener('click', handleClickOutside);
+    
+    return () => {
+      document.removeEventListener('touchstart', handleClickOutside);
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [isMobile]);
+
   // Clear fading bubble after animation completes
   useEffect(() => {
     if (fadingBubble !== null) {
       const timer = setTimeout(() => {
         setFadingBubble(null);
-      }, 300); // Match this with the CSS transition duration
+      }, 300);
       
       return () => clearTimeout(timer);
     }
   }, [fadingBubble]);
 
   const handleMouseEnter = (index: number) => {
-    console.log('Mouse enter on bubble:', index);
-    setHoveredBubble(index);
+    if (!isMobile) {
+      console.log('Mouse enter on bubble:', index);
+      setHoveredBubble(index);
+    }
   };
 
   const handleMouseLeave = () => {
-    console.log('Mouse leave');
-    setHoveredBubble(null);
+    if (!isMobile) {
+      console.log('Mouse leave');
+      setHoveredBubble(null);
+    }
   };
 
-  const handleBubbleClick = (index: number) => {
+  const handleBubbleClick = (index: number, event: React.MouseEvent | React.TouchEvent) => {
+    event.stopPropagation(); // Prevent event from bubbling up
     console.log('Bubble clicked:', index);
-    if (hoveredBubble === index) {
-      setFadingBubble(index);
-      setTimeout(() => setHoveredBubble(null), 300);
+    
+    if (isMobile) {
+      // On mobile, toggle the tooltip
+      if (hoveredBubble === index) {
+        setFadingBubble(index);
+        setTimeout(() => setHoveredBubble(null), 300);
+      } else {
+        setHoveredBubble(index);
+        setFadingBubble(null);
+      }
+    } else {
+      // Desktop behavior remains the same
+      if (hoveredBubble === index) {
+        setFadingBubble(index);
+        setTimeout(() => setHoveredBubble(null), 300);
+      }
     }
   };
 
@@ -130,8 +184,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             </p>
           </div>        </div>
         
-        {/* Bubbles section - modified for better fit */}
-        <div className="border-t border-[#27272a] mt-1 py-3">
+        {/* Bubbles section - modified for mobile touch behavior */}
+        <div className="border-t border-[#27272a] mt-1 py-3 bubble-container">
           <div className="flex flex-wrap gap-2 w-full">
             {bubbles.map((bubble, index) => (
               <div 
@@ -139,7 +193,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                 className="px-3 py-1 bg-black border border-[#27272a] rounded-full flex items-center gap-1.5 relative cursor-pointer shadow-md transition-transform duration-200 hover:scale-[1.03] overflow-visible"
                 onMouseEnter={() => handleMouseEnter(index)}
                 onMouseLeave={handleMouseLeave}
-                onClick={() => handleBubbleClick(index)}
+                onClick={(e) => handleBubbleClick(index, e)}
+                onTouchEnd={(e) => handleBubbleClick(index, e)}
               >
                 <div className="flex-shrink-0">
                   {bubble.icon}
