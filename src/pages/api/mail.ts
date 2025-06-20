@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (!tokenResponse?.accessToken) {
       throw new Error('Failed to obtain access token');
-    }    // Create email content styled to match your portfolio site
+    }    // Create beautifully formatted HTML email content matching portfolio design
     const htmlContent = `
       <!DOCTYPE html>
       <html lang="en">
@@ -36,35 +36,44 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>New Contact Form Submission</title>
-        <style>
-          body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
+        <style>          body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.7;
             color: #ffffff;
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
             background-color: #000000;
+            font-weight: 400;
+            font-size: 16px;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: antialiased;
-          }          .container {
+            -moz-osx-font-smoothing: grayscale;
+          }
+          .container {
             background-color: #000000;
             border: 1px solid #27272a;
             border-radius: 8px;
             overflow: hidden;
-          }          .header {
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+            transition: border-color 0.3s ease;
+          }
+          .container:hover {
+            border-color: #71717a;
+          }
+          .header {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
             color: white;
             padding: 30px;
             text-align: center;
-          }
-          .header h1 {
+            border-bottom: 1px solid #27272a;
+          }          .header h1 {
             margin: 0;
-            font-size: 24px;
-            font-weight: 300;
+            font-size: 26px;
+            font-weight: 500;
             letter-spacing: 0.025em;
-          }          .content {
+          }
+          .content {
             padding: 30px;
+            background-color: #000000;
           }
           .field {
             margin-bottom: 24px;
@@ -75,60 +84,78 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             border-bottom: none;
             margin-bottom: 0;
           }          .label {
-            display: inline-block;
-            font-weight: 200;
-            color: #ffffff;
-            margin-bottom: 8px;
-            font-size: 14px;
+            display: block;
+            font-weight: 600;
+            color: #e4e4e7;
+            margin-bottom: 10px;
+            font-size: 13px;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.8px;
           }
           .value {
-            font-size: 16px;
+            font-size: 17px;
             color: #ffffff;
             word-wrap: break-word;
-            font-weight: 300;
-          }.message-content {
-            background-color: #111111;
-            border: 1px solid #27272a;
+            font-weight: 400;
+            line-height: 1.6;
+          }          .message-content {
+            background-color: #18181b;
+            border: 1px solid #3f3f46;
             border-left: 4px solid #3b82f6;
-            padding: 20px;
-            border-radius: 6px;
+            padding: 24px;
+            border-radius: 8px;
             margin-top: 12px;
             white-space: pre-wrap;
-            font-weight: 300;
             color: #ffffff;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 1.7;
           }          .footer {
-            background-color: #111111;
-            border-top: 1px solid #27272a;
-            padding: 20px 30px;
+            background-color: #18181b;
+            border-top: 1px solid #3f3f46;
+            padding: 24px 30px;
             text-align: center;
-            font-size: 12px;
-            color: #ffffff;
+            font-size: 14px;
+            color: #d4d4d8;
+            font-weight: 400;
           }
           .email-link {
             color: #3b82f6;
             text-decoration: none;
-            transition: color 0.2s ease;
+            transition: color 0.3s ease;
           }
           .email-link:hover {
-            background: linear-gradient(to right, #3b82f6, #8b5cf6, #ec4899);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #8b5cf6;
+            text-decoration: underline;
           }
-          .gradient-text {
-            background: linear-gradient(to right, #3b82f6, #8b5cf6, #ec4899);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+          .phone-link {
+            color: #3b82f6;
+            text-decoration: none;
+            transition: color 0.3s ease;
+          }
+          .phone-link:hover {
+            color: #8b5cf6;
+            text-decoration: underline;
+          }          .timestamp {
+            color: #a1a1aa;
+            font-size: 13px;
+            margin-top: 8px;
+            font-weight: 400;
+          }
+          .footer-text {
+            margin: 8px 0 0 0;
+            color: #d4d4d8;
+            font-weight: 400;
           }
           @media (max-width: 600px) {
             body {
-              padding: 10px;
+              padding: 16px;
             }
             .header, .content {
               padding: 20px;
+            }
+            .container {
+              border-radius: 6px;
             }
           }
         </style>
@@ -136,7 +163,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       <body>
         <div class="container">
           <div class="header">
-            <h1>🚀 New Contact Form Submission</h1>
+            <h1>🎮 New Portfolio Contact</h1>
           </div>
           
           <div class="content">
@@ -156,7 +183,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             <div class="field">
               <div class="label">📱 Phone</div>
               <div class="value">
-                <a href="tel:${phone}" class="email-link">${phone}</a>
+                <a href="tel:${phone}" class="phone-link">${phone}</a>
               </div>
             </div>
             ` : ''}
@@ -172,17 +199,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             </div>
           </div>
           
-          <div class="footer">
-            <p>📅 Received on ${new Date().toLocaleDateString('en-US', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-              timeZoneName: 'short'
-            })}</p>
-            <p class="gradient-text">Sent from your portfolio contact form</p>
+          <div class="footer">            <div class="timestamp">
+              📅 ${new Date().toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                timeZoneName: 'short'
+              })}
+            </div>
+            <p class="footer-text">From Beer de Vreeze Portfolio</p>
           </div>
         </div>
       </body>
