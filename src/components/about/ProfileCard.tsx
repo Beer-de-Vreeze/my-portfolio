@@ -112,42 +112,82 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
     if (!isMobile) {
       console.log('Mouse enter on bubble:', index);
       setHoveredBubble(index);
+      setFadingBubble(null);
     }
   };
 
   const handleMouseLeave = () => {
     if (!isMobile) {
       console.log('Mouse leave');
-      setHoveredBubble(null);
+      if (hoveredBubble !== null) {
+        setFadingBubble(hoveredBubble);
+        setTimeout(() => {
+          setHoveredBubble(null);
+          setFadingBubble(null);
+        }, 200);
+      }
     }
   };
 
   const handleBubbleClick = (index: number, event: React.MouseEvent | React.TouchEvent) => {
-    event.stopPropagation(); // Prevent event from bubbling up
+    event.stopPropagation();
     console.log('Bubble clicked:', index);
     
     if (isMobile) {
       // On mobile, toggle the tooltip
       if (hoveredBubble === index) {
         setFadingBubble(index);
-        setTimeout(() => setHoveredBubble(null), 300);
+        setTimeout(() => {
+          setHoveredBubble(null);
+          setFadingBubble(null);
+        }, 200);
       } else {
         setHoveredBubble(index);
         setFadingBubble(null);
       }
     } else {
-      // Desktop behavior remains the same
+      // Desktop behavior - click to close
       if (hoveredBubble === index) {
         setFadingBubble(index);
-        setTimeout(() => setHoveredBubble(null), 300);
+        setTimeout(() => {
+          setHoveredBubble(null);
+          setFadingBubble(null);
+        }, 200);
       }
     }
   };
 
+  // Modified handleClickOutside for smoother closing
+  useEffect(() => {
+    if (!isMobile) return;
+
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Element;
+      if (!target.closest('.bubble-container')) {
+        if (hoveredBubble !== null) {
+          setFadingBubble(hoveredBubble);
+          setTimeout(() => {
+            setHoveredBubble(null);
+            setFadingBubble(null);
+          }, 200);
+        }
+      }
+    };
+
+    document.addEventListener('touchstart', handleClickOutside);
+    document.addEventListener('click', handleClickOutside);
+    
+    return () => {
+      document.removeEventListener('touchstart', handleClickOutside);
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [isMobile, hoveredBubble]);
+
   return (
     <div className="w-full max-w-[500px] h-auto md:w-[495px] bg-black border border-[#27272a] rounded-lg shadow-lg p-4">
       <div className="w-full">
-        {/* Profile header - existing code */}        <div className="flex items-center justify-start gap-3 mb-0">
+        {/* Profile header - existing code */}
+        <div className="flex items-center justify-start gap-3 mb-0">
           <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-900 border-2 border-gray-600 shadow-md">
             <Image 
               src="/images/Beer.webp" 
@@ -164,9 +204,11 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
               <span className="flex items-center gap-2 ml-2">
                 <a href="https://github.com/Beer-de-Vreeze" target="_blank" rel="noopener noreferrer" className="hover:text-white text-gray-400 transition-colors text-lg">
                   <FaGithub />
-                </a>                <a href="https://www.linkedin.com/in/beer-de-vreeze-59040919a/" target="_blank" rel="noopener noreferrer" className="hover:text-white text-gray-400 transition-colors text-lg">
+                </a>
+                <a href="https://www.linkedin.com/in/beer-de-vreeze-59040919a/" target="_blank" rel="noopener noreferrer" className="hover:text-white text-gray-400 transition-colors text-lg">
                   <FaLinkedin />
-                </a>                <a href="https://bjeerpeer.itch.io/" target="_blank" rel="noopener noreferrer" className="hover:text-white text-gray-400 transition-colors text-lg">
+                </a>
+                <a href="https://bjeerpeer.itch.io/" target="_blank" rel="noopener noreferrer" className="hover:text-white text-gray-400 transition-colors text-lg">
                   <svg 
                     width="18" 
                     height="18" 
@@ -182,7 +224,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                 </a>
               </span>
             </p>
-          </div>        </div>
+          </div>
+        </div>
         
         {/* Bubbles section - modified for mobile touch behavior */}
         <div className="border-t border-[#27272a] mt-1 py-3 bubble-container">
@@ -207,9 +250,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                       fixed transform -translate-x-1/2 
                       bg-gray-800 border border-[#27272a] rounded-xl 
                       text-white text-xs w-max max-w-[180px] shadow-lg z-50 
-                      transition-all duration-300 p-2.5
-                      ${fadingBubble === index ? 'opacity-0' : 'opacity-100'}
-                      tooltip-popup
+                      transition-all duration-200 p-2.5
+                      ${fadingBubble === index ? 'tooltip-close' : 'tooltip-popup'}
                     `}
                     style={{
                       bottom: 'calc(100% + 8px)',
@@ -222,8 +264,11 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                   </div>
                 )}
               </div>
-            ))}          </div>
-        </div>          {/* About Me section */}
+            ))}
+          </div>
+        </div>
+        
+        {/* About Me section */}
         <div className="border-t border-[#27272a] mt-1 pt-1 pb-0">
           <div>
             <p className="text-base text-gray-300 leading-tight tracking-tight mb-3">
@@ -233,7 +278,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
               I&apos;m always looking to grow whether that&apos;s diving into a new framework, collaborating with a team, or literally scuba diving (yes, I do that too). I&apos;m a gamer and someone who finds joy in cooking from scratch.
             </p>
             <p className="text-base text-gray-300 leading-tight tracking-tight mb-0">
-              I thrive in environments where curiosity, teamwork, and hands-on building meet. If there&apos;s a challenge, I&apos;m all in.
+              I thrive in environments where curiosity, teamwork, and hands-on building meet. If there&apos;s a challenge, I&apos;s all in.
             </p>
           </div>
         </div>
@@ -245,10 +290,14 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   );
 };
 
-// Replace dynamic style injection with a static class
+// Enhanced tooltip styles with close animation
 const tooltipStyles = `
   .tooltip-popup {
-    animation: tooltipPopup 0.3s forwards;
+    animation: tooltipPopup 0.2s ease-out forwards;
+  }
+  
+  .tooltip-close {
+    animation: tooltipClose 0.2s ease-in forwards;
   }
   
   @keyframes tooltipPopup {
@@ -262,6 +311,20 @@ const tooltipStyles = `
     100% {
       opacity: 1;
       transform: translate(-50%, 0) scale(1);
+    }
+  }
+  
+  @keyframes tooltipClose {
+    0% {
+      opacity: 1;
+      transform: translate(-50%, 0) scale(1);
+    }
+    50% {
+      transform: translate(-50%, -2px) scale(0.98);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(-50%, 8px) scale(0.9);
     }
   }
 `;
