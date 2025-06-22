@@ -16,20 +16,33 @@ const EducationCard = () => {
 
   const [activeSchool, setActiveSchool] = useState<School | null>(null);
 
-  const schools: School[] = [
-    {
+  const schools: School[] = [    {
       name: 'Lek en Linge',
       educationType: 'VMBO-TL',
       logo: '/images/lek-en-linge.webp',
       subtitle: 'High School',
       finishedDate: '06.2021',
+      program: [
+        'Dutch Language and Literature: Advanced reading, writing, and communication skills.',
+        'English: Conversational and written English proficiency.',        'Mathematics: Algebra, geometry, and statistical analysis.',
+        'History and Geography: European and world history, geographic knowledge.',
+        'Biology: Basic life sciences and natural world understanding.',
+        'Physical Education: Sports, fitness, and health awareness.'
+      ],
+      technologies: [
+        'Critical Thinking',
+        'Communication Skills',
+        'Problem Solving',
+        'Research Methods',
+        'Academic Writing'
+      ]
     },
     {
       name: 'ROC Midden Nederland',
       educationType: 'MBO',
       logo: '/images/roc.webp',
       subtitle: 'Chef Training',
-      finishedDate: '09.2022 till 09.2023',
+      finishedDate: '09.2022 - 09.2023',
       program: [
         'Menu Planning and Preparation: Designing and executing diverse menus.',
         'Advanced Cooking Techniques: Mastering methods such as sautéing, grilling, roasting, and steaming.',
@@ -50,7 +63,7 @@ const EducationCard = () => {
       educationType: 'MBO',
       logo: '/images/GLU.webp',
       subtitle: 'Game Development',
-      finishedDate: '09.2023 till present',
+      finishedDate: '09.2023 - present',
       program: [
         'Learning programming languages like C#​',
         "Exploring game design and development principles",
