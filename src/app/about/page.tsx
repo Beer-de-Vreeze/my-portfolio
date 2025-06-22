@@ -13,7 +13,7 @@ export default function About() {
     <>
       <Navbar />
       <main
-        className="min-h-screen pt-24 pb-32 px-4 text-white grid"
+        className="min-h-screen pt-24 pb-8 px-4 text-white grid"
         style={{
           backgroundImage: `
             linear-gradient(to right, rgba(9,9,9,0.8) 2px, transparent 1px),
