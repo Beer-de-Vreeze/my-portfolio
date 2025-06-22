@@ -3,7 +3,10 @@ import LoadingBar from "@/components/loadingbar";
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Beer de Vreeze - Portfolio",
+  title: {
+    template: "Beer de Vreeze - %s",
+    default: "Beer de Vreeze - Portfolio"
+  },
   description: "Game Developer Portfolio",
   viewport: {
     width: 'device-width',
