@@ -8,10 +8,10 @@
   padding-right: 0.5rem;
   background-color: black;
   color: white;
-  padding-top: 1.5rem;
-  padding-bottom: 4rem;
+  padding-top: 1rem;
+  padding-bottom: 2rem;
   width: 100%;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
 @media (min-width: 640px) {
@@ -33,17 +33,17 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   width: 100%;
 }
 
 .headerContainerDesktop {
   margin-top: -5vh; /* Increased from -10vh to move lower */
-  margin-bottom: 2rem; /* Reduced from 4rem */
+  margin-bottom: 1.5rem; /* Reduced from 2rem */
 }
 
 .headerContainerMobile {
-  margin-bottom: 1rem; /* Reduced from 2rem */
+  margin-bottom: 0.75rem; /* Reduced from 1rem */
 }
 
 /* Adjust header position for smaller screens and laptops */
@@ -81,7 +81,7 @@
 }
 
 .nameDesktop {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   font-size: clamp(
     3rem,
     5vw + 1.5rem,
@@ -90,7 +90,7 @@
 }
 
 .nameMobile {
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   font-size: clamp(2rem, 8vw, 4rem);
 }
 
@@ -105,7 +105,7 @@
 }
 
 .titleDesktop {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   font-size: clamp(
     1.5rem,
     2vw + 1rem,
@@ -114,7 +114,7 @@
 }
 
 .titleMobile {
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   font-size: clamp(1.5rem, 5vw, 3rem);
 }
 
