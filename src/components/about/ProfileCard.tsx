@@ -274,7 +274,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
               I&apos;m always looking to grow whether that&apos;s diving into a new framework, collaborating with a team, or literally scuba diving (yes, I do that too). I&apos;m a gamer and someone who finds joy in cooking from scratch.
             </p>
             <p className="text-base text-gray-300 leading-tight tracking-tight mb-0">
-              I thrive in environments where curiosity, teamwork, and hands-on building meet. If there&apos;s a challenge, I&apos;s all in.
+              I thrive in environments where curiosity, teamwork, and hands-on building meet. If there&apos;s a challenge, I&apos;m all in.
             </p>
           </div>
         </div>
