@@ -1008,18 +1008,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             className={`w-full max-w-7xl ${isClosing ? 'animate-fadeOut' : 'animate-fadeIn'} 
               transition-transform duration-300 ease-in-out py-6 overflow-y-auto 
               max-h-[90vh] my-auto`}
-          >            <div className="flex flex-col lg:flex-row gap-4 lg:gap-4 px-2 sm:px-4 lg:px-2">
-              {/* Left Column - Media carousel and action buttons */}
+          >            <div className="flex flex-col lg:flex-row gap-4 lg:gap-4 px-2 sm:px-4 lg:px-2">              {/* Left Column - Media carousel and action buttons */}
               <div className="w-full lg:w-1/2 flex flex-col">
-                {/* Mobile: Title and Description above carousel */}
+                {/* Mobile: Title above carousel */}
                 <div className="mb-6 lg:hidden">
                   <h2 className="text-2xl sm:text-3xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 
                     bg-clip-text text-transparent leading-tight">
                     {title}
                   </h2>
-                  <p className="text-gray-300 leading-relaxed text-base sm:text-[1rem]">
-                    {description}
-                  </p>
                 </div>
 
                 {/* Media Slideshow Container */}
@@ -1149,12 +1145,20 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                           <path d="M8 6L2 12L8 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                       </a>
-                    )}
-                  </div>
-                )}
+                    )}                  </div>
+                )}                {/* Mobile: Description below carousel and buttons */}
+                <div className="mt-6 mb-4 lg:hidden">
+                  <h3 className="text-lg font-semibold mb-3 bg-gradient-to-r from-blue-500 to-purple-600 
+                    bg-clip-text text-transparent">
+                    About
+                  </h3>
+                  <p className="text-gray-300 leading-relaxed text-base sm:text-[1rem]">
+                    {description}
+                  </p>
+                </div>
                 
                 {/* Tech Stack section - moved from right column */}
-                <div className="mt-8 mb-4">
+                <div className="mt-0 mb-4">
                   <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 
                     bg-clip-text text-transparent">
                     Built with
