@@ -34,10 +34,14 @@ export default function ContactCard() {
   // }, []);
 
   return (
-    <BaseCard href="/contact">
-      <div
+    <BaseCard href="/contact">      <div
         className="relative z-10 flex items-center justify-center p-4 sm:p-5 bg-black border border-[#27272a] rounded-lg transition-all duration-300 group-hover:border-gray-500 group-hover:scale-105"
-        style={{ width: "clamp(180px, 25vw, 260px)", height: "clamp(180px, 25vw, 260px)" }}      >        {/* Online status indicator - positioned outside the card */}
+        style={{
+          width: 'clamp(180px, 25vw, 250px)',
+          height: 'clamp(160px, 20vw, 220px)'
+        }}
+      >
+        {/* Online status indicator - positioned outside the card */}
         {/* <div className="absolute -top-2 -right-2 md:-right-3 lg:-right-5 flex items-center space-x-2 bg-black border border-[#27272a] rounded-full px-3 py-1 z-20">
           {loading ? (
             <div className="w-3 h-3 md:w-4 md:h-4 rounded-full bg-gray-500 animate-pulse"></div>
