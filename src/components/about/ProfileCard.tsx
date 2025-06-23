@@ -63,10 +63,17 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   const [fadingBubble, setFadingBubble] = useState<number | null>(null);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Detect if device is mobile/touch
+  // Detect if device is mobile/touch - updated detection
   useEffect(() => {
     const checkIfMobile = () => {
-      setIsMobile('ontouchstart' in window || navigator.maxTouchPoints > 0);
+      // More specific mobile detection
+      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      const isSmallScreen = window.innerWidth <= 768;
+      const userAgent = navigator.userAgent.toLowerCase();
+      const isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+      
+      // Only consider it mobile if it's both touch-enabled AND has a small screen OR is a known mobile device
+      setIsMobile((isTouchDevice && isSmallScreen) || isMobileDevice);
     };
     
     checkIfMobile();
