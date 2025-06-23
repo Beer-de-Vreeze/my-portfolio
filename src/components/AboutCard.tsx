@@ -3,11 +3,10 @@ import BaseCard from "./Card";
 
 export default function AboutCard() {
   return (
-    <BaseCard href="/about">
-      <div 
+    <BaseCard href="/about">      <div 
         className="relative z-10 flex items-center justify-center p-4 sm:p-5 bg-black border border-[#27272a] rounded-lg transition-all duration-300 group-hover:border-gray-500 group-hover:scale-105"
         style={{
-          width: 'clamp(180px, 25vw, 250px)',
+          width: 'clamp(160px, 20vw, 220px)',
           height: 'clamp(160px, 20vw, 220px)'
         }}
       >
