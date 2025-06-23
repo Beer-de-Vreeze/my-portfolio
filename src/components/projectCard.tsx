@@ -1009,19 +1009,19 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               transition-transform duration-300 ease-in-out py-6 overflow-y-auto 
               max-h-[90vh] my-auto`}
           >            <div className="flex flex-col lg:flex-row gap-4 lg:gap-4 px-2 sm:px-4 lg:px-2">
-              {/* Mobile: Title and Description First */}
-              <div className="lg:hidden mb-3">
-                <h2 className="text-2xl sm:text-3xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 
-                  bg-clip-text text-transparent leading-tight">
-                  {title}
-                </h2>
-                <p className="text-gray-300 leading-relaxed text-base sm:text-[1rem]">
-                  {description}
-                </p>
-              </div>
-
               {/* Left Column - Media carousel and action buttons */}
               <div className="w-full lg:w-1/2 flex flex-col">
+                {/* Mobile: Title and Description above carousel */}
+                <div className="mb-6 lg:hidden">
+                  <h2 className="text-2xl sm:text-3xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 
+                    bg-clip-text text-transparent leading-tight">
+                    {title}
+                  </h2>
+                  <p className="text-gray-300 leading-relaxed text-base sm:text-[1rem]">
+                    {description}
+                  </p>
+                </div>
+
                 {/* Media Slideshow Container */}
                 <div className="relative w-full rounded-xl overflow-hidden border border-[#333333] mb-4">
                   {/* Media Content with touch gesture support */}
@@ -1171,11 +1171,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     ))}
                   </div>
                 </div>
-              </div>              
-              {/* Right Column - Project details and features */}
+              </div>                {/* Right Column - Project details and features */}
               <div className="w-full lg:w-1/2 mt-4 lg:mt-0">
-                {/* Title and Description */}
-                <div className="mb-8">
+                {/* Title and Description - hidden on mobile since it's shown above carousel */}
+                <div className="mb-8 hidden lg:block">
                   <h2 className="text-2xl sm:text-3xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 
                     bg-clip-text text-transparent leading-tight">
                     {title}
