@@ -934,14 +934,17 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   }, [zoomedImage, isModalOpen]);
 
   return (
-    <>
-      {/* Project Card with mobile-responsive design */}
+    <>      {/* Project Card with mobile-responsive design */}
       <div 
         onClick={openModal}
         onMouseDown={() => setIsClicked(true)}
         onMouseUp={() => setIsClicked(false)}
-        className={`relative z-10 flex flex-col justify-between p-4 sm:p-5 bg-[#111111] border border-[#2a2a2a] rounded-lg transition-all duration-300 hover:border-[#4a4a4a] hover:translate-y-[-4px] overflow-hidden cursor-pointer w-full max-w-[500px] mx-auto h-48 sm:h-56 ${isClicked ? 'scale-95' : ''}`}
-      >        {/* Background thumbnail image with improved visibility */}
+        className={`relative z-10 flex flex-col justify-between p-4 sm:p-5 bg-[#111111] border border-[#2a2a2a] rounded-lg transition-all duration-300 hover:border-[#4a4a4a] hover:translate-y-[-4px] overflow-hidden cursor-pointer w-full max-w-[500px] mx-auto ${isClicked ? 'scale-95' : ''}`}
+        style={{
+          width: 'clamp(180px, 25vw, 250px)',
+          height: 'clamp(160px, 20vw, 220px)'
+        }}
+      >{/* Background thumbnail image with improved visibility */}
         <div className="absolute top-0 left-0 w-full h-full z-0 opacity-60">
           <Image 
             src={thumbnailImage} 
