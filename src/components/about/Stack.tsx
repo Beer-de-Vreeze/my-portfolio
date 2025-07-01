@@ -27,7 +27,7 @@ const Stack = () => {
           title: 'Started Creative Software Development Program at GLU',
           category: 'Education',
           date: '08.2023',
-          description: 'Enrolled in the Creative Software Development – Game Development profile at Grafisch Lyceum Utrecht, focusing on programming languages like C# and mastering tools such as Unity and Git.',
+        description: 'Enrolled in the Creative Software Development – Game Development profile at Grafisch Lyceum Utrecht, focusing on programming languages like C# and mastering tools such as Unity and Git.',
         },
       ];
 
