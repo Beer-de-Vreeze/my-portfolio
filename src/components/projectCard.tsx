@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, TouchEvent, useCallback } from 'rea
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiApple, SiDocker, SiGooglecloud, SiNextdotjs, SiTailwindcss, SiBlender, SiAdobephotoshop, SiMysql, SiPhp, SiPython, SiCplusplus, SiUnrealengine, SiGodotengine, SiTensorflow, SiPytorch, SiAndroidstudio, SiVercel, SiDotnet } from 'react-icons/si';
-import { FaExpand, FaCompress, FaDownload, FaFileArchive, FaFileVideo, FaFileImage, FaFilePdf, FaWindows, FaCode, FaVolumeUp, FaRobot, FaPalette, FaGamepad, FaBrain, FaMusic, FaNetworkWired, FaImage, FaPaintBrush, FaDesktop, FaLayerGroup, FaCogs, FaMicrochip } from 'react-icons/fa';
+import { FaExpand, FaCompress, FaDownload, FaFileArchive, FaFileVideo, FaFileImage, FaFilePdf, FaWindows, FaCode, FaVolumeUp, FaRobot, FaPalette, FaGamepad, FaBrain, FaMusic, FaNetworkWired, FaImage, FaPaintBrush, FaDesktop, FaLayerGroup, FaCogs, FaMicrochip, FaComments, FaPlay, FaFont, FaMicrophone } from 'react-icons/fa';
 import hljs from 'highlight.js';
 
 // Extend HTMLVideoElement interface for fullscreen API compatibility
@@ -136,7 +136,13 @@ const techIcons: { [key: string]: React.JSX.Element } = {
   "Real-time Drawing": <FaPaintBrush className="text-purple-500 text-lg mr-2" />,
   "UI Systems": <FaDesktop className="text-blue-400 text-lg mr-2" />,
   "Tilemap": <FaLayerGroup className="text-orange-500 text-lg mr-2" />,  "State Machine": <FaCogs className="text-gray-400 text-lg mr-2" />,
-  "Vercel": <SiVercel className="text-black text-lg mr-2" />
+  "Vercel": <SiVercel className="text-black text-lg mr-2" />,
+  // LP-Cafe specific technologies
+  "Custom Dialogue Tool": <FaComments className="text-blue-400 text-lg mr-2" />,
+  "Audacity": <FaVolumeUp className="text-red-500 text-lg mr-2" />,
+  "DOTween": <FaPlay className="text-purple-500 text-lg mr-2" />,
+  "Text Animator": <FaFont className="text-green-500 text-lg mr-2" />,
+  "Voice Acting": <FaMicrophone className="text-pink-500 text-lg mr-2" />
 };
 
 /**
