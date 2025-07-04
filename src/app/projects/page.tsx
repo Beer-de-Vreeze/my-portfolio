@@ -28,8 +28,8 @@ const ProjectsLoading = () => (
 // Projects content component that uses useSearchParams
 const ProjectsContent = ({ onModalStateChange }: { onModalStateChange: (isOpen: boolean) => void }) => (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl">
-    <LPCafe onModalStateChange={onModalStateChange} />
     <AudioPreviever onModalStateChange={onModalStateChange} />
+    <LPCafe onModalStateChange={onModalStateChange} />
     <MLAgent onModalStateChange={onModalStateChange} />
     <BearlyStealthy onModalStateChange={onModalStateChange} />
     <Website onModalStateChange={onModalStateChange} />
