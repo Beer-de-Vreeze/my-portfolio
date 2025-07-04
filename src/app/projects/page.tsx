@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 // Add highlight.js import and style
@@ -13,6 +13,30 @@ import SketchinSpells from "@/components/projects/Sketchin Spells";
 import Tetrtis from "@/components/projects/Tetrtis";
 import Website from "@/components/projects/Website";
 import LPCafe from "@/components/projects/LPCafe";
+
+// Loading component for the projects grid
+const ProjectsLoading = () => (
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl">
+    {[...Array(7)].map((_, i) => (
+      <div key={i} className="w-full h-96 bg-gray-800 rounded-lg animate-pulse flex items-center justify-center">
+        <div className="text-gray-400">Loading project...</div>
+      </div>
+    ))}
+  </div>
+);
+
+// Projects content component that uses useSearchParams
+const ProjectsContent = ({ onModalStateChange }: { onModalStateChange: (isOpen: boolean) => void }) => (
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl">
+    <LPCafe onModalStateChange={onModalStateChange} />
+    <AudioPreviever onModalStateChange={onModalStateChange} />
+    <MLAgent onModalStateChange={onModalStateChange} />
+    <BearlyStealthy onModalStateChange={onModalStateChange} />
+    <Website onModalStateChange={onModalStateChange} />
+    <SketchinSpells onModalStateChange={onModalStateChange} />
+    <Tetrtis onModalStateChange={onModalStateChange} />
+  </div>
+);
 
 export default function Projects() {
   const [backgroundAttachment, setBackgroundAttachment] = useState("fixed");
@@ -50,15 +74,9 @@ export default function Projects() {
       </div>
 
       <main className="relative z-0 flex flex-col items-center flex-grow p-2 pt-20 pb-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl">
-          <LPCafe onModalStateChange={handleModalStateChange} />
-          <AudioPreviever onModalStateChange={handleModalStateChange} />
-          <MLAgent onModalStateChange={handleModalStateChange} />
-          <BearlyStealthy onModalStateChange={handleModalStateChange} />
-          <Website onModalStateChange={handleModalStateChange} />
-          <SketchinSpells onModalStateChange={handleModalStateChange} />
-          <Tetrtis onModalStateChange={handleModalStateChange} />
-        </div>
+        <Suspense fallback={<ProjectsLoading />}>
+          <ProjectsContent onModalStateChange={handleModalStateChange} />
+        </Suspense>
       </main>
 
       <div

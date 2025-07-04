@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   SiReact, SiUnity, SiGit, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiTailwindcss,
-  SiDotnet, SiPython, SiGooglecloud, SiPhp, SiMysql, SiFirebase, SiLua, SiRoblox, SiVercel
+  SiDotnet, SiPython, SiGooglecloud, SiPhp, SiMysql, SiFirebase, SiLua, SiRoblox, SiVercel, SiAudacity
 } from 'react-icons/si';
 import { FiRefreshCw } from 'react-icons/fi';
 
@@ -35,6 +35,7 @@ const SkillCard: React.FC<TechStackProps> = ({ title = "Tech Stack" }) => {
     { name: 'Game Dev', active: activeCategory === 'Game Dev' },
     { name: 'Frontend', active: activeCategory === 'Frontend' },
     { name: 'Backend', active: activeCategory === 'Backend' },
+    { name: 'Tools', active: activeCategory === 'Tools' },
     { name: 'DevOps', active: activeCategory === 'DevOps' },
   ];
 
@@ -64,6 +65,8 @@ const SkillCard: React.FC<TechStackProps> = ({ title = "Tech Stack" }) => {
     { icon: <FiRefreshCw />, name: 'SCRUM', category: 'DevOps' },
     { icon: <SiGooglecloud />, name: 'Azure', category: 'DevOps' },
     { icon: <SiVercel />, name: 'Vercel', category: 'DevOps' },
+    //Tools
+    { icon: <SiAudacity />, name: 'Audacity', category: 'Tools' },
   ]
 
   const filteredTechnologies = technologies.filter(

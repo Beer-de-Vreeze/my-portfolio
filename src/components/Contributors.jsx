@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import styles from './Contributors.module.css';
 
 const Contributors = ({ contributors }) => {
@@ -56,9 +57,11 @@ const Contributors = ({ contributors }) => {
               }}
             >
               {contributor.image ? (
-                <img 
+                <Image 
                   src={contributor.image} 
                   alt={contributor.name || contributor} 
+                  width={100}
+                  height={100}
                   style={{ width: '100%', height: 'auto', display: 'block' }}
                 />
               ) : (

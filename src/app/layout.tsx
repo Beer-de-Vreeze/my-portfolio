@@ -1,6 +1,6 @@
 import "../app/globals.css"; 
 import LoadingBar from "@/components/loadingbar";
-import { Metadata } from 'next';
+import { Metadata, Viewport } from 'next';
 
 export const metadata: Metadata = {
   title: {
@@ -8,13 +8,6 @@ export const metadata: Metadata = {
     default: "Beer de Vreeze - Portfolio"
   },
   description: "Game Developer Portfolio",
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-    viewportFit: 'cover', // Important for iPhone X and newer
-  },
   icons: {
     icon: [
       { url: '/favicon/favicon.ico', sizes: 'any' },
@@ -35,6 +28,14 @@ export const metadata: Metadata = {
     'apple-mobile-web-app-status-bar-style': 'black-translucent',
     'format-detection': 'telephone=no',
   },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover', // Important for iPhone X and newer
 };
 
 export default function RootLayout({
