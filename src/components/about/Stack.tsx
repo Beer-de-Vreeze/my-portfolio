@@ -7,27 +7,27 @@ const Stack = () => {
     const journeySteps = [
         {
           title: 'Completed High School at Lek en Linge',
-          category: 'Education',
+          category: 'Education' as const,
           date: '06.2021',
           description: 'Graduated from Lek en Linge, gaining proficiency in both Dutch and English, with a strong foundation in critical thinking and creativity.',
         },
         {
           title: 'Started Chef Training at ROC Midden Nederland',
-          category: 'Education',
+          category: 'Education' as const,
           date: '09.2021-06.2023',
           description: 'Pursued a Chef Training program at ROC Midden Nederland, focusing on culinary skills, menu planning, and kitchen management, while also gaining practical experience in professional kitchens.',
         },
         {
           title: 'Gained Practical Experience at Restaurants',
-          category: 'Experience',
+          category: 'Experience' as const,
           date: '09.2022-06.2023',
           description: 'Accumulated hands-on experience in professional kitchens at Camping Ganspoort, Winkel van Sinkel, and Ruby Rose, applying culinary skills and gaining insights into various kitchen operations and restaurant environments.',
         },
         {
           title: 'Started Creative Software Development Program at GLU',
-          category: 'Education',
+          category: 'Education' as const,
           date: '08.2023',
-        description: 'Enrolled in the Creative Software Development – Game Development profile at Grafisch Lyceum Utrecht, focusing on programming languages like C# and mastering tools such as Unity and Git.',
+          description: 'Enrolled in the Creative Software Development – Game Development profile at Grafisch Lyceum Utrecht, focusing on programming languages like C# and mastering tools such as Unity and Git.',
         },
       ];
 
