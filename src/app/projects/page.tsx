@@ -31,8 +31,8 @@ const ProjectsContent = ({ onModalStateChange }: { onModalStateChange: (isOpen: 
     <AudioPreviever onModalStateChange={onModalStateChange} />
     <LPCafe onModalStateChange={onModalStateChange} />
     <MLAgent onModalStateChange={onModalStateChange} />
-    <BearlyStealthy onModalStateChange={onModalStateChange} />
     <Website onModalStateChange={onModalStateChange} />
+    <BearlyStealthy onModalStateChange={onModalStateChange} />
     <SketchinSpells onModalStateChange={onModalStateChange} />
     <Tetrtis onModalStateChange={onModalStateChange} />
   </div>

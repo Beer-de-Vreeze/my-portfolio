@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef, TouchEvent, useCallback } from 'react';
+import React, { useState, useEffect, useRef, TouchEvent, useCallback, useMemo, memo } from 'react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiApple, SiDocker, SiGooglecloud, SiNextdotjs, SiTailwindcss, SiBlender, SiAdobephotoshop, SiMysql, SiPhp, SiPython, SiCplusplus, SiUnrealengine, SiGodotengine, SiTensorflow, SiPytorch, SiAndroidstudio, SiVercel, SiDotnet } from 'react-icons/si';
-import { FaExpand, FaCompress, FaDownload, FaFileArchive, FaFileVideo, FaFileImage, FaFilePdf, FaWindows, FaCode, FaVolumeUp, FaRobot, FaPalette, FaGamepad, FaBrain, FaMusic, FaNetworkWired, FaImage, FaPaintBrush, FaDesktop, FaLayerGroup, FaCogs, FaMicrochip, FaComments, FaPlay, FaFont, FaMicrophone } from 'react-icons/fa';
+import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiApple, SiDocker, SiGooglecloud, SiNextdotjs, SiTailwindcss, SiBlender, SiAdobephotoshop, SiMysql, SiPhp, SiPython, SiCplusplus, SiUnrealengine, SiGodotengine, SiTensorflow, SiPytorch, SiAndroidstudio, SiVercel, SiDotnet, SiEslint, SiFramer } from 'react-icons/si';
+import { FaExpand, FaCompress, FaDownload, FaFileArchive, FaFileVideo, FaFileImage, FaFilePdf, FaWindows, FaCode, FaVolumeUp, FaRobot, FaPalette, FaGamepad, FaBrain, FaMusic, FaNetworkWired, FaImage, FaPaintBrush, FaDesktop, FaLayerGroup, FaCogs, FaMicrochip, FaComments, FaPlay, FaFont, FaMicrophone, FaGitAlt, FaTachometerAlt, FaMobile } from 'react-icons/fa';
 import hljs from 'highlight.js';
 
 // Extend HTMLVideoElement interface for fullscreen API compatibility
@@ -19,12 +19,14 @@ interface ExtendedDocument extends Document {
 
 /**
  * Interface for media items that can be displayed in the project card
- * Supports both images and videos
+ * Supports both images and videos with enhanced metadata
  */
 interface MediaItem {
   type: 'image' | 'video';
   src: string;
   alt?: string;
+  thumbnail?: string; // Optional thumbnail for videos
+  caption?: string;   // Optional caption for accessibility
 }
 
 /**
@@ -34,6 +36,7 @@ interface CodeSnippet {
   code: string;
   language: string;
   title?: string;
+  description?: string; // Optional description for the code snippet
 }
 
 /**
@@ -57,6 +60,35 @@ interface FileSizeResponse {
 }
 
 /**
+ * Interface for error state
+ */
+interface ErrorState {
+  hasError: boolean;
+  message: string;
+  type: 'media' | 'fileSize' | 'general';
+}
+
+/**
+ * Interface for loading states
+ */
+interface LoadingState {
+  media: boolean;
+  fileSize: boolean;
+  modal: boolean;
+}
+
+/**
+ * Enhanced feature interface with better type safety
+ */
+interface ProjectFeature {
+  title: string;
+  description: string;
+  codeSnippet?: CodeSnippet;
+  icon?: React.ReactNode; // Optional feature icon
+  priority?: 'high' | 'medium' | 'low'; // Feature importance
+}
+
+/**
  * Main props interface for the ProjectCard component
  */
 interface ProjectCardProps {
@@ -67,15 +99,13 @@ interface ProjectCardProps {
   coverImage?: string;                          // Optional cover image override
   description?: string;                         // Project description
   downloadLink?: string | DownloadLinkObject;   // Optional download link
-  features?: {                                  // Optional features list
-    title: string; 
-    description: string;
-    codeSnippet?: CodeSnippet;                  // Optional code snippet per feature
-  }[];
+  features?: ProjectFeature[];                  // Enhanced features list with better typing
   codeSnippet?: CodeSnippet;                    // Optional main code snippet
   liveLink?: string;                            // Optional demo link
   githubLink?: string;                          // Optional source code link
   onModalStateChange?: (isOpen: boolean) => void; // Callback for modal state changes
+  priority?: 'high' | 'medium' | 'low';        // Project priority for performance optimization
+  lazyLoad?: boolean;                           // Enable lazy loading for media
 }
 
 /**
@@ -136,7 +166,17 @@ const techIcons: { [key: string]: React.JSX.Element } = {
   "Real-time Drawing": <FaPaintBrush className="text-purple-500 text-lg mr-2" />,
   "UI Systems": <FaDesktop className="text-blue-400 text-lg mr-2" />,
   "Tilemap": <FaLayerGroup className="text-orange-500 text-lg mr-2" />,  "State Machine": <FaCogs className="text-gray-400 text-lg mr-2" />,
-  "Vercel": <SiVercel className="text-black text-lg mr-2" />,
+  "Vercel": <SiVercel className="text-white text-lg mr-2" />,
+  // Website project specific technologies
+  "Next.js 14": <SiNextdotjs className="text-white text-lg mr-2" />,
+  "React 18": <SiReact className="text-blue-500 text-lg mr-2" />,
+  "Framer Motion": <SiFramer className="text-pink-500 text-lg mr-2" />,
+  "ESLint": <SiEslint className="text-purple-500 text-lg mr-2" />,
+  "Git": <FaGitAlt className="text-orange-500 text-lg mr-2" />,
+  "Responsive Design": <FaMobile className="text-blue-400 text-lg mr-2" />,
+  "Performance Optimization": <FaTachometerAlt className="text-green-500 text-lg mr-2" />,
+  // ML Agent project specific technologies
+  "Neural Networks": <FaBrain className="text-purple-400 text-lg mr-2" />,
   // LP-Cafe specific technologies
   "Custom Dialogue Tool": <FaComments className="text-blue-400 text-lg mr-2" />,
   "Audacity": (
@@ -155,6 +195,67 @@ const techIcons: { [key: string]: React.JSX.Element } = {
 };
 
 /**
+ * Custom hook for managing error states
+ */
+const useErrorHandler = () => {
+  const [error, setError] = useState<ErrorState>({ hasError: false, message: '', type: 'general' });
+  
+  const handleError = useCallback((message: string, type: ErrorState['type'] = 'general') => {
+    setError({ hasError: true, message, type });
+    console.error(`ProjectCard Error (${type}):`, message);
+  }, []);
+  
+  const clearError = useCallback(() => {
+    setError({ hasError: false, message: '', type: 'general' });
+  }, []);
+  
+  return { error, handleError, clearError };
+};
+
+/**
+ * Custom hook for managing loading states
+ */
+const useLoadingState = () => {
+  const [loading, setLoading] = useState<LoadingState>({
+    media: false,
+    fileSize: false,
+    modal: false
+  });
+  
+  const setLoadingState = useCallback((key: keyof LoadingState, value: boolean) => {
+    setLoading(prev => ({ ...prev, [key]: value }));
+  }, []);
+  
+  return { loading, setLoadingState };
+};
+
+
+
+/**
+ * Enhanced intersection observer hook for lazy loading
+ */
+const useIntersectionObserver = (
+  elementRef: React.RefObject<HTMLDivElement | null>,
+  options: IntersectionObserverInit = {}
+) => {
+  const [isIntersecting, setIsIntersecting] = useState(false);
+
+  useEffect(() => {
+    if (!elementRef.current) return;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsIntersecting(entry.isIntersecting);
+    }, options);
+
+    observer.observe(elementRef.current);
+
+    return () => observer.disconnect();
+  }, [elementRef, options]);
+
+  return isIntersecting;
+};
+
+/**
  * ProjectCard Component
  * 
  * A card component that displays project information with an expandable modal view.
@@ -166,10 +267,13 @@ const techIcons: { [key: string]: React.JSX.Element } = {
  * - Download button with file type detection
  * - Automatic file size detection for download links (always enabled)
  * - Tech stack visualization
+ * - Enhanced error handling and loading states
+ * - Performance optimizations with lazy loading
+ * - Improved accessibility features
  */
 const ProjectCard: React.FC<ProjectCardProps> = ({ 
   projectId,
-  media = [{ type: 'image', src: "/path/to/wip-image-library/placeholder.jpg", alt: "Project thumbnail" }], 
+  media = [{ type: 'image', src: "/gamepad.svg", alt: "Project thumbnail" }], 
   title, 
   techStack,
   coverImage,
@@ -183,10 +287,23 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   liveLink = "#",
   githubLink: sourceLink = "#",
   codeSnippet, 
-  onModalStateChange
+  onModalStateChange,
+  priority = 'medium',
+  lazyLoad = true
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  
+  // Custom hooks for enhanced state management
+  const { error, handleError, clearError } = useErrorHandler();
+  const { loading, setLoadingState } = useLoadingState();
+  
+  // Intersection observer for lazy loading
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isVisible = useIntersectionObserver(cardRef, { 
+    threshold: 0.1,
+    rootMargin: '50px'
+  });
   
   // Modal state management
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -197,8 +314,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [autoplay, setAutoplay] = useState(true);
-    // File size state
+  
+  // File size state
   const [autoFileSize, setAutoFileSize] = useState<string | null>(null);
+  
   // Code snippet collapse state - starts closed for all snippets
   const [collapsedCodeSnippets, setCollapsedCodeSnippets] = useState<{ [key: string]: boolean }>({});
   
@@ -208,45 +327,76 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   // Video and fullscreen references/state
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  
   // State to control object-fit for media
   const [mediaObjectFit] = useState<'cover' | 'contain'>('contain');
   const mediaContainerRef = useRef<HTMLDivElement>(null);
-    // Image preloading state and refs
+  
+  // Image preloading state and refs
   const preloadedImages = useRef<Set<string>>(new Set());
+
+  // Memoized values for performance
+  const thumbnailImage = useMemo(() => {
+    return coverImage || media[0]?.src || "/gamepad.svg";
+  }, [coverImage, media]);
+
+  const shouldLoadMedia = useMemo(() => {
+    return !lazyLoad || isVisible || isModalOpen;
+  }, [lazyLoad, isVisible, isModalOpen]);
+
+
 
   /**
    * Preload all images in the media array for smoother carousel experience
+   * Enhanced with error handling and loading states
    */
   const preloadImages = useCallback(() => {
+    if (!shouldLoadMedia) return;
+    
+    setLoadingState('media', true);
+    
     const imageUrls = media
       .filter(item => item.type === 'image')
       .map(item => item.src)
       .filter(src => !preloadedImages.current.has(src));
 
     if (imageUrls.length === 0) {
+      setLoadingState('media', false);
       return;
     }
 
+    let loadedCount = 0;
+    let hasErrors = false;
+
     imageUrls.forEach(src => {
       const img = document.createElement('img');
+      
       img.onload = () => {
         preloadedImages.current.add(src);
+        loadedCount++;
+        
+        if (loadedCount === imageUrls.length) {
+          setLoadingState('media', false);
+          if (hasErrors) {
+            clearError(); // Clear any previous errors if some images loaded
+          }
+        }
       };
+      
       img.onerror = () => {
-        // Log error but don't prevent other images from loading
-        console.warn(`Failed to preload image: ${src}`);
+        loadedCount++;
+        hasErrors = true;
+        handleError(`Failed to preload image: ${src}`, 'media');
+        
+        if (loadedCount === imageUrls.length) {
+          setLoadingState('media', false);
+        }
       };
+      
       img.src = src;
     });
-  }, [media]);
+  }, [media, shouldLoadMedia, setLoadingState, handleError, clearError]);
 
-  /**
-   * Determine the thumbnail image with fallback options:
-   * 1. Use coverImage if provided
-   * 2. Otherwise use first media item's src if available
-   * 3. Fall back to placeholder image if neither exists
-   */
-  const thumbnailImage = coverImage || media[0]?.src || "/path/to/wip-image-library/placeholder.jpg";
   /**
    * Opens the modal and updates the URL with the project ID
    * Also initializes all code snippets to be collapsed
@@ -342,8 +492,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   /**
    * Handler for tech stack icon clicks
    */
-  const handleTechIconClick = (tech: string) => {
+  const handleTechIconClick = (e: React.MouseEvent, tech: string) => {
+    e.stopPropagation();
     console.log(`${tech} icon clicked`);
+    openModal();
   };
 
   /**
@@ -832,20 +984,30 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     }
   }, [formatFileSize]);  /**
    * Helper function to get file size for a download link
-   */  const getDownloadFileSize = useCallback(async () => {
-    if (downloadLink) {
-      const url = typeof downloadLink === 'string' ? downloadLink : downloadLink.url;
-      
-      // Don't fetch if the link is external or invalid
-      if (!url || !url.startsWith('/')) return;
-      
-      // Always fetch the file size, regardless of whether a manual size was provided
+   * Enhanced with loading states and error handling
+   */  
+  const getDownloadFileSize = useCallback(async () => {
+    if (!downloadLink) return;
+    
+    const url = typeof downloadLink === 'string' ? downloadLink : downloadLink.url;
+    
+    // Don't fetch if the link is external or invalid
+    if (!url || !url.startsWith('/')) return;
+    
+    try {
+      setLoadingState('fileSize', true);
       const { formattedSize } = await fetchFileSize(url);
       if (formattedSize) {
         setAutoFileSize(formattedSize);
+        clearError(); // Clear any previous errors
       }
+    } catch (err) {
+      console.error('File size fetch error:', err);
+      handleError(`Failed to fetch file size for ${url}`, 'fileSize');
+    } finally {
+      setLoadingState('fileSize', false);
     }
-  }, [downloadLink, fetchFileSize]);
+  }, [downloadLink, fetchFileSize, setLoadingState, handleError, clearError]);
 
   /**
    * Effect to fetch file size when the component mounts
@@ -949,21 +1111,51 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   }, [zoomedImage, isModalOpen]);
 
   return (
-    <>      {/* Project Card with mobile-responsive design */}
+    <>      
+      {/* Project Card with mobile-responsive design */}
       <div 
+        ref={cardRef}
         onClick={openModal}
         onMouseDown={() => setIsClicked(true)}
         onMouseUp={() => setIsClicked(false)}
-        className={`relative z-10 flex flex-col justify-between p-4 sm:p-5 bg-[#111111] border border-[#2a2a2a] rounded-lg transition-all duration-300 hover:border-[#4a4a4a] hover:translate-y-[-4px] overflow-hidden cursor-pointer w-full max-w-[500px] mx-auto h-48 sm:h-56 ${isClicked ? 'scale-95' : ''}`}
-      >{/* Background thumbnail image with improved visibility */}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openModal();
+          }
+        }}
+        tabIndex={0}
+        role="button"
+        aria-label={`Open ${title} project details`}
+        className={`relative z-10 flex flex-col justify-between p-4 sm:p-5 bg-[#111111] border border-[#2a2a2a] rounded-lg transition-all duration-300 hover:border-[#4a4a4a] hover:translate-y-[-4px] overflow-hidden cursor-pointer w-full max-w-[500px] mx-auto h-48 sm:h-56 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 ${isClicked ? 'scale-95' : ''}`}
+      >        {/* Background thumbnail image with improved visibility and lazy loading */}
         <div className="absolute top-0 left-0 w-full h-full z-0 opacity-60">
-          <Image 
-            src={thumbnailImage} 
-            alt={title} 
-            fill 
-            sizes="(max-width: 768px) 100vw, 400px"
-            className="object-cover" 
-          />
+          {shouldLoadMedia ? (
+            error.hasError && error.type === 'media' ? (
+              <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+                <div className="text-red-400 text-center text-sm">
+                  <div>⚠️</div>
+                  <div>Image failed to load</div>
+                </div>
+              </div>
+            ) : (
+              <Image 
+                src={thumbnailImage} 
+                alt={title} 
+                fill 
+                sizes="(max-width: 768px) 100vw, 400px"
+                className="object-cover transition-opacity duration-300" 
+                priority={priority === 'high'}
+                placeholder="blur"
+                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkrHB0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                onError={() => handleError('Failed to load thumbnail image', 'media')}
+              />
+            )
+          ) : (
+            <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+              <div className="text-gray-400">Loading...</div>
+            </div>
+          )}
           {/* Dark gradient overlay for text readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20"></div>
         </div>
@@ -974,23 +1166,22 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           </h3>
           <p className="text-gray-200 text-sm line-clamp-2 mb-3 drop-shadow-md">{description.split('.')[0]}.</p>
         </div>
-          {/* Tech stack tags - enhanced visibility with backdrop */}
+        {/* Tech stack tags - enhanced visibility with backdrop */}
         <div className="relative z-10 flex flex-wrap gap-1.5 mt-auto max-w-full overflow-hidden">
           {techStack.slice(0, 4).map((tech, index) => (
-            <span 
+            <span
               key={index} 
-              className="px-3 py-2 bg-black/80 backdrop-blur-sm border border-[#27272a] rounded-full flex items-center justify-center text-gray-300 text-sm shadow-lg whitespace-nowrap flex-shrink-0 min-w-0"
-              onClick={() => handleTechIconClick(tech)}
+              className="px-3 py-2 bg-black/80 backdrop-blur-sm border border-[#27272a] rounded-full flex items-center justify-center text-gray-300 text-sm shadow-lg whitespace-nowrap flex-shrink-0 min-w-0 cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleTechIconClick(e, tech);
+              }}
+              aria-label={`Technology: ${tech}`}
             >
               {techIcons[tech] || null} 
               <span className="truncate ml-1">{tech}</span>
             </span>
           ))}
-          {techStack.length > 4 && (
-            <span className="px-3 py-2 bg-black/80 backdrop-blur-sm border border-[#27272a] rounded-full flex items-center justify-center text-gray-300 text-sm shadow-lg whitespace-nowrap flex-shrink-0">
-              +{techStack.length - 4}
-            </span>
-          )}
         </div>
       </div>
 
@@ -1051,6 +1242,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                           className={`w-full h-full object-${mediaObjectFit}`} 
                           controls={false}
                           onEnded={handleVideoEnd}
+                          onError={() => handleError(`Failed to load video: ${currentMedia.src}`, 'media')}
+                          preload={shouldLoadMedia ? 'metadata' : 'none'}
                         />
                         {renderVideoControls()}
                       </>
@@ -1119,9 +1312,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                         {downloadFileInfo.icon}
                         <span>
                           {downloadInfo.label}
-                          {downloadInfo.fileSize && (
+                          {loading.fileSize ? (
+                            <span className="text-xs opacity-75 ml-1">(Loading...)</span>
+                          ) : downloadInfo.fileSize ? (
                             <span className="text-xs opacity-75 ml-1">({downloadInfo.fileSize})</span>
-                          )}
+                          ) : null}
                         </span>
                       </a>
                     )}
@@ -1182,8 +1377,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     {techStack.map((tech, index) => (
                       <span 
                         key={index} 
-                        className="px-4 py-2.5 bg-black border border-[#27272a] rounded-full flex items-center justify-center text-gray-300 text-base whitespace-nowrap flex-shrink-0 min-w-0 hover:border-[#4a4a4a] transition-colors"
-                        onClick={() => handleTechIconClick(tech)}
+                        className="px-4 py-2.5 bg-black border border-[#27272a] rounded-full flex items-center justify-center text-gray-300 text-base whitespace-nowrap flex-shrink-0 min-w-0 cursor-pointer"
+                        onClick={(e) => handleTechIconClick(e, tech)}
                       >
                         {techIcons[tech] || null} 
                         <span className="truncate ml-1.5">{tech}</span>
@@ -1371,4 +1566,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   );
 };
 
-export default ProjectCard;
+// Add display name for better debugging
+ProjectCard.displayName = 'ProjectCard';
+
+// Export the component with memo for performance optimization
+export default memo(ProjectCard);

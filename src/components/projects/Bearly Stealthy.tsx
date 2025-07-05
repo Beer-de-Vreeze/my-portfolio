@@ -9,7 +9,7 @@ const BearlyStealthy = ({
   <SuspenseProjectCard
     projectId="Bearly-Stealthy"
     title="Bearly Stealthy"
-    description="A cool Unity stealth game where you play as a bear sneaking through shadowy environments. It’s built with advanced AI, dynamic noise detection, and layered stealth mechanics that make every move count. The game features smart enemy behavior and complex state management that keep the tension high throughout gameplay."
+    description="Ever wanted to be a sneaky bear? Well, now's your chance! Bearly Stealthy is my take on the stealth genre with a furry twist—you play as a bear trying to sneak through dangerous environments without getting caught. I've packed this Unity game with sophisticated AI systems, dynamic noise detection, and layered stealth mechanics that make every step matter. The enemies are smart, the tension is real, and the bear is absolutely adorable (but deadly sneaky!). It's a technical showcase of advanced game AI that keeps you on your toes throughout every mission."
     githubLink="https://github.com/Beer-de-Vreeze/Bearly-Stealthy"
     liveLink="https://bjeerpeer.itch.io/bearly-stealthy"
     media={[
@@ -42,9 +42,9 @@ const BearlyStealthy = ({
     techStack={["Unity", "C#", "Game Design"]}
     features={[
       {
-        title: "Advanced Enemy AI with Multi-State Behavior",
+        title: "Brain-Powered Enemy AI",
         description:
-          "Enemies have smart AI with patrol, wandering, investigating, and chasing states. They use NavMesh pathfinding and dynamic waypoints. Each enemy type (like BasePatrolEnemy and BaseWanderingEnemy) has unique behaviors, with adjustable vision cones, hearing ranges, and investigation settings.",
+         "These aren't your typical dumb NPCs! I've built a multi-state AI system where enemies patrol their routes, investigate suspicious sounds, and chase you down when spotted. Each enemy type has its own personality—some patrol in loops, others wander around exploring. They use Unity's NavMesh for smart pathfinding and have realistic vision cones and hearing ranges. When they spot you, things get intense fast! The AI adapts and reacts to your behavior, making every encounter feel dynamic and challenging.",
         codeSnippet: {
           title: "BaseEnemy Vision Detection System",
           language: "csharp",
@@ -79,6 +79,7 @@ const BearlyStealthy = ({
         {
             if (Time.time - LastPlayerVisibleTime > PlayerVisibilityTimeout)
             {
+                // Enemy lost sight of player go patrol the area you lost sight of them and after a bit return to patrolling
                 LosePlayerVisibility();
             }
         }
@@ -87,100 +88,113 @@ const BearlyStealthy = ({
         },
       },
       {
-        title: "Dynamic Noise Generation & Sound Propagation",
+        title: "Realistic Noise & Sound Propagation",
         description:
-          "Player actions create different noise levels—stealth is quiet, running is loud, and a bear roar is huge. The NoiseManager handles spreading the noise to nearby enemies, triggering their investigation if it’s loud enough. Noise fades over time and distance to keep things realistic.",
+          "Every footstep matters in this world! I've created a dynamic noise system where different actions generate different sound levels—tiptoeing around is whisper-quiet, normal walking creates moderate noise, and running? Well, you might as well ring a dinner bell! The best part is the bear's special roar ability that creates a massive noise burst perfect for distracting enemies. Sound travels realistically through the environment, and enemies will investigate if they hear something suspicious. It's all about managing your noise footprint!",
         codeSnippet: {
-          title: "Player Noise Generation System",
+          title: "NoiseManager - Centralized Sound System",
           language: "csharp",
-          code: `private void GenerateNoise()
+          code: `[System.Serializable]
+public struct NoiseEvent
 {
-    if (_movementDirection.magnitude > 0)
+    public Vector3 position;
+    public float intensity;
+    public float maxRadius;
+    public float startTime;
+    public float duration;
+}
+
+public void GenerateNoise(Vector3 position, float noiseLevel)
+{
+    // Notify all registered enemies about the noise
+    foreach (var enemy in _enemies)
     {
-        if (InputManager.Instance.PlayerInput.Player.Sprint.ReadValue<float>() > 0)
-        {
-            _noiseLevel = _runNoiseLevel;      // 10.0f
-        }
-        else if (InputManager.Instance.PlayerInput.Player.Stealth.ReadValue<float>() > 0)
-        {
-            _noiseLevel = _stealthNoiseLevel;  // 2.0f
-        }
-        else
-        {
-            _noiseLevel = _walkNoiseLevel;     // 5.0f
-        }
-        NoiseManager.Instance.GenerateNoise(transform.position, _noiseLevel);
-    }
-    else
-    {
-        _noiseLevel = 0f;
+        enemy.OnNoiseHeard(position, noiseLevel);
     }
 
-    // Noise level decay over time
-    if (_noiseLevel > 0)
+    // Add to active noise events for debug visualization
+    if (_showNoiseGizmos)
     {
-        _noiseLevel = Mathf.Max(0, _noiseLevel - Time.deltaTime * 5f);
+        NoiseEvent newEvent = new NoiseEvent
+        {
+            position = position,
+            intensity = noiseLevel,
+            maxRadius = Mathf.Min(noiseLevel * 2.0f, _maxNoiseDistance),
+            startTime = Time.time,
+            duration = _defaultNoiseDuration
+        };
+        _activeNoiseEvents.Add(newEvent);
+    }
+}
+
+public void RegisterEnemy(BaseEnemy enemy)
+{
+    if (!_enemies.Contains(enemy))
+    {
+        _enemies.Add(enemy);
     }
 }`,
         },
       },
       {
-        title: "Intelligent Patrol & Wandering Systems",
+        title: "Intelligent Patrol & Exploration Systems",
         description:
-          "Enemies move using modular systems: patrols follow set routes (loops or back-and-forth), while wanderers explore confined areas. Both connect with investigation and chase behaviors and use Unity’s NavMesh for smooth pathfinding and obstacle avoidance.",
+          "I've designed two distinct enemy movement patterns that feel naturally different. Patrol enemies follow set routes—some loop around in circles, others walk back and forth like they're guarding something important. Meanwhile, wandering enemies explore their territory randomly, making them unpredictable and exciting to avoid. Both systems integrate seamlessly with the investigation and chase behaviors, using Unity's NavMesh for obstacle avoidance and smooth pathfinding. No more enemies walking through walls!",
         codeSnippet: {
-          title: "Patrol Pattern Implementation",
+          title: "Patrol Route Visualization System",
           language: "csharp",
-          code: `private void PatrolBackAndForth()
+          code: `protected override void OnDrawGizmos()
 {
-    if (!Agent.pathPending && Agent.remainingDistance < 0.2f)
-    {
-        if (_currentPointIndex == 0)
-        {
-            _isReversing = false;
-        }
-        else if (_currentPointIndex == _patrolPoints.Length - 1)
-        {
-            _isReversing = true;
-        }
+    base.OnDrawGizmos();
+    if (!_showGizmos || _patrolPoints == null || _patrolPoints.Length == 0)
+        return;
 
-        _currentPointIndex = _isReversing ? _currentPointIndex - 1 : _currentPointIndex + 1;
-        Agent.SetDestination(_patrolPoints[_currentPointIndex].position);
-        _waitCounter = _waitTime;
+    for (int i = 0; i < _patrolPoints.Length; i++)
+    {
+        if (_patrolPoints[i] != null)
+        {
+            if (i == 0)
+            {
+                Gizmos.color = Color.green; // Start point
+            }
+            else if (i == _patrolPoints.Length - 1)
+            {
+                Gizmos.color = Color.red; // End point
+            }
+            else
+            {
+                Gizmos.color = Color.blue; // Intermediate points
+            }
+
+            Gizmos.DrawSphere(_patrolPoints[i].position, 0.3f);
+            Gizmos.color = Color.yellow;
+            if (i < _patrolPoints.Length - 1 && _patrolPoints[i + 1] != null)
+            {
+                Gizmos.DrawLine(_patrolPoints[i].position, _patrolPoints[i + 1].position);
+            }
+        }
     }
-}
 
-private void PatrolLoopMethod()
-{
-    if (!Agent.pathPending && Agent.remainingDistance < 0.2f)
+    // Draw loop connection for looping patrol routes
+    if (_patrolLoop && _patrolPoints.Length > 1 
+        && _patrolPoints[0] != null && _patrolPoints[_patrolPoints.Length - 1] != null)
     {
-        _currentPointIndex = (_currentPointIndex + 1) % _patrolPoints.Length;
-        Agent.SetDestination(_patrolPoints[_currentPointIndex].position);
-        _waitCounter = _waitTime;
+        Gizmos.DrawLine(_patrolPoints[_patrolPoints.Length - 1].position, 
+            _patrolPoints[0].position);
     }
 }`,
         },
       },
       {
-        title: "Interactive Object System & Bear Abilities",
+        title: "Bear Powers & Interactive Gameplay",
         description:
-          "Players can pick up objects to distract enemies. The bear’s special roar ability creates a huge noise burst to draw attention. Movement modes include stealth, and physics-based object interactions make gameplay feel alive. Controls are built with Unity’s new Input System and work on multiple platforms.",
+          "Being a bear has its perks! You can pick up and throw objects to create distractions, sneak around in stealth mode, or unleash a mighty roar that draws every enemy's attention (great for strategic misdirection!). The interaction system feels natural and responsive, built with Unity's modern Input System for smooth controls across different platforms. Whether you're carefully planning your route or improvising on the fly, the bear handles beautifully and makes stealth feel empowering rather than frustrating.",
         codeSnippet: {
-          title: "Bear Roar Distraction System",
+          title: "Bear Object Interaction System",
           language: "csharp",
-          code: `private void BearRoar()
+          code: `private void HandleObjectInteraction()
 {
-    GenerateNoise(100f);  // Maximum noise level for distraction
-    _audioSource.PlayOneShot(_bearRoarSound);
-}
-
-private void SetUp()
-{
-    InputManager.Instance.PlayerInput.Player.Roar.performed += ctx => BearRoar();
-}
-
-private void HandleObjectInteraction()
-{
+    // Pickup/Drop objects
     if (InputManager.Instance.PlayerInput.Player.Interact.triggered)
     {
         if (_isHoldingObject)
@@ -193,17 +207,45 @@ private void HandleObjectInteraction()
         }
     }
 
+    // Throw objects
     if (_isHoldingObject && InputManager.Instance.PlayerInput.Player.Throw.triggered)
     {
         ThrowObject();
+    }
+}
+
+private void TryPickupObject()
+{
+    RaycastHit hit;
+    if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward,
+        out hit, _pickupDistance, _interactableLayers))
+    {
+        DistractionObject distractionObject = hit.collider.GetComponent<DistractionObject>();
+        if (distractionObject != null && distractionObject.CanBePickedUp)
+        {
+            _heldObject = distractionObject;
+            _heldObject.PickUp(_holdPosition);
+            _isHoldingObject = true;
+        }
+    }
+}
+
+private void ThrowObject()
+{
+    if (_heldObject != null)
+    {
+        GenerateNoise(_heldObject.NoiseOnThrow);
+        _heldObject.Throw(Camera.main.transform.forward * _throwForce);
+        _heldObject = null;
+        _isHoldingObject = false;
     }
 }`,
         },
       },
       {
-        title: "Sophisticated Investigation Mechanics",
+        title: "Smart Investigation Mechanics",
         description:
-          "When enemies hear a noise, they switch to investigation: moving to the source, searching around, then returning to patrol if nothing’s found. This system uses timers, sound decay, and smart state changes to keep enemy behavior believable.",
+          "When enemies hear something suspicious, they don't just ignore it—they investigate! I've programmed them to move to the noise source, search the area by looking around, and only return to their normal routine if they don't find anything. This creates incredible tension as you watch guards carefully checking out that trash can you accidentally knocked over. The investigation system uses realistic timers and state transitions, making enemy behavior feel believable and adding strategic depth to every encounter.",
         codeSnippet: {
           title: "Enemy Sound Investigation Coroutine",
           language: "csharp",
@@ -239,9 +281,9 @@ private void HandleObjectInteraction()
         },
       },
       {
-        title: "Dynamic State Machine Architecture",
+        title: "Rock-Solid State Machine Architecture",
         description:
-          "Enemy behavior is managed with a solid finite state machine covering patrolling, investigating, chasing, and wandering. Each state has clear rules for entering, updating, and exiting, with debug tools to visualize state changes and ensure smooth transitions.",
+         "Under the hood, every enemy runs on a carefully crafted finite state machine that manages patrolling, investigating, chasing, and wandering behaviors. Each state has clear rules for when to enter, what to do while active, and when to exit to another state. I've included debug visualization tools that let me see exactly what each enemy is thinking, ensuring smooth transitions and consistent behavior. It's the kind of solid foundation that makes complex AI feel effortless and reliable!",
         codeSnippet: {
           title: "Enemy State Management System",
           language: "csharp",
@@ -262,6 +304,7 @@ protected virtual void Update()
             // Regular patrol behavior
             break;
         case EnemyState.Investigating:
+            // Go to the last heard position and investigate
             Agent.SetDestination(_lastHeardPosition);
             _investigationTimeRemaining -= Time.deltaTime;
             if (_investigationTimeRemaining <= 0)
@@ -271,13 +314,12 @@ protected virtual void Update()
             }
             break;
         case EnemyState.Chasing:
+            // Chase the player if spotted
             if (Time.time - LastPlayerVisibleTime > PlayerVisibilityTimeout)
             {
+                // Enemy lost sight of player, go patrol the area you lost sight of them and after a bit return to patrolling
                 LosePlayerVisibility();
             }
-            break;
-        case EnemyState.Wandering:
-            // Wandering is handled by coroutine system
             break;
     }
       CheckVision();
@@ -286,9 +328,9 @@ protected virtual void Update()
         },
       },
       {
-        title: "Advanced Physics-Based Movement System",
+        title: "Physics-Based Bear Movement",
         description:
-          "The bear moves realistically using Rigidbody physics, with different speeds for stealth, walking, and sprinting. Direction changes are smooth, animations sync nicely, and movement adapts to the terrain. This system works tightly with noise generation and player input.",
+          "This bear moves with realistic weight and momentum! Using Unity's Rigidbody physics system, I've created movement that feels natural and responsive. The bear has different speeds for sneaking, walking, and sprinting, with smooth direction changes and perfectly synchronized animations. Movement speed directly affects noise generation, so you're constantly making tactical decisions about how fast to move. The physics-based approach means the bear interacts naturally with the environment and terrain—no more floating or sliding around!",
         codeSnippet: {
           title: "Player Movement & Animation System",
           language: "csharp",
@@ -368,6 +410,7 @@ public class BaseEnemy : MonoBehaviour
         
         // Register with noise management system
         if (NoiseManager.Instance != null)
+            // Register this enemy for noise events
             NoiseManager.Instance.RegisterEnemy(this);
     }
     
@@ -378,9 +421,12 @@ public class BaseEnemy : MonoBehaviour
         {
             case EnemyState.Chasing:
                 if (Time.time - LastPlayerVisibleTime > PlayerVisibilityTimeout)
+                {
+                    // Enemy lost sight of player, go patrol the area you lost sight of them and after
                     LosePlayerVisibility();
                 break;
             case EnemyState.Investigating:
+                // Go to the last heard position and investigate
                 Agent.SetDestination(_lastHeardPosition);
                 _investigationTimeRemaining -= Time.deltaTime;
                 if (_investigationTimeRemaining <= 0)
@@ -406,6 +452,7 @@ public class BaseEnemy : MonoBehaviour
                 _isInvestigating = true;
                 _investigationTimeRemaining = _investigationTime;
                 _currentState = EnemyState.Investigating;
+                // Notify the enemy to investigate the noise
                 StartCoroutine(OnSoundHeard(noisePosition));
             }
         }
@@ -426,6 +473,7 @@ public class BaseEnemy : MonoBehaviour
                 if (hit.collider.GetComponent<Player>() != null)
                 {
                     if (!IsPlayerSpotted)
+                    // Enemy spotted the player, start chasing
                         StartCoroutine(OnPlayerSpotted());
                     LastPlayerVisibleTime = Time.time;
                 }

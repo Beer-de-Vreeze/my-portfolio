@@ -62,6 +62,7 @@ const LPCafe = ({ onModalStateChange }: { onModalStateChange: (isOpen: boolean) 
           language: "csharp",
           code: `public void ShowDialogue()
 {
+    // Clear previous choices and reset layout
     ClearChoices();
     EnsureVerticalLayoutSettings();
     EnsureLoveMeterSetup();
@@ -72,12 +73,14 @@ const LPCafe = ({ onModalStateChange }: { onModalStateChange: (isOpen: boolean) 
     // Handle special node types
     if (IsConditionNode(_dialogue))
     {
+        // Evaluate conditions and apply logic if the conditition is met or not
         EvaluateConditionNode();
         return;
     }
     
     if (IsSetterNode(_dialogue))
     {
+        // Applying Setter Node to update Love Meter or preferences
         ApplySetterNode();
         return;
     }
@@ -121,6 +124,7 @@ const LPCafe = ({ onModalStateChange }: { onModalStateChange: (isOpen: boolean) 
     var choices = _dialogue.m_dialogue.m_dialogueChoiceData;
     if (choices?.Count > 0)
     {
+        // Checks the DialogueChoiceData for any choices and displays them
         ShowChoices(choices);
         _canAdvance = false;
     }
