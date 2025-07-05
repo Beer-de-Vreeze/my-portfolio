@@ -42,14 +42,13 @@ const Website = ({ onModalStateChange }: { onModalStateChange: (isOpen: boolean)
       },
     ]}
     techStack={[
-      "Next.js 14",
-      "React 18",
+      "Next.js",
+      "React",
       "TypeScript",
       "Tailwind CSS",
       "Framer Motion",
       "Vercel",
       "ESLint",
-      "Git",
       "Responsive Design",
       "Performance Optimization",
     ]}
