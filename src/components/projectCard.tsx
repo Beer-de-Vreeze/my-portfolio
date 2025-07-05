@@ -1419,7 +1419,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                           <div className="mt-6 w-full">                            {/* Collapsible header */}
                             <button
                               onClick={() => toggleCodeSnippet(`feature-${index}`)}
-                              className="group w-full flex items-center justify-between p-3 bg-[#1a1a1a] hover:bg-black border border-[#333] transition-colors text-left rounded-none"
+                              className="group w-full flex items-center justify-between p-3 bg-[#1a1a1a] hover:bg-white border border-[#333] transition-colors text-left rounded-none"
                             >
                               <span className="text-sm text-gray-300 font-medium group-hover:text-black transition-colors">
                                 {feature.codeSnippet.title || 'Code Example'}
@@ -1438,7 +1438,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                             <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
                               collapsedCodeSnippets[`feature-${index}`] ? 'max-h-0' : 'max-h-[72rem]'
                             }`}>                              <div className="relative overflow-hidden border-x border-b border-[#333]">
-                                <div className="max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
+                                <div className="max-h-[32rem] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
                                   <pre className="w-full overflow-x-auto p-5 text-sm sm:text-[14px] leading-relaxed bg-[#1e1e1e]">
                                     <code className={`language-${feature.codeSnippet.language || 'javascript'} font-mono`}>
                                       {feature.codeSnippet.code}
@@ -1450,8 +1450,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                                     e.stopPropagation();
                                     handleCopyCode(feature.codeSnippet!.code, `feature-${index}`);
                                   }}
-                                  className={`absolute top-2 right-2 bg-black/70 hover:bg-black/90 p-2 rounded-md text-gray-200 text-xs hover:text-white transition-all duration-150 ${
-                                    pressedButton === `feature-${index}` ? 'scale-90 bg-black/95' : ''
+                                  className={`absolute top-2 right-2 p-2 rounded-md text-xs transition-all duration-150 ${
+                                    pressedButton === `feature-${index}` 
+                                      ? 'scale-90 bg-white text-black' 
+                                      : 'bg-black/70 text-gray-200 hover:bg-white hover:text-black'
                                   }`}
                                   aria-label="Copy code"
                                 >
@@ -1478,7 +1480,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     </h2>                    {/* Collapsible header */}
                     <button
                       onClick={() => toggleCodeSnippet('main')}
-                      className="group w-full flex items-center justify-between p-3 bg-[#1a1a1a] hover:bg-[#222] border border-[#333] transition-colors text-left rounded-none"
+                      className="group w-full flex items-center justify-between p-3 bg-[#1a1a1a] hover:bg-white border border-[#333] transition-colors text-left rounded-none"
                     >
                       <span className="text-sm text-gray-300 font-medium group-hover:text-black transition-colors">
                         {codeSnippet.title || 'Main Code Example'}
@@ -1498,7 +1500,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                       collapsedCodeSnippets['main'] ? 'max-h-0' : 'max-h-[72rem]'
                     }`}>
                       <div className="relative overflow-hidden border-x border-b border-[#333]">
-                        <div className="max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
+                        <div className="max-h-[32rem] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
                           <pre className="w-full overflow-x-auto p-5 text-sm sm:text-[14px] leading-relaxed bg-[#1e1e1e]">
                             <code className={`language-${codeSnippet.language || 'javascript'} font-mono`}>
                               {codeSnippet.code}
@@ -1510,8 +1512,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                             e.stopPropagation();
                             handleCopyCode(codeSnippet.code, 'main-code');
                           }}
-                          className={`absolute top-2 right-2 bg-black/70 hover:bg-black/90 p-2 rounded-md text-gray-200 text-xs hover:text-white transition-all duration-150 ${
-                            pressedButton === 'main-code' ? 'scale-90 bg-black/95' : ''
+                          className={`absolute top-2 right-2 p-2 rounded-md text-xs transition-all duration-150 ${
+                            pressedButton === 'main-code' 
+                              ? 'scale-90 bg-white text-black' 
+                              : 'bg-black/70 text-gray-200 hover:bg-white hover:text-black'
                           }`}
                           aria-label="Copy code"
                         >

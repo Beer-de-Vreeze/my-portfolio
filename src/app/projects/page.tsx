@@ -66,8 +66,8 @@ export default function Projects() {
       }}
     >
       <div
-        className={`fixed top-0 left-0 w-full z-10 transition-all duration-300 ease-in-out ${
-          isAnyModalOpen ? "opacity-0 pointer-events-none" : "opacity-100"
+        className={`fixed top-0 left-0 w-full z-10 transition-all duration-500 ease-out ${
+          isAnyModalOpen ? "opacity-0 -translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
         }`}
       >
         <Navbar />
@@ -80,8 +80,8 @@ export default function Projects() {
       </main>
 
       <div
-        className={`fixed bottom-0 left-0 w-full z-10 transition-all duration-300 ease-in-out ${
-          isAnyModalOpen ? "opacity-0 pointer-events-none" : "opacity-100"
+        className={`fixed bottom-0 left-0 w-full z-10 transition-all duration-500 ease-out ${
+          isAnyModalOpen ? "opacity-0 translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
         }`}
       >
         <Footer />

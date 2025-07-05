@@ -88,7 +88,8 @@ export default function Home() {
       <div className={`${styles.headerContainer} ${isDesktop ? styles.headerContainerDesktop : styles.headerContainerMobile}`}>
         <h1 className={`${styles.name} ${isDesktop ? styles.nameDesktop : styles.nameMobile}`}>
           Beer de Vreeze
-        </h1>        <h2 className={`${styles.title} ${isDesktop ? styles.titleDesktop : styles.titleMobile}`}>
+        </h1>
+        <h2 className={`${styles.title} ${isDesktop ? styles.titleDesktop : styles.titleMobile}`}>
           <span className="text-white">Dutch-based </span>
           {width !== undefined && width < 900 && <br />}
           <span className="gradient-text" style={{ marginTop: '0.5rem' }}>Game Developer</span>
