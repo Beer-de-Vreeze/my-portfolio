@@ -975,18 +975,19 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           <p className="text-gray-200 text-sm line-clamp-2 mb-3 drop-shadow-md">{description.split('.')[0]}.</p>
         </div>
           {/* Tech stack tags - enhanced visibility with backdrop */}
-        <div className="relative z-10 flex flex-wrap gap-1.5 mt-auto">
+        <div className="relative z-10 flex flex-wrap gap-1.5 mt-auto max-w-full overflow-hidden">
           {techStack.slice(0, 4).map((tech, index) => (
             <span 
               key={index} 
-              className="px-4 py-2 bg-black/80 backdrop-blur-sm border border-[#27272a] rounded-full flex items-center justify-center text-gray-300 text-xs shadow-lg"
+              className="px-3 py-2 bg-black/80 backdrop-blur-sm border border-[#27272a] rounded-full flex items-center justify-center text-gray-300 text-sm shadow-lg whitespace-nowrap flex-shrink-0 min-w-0"
               onClick={() => handleTechIconClick(tech)}
             >
-              {techIcons[tech] || null} {tech}
+              {techIcons[tech] || null} 
+              <span className="truncate ml-1">{tech}</span>
             </span>
           ))}
           {techStack.length > 4 && (
-            <span className="px-4 py-2 bg-black/80 backdrop-blur-sm border border-[#27272a] rounded-full flex items-center justify-center text-gray-300 text-xs shadow-lg">
+            <span className="px-3 py-2 bg-black/80 backdrop-blur-sm border border-[#27272a] rounded-full flex items-center justify-center text-gray-300 text-sm shadow-lg whitespace-nowrap flex-shrink-0">
               +{techStack.length - 4}
             </span>
           )}
@@ -1177,14 +1178,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     bg-clip-text text-transparent">
                     Built with
                   </h2>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2.5 max-w-full">
                     {techStack.map((tech, index) => (
                       <span 
                         key={index} 
-                        className="px-5 py-3 bg-black border border-[#27272a] rounded-full flex items-center justify-center text-gray-300 text-sm"
+                        className="px-4 py-2.5 bg-black border border-[#27272a] rounded-full flex items-center justify-center text-gray-300 text-base whitespace-nowrap flex-shrink-0 min-w-0 hover:border-[#4a4a4a] transition-colors"
                         onClick={() => handleTechIconClick(tech)}
                       >
-                        {techIcons[tech] || null} {tech}
+                        {techIcons[tech] || null} 
+                        <span className="truncate ml-1.5">{tech}</span>
                       </span>
                     ))}
                   </div>

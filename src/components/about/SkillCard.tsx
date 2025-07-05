@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  SiReact, SiUnity, SiGit, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiTailwindcss,
+  SiReact, SiUnity, SiGit, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNextdotjs, SiTailwindcss,
   SiDotnet, SiPython, SiGooglecloud, SiPhp, SiMysql, SiFirebase, SiLua, SiRoblox, SiVercel, SiAudacity
 } from 'react-icons/si';
 import { FiRefreshCw } from 'react-icons/fi';
@@ -56,7 +56,7 @@ const SkillCard: React.FC<TechStackProps> = ({ title = "Tech Stack" }) => {
     { icon: <SiReact />, name: 'React', category: 'Frontend' },
     { icon: <SiReact />, name: 'React Native', category: 'Frontend' },
     //Backend
-    { icon: <SiNodedotjs />, name: 'Node.js', category: 'Backend' },
+    { icon: <SiNextdotjs />, name: 'Next.js', category: 'Backend' },
     { icon: <SiPhp />, name: 'PHP', category: 'Backend' },
     { icon: <SiMysql />, name: 'SQL', category: 'Backend' },
     { icon: <SiFirebase />, name: 'Google Firebase', category: 'Backend' },

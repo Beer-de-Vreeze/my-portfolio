@@ -5,7 +5,7 @@ const LPCafe = ({ onModalStateChange }: { onModalStateChange: (isOpen: boolean) 
   <SuspenseProjectCard
     projectId="LP-Cafe"
     title="LP-Cafe"
-    description={`A wild, romantic, and comedic visual novel/dating sim where you can pursue love, chaos, or just a good time at the LP-Cafe! Featuring a cast of eccentric characters, branching storylines, and a custom dialogue system built from scratch in Unity. Dive into a world of motorcycles, gym days, and... catboys! (Yes, I did my own voice acting for Beer, the catboy character!)\n\nThe game features a fully custom dialogue tool and display system, allowing for complex branching, dynamic choices, and a love meter that tracks your progress with each bachelor or bachelorette. Every interaction is brought to life with animated UI, typewriter effects, and even voice lines.`}
+    description={`A wild, romantic, and comedic visual novel/dating sim where you can pursue love, chaos, or just a good time at the LP-Cafe! Featuring a cast of eccentric characters, branching storylines, and a custom dialogue system built from scratch in Unity. Dive into a world of motorcycles, gym days, and... catboys! (Yes, I did my own voice acting for Beer, the catboy!)\n\nThe game features a fully custom dialogue tool and display system, allowing for complex branching, dynamic choices, and a love meter that tracks your progress with each bachelor or bachelorette. Every interaction is brought to life with animated UI, typewriter effects, and even voice lines.`}
     coverImage="/images/LPCafe Images/Cafe.webp"
     liveLink="https://tanixgames.itch.io/lp-cafe"
     githubLink="https://github.com/Beer-de-Vreeze/LP-Cafe"
@@ -34,12 +34,12 @@ const LPCafe = ({ onModalStateChange }: { onModalStateChange: (isOpen: boolean) 
     techStack={[
       "Unity",
       "C#",
-      "Editor Scripting",
       "Custom Dialogue Tool",
+      "Voice Acting",
+      "Editor Scripting",
       "Audacity",
       "DOTween",
       "Text Animator",
-      "Voice Acting",
       "UI/UX",
     ]}
     features={[
