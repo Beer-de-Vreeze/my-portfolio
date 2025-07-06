@@ -1,7 +1,14 @@
 import React from "react";
 import SuspenseProjectCard from "../projectCard";
+import useMobileDetection from "../utils/useMobileDetection";
 
-const AudioPreviever = ({ onModalStateChange }: { onModalStateChange: (isOpen: boolean) => void }) => (
+const AudioPreviever = ({ onModalStateChange }: { onModalStateChange: (isOpen: boolean) => void }) => {
+  // Mobile detection hook is included for consistency across components
+  // but not currently used since this component doesn't have video content
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const isMobile = useMobileDetection();
+  
+  return (
   <SuspenseProjectCard
     projectId="Unity Audio Previewer"
     title="Unity Audio Previewer"
@@ -444,6 +451,8 @@ public class AudioPreviewerWindow : EditorWindow
 }`,
     }}
     onModalStateChange={onModalStateChange}
-  />);
+  />
+  );
+};
 
 export default AudioPreviever;

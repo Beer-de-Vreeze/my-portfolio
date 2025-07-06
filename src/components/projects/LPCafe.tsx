@@ -1,7 +1,11 @@
 import React from "react";
 import SuspenseProjectCard from "../SuspenseProjectCard";
+import useMobileDetection from "../utils/useMobileDetection";
 
-const LPCafe = ({ onModalStateChange }: { onModalStateChange: (isOpen: boolean) => void }) => (
+const LPCafe = ({ onModalStateChange }: { onModalStateChange: (isOpen: boolean) => void }) => {
+  const isMobile = useMobileDetection();
+  
+  return (
   <SuspenseProjectCard
     projectId="LP-Cafe"
     title="LP-Cafe"
@@ -11,9 +15,12 @@ const LPCafe = ({ onModalStateChange }: { onModalStateChange: (isOpen: boolean) 
     githubLink="https://github.com/Beer-de-Vreeze/LP-Cafe"
     media={[
       {
-        type: "video",
-        src: "/images/LPCafe Images/LP Cafe Trailer.webm",
+        type: isMobile ? "youtube" : "video",
+        src: isMobile 
+          ? "https://youtu.be/UuNebYF0hbE" // YouTube link for LP Cafe Trailer
+          : "/images/LPCafe Images/LP Cafe Trailer.webm",
         alt: "LP Cafe Trailer",
+        thumbnail: "/images/LPCafe Images/Cafe.webp",
       },
       {
         type: "image",
@@ -26,14 +33,20 @@ const LPCafe = ({ onModalStateChange }: { onModalStateChange: (isOpen: boolean) 
         alt: "James character dialogue scene",
       },
       {
-        type: "video",
-        src: "/images/LPCafe Images/DialogueTool.webm",
+        type: isMobile ? "youtube" : "video",
+        src: isMobile 
+          ? "https://youtu.be/eIh6guJ7X0g" // YouTube link for DialogueTool
+          : "/images/LPCafe Images/DialogueTool.webm",
         alt: "Custom dialogue tool in action",
+        thumbnail: "/images/LPCafe Images/Catboy.webp",
       },
       {
-        type: "video",
-        src: "/images/LPCafe Images/Recording Session.webm",
+        type: isMobile ? "youtube" : "video",
+        src: isMobile 
+          ? "https://youtu.be/vUvCR3kR_lw" // YouTube link for Recording Session
+          : "/images/LPCafe Images/Recording Session.webm",
         alt: "Voice acting recording session",
+        thumbnail: "/images/LPCafe Images/James Talking.webp",
       },
     ]}
     techStack={[
@@ -428,6 +441,7 @@ public void MarkAsDated()
     }}
     onModalStateChange={onModalStateChange}
   />
-);
+  );
+};
 
 export default LPCafe;

@@ -1,11 +1,18 @@
 import React from "react";
 import SuspenseProjectCard from "../projectCard";
 
+// Using our centralized mobile detection hook instead
+import useMobileDetection from "../utils/useMobileDetection";
+
 const MLAgent = ({
   onModalStateChange,
 }: {
   onModalStateChange: (isOpen: boolean) => void;
-}) => (
+}) => {
+  // Use the shared hook for mobile detection
+  const isMobile = useMobileDetection();
+  
+  return (
   <SuspenseProjectCard
     projectId="ML-Agents"
     title="Unity ML-Agents Training"
@@ -13,40 +20,46 @@ const MLAgent = ({
     githubLink="https://github.com/Beer-de-Vreeze/ML-Agents-Training"
     coverImage="/images/AI Images/Title.webp"
     media={[
+      // For the rest, conditionally use YouTube on mobile or webm on desktop
       {
-        type: "youtube",
-        src: "https://youtu.be/FPXM00lVQjI",
-        alt: "ML-Agents Training Overview",
+        type: isMobile ? "youtube" : "video",
+        src: isMobile 
+          ? "https://youtu.be/MhUCYR9Tbgk" // YouTube link for Jerry Move
+          : "/images/AI Images/Jerry Move.webm",
+        alt: "Move 1 first iteration",
+        thumbnail: "/images/AI Images/Title.webp",
       },
       {
-        type: "video",
-        src: "/images/AI Images/Jerry Move.webm",
-        alt: "Move 1 first itteration",
-        thumbnail: "/images/AI Images/Title.webp", // Using cover image as thumbnail
-      },
-      {
-        type: "video",
-        src: "/images/AI Images/Jerry MoveWithVision.webm",
+        type: isMobile ? "youtube" : "video",
+        src: isMobile 
+          ? "https://youtu.be/4xG31EWKt8k" // YouTube link for Jerry MoveWithVision
+          : "/images/AI Images/Jerry MoveWithVision.webm",
         alt: "Move with raycast training",
         thumbnail: "/images/AI Images/Title.webp",
       },
       {
-        type: "video",
-        src: "/images/AI Images/Jerry MoveWithFEEDBACKV2.webm",
+        type: isMobile ? "youtube" : "video",
+        src: isMobile 
+          ? "https://youtu.be/4_am39e5vU0" // YouTube link for Jerry MoveWithFEEDBACKV2
+          : "/images/AI Images/Jerry MoveWithFEEDBACKV2.webm",
         alt: "Training with feedback",
         thumbnail: "/images/AI Images/Title.webp",
       },
       {
-        type: "video",
-        src: "/images/AI Images/Jerry MoveWithFEEDBACKTRAINING2.webm",
+        type: isMobile ? "youtube" : "video",
+        src: isMobile 
+          ? "https://youtu.be/ntM6Rpd6G5Q" // YouTube link for Jerry MoveWithFEEDBACKTRAINING2
+          : "/images/AI Images/Jerry MoveWithFEEDBACKTRAINING2.webm",
         alt: "Training with Timer",
         thumbnail: "/images/AI Images/Title.webp",
       },
       {
-        type: "video",
-        src: "/images/AI Images/HUNTERVSPREY.webm",
+        type: isMobile ? "youtube" : "video",
+        src: isMobile 
+          ? "https://youtu.be/V1-059V_a2w" // YouTube link for HUNTERVSPREY
+          : "/images/AI Images/HUNTERVSPREY.webm",
         alt: "Hunter VS Prey simulation",
-        thumbnail: "/images/AI Images/Zombie Arena.webp", // Different thumbnail for variety
+        thumbnail: "/images/AI Images/Zombie Arena.webp",
       },
     ]}
     techStack={[
@@ -742,6 +755,7 @@ public class JerryAgentController : BaseAgentController
     }}
     onModalStateChange={onModalStateChange}
   />
-);
+  );
+};
 
 export default MLAgent;

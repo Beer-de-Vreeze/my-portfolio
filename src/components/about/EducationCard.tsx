@@ -32,26 +32,19 @@ const EducationCard: React.FC = () => {
   // Readonly array for better type safety and performance
   const schools: readonly School[] = [
     {
-      name: 'Lek en Linge',
-      educationType: 'VMBO-TL',
-      logo: '/images/lek-en-linge.webp',
-      subtitle: 'High School',
-      finishedDate: '06.2021',
+      name: 'GLU',
+      educationType: 'MBO',
+      logo: '/images/GLU.webp',
+      subtitle: 'Game Development',
+      finishedDate: '09.2023 - present',
       program: [
-        'Dutch Language and Literature: Advanced reading, writing, and communication skills.',
-        'English: Conversational and written English proficiency.',
-        'Mathematics: Algebra, geometry, and statistical analysis.',
-        'History and Geography: European and world history, geographic knowledge.',
-        'Biology: Basic life sciences and natural world understanding.',
-        'Physical Education: Sports, fitness, and health awareness.'
+        'Learning programming languages like C#​',
+        'Exploring game design and development principles',
+        'Building immersive experiences with Unity and industry-standard tools',
+        'Developing engaging games – Unity, Git and SCRUM',
+        'Collaborating effectively between programmers, artists, and designers'
       ],
-      technologies: [
-        'Critical Thinking',
-        'Communication Skills',
-        'Problem Solving',
-        'Research Methods',
-        'Academic Writing'
-      ]
+      technologies: ['Unity', 'C#', 'Git', 'Game Design', 'SCRUM']
     },
     {
       name: 'ROC Midden Nederland',
@@ -74,20 +67,27 @@ const EducationCard: React.FC = () => {
         'Independence'
       ]
     },
-    {
-      name: 'GLU',
-      educationType: 'MBO',
-      logo: '/images/GLU.webp',
-      subtitle: 'Game Development',
-      finishedDate: '09.2023 - present',
+     {
+      name: 'Lek en Linge',
+      educationType: 'VMBO-TL',
+      logo: '/images/lek-en-linge.webp',
+      subtitle: 'High School',
+      finishedDate: '06.2021',
       program: [
-        'Learning programming languages like C#​',
-        'Exploring game design and development principles',
-        'Building immersive experiences with Unity and industry-standard tools',
-        'Developing engaging games – Unity, Git and SCRUM',
-        'Collaborating effectively between programmers, artists, and designers'
+        'Dutch Language and Literature: Advanced reading, writing, and communication skills.',
+        'English: Conversational and written English proficiency.',
+        'Mathematics: Algebra, geometry, and statistical analysis.',
+        'History and Geography: European and world history, geographic knowledge.',
+        'Biology: Basic life sciences and natural world understanding.',
+        'Physical Education: Sports, fitness, and health awareness.'
       ],
-      technologies: ['Unity', 'C#', 'Git', 'Game Design', 'SCRUM']
+      technologies: [
+        'Critical Thinking',
+        'Communication Skills',
+        'Problem Solving',
+        'Research Methods',
+        'Academic Writing'
+      ]
     }
   ] as const;
   

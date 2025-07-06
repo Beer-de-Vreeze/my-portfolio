@@ -345,6 +345,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   // Media carousel state
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isYouTubePlaying, setIsYouTubePlaying] = useState(false);
   const [autoplay, setAutoplay] = useState(true);
   
   // Mobile device detection
@@ -386,6 +387,63 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     window.addEventListener('resize', checkMobile);
     
     return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  /**
+   * Effect for handling YouTube iframe API messages
+   * Listens for play/pause events from YouTube videos
+   */
+  useEffect(() => {
+    const handleYouTubeMessage = (event: MessageEvent) => {
+      // Only listen to messages from YouTube
+      if (event.origin !== 'https://www.youtube.com') return;
+      
+      try {
+        // YouTube sends both string and object data
+        let data;
+        if (typeof event.data === 'string') {
+          // Try to parse as JSON first
+          if (event.data.startsWith('{')) {
+            data = JSON.parse(event.data);
+          } else {
+            // Handle non-JSON string messages (some YouTube messages are just strings)
+            return;
+          }
+        } else {
+          data = event.data;
+        }
+        
+        // YouTube iframe API message formats
+        if (data.event === 'video-progress') {
+          // This event is sent periodically during playback
+          setIsYouTubePlaying(true);
+          setAutoplay(false);
+        } else if (data.event === 'onStateChange') {
+          // YouTube player states: -1 (unstarted), 0 (ended), 1 (playing), 2 (paused), 3 (buffering), 5 (cued)
+          const playerState = data.info?.playerState;
+          
+          if (playerState === 1) {
+            // Video is playing
+            setIsYouTubePlaying(true);
+            setAutoplay(false);
+          } else if (playerState === 2 || playerState === 0) {
+            // Video is paused or ended
+            setIsYouTubePlaying(false);
+            setAutoplay(true);
+          }
+        }
+      } catch {
+        // Ignore parsing errors from non-JSON messages
+      }
+    };
+
+    // Add the message listener
+    window.addEventListener('message', handleYouTubeMessage);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('message', handleYouTubeMessage);
+    };
   }, []);
 
   /**
@@ -913,6 +971,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       videoRef.current.pause();
     }
     setIsPlaying(false);
+    setIsYouTubePlaying(false); // Reset YouTube playing state when closing modal
     setIsClosing(true);
     
     // Set flag to indicate we're programmatically closing
@@ -1000,6 +1059,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       videoRef.current.pause();
     }
     setIsPlaying(false);
+    setIsYouTubePlaying(false); // Reset YouTube playing state when changing slides
     setCurrentMediaIndex((prevIndex) => (prevIndex + 1) % media.length);
   }, [media.length]);
 
@@ -1012,6 +1072,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       videoRef.current.pause();
     }
     setIsPlaying(false);
+    setIsYouTubePlaying(false); // Reset YouTube playing state when changing slides
     setCurrentMediaIndex((prevIndex) => (prevIndex - 1 + media.length) % media.length);
   }, [media.length]);
 
@@ -1165,23 +1226,27 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   /**
    * Renders fullscreen button for videos
    * Positioned outside the main controls overlay to avoid pointer event conflicts
+   * Hidden on mobile devices for all videos - let YouTube handle its own interface on mobile
    */
   const renderVideoFullscreenButton = () => {
-    // Show fullscreen button for both local videos and YouTube videos
+    // Show fullscreen button for both local videos and YouTube videos on desktop only
+    // Hide fullscreen button on mobile for all videos (let YouTube handle its own interface)
     if (!(isVideo || isYouTube)) return null;
+    if (isMobile) return null; // Hide fullscreen button on mobile for all videos
 
     return (
       <button
         onClick={toggleFullscreen}
         className="absolute bottom-3 right-3 z-40 bg-black/60 hover:bg-black/80 rounded-full p-2.5
-          text-white transition-all duration-200 focus:outline-none pointer-events-auto"
+          text-white transition-all duration-200 focus:outline-none pointer-events-auto
+          flex items-center justify-center w-10 h-10"
         aria-label="Toggle fullscreen"
         style={{ pointerEvents: 'auto' }}
       >
         {isFullscreen ? (
-          <FaCompress className="text-white text-lg" />
+          <FaCompress className="text-white text-base" />
         ) : (
-          <FaExpand className="text-white text-lg" />
+          <FaExpand className="text-white text-base" />
         )}
       </button>
     );
@@ -1190,9 +1255,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   /**
    * Renders fullscreen button for images
    * Shows enlarge button overlay for image media types
+   * Hidden on all mobile devices (removed functionality)
    */
   const renderImageControls = () => {
-    if (isVideo) return null;
+    if (isVideo || isMobile) return null;
 
     return (
       <div className="absolute bottom-3 right-3 z-30 pointer-events-none">
@@ -1200,13 +1266,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         <button
           onClick={toggleFullscreen}
           className="bg-black/60 hover:bg-black/80 rounded-full p-2.5
-            text-white transition-all duration-200 focus:outline-none opacity-0 group-hover/carousel:opacity-100 hover:opacity-100 pointer-events-auto"
+            text-white transition-all duration-200 focus:outline-none opacity-0 group-hover/carousel:opacity-100 hover:opacity-100 pointer-events-auto
+            flex items-center justify-center w-10 h-10"
           aria-label={isFullscreen ? "Exit fullscreen" : "Enlarge image"}
         >
           {isFullscreen ? (
-            <FaCompress className="text-white text-lg" />
+            <FaCompress className="text-white text-base" />
           ) : (
-            <FaExpand className="text-white text-lg" />
+            <FaExpand className="text-white text-base" />
           )}
         </button>
       </div>
@@ -1222,6 +1289,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       videoRef.current.pause();
     }
     setIsPlaying(false);
+    setIsYouTubePlaying(false); // Reset YouTube playing state when changing slides
     setCurrentMediaIndex(index);
     // Reset autoplay timer when manually changing slides
     setAutoplay(true);
@@ -1351,8 +1419,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
     // Only autoplay when modal is open, autoplay is enabled, video is not playing,
-    // not in fullscreen, and there are multiple media items
-    if (isModalOpen && autoplay && !isPlaying && !isFullscreen && media.length > 1) {
+    // YouTube is not playing, not in fullscreen, and there are multiple media items
+    if (isModalOpen && autoplay && !isPlaying && !isYouTubePlaying && !isFullscreen && media.length > 1) {
       intervalId = setInterval(() => {
         goToNextMedia();
       }, 5000); // Change slide every 5 seconds
@@ -1362,7 +1430,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  }, [isModalOpen, autoplay, isPlaying, isFullscreen, currentMediaIndex, media.length, goToNextMedia]);
+  }, [isModalOpen, autoplay, isPlaying, isYouTubePlaying, isFullscreen, currentMediaIndex, media.length, goToNextMedia]);
 
   /**
    * Effect for applying syntax highlighting to code snippets
@@ -1736,69 +1804,37 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               <div className="text-gray-400">Loading...</div>
             </div>
           )}
-          {/* Enhanced gradient overlays for better readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-transparent to-purple-900/20"></div>
-        </div>
-          {/* Card content - title and description with modern styling */}
-        <div className="relative z-10">
-          <h3 className="text-blue-100 font-bold text-xl sm:text-2xl group-hover/card:text-white transition-colors duration-300 mb-3 truncate drop-shadow-xl">
-            {title}
-          </h3>
-          <p className="text-blue-200/70 group-hover/card:text-blue-100 transition-colors duration-300 text-sm line-clamp-2 mb-4 drop-shadow-lg leading-relaxed">{description.split('.')[0]}.</p>
-        </div>
-        {/* Tech stack tags - modern glass morphism design */}
-        <div className="relative z-10 flex flex-wrap gap-1.5 mt-auto max-w-full overflow-hidden">
-          {techStack.slice(0, 4).map((tech, index) => (
-            <span
-              key={index} 
-              className="px-2 py-1.5 bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-400/30 rounded-full flex items-center justify-center text-blue-200 text-xs shadow-md hover:border-blue-300/50 transition-all duration-300 whitespace-nowrap flex-shrink-0 cursor-pointer group-hover/card:from-blue-400/30 group-hover/card:to-purple-400/30 group-hover/card:text-blue-100"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleTechIconClick(e, tech);
-              }}
-              aria-label={`Technology: ${tech}`}
-            >
-              {techIcons[tech] || null} 
-              <span className="ml-1">{tech}</span>
-            </span>
-          ))}
         </div>
       </div>
 
-      {/* Enhanced Modal with modern design matching the new system */}
-      {(isModalOpen || isClosing) && (
+      {/* Modal with backdrop blur and enhanced animations */}
+      {isModalOpen && (
         <div 
-          className={`fixed inset-0 z-[1000] flex items-center justify-center bg-gradient-to-br from-gray-900/95 to-black/90 
-            ${isClosing ? 'animate-fadeOut' : 'animate-fadeIn'} 
-            transition-opacity duration-300 ease-in-out py-2 sm:py-4`}
-          onClick={(e) => {
-            if (e.target === e.currentTarget) closeModal();
-          }}
+          className={`fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-sm transition-all duration-300 ${
+            isClosing ? 'opacity-0 backdrop-blur-none' : 'opacity-100'
+          }`}
+          onClick={closeModal}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-title"
         >
-          {/* Modal Content - Enhanced with consistent site design */}
+          {/* Enhanced Modal Container with modern design and responsive sizing */}
           <div 
-            className={`w-full max-w-7xl ${isClosing ? 'animate-fadeOut' : 'animate-fadeIn'} 
-              transition-transform duration-300 ease-in-out py-6 overflow-y-auto 
-              max-h-[90vh] my-auto bg-gradient-to-br from-gray-900/95 to-black/90 rounded-2xl 
-              border border-blue-500/20 shadow-2xl shadow-black/50 mx-4 relative`}
+            className={`relative w-full max-w-7xl max-h-[95vh] bg-gradient-to-br from-gray-900/95 to-black/90 backdrop-blur-md rounded-2xl shadow-2xl overflow-y-auto transition-all duration-300 border border-blue-500/30 ${
+              isClosing ? 'scale-95 opacity-0' : 'scale-100 opacity-100'
+            }`}
+            onClick={(e) => e.stopPropagation()}
           >
-            {/* Enhanced close button with consistent styling - follows scroll */}
-            <div className="flex justify-end p-4">
-              <button 
-                onClick={closeModal}
-                className="sticky top-4 z-[1010] bg-gradient-to-r from-gray-800/90 to-black/90 hover:from-gray-700/90 hover:to-black/95 
-                  rounded-full p-3 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center
-                  text-white hover:text-blue-200 transition-all duration-300
-                  shadow-lg border border-blue-500/20 hover:border-blue-400/40 focus:outline-none focus:ring-2 focus:ring-blue-400/50
-                  backdrop-blur-sm"
-                aria-label="Close modal"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </button>
-            </div>
+            {/* Enhanced Close button with better positioning and accessibility */}
+            <button
+              onClick={closeModal}
+              className="absolute top-4 right-4 z-50 bg-gradient-to-r from-red-600/80 to-red-700/80 hover:from-red-500 hover:to-red-600 text-white rounded-full p-3 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-400/50 focus:ring-offset-2 focus:ring-offset-transparent shadow-lg"
+              aria-label="Close modal"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
             
             <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 px-4 sm:px-6 lg:px-8 relative z-10">              {/* Left Column - Media carousel and action buttons */}
               <div className="w-full lg:w-1/2 flex flex-col">
@@ -1855,7 +1891,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                       ) : isYouTube ? (
                         <>
                           <iframe
-                            src={`https://www.youtube.com/embed/${extractYouTubeVideoId(currentMedia.src)}?rel=0&enablejsapi=1`}
+                            src={`https://www.youtube.com/embed/${extractYouTubeVideoId(currentMedia.src)}?rel=0&enablejsapi=1&origin=${typeof window !== 'undefined' ? window.location.origin : ''}&modestbranding=1&showinfo=0`}
                             className="w-full h-full transition-all duration-500 animate-fadeIn"
                             title={currentMedia.alt || title}
                             frameBorder="0"
@@ -1865,6 +1901,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                             onError={() => handleError(`Failed to load YouTube video: ${currentMedia.src}`, 'media')}
                             key={currentMediaIndex} // Force re-render when media changes
                           ></iframe>
+                          {renderVideoFullscreenButton()}
                         </>
                       ) : (
                         <>
@@ -1898,7 +1935,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                           bg-gradient-to-r from-black/60 to-gray-900/60
                           backdrop-blur-sm rounded-full p-2.5 sm:p-3
                           text-white/80 transition-all duration-300
-                          opacity-0 group-hover/carousel:opacity-100
+                          md:opacity-0 md:group-hover/carousel:opacity-100
+                          opacity-100
                           border border-white/10
                           focus:outline-none focus:ring-2 focus:ring-blue-400/50"
                         aria-label="Previous image"
@@ -1918,7 +1956,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                           bg-gradient-to-r from-black/60 to-gray-900/60
                           backdrop-blur-sm rounded-full p-2.5 sm:p-3
                           text-white/80 transition-all duration-300
-                          opacity-0 group-hover/carousel:opacity-100
+                          md:opacity-0 md:group-hover/carousel:opacity-100
+                          opacity-100
                           border border-white/10
                           focus:outline-none focus:ring-2 focus:ring-blue-400/50"
                         aria-label="Next image"
@@ -1982,7 +2021,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                   </div>
 
                   {/* Enhanced Progress bar for autoplay with subtle design */}
-                  {media.length > 1 && autoplay && !isPlaying && !isFullscreen && (
+                  {media.length > 1 && autoplay && !isPlaying && !isYouTubePlaying && !isFullscreen && (
                     <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-black/40 to-gray-900/40 z-20 overflow-hidden">
                       <div 
                         className="h-full bg-gradient-to-r from-blue-400/80 to-purple-400/80 transition-all duration-300 ease-linear shadow-lg"

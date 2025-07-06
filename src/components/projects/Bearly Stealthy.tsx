@@ -1,11 +1,15 @@
 import React from "react";
 import SuspenseProjectCard from "../projectCard";
+import useMobileDetection from "../utils/useMobileDetection";
 
 const BearlyStealthy = ({
   onModalStateChange,
 }: {
   onModalStateChange: (isOpen: boolean) => void;
-}) => (
+}) => {
+  const isMobile = useMobileDetection();
+  
+  return (
   <SuspenseProjectCard
     projectId="Bearly-Stealthy"
     title="Bearly Stealthy"
@@ -19,8 +23,10 @@ const BearlyStealthy = ({
         alt: "Bear",
       },
       {
-        type: "video",
-        src: "/images/Bearly Stealth Images/Bearly Stealthjy vid.webm",
+        type: isMobile ? "youtube" : "video",
+        src: isMobile 
+          ? "https://youtu.be/sko7rdFqJ4E" // YouTube link for Bearly Stealthy video
+          : "/images/Bearly Stealth Images/Bearly Stealthjy vid.webm",
         alt: "Bearly Stealthy Vid",
         thumbnail: "/images/Bearly Stealth Images/Bear.webp", // Use Bear image as thumbnail
       },
@@ -38,6 +44,14 @@ const BearlyStealthy = ({
         type: "image",
         src: "/images/Bearly Stealth Images/Hunter.webp",
         alt: "Hunter",
+      },
+      {
+        type: isMobile ? "youtube" : "video",
+        src: isMobile 
+          ? "https://youtu.be/ryoPsTMYDNY" // YouTube link for Noise visualization
+          : "/images/Bearly Stealth Images/Noise.webm",
+        alt: "Noise visualization system",
+        thumbnail: "/images/Bearly Stealth Images/MapOverview.webp",
       },
     ]}
     techStack={["Unity", "C#", "Game Design"]}
@@ -91,7 +105,7 @@ const BearlyStealthy = ({
       {
         title: "Dynamic Noise & Sound Propagation",
         description:
-          "The game implements a dynamic noise system where different player actions generate varying sound levels - from silent tiptoeing to attention-grabbing sprinting. The bear's roar ability creates strategic noise bursts for enemy distraction. Sound propagates realistically through the environment, with enemies investigating suspicious noises based on proximity and volume thresholds. This creates a layered stealth experience where sound management is crucial to survival.",
+          "The game implements a dynamic noise system where different player actions generate varying sound levels - from silent tiptoeing to attention-grabbing sprinting. The bear's roar ability creates strategic noise bursts for enemy distraction. Sound propagates realistically through the environment, with enemies investigating suspicious noises based on proximity and volume thresholds. This creates a layered stealth experience where sound management is crucial to survival. The Noise.webm visualization shows how sound waves propagate and alert enemies, illustrating this core stealth mechanic.",
         codeSnippet: {
           title: "NoiseManager - Centralized Sound System",
           language: "csharp",
@@ -497,6 +511,7 @@ public class BaseEnemy : MonoBehaviour
     }}
     onModalStateChange={onModalStateChange}
   />
-);
+  );
+};
 
 export default BearlyStealthy;
