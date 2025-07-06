@@ -11,6 +11,11 @@ const LPCafe = ({ onModalStateChange }: { onModalStateChange: (isOpen: boolean) 
     githubLink="https://github.com/Beer-de-Vreeze/LP-Cafe"
     media={[
       {
+        type: "video",
+        src: "/images/LPCafe Images/LP Cafe Trailer.webm",
+        alt: "LP Cafe Trailer",
+      },
+      {
         type: "image",
         src: "/images/LPCafe Images/Catboy.webp",
         alt: "Beer the Catboy (yes, that's me!)",
