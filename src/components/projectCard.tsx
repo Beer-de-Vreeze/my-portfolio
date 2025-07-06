@@ -361,7 +361,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   }, []);
 
   /**
-   * Enhanced video thumbnail generation with mobile support
+   * Enhanced video thumbnail generation with iOS/Safari support
    */
   const generateVideoThumbnail = useCallback(async (
     videoSrc: string, 
@@ -375,32 +375,31 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         return;
       }
 
-      // Detect mobile devices
-      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      // Special handling for iOS/Safari
       const isIOSSafari = isIOSorSafari();
       
-      // For WebM format on iOS/Safari, reject early as it's not supported
+      // For iOS/Safari, check if video format is supported
       if (isIOSSafari && videoSrc.includes('.webm')) {
-        console.warn('WebM format not supported on iOS/Safari');
+        console.warn('WebM format may not be supported on iOS/Safari, skipping thumbnail generation');
         reject(new Error('WebM format not supported on iOS/Safari'));
         return;
       }
-      
-      console.log(`📱 Generating thumbnail on ${isMobile ? 'mobile' : 'desktop'} device`);
 
       // Create video element for thumbnail generation
       const video = document.createElement('video');
       
-      // Mobile-optimized attributes
-      video.setAttribute('webkit-playsinline', 'true');
-      video.setAttribute('playsinline', 'true');
-      video.setAttribute('muted', 'true');
-      video.setAttribute('autoplay', 'false');
-      video.preload = 'metadata';
-      
-      // Set crossOrigin only for same-origin videos to avoid CORS issues
-      if (videoSrc.startsWith('/') || videoSrc.startsWith(window.location.origin)) {
+      // iOS-specific attributes
+      if (isIOSSafari) {
+        video.setAttribute('webkit-playsinline', 'true');
+        video.setAttribute('playsinline', 'true');
+        video.setAttribute('muted', 'true');
+        video.setAttribute('autoplay', 'false'); // Disable autoplay on iOS
+        video.preload = 'metadata'; // Only load metadata initially
+      } else {
         video.crossOrigin = 'anonymous';
+        video.muted = true;
+        video.playsInline = true;
+        video.preload = 'auto';
       }
       
       const canvas = document.createElement('canvas');
@@ -429,34 +428,51 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         // Seek to the specified time (or 1 second by default)
         const seekTime = Math.min(timeInSeconds, video.duration - 0.1);
         
-        // For mobile devices, use a simpler approach
-        video.currentTime = seekTime;
+        if (isIOSSafari) {
+          // On iOS, we may need to trigger play first, then pause and seek
+          video.play()
+            .then(() => {
+              video.pause();
+              video.currentTime = seekTime;
+            })
+            .catch(() => {
+              // If play fails, try direct seeking
+              video.currentTime = seekTime;
+            });
+        } else {
+          video.currentTime = seekTime;
+        }
       };
 
       video.onseeked = () => {
         try {
           clearTimeout(timeout);
           
+          // Additional check for iOS Canvas security
+          if (isIOSSafari) {
+            // Try to draw a test pixel first
+            try {
+              ctx.drawImage(video, 0, 0, 1, 1);
+              ctx.getImageData(0, 0, 1, 1);
+            } catch (securityError) {
+              console.warn('Canvas security error on iOS/Safari:', securityError);
+              video.remove();
+              reject(new Error('Canvas security restriction on iOS/Safari'));
+              return;
+            }
+          }
+          
           // Draw the video frame to canvas
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
           
-          // Convert to data URL with error handling for mobile
+          // Convert to data URL (JPEG for smaller file size and better iOS support)
           let thumbnailDataUrl: string;
           try {
-            // Try PNG first as it's more universally supported
+            thumbnailDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+          } catch (canvasError) {
+            console.warn('Canvas toDataURL error:', canvasError);
+            // Fallback to PNG if JPEG fails
             thumbnailDataUrl = canvas.toDataURL('image/png');
-            console.log('✅ PNG thumbnail generated successfully');
-          } catch (pngError) {
-            console.warn('PNG generation failed, trying JPEG:', pngError);
-            try {
-              thumbnailDataUrl = canvas.toDataURL('image/jpeg', 0.8);
-              console.log('✅ JPEG thumbnail generated successfully');
-            } catch (jpegError) {
-              console.error('Both PNG and JPEG generation failed:', jpegError);
-              video.remove();
-              reject(new Error('Canvas toDataURL failed'));
-              return;
-            }
           }
           
           // Cache the generated thumbnail
@@ -521,7 +537,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   }, [isIOSorSafari]);
 
   /**
-   * Enhanced video format detection with better browser support detection
+   * Enhanced video format detection
    */
   const isVideoFormatSupported = useCallback((videoSrc: string): boolean => {
     if (typeof window === 'undefined') return true;
@@ -529,60 +545,42 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     const video = document.createElement('video');
     const extension = videoSrc.split('.').pop()?.toLowerCase();
     
-    let canPlay = '';
     switch (extension) {
       case 'mp4':
-        canPlay = video.canPlayType('video/mp4');
-        break;
+        return video.canPlayType('video/mp4') !== '';
       case 'webm':
-        canPlay = video.canPlayType('video/webm');
-        break;
+        return video.canPlayType('video/webm') !== '';
       case 'mov':
-        canPlay = video.canPlayType('video/quicktime');
-        break;
+        return video.canPlayType('video/quicktime') !== '';
       case 'avi':
-        canPlay = video.canPlayType('video/x-msvideo');
-        break;
+        return video.canPlayType('video/x-msvideo') !== '';
       default:
         return true; // Assume supported if unknown
     }
-    
-    const isSupported = canPlay !== '';
-    console.log(`🎥 Format support check for ${extension}: ${canPlay} (${isSupported ? 'SUPPORTED' : 'NOT SUPPORTED'})`);
-    
-    return isSupported;
   }, []);
 
   /**
-   * Simplified fallback thumbnail generation for mobile devices
+   * Fallback thumbnail generation for iOS/Safari using video poster attribute
    */
   const generateFallbackThumbnail = useCallback(async (videoSrc: string): Promise<string | null> => {
-    console.log('📱 Starting mobile fallback thumbnail generation for:', videoSrc);
-    
     try {
+      // For iOS/Safari, try to extract a frame using a different approach
       const video = document.createElement('video');
       video.src = videoSrc;
       video.muted = true;
       video.playsInline = true;
       video.preload = 'metadata';
-      video.controls = false;
-      
-      // Mobile-specific attributes
-      video.setAttribute('webkit-playsinline', 'true');
-      video.setAttribute('playsinline', 'true');
       
       return new Promise((resolve) => {
         const timeout = setTimeout(() => {
-          console.warn('📱 Mobile fallback thumbnail generation timeout');
           video.remove();
           resolve(null);
-        }, 5000); // Shorter timeout for mobile
+        }, 5000);
         
-        video.onloadedmetadata = async () => {
-          console.log('📱 Video metadata loaded');
+        video.onloadedmetadata = () => {
           clearTimeout(timeout);
           
-          // Check if video has valid dimensions
+          // Try to create a poster/thumbnail from the first frame
           if (video.videoWidth > 0 && video.videoHeight > 0) {
             const canvas = document.createElement('canvas');
             const aspectRatio = video.videoWidth / video.videoHeight;
@@ -592,58 +590,44 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             const ctx = canvas.getContext('2d');
             if (ctx) {
               try {
-                // Set video to first frame and wait a moment
-                video.currentTime = 0.1;
+                // For iOS, we'll try to draw at time 0
+                video.currentTime = 0;
                 
-                // Wait for seek to complete
-                const waitForSeek = () => {
-                  return new Promise<void>((seekResolve) => {
-                    const onSeeked = () => {
-                      video.removeEventListener('seeked', onSeeked);
-                      seekResolve();
-                    };
-                    video.addEventListener('seeked', onSeeked);
-                    
-                    // Fallback timeout
-                    setTimeout(() => {
-                      video.removeEventListener('seeked', onSeeked);
-                      seekResolve();
-                    }, 1000);
-                  });
+                const drawFrame = () => {
+                  try {
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    video.remove();
+                    resolve(dataUrl);
+                  } catch (error) {
+                    console.warn('Fallback thumbnail generation failed:', error);
+                    video.remove();
+                    resolve(null);
+                  }
                 };
                 
-                await waitForSeek();
-                
-                // Small delay to ensure frame is ready
-                await new Promise(resolve => setTimeout(resolve, 100));
-                
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                
-                // Try to generate thumbnail
-                const dataUrl = canvas.toDataURL('image/png');
-                console.log('✅ Mobile fallback thumbnail generated successfully');
-                
-                video.remove();
-                resolve(dataUrl);
+                if (video.readyState >= 2) {
+                  drawFrame();
+                } else {
+                  video.onseeked = drawFrame;
+                  video.oncanplay = drawFrame;
+                }
               } catch (error) {
-                console.warn('📱 Mobile fallback canvas error:', error);
+                console.warn('Canvas fallback failed:', error);
                 video.remove();
                 resolve(null);
               }
             } else {
-              console.warn('📱 Canvas context not available');
               video.remove();
               resolve(null);
             }
           } else {
-            console.warn('📱 Video has invalid dimensions');
             video.remove();
             resolve(null);
           }
         };
         
-        video.onerror = (error) => {
-          console.error('📱 Mobile fallback video loading error:', error);
+        video.onerror = () => {
           clearTimeout(timeout);
           video.remove();
           resolve(null);
@@ -652,53 +636,42 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         video.load();
       });
     } catch (error) {
-      console.warn('📱 Mobile fallback thumbnail generation error:', error);
+      console.warn('Fallback thumbnail generation error:', error);
       return null;
     }
   }, []);
 
   /**
-   * Enhanced thumbnail resolution with mobile device support
+   * Enhanced thumbnail resolution with iOS/Safari fallbacks
    */
   const enhancedThumbnailResolution = useCallback(async (videoSrc: string): Promise<string | null> => {
-    console.log('🎥 Starting enhanced thumbnail generation for:', videoSrc);
-    
     // Check if the video format is supported on this platform
     if (!isVideoFormatSupported(videoSrc)) {
       console.warn(`Video format not supported on this platform: ${videoSrc}`);
-      // For unsupported formats, try fallback immediately
-      return await generateFallbackThumbnail(videoSrc);
+      return null;
     }
     
-    // Get compatible video source
+    // Get compatible video source for iOS/Safari
     const compatibleVideoSrc = getCompatibleVideoSource(videoSrc);
     
-    // Try the main thumbnail generation method first
+    // First, try to generate a high-quality thumbnail
     try {
-      console.log('🎥 Attempting primary thumbnail generation...');
-      const thumbnail = await generateVideoThumbnail(compatibleVideoSrc, 1);
-      if (thumbnail) {
-        console.log('✅ Primary thumbnail generation successful');
-        return thumbnail;
-      }
+      const highQualityThumbnail = await generateVideoThumbnail(compatibleVideoSrc, 2);
+      if (highQualityThumbnail) return highQualityThumbnail;
     } catch (error) {
-      console.warn('⚠️ Primary thumbnail generation failed:', error);
+      console.warn('High-quality thumbnail generation failed, falling back:', error);
     }
     
-    // If primary method fails, try fallback
+    // If high-quality generation fails, fall back to low-quality
     try {
-      console.log('🎥 Attempting fallback thumbnail generation...');
-      const fallbackThumbnail = await generateFallbackThumbnail(compatibleVideoSrc);
-      if (fallbackThumbnail) {
-        console.log('✅ Fallback thumbnail generation successful');
-        return fallbackThumbnail;
-      }
+      const lowQualityThumbnail = await generateVideoThumbnail(compatibleVideoSrc, 1);
+      if (lowQualityThumbnail) return lowQualityThumbnail;
     } catch (error) {
-      console.warn('⚠️ Fallback thumbnail generation failed:', error);
+      console.warn('Low-quality thumbnail generation failed:', error);
     }
     
-    console.error('❌ All thumbnail generation methods failed for:', videoSrc);
-    return null;
+    // As a last resort, use the fallback method for iOS/Safari
+    return await generateFallbackThumbnail(compatibleVideoSrc);
   }, [generateVideoThumbnail, generateFallbackThumbnail, getCompatibleVideoSource, isVideoFormatSupported]);
 
   /**
@@ -744,17 +717,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
   /**
    * Effect to automatically generate thumbnails for videos without thumbnails
-   * Enhanced with mobile device support and more aggressive generation
+   * This runs when the component becomes visible and improves user experience
    */
   useEffect(() => {
-    // Detect mobile devices
-    const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    // For mobile devices, always try to generate thumbnails regardless of visibility
-    // to overcome platform restrictions and improve UX
-    const forceGeneration = isMobile;
-    
-    if (!shouldLoadMedia && !forceGeneration) return;
+    if (!shouldLoadMedia) return;
 
     const generateMissingThumbnails = async () => {
       const videosNeedingThumbnails = media.filter(item => 
@@ -765,69 +731,31 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
       if (videosNeedingThumbnails.length === 0) return;
 
-      console.log(`🎥 Generating thumbnails for ${videosNeedingThumbnails.length} videos`, {
-        isMobile,
-        forceGeneration,
-        shouldLoadMedia,
-        videos: videosNeedingThumbnails.map(v => v.src)
-      });
-
       setLoadingState('media', true);
       
       try {
-        // Process thumbnails sequentially on mobile to avoid overwhelming the device
-        if (isMobile) {
-          for (const videoItem of videosNeedingThumbnails) {
-            try {
-              console.log(`📱 Mobile: Processing thumbnail for: ${videoItem.src}`);
-              const thumbnail = await enhancedThumbnailResolution(videoItem.src);
-              if (thumbnail) {
-                console.log(`✅ Mobile: Successfully generated thumbnail for: ${videoItem.src}`);
-                setGeneratedThumbnails(prev => 
-                  new Map(prev).set(videoItem.src, thumbnail)
-                );
-              } else {
-                console.warn(`❌ Mobile: No thumbnail generated for: ${videoItem.src}`);
-              }
-              
-              // Small delay between mobile thumbnail generations to prevent overwhelming
-              await new Promise(resolve => setTimeout(resolve, 100));
-            } catch (error) {
-              console.warn(`❌ Mobile: Failed to generate thumbnail for ${videoItem.src}:`, error);
-            }
+        // Generate thumbnails for all videos that need them using enhanced resolution
+        const thumbnailPromises = videosNeedingThumbnails.map(async (videoItem) => {
+          try {
+            const thumbnail = await enhancedThumbnailResolution(videoItem.src);
+            return thumbnail ? { src: videoItem.src, thumbnail } : null;
+          } catch (error) {
+            console.warn(`Failed to generate thumbnail for ${videoItem.src}:`, error);
+            return null;
           }
-        } else {
-          // Desktop: Process in parallel for better performance
-          const thumbnailPromises = videosNeedingThumbnails.map(async (videoItem) => {
-            try {
-              console.log(`🖥️ Desktop: Processing thumbnail for: ${videoItem.src}`);
-              const thumbnail = await enhancedThumbnailResolution(videoItem.src);
-              if (thumbnail) {
-                console.log(`✅ Desktop: Successfully generated thumbnail for: ${videoItem.src}`);
-                return { src: videoItem.src, thumbnail };
-              } else {
-                console.warn(`❌ Desktop: No thumbnail generated for: ${videoItem.src}`);
-                return null;
-              }
-            } catch (error) {
-              console.warn(`❌ Desktop: Failed to generate thumbnail for ${videoItem.src}:`, error);
-              return null;
-            }
-          });
+        });
 
-          const results = await Promise.allSettled(thumbnailPromises);
-          
-          // Update state with successful thumbnail generations
-          results.forEach((result) => {
-            if (result.status === 'fulfilled' && result.value) {
-              setGeneratedThumbnails(prev => 
-                new Map(prev).set(result.value!.src, result.value!.thumbnail)
-              );
-            }
-          });
-        }
+        const results = await Promise.allSettled(thumbnailPromises);
+        
+        // Update state with successful thumbnail generations
+        results.forEach((result) => {
+          if (result.status === 'fulfilled' && result.value) {
+            setGeneratedThumbnails(prev => 
+              new Map(prev).set(result.value!.src, result.value!.thumbnail)
+            );
+          }
+        });
 
-        console.log(`🎥 Thumbnail generation complete for ${videosNeedingThumbnails.length} videos`);
         clearError(); // Clear any previous thumbnail generation errors
       } catch (error) {
         console.error('Error in batch thumbnail generation:', error);
@@ -837,9 +765,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       }
     };
 
-    // Immediate generation for mobile, slight delay for desktop
-    const delay = isMobile ? 0 : 500;
-    const timeoutId = setTimeout(generateMissingThumbnails, delay);
+    // Delay thumbnail generation slightly to avoid blocking initial render
+    const timeoutId = setTimeout(generateMissingThumbnails, 500);
     
     return () => clearTimeout(timeoutId);
   }, [shouldLoadMedia, media, generatedThumbnails, enhancedThumbnailResolution, setLoadingState, handleError, clearError]);
@@ -1810,7 +1737,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 </div>
 
                 {/* Enhanced Media Slideshow Container with modern carousel design */}
-                <div className="relative w-full rounded-xl overflow-hidden border border-blue-400/20 shadow-lg mb-4 group/carousel transition-all duration-300 hover:border-blue-300/40 hover:shadow-blue-500/10">
+                <div className="relative w-full rounded-xl overflow-hidden border border-blue-400/20 shadow-lg mb-4 group/carousel">
                   {/* Media Content with touch gesture support and enhanced loading states */}
                   <div 
                     ref={mediaContainerRef}
@@ -1839,10 +1766,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                           <video 
                             ref={videoRef}
                             src={currentMedia.src} 
-                            className={`w-full h-full object-${mediaObjectFit} transition-all duration-500 animate-fadeIn`} 
+                            className={`w-full h-full object-${mediaObjectFit} transition-all duration-500 animate-fadeIn cursor-pointer`} 
                             controls={false}
                             onEnded={handleVideoEnd}
                             onError={() => handleError(`Failed to load video: ${currentMedia.src}`, 'media')}
+                            onClick={handleVideoToggle}
                             preload={shouldLoadMedia ? 'metadata' : 'none'}
                             key={currentMediaIndex} // Force re-render when media changes
                           />
@@ -1857,7 +1785,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                             fill
                             priority
                             sizes="(max-width: 768px) 100vw, 800px"
-                            className={`object-${mediaObjectFit} transition-all duration-500 hover:scale-105 animate-fadeIn`}
+                            className={`object-${mediaObjectFit} transition-all duration-500 animate-fadeIn`}
                             onLoad={() => setLoadingState('media', false)}
                             onError={() => handleError(`Failed to load image: ${currentMedia.src}`, 'media')}
                             key={currentMediaIndex} // Force re-render when media changes
@@ -1878,11 +1806,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                           goToPreviousMedia();
                         }}
                         className="absolute left-2 top-1/2 -translate-y-1/2 z-30 
-                          bg-gradient-to-r from-black/60 to-gray-900/60 hover:from-black/80 hover:to-gray-900/80
+                          bg-gradient-to-r from-black/60 to-gray-900/60
                           backdrop-blur-sm rounded-full p-2.5 sm:p-3
-                          text-white/80 hover:text-white transition-all duration-300
-                          opacity-0 group-hover/carousel:opacity-100 hover:scale-110
-                          border border-white/10 hover:border-blue-400/30
+                          text-white/80 transition-all duration-300
+                          opacity-0 group-hover/carousel:opacity-100
+                          border border-white/10
                           focus:outline-none focus:ring-2 focus:ring-blue-400/50"
                         aria-label="Previous image"
                       >
@@ -1898,11 +1826,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                           goToNextMedia();
                         }}
                         className="absolute right-2 top-1/2 -translate-y-1/2 z-30 
-                          bg-gradient-to-r from-black/60 to-gray-900/60 hover:from-black/80 hover:to-gray-900/80
+                          bg-gradient-to-r from-black/60 to-gray-900/60
                           backdrop-blur-sm rounded-full p-2.5 sm:p-3
-                          text-white/80 hover:text-white transition-all duration-300
-                          opacity-0 group-hover/carousel:opacity-100 hover:scale-110
-                          border border-white/10 hover:border-blue-400/30
+                          text-white/80 transition-all duration-300
+                          opacity-0 group-hover/carousel:opacity-100
+                          border border-white/10
                           focus:outline-none focus:ring-2 focus:ring-blue-400/50"
                         aria-label="Next image"
                       >
@@ -1933,7 +1861,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                             } ${
                               index === currentMediaIndex 
                                 ? 'bg-gradient-to-r from-blue-400 to-purple-400 scale-105 sm:scale-125 shadow-sm sm:shadow-lg shadow-blue-400/20 sm:shadow-blue-400/30' 
-                                : 'bg-white/30 hover:bg-white/50 sm:hover:bg-white/70 hover:scale-105 sm:hover:scale-110'
+                                : 'bg-white/30'
                             }`}
                             aria-label={`Go to media ${index + 1}${mediaItem.alt ? `: ${mediaItem.alt}` : ''}`}
                             title={mediaItem.alt || `Media ${index + 1}`}
