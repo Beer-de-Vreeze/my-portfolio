@@ -5,7 +5,7 @@ const LPCafe = ({ onModalStateChange }: { onModalStateChange: (isOpen: boolean) 
   <SuspenseProjectCard
     projectId="LP-Cafe"
     title="LP-Cafe"
-    description={`A wild, romantic, and comedic visual novel/dating sim where you can pursue love, chaos, or just a good time at the LP-Cafe! Featuring a cast of eccentric characters, branching storylines, and a custom dialogue system built from scratch in Unity. Dive into a world of motorcycles, gym days, and... catboys! (Yes, I did my own voice acting for Beer, the catboy!)\n\nThe game features a fully custom dialogue tool and display system, allowing for complex branching, dynamic choices, and a love meter that tracks your progress with each bachelor or bachelorette. Every interaction is brought to life with animated UI, typewriter effects, and even voice lines.`}
+    description={`LP-Cafe is a visual novel/dating sim built in Unity that features a custom dialogue system and branching storylines. The game includes multiple romance options with unique character personalities and storylines, all supported by a sophisticated dialogue engine I built from scratch. I handled the complete audio production pipeline, including voice acting for Beer the catboy character, sound effects, and audio editing.\n\nThe project showcases advanced Unity editor tools, including a visual node editor for dialogue creation, dynamic UI systems with smooth animations, and a comprehensive save system that tracks relationship progress and discovered character preferences. The game combines narrative design with technical systems to create an engaging interactive experience.`}
     coverImage="/images/LPCafe Images/Cafe.webp"
     liveLink="https://tanixgames.itch.io/lp-cafe"
     githubLink="https://github.com/Beer-de-Vreeze/LP-Cafe"
@@ -49,19 +49,14 @@ const LPCafe = ({ onModalStateChange }: { onModalStateChange: (isOpen: boolean) 
     ]}
     features={[
       {
-        title: "Voice Acting (Beer the Catboy)",
+        title: "Character Voice Acting & Audio Production",
         description:
-          "I did all the voice lines for Beer, the catboy! Every meow, purr, and quip is me—giving the game a personal and quirky touch. (He's friendly, promise.)",
+          "I performed all voice acting for Beer the catboy character and handled the complete audio production pipeline. This included recording dialogue, sound effects, and ambient audio, followed by professional editing in Audacity with noise reduction, EQ adjustments, compression, and timing optimization to integrate seamlessly with the dialogue system's typewriter effects.",
       },
       {
-        title: "Complete Audio Production Pipeline",
+        title: "Custom Dialogue Engine with Branching Logic",
         description:
-          "I recorded all character voice lines and sound effects from scratch, then meticulously edited and mastered each audio clip using Audacity. This included noise reduction, EQ adjustments, compression, and timing optimization to ensure every voice line fits perfectly with the dialogue system's typewriter effects and animations.",
-      },
-      {
-        title: "Advanced Dialogue Flow System",
-        description:
-          "A sophisticated dialogue engine with branching conversations, conditional logic, and setter nodes. The system handles audio integration, typewriter effects, and seamless transitions between different dialogue types.",
+          "A sophisticated dialogue system built from scratch featuring conditional branching, setter nodes for state management, and audio integration. The engine handles complex dialogue trees with typewriter effects, character animations, and seamless transitions between different conversation types, all managed through a visual node-based editor.",
         codeSnippet: {
           title: "Dialogue Processing with Conditional Branching",
           language: "csharp",
@@ -137,9 +132,9 @@ const LPCafe = ({ onModalStateChange }: { onModalStateChange: (isOpen: boolean) 
         },
       },
       {
-        title: "Animated Love Meter with DOTween",
+        title: "DOTween-Powered UI Animation System",
         description:
-          "A visually stunning love meter that smoothly animates between values using DOTween. Features fade-in/out effects, dial rotations, and physics-based easing for satisfying visual feedback.",
+          "An animated love meter system using DOTween for smooth visual feedback. Features include fade transitions, dial rotations with physics-based easing, and coordinated animation sequences that provide satisfying visual responses to player choices and relationship progress.",
         codeSnippet: {
           title: "Love Meter Animation System",
           language: "csharp",
@@ -189,9 +184,9 @@ private void UpdateDialPosition(int loveValue, bool animate = false)
         },
       },
       {
-        title: "Dynamic Notebook System",
+        title: "Event-Driven Notebook Discovery System",
         description:
-          "An intelligent notebook that automatically discovers and records character preferences. Features smooth animations, event-driven updates, and visual highlighting for newly discovered information.",
+          "An intelligent notebook system that automatically tracks and displays discovered character preferences. Features event-driven updates, smooth entry animations with scale and color effects, and duplicate prevention to maintain a clean, organized preference database throughout gameplay.",
         codeSnippet: {
           title: "Preference Discovery & Animation",
           language: "csharp",
@@ -252,9 +247,9 @@ private void OnPreferenceDiscovered(string preferenceName, bool isLike)
         },
       },
       {
-        title: "Visual Node Editor for Dialogue",
+        title: "Visual Node Editor for Dialogue Creation",
         description:
-          "A custom Unity editor tool for creating dialogue trees visually. Features dropdown population, preference selection, and real-time validation—no coding required for content creation.",
+          "A custom Unity editor tool that enables non-programmers to create complex dialogue trees through a visual interface. Features dynamic dropdown population, real-time validation, and preference selection systems that automatically sync with character data for streamlined dialogue creation workflow.",
         codeSnippet: {
           title: "Dynamic Dropdown Population",
           language: "csharp",
@@ -314,9 +309,9 @@ private void OnPreferenceSelectionChanged(ChangeEvent<string> evt)
         },
       },
       {
-        title: "Comprehensive Save System",
+        title: "Comprehensive Save & State Management",
         description:
-          "A robust save system tracking relationships, preferences, and progress. Features automatic serialization, data validation, and backward compatibility for seamless updates.",
+          "A robust persistence system that tracks relationship progress, discovered preferences, and game state across sessions. Features automatic serialization, data validation, and backward compatibility to ensure seamless save/load functionality as the game evolves and updates.",
         codeSnippet: {
           title: "Bachelor State Management & Persistence",
           language: "csharp",

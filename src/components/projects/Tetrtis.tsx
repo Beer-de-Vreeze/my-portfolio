@@ -5,7 +5,7 @@ const Tetrtis = ({ onModalStateChange }: { onModalStateChange: (isOpen: boolean)
   <SuspenseProjectCard
     projectId="Better-Tetris"
     title="Tetris"
-    description="Who doesn't love a good game of Tetris? I've recreated this timeless classic in Unity with all the modern polish and precision you'd expect! This isn't just any Tetris clone—I've implemented the official Super Rotation System, added smooth ghost piece previews, rich audio feedback, and a comprehensive scoring system that rewards strategic play. Built with clean, modular code using Unity's Tilemaps and ScriptableObjects, it's both a joy to play and a solid technical showcase. Drop some blocks and chase that perfect Tetris!"
+    description="A comprehensive Tetris implementation built in Unity featuring the official Super Rotation System and modern gameplay enhancements. The project demonstrates advanced game programming concepts including mathematical rotation matrices, collision detection algorithms, and optimized tilemap rendering. I implemented authentic Tetris mechanics with ghost piece previews, wall kick systems, and data-driven architecture using ScriptableObjects. The game showcases clean code organization, responsive input handling, and persistent scoring systems while maintaining the classic Tetris feel with modern technical polish."
     githubLink="https://github.com/Beer-de-Vreeze/Better-Tetris"
     liveLink="https://bjeerpeer.itch.io/better-tetris"
     coverImage="/images/BetterTetris Images/Tetris3.webp"
@@ -19,9 +19,9 @@ const Tetrtis = ({ onModalStateChange }: { onModalStateChange: (isOpen: boolean)
     techStack={["Unity", "C#", "Tilemap", "Game Design"]}
     features={[
       {
-        title: "Authentic Super Rotation System (SRS)",
+        title: "Super Rotation System (SRS) Implementation",
         description:
-          "I've meticulously implemented the official Super Rotation System with all the complex wall kick patterns that make Tetris feel just right! Every rotation is mathematically precise, collision detection is spot-on, and those tricky wall kicks work exactly like they should. Whether you're T-spinning like a pro or just trying to squeeze a piece into a tight spot, the rotation system responds perfectly and feels incredibly satisfying to use!",
+          "A mathematically precise implementation of the official Super Rotation System with complete wall kick patterns for all tetromino pieces. The system uses rotation matrices for accurate piece transformations and implements complex collision detection with fallback positioning. Features different rotation behaviors for I-pieces and O-pieces, ensuring authentic Tetris gameplay that matches official standards.",
         codeSnippet: {
           title: "Advanced Rotation with Wall Kick System",
           language: "csharp",
@@ -95,9 +95,9 @@ private void ApplyRotationMatrix(int direction)
         },
       },
       {
-        title: "Lightning-Fast Tilemap Board System",
+        title: "Optimized Tilemap Board Management",
         description:
-          "Under the hood, I'm using Unity's powerful Tilemap system for blazing-fast rendering and efficient memory usage. The line clearing algorithm is optimized to handle even the most intense gameplay moments, with smart collision detection and board validation that keeps up with your fastest moves. No lag, no stuttering—just pure, smooth Tetris action that responds instantly to your every input!",
+          "A high-performance board system built on Unity's Tilemap architecture for efficient rendering and memory usage. The line clearing algorithm processes full rows optimally and handles cascading line clears with proper tile shifting. Features boundary checking, collision validation, and real-time board state management that maintains smooth performance during intensive gameplay scenarios.",
         codeSnippet: {
           title: "Optimized Line Clearing Algorithm",
           language: "csharp",
@@ -180,9 +180,9 @@ public void LineClear(int row)
         },
       },
       {
-        title: "Crystal-Clear Ghost Piece Preview",
+        title: "Real-Time Ghost Piece Drop Simulation",
         description:
-          "Never wonder where your piece will land again! The ghost piece system shows you exactly where your tetromino will drop with a sleek transparent preview. I've optimized the drop simulation to be lightning-fast, so you get instant visual feedback without any performance hiccups. It's like having X-ray vision for your Tetris strategy—plan your moves with confidence!",
+          "An optimized ghost piece system that provides instant visual feedback for piece placement. The simulation uses efficient collision detection algorithms to calculate the exact landing position in real-time, temporarily clearing the active piece for accurate boundary testing. Features transparent tile rendering with automatic updates during movement and rotation, helping players plan strategic moves with precise landing position information.",
         codeSnippet: {
           title: "Ghost Piece Drop Simulation",
           language: "csharp",
@@ -269,9 +269,9 @@ public void LineClear(int row)
         },
       },
       {
-        title: "Rewarding Scoring & Progression System",
+        title: "Authentic Tetris Scoring & Progress Tracking",
         description:
-          "Score big with an authentic Tetris scoring system that rewards smart play! Singles, doubles, triples, and those satisfying four-line Tetrises all have their own point values and multipliers. The game tracks your high scores persistently, updates everything in real-time, and gives you that rush of satisfaction when you nail a perfect combo. Every cleared line feels rewarding, and chasing that high score becomes addictive!",
+          "A comprehensive scoring system that implements official Tetris scoring mechanics with exponential multipliers for line clears. Singles award 100 points, doubles 300 (3x), triples 500 (5x), and Tetris clears 800 points (8x). Features persistent high score tracking using PlayerPrefs, real-time UI updates, and separate scoring for piece placement and line clearing events. The system maintains score state across game sessions and provides detailed feedback for player progression.",
         codeSnippet: {
           title: "Multi-Level Scoring Algorithm",
           language: "csharp",
@@ -333,9 +333,9 @@ public void GameOver()
         },
       },
       {
-        title: "Responsive Controls & Smooth Movement",
+        title: "Responsive Input & Movement System",
         description:
-          "The controls feel incredibly responsive and intuitive! I've implemented smooth piece movement with customizable keyboard support, plus features like hard drops for instant placement and soft drops for precise control. The input system handles timing perfectly—no missed rotations or accidental moves. Whether you're a casual player or a Tetris speedrunner, the controls adapt to your playstyle beautifully!",
+          "A sophisticated input handling system that supports multiple control schemes with precise timing mechanisms. Features customizable keyboard controls, hard drop functionality for instant piece placement, and smooth soft drop mechanics. The system implements proper input buffering, movement delays, and lock timers to prevent accidental inputs while maintaining responsive gameplay. Includes hold piece functionality and automatic gravity with configurable step delays for different difficulty levels.",
         codeSnippet: {
           title: "Advanced Input Processing System",
           language: "csharp",
@@ -426,9 +426,9 @@ private bool Move(Vector2Int translation, bool isHardDrop = false)
         },
       },
       {
-        title: "Clean Data-Driven Architecture",
+        title: "Data-Driven Architecture & Mathematical Precision",
         description:
-         "Behind the scenes, everything is built with clean, maintainable code! I've used data-driven design with rotation matrices, static dictionaries for tetromino shapes, and organized ScriptableObjects that make the codebase easy to understand and extend. The mathematical precision of the rotation system combined with elegant data structures creates a solid foundation that any developer would appreciate working with!",
+         "A robust architecture built on data-driven design principles using Unity's ScriptableObjects and mathematical rotation matrices. Features static dictionaries for tetromino shape definitions, precise 90-degree rotation calculations using trigonometric functions, and the complete Super Rotation System wall kick data arrays. The modular design separates game logic from data, making the codebase maintainable and extensible while ensuring mathematical accuracy in all piece transformations and collision calculations.",
         codeSnippet: {
           title: "Tetromino Data & Rotation Mathematics",
           language: "csharp",

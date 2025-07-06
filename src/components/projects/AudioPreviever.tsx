@@ -5,7 +5,7 @@ const AudioPreviever = ({ onModalStateChange }: { onModalStateChange: (isOpen: b
   <SuspenseProjectCard
     projectId="Unity Audio Previewer"
     title="Unity Audio Previewer"
-    description="Ever been frustrated trying to preview audio files in Unity? This Unity Editor extension is here to save your sanity! I built this powerful tool to make working with audio clips a breeze for game developers and sound designers. It brings gorgeous waveform visualizations, seamless Unity audio integration, and smart project scanning right into the Unity Editor—no more switching between applications just to hear what your sounds actually sound like! Whether you're organizing hundreds of audio files or just want to quickly preview that perfect footstep sound, this tool has got your back."
+    description="Working with audio files in Unity can be surprisingly tedious - you often have to rely on external tools just to preview sounds or dig through folders to find the right audio clip. I created this Unity Editor extension to solve that problem by bringing comprehensive audio management directly into the Unity interface. It features real-time waveform visualizations, seamless playback controls, and intelligent project organization, making it much easier for developers and sound designers to work with audio assets without constantly switching between applications."
     coverImage="/images/CoverImageSound.webp"
     downloadLink={{
       url: "/assets/downloads/audio-previewer.zip",
@@ -33,14 +33,14 @@ const AudioPreviever = ({ onModalStateChange }: { onModalStateChange: (isOpen: b
     ]}
     features={[
               {
-        title: "Interactive UI & Drag-Drop System",
+        title: "Intuitive Interface & Drag-Drop Controls",
         description:
-          "Get ready for the smoothest audio management experience in Unity! The interface features intuitive drag-and-drop support, real-time playback progress bars, precise seeking controls, and responsive layouts that adapt to your workflow. With collapsible folder organization and lightning-fast search filters, you'll be managing audio assets like a pro. It's designed to feel natural and get out of your way so you can focus on making great games!",
+          "The interface centers around intuitive drag-and-drop functionality with real-time playback controls and responsive layouts. It includes collapsible folder organization and fast search filtering to help manage large audio libraries efficiently. The design focuses on staying out of your way while providing quick access to essential audio management features.",
       },
       {
-        title: "Beautiful Waveform Visualizations",
+        title: "Real-Time Waveform Visualization",
         description:
-          "Watch your audio come to life with stunning real-time waveforms! Each visualization features smooth amplitude mapping and eye-catching three-color gradients (blue to green to orange) that make identifying different sounds super easy. The waveforms have clean, soft edges and are generated efficiently with peak detection—giving you a crystal-clear visual representation of every sound in your project. It's like having a professional audio editor built right into Unity!",
+          "Each audio file gets a real-time waveform visualization with smooth amplitude mapping and a three-color gradient system (blue to green to orange) that makes it easy to visually distinguish between different types of sounds. The waveforms are generated using efficient peak detection algorithms and feature soft anti-aliased edges for a clean, professional look that helps you quickly identify audio characteristics.",
         codeSnippet: {
           title: "Waveform Texture Generation Algorithm",
           language: "csharp",
@@ -104,9 +104,9 @@ const AudioPreviever = ({ onModalStateChange }: { onModalStateChange: (isOpen: b
 }`,
         },
       },              {
-        title: "Seamless Unity Integration",
+        title: "Native Unity AudioUtil Integration",
         description:
-          "This isn't just another audio player—it's built specifically for Unity developers! Using clever reflection techniques, I tapped into Unity's hidden AudioUtil methods to give you native audio playback, stopping, looping, and seeking capabilities. The best part? It automatically adapts to different Unity versions, so you don't have to worry about compatibility issues when Unity updates. It's like having Unity's audio system working exactly how you always wished it would!",
+         "Rather than building a separate audio player, this tool taps directly into Unity's internal AudioUtil system using reflection techniques. This provides native audio playback, looping, and seeking capabilities that work consistently across different Unity versions. The reflection-based approach automatically adapts to Unity's API changes, ensuring compatibility as Unity evolves.",
         codeSnippet: {
           title: "Cross-Version AudioUtil Reflection System",
           language: "csharp",
@@ -182,9 +182,9 @@ private void SeekToTime(AudioClip clip, float timeInSeconds)
         },
       },
       {
-        title: "Smart Project Scanning & Organization",
+        title: "Automated Project Asset Discovery",
         description:
-          "Say goodbye to hunting through endless folders for that one sound effect! This tool intelligently scans your entire project using Unity's AssetDatabase, automatically detects duplicates, and organizes everything by folders. With powerful search and filtering capabilities, you can find any audio clip in seconds—whether you're looking for 'footstep' sounds or everything in your 'SFX/Combat' folder. It's like having a personal assistant for your audio assets!",
+         "The tool automatically scans your entire project using Unity's AssetDatabase to discover all audio clips, detect duplicates, and organize them by folder structure. It includes powerful search and filtering capabilities that let you quickly locate specific sounds - whether you're searching by filename, folder location, or audio characteristics. This eliminates the need to manually hunt through project folders.",
         codeSnippet: {
           title: "Project Audio Asset Discovery System",
           language: "csharp",
@@ -254,9 +254,9 @@ private void OrganizeClipsByFolder()
         },
       },
       {
-        title: "Lightning-Fast Caching & Performance",
+        title: "Optimized Dual-Layer Caching System",
         description:
-          "Nobody likes waiting around for things to load! This tool features a sophisticated dual-layer caching system that stores both waveform textures and audio samples with intelligent memory management. It uses lazy loading to keep things snappy and remembers all your settings between sessions. The result? Instant previews, smooth scrolling, and no more twiddling your thumbs waiting for waveforms to generate. It's optimized to handle hundreds of audio files without breaking a sweat!",
+         "A dual-layer caching system stores both waveform textures and audio sample data with intelligent memory management to ensure smooth performance even with large audio libraries. The system uses lazy loading for instant previews and persists settings between Unity sessions. This architecture allows the tool to handle hundreds of audio files without performance degradation.",
         codeSnippet: {
           title: "Dual-Layer Caching System",
           language: "csharp",

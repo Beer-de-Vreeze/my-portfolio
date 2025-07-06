@@ -28,7 +28,7 @@ const SketchinSpells = ({
     ]}
     title="Sketchin' Spells"
     techStack={["Unity", "C#", "Real-time Drawing", "UI Systems"]}
-    description="Want to unleash your inner artist with some digital magic? Sketchin' Spells is my love letter to creative expression—a polished real-time drawing game built in Unity that's packed with everything you need to create beautiful art! It features advanced canvas controls, responsive multi-touch support, and mesmerizing symmetry modes that turn simple strokes into intricate masterpieces. This project showcases some serious technical wizardry with smooth UI interactions and pixel-perfect efficiency, all wrapped up in a delightful drawing experience that feels like magic!"
+    description="Sketchin' Spells is a real-time drawing roguelike game built in Unity that combines spell-casting mechanics with creative drawing gameplay. Players draw magical symbols and spells in real-time to defeat enemies and progress through challenging levels. The project features advanced canvas manipulation, multi-touch input handling, and symmetry-based drawing algorithms optimized for fast-paced combat scenarios. I implemented custom drawing tools, coordinate conversion systems, and memory-efficient canvas management to create a unique gaming experience that merges artistic expression with tactical roguelike gameplay."
     codeSnippet={{
       code: `public class Sketcher : MonoBehaviour
 {
@@ -82,9 +82,9 @@ const SketchinSpells = ({
     githubLink="https://github.com/Beer-de-Vreeze/Sketchin-Spells"
     features={[
       {
-        title: "Responsive Multi-Touch Magic",
+        title: "Multi-Touch Input Processing System",
         description:
-          "Draw with all your fingers at once—seriously! The touch system handles multiple simultaneous touches with pressure sensitivity and gesture recognition that feels incredibly natural. I've engineered precise coordinate conversion between world space and pixel space, so every stroke lands exactly where you expect it to. Whether you're sketching with one finger or going wild with all ten, the canvas keeps up with your creativity!",
+          "A comprehensive touch input system that handles multiple simultaneous touches with precise coordinate conversion between screen space and world space. The system tracks individual touch phases, manages active touch states, and provides accurate positioning for drawing operations. Features include pressure sensitivity detection and gesture recognition for natural drawing experiences across different devices.",
         codeSnippet: {
           title: "Touch Input Handler",
           language: "csharp",
@@ -115,9 +115,9 @@ const SketchinSpells = ({
         },
       },
       {
-        title: "Mind-Blowing Symmetry Engine",
+        title: "Real-Time Symmetry Drawing Engine",
         description:
-          "This is where the real magic happens! Watch your simple doodles transform into stunning symmetric masterpieces with real-time horizontal, vertical, and radial symmetry. Using smart matrix mathematics and reflection algorithms, every stroke you make gets mirrored across multiple axes instantly. It's like having a team of artists copying your every move—perfect for creating mandalas, kaleidoscope patterns, or just making everything look absolutely gorgeous!",
+          "An advanced symmetry system that applies mathematical transformations to create mirrored drawing patterns in real-time. Supports horizontal, vertical, and radial symmetry modes using matrix calculations and reflection algorithms. The system generates multiple symmetric points for each input stroke, enabling complex pattern creation and mandala-style artwork through automated geometric transformations.",
         codeSnippet: {
           title: "Symmetry Drawing Logic",
           language: "csharp",
@@ -153,9 +153,9 @@ const SketchinSpells = ({
         },
       },
       {
-        title: "Smart Erasing & Undo System",
+        title: "Advanced Erasing & History Management",
         description:
-         "Made a mistake? No worries! The erasing system gives you multiple ways to fix things—point erasing for precision, area erasing for bigger oops moments, and even selective color erasing for when you just want to remove that one annoying blue line. Plus, there's a full undo/redo system with smart memory management, so you can experiment fearlessly knowing you can always go back to that perfect moment!",
+         "A comprehensive editing system featuring multiple erasing modes including point erasing, area erasing, and selective color removal. The system implements efficient undo/redo functionality with intelligent memory management and state tracking. Features circular area calculations for smooth erasing operations and maintains canvas history for non-destructive editing workflows.",
         codeSnippet: {
           title: "Smart Erasing Implementation",
           language: "csharp",
@@ -185,9 +185,9 @@ const SketchinSpells = ({
         },
       },
       {
-        title: "Silky-Smooth Line Rendering",
+        title: "Anti-Aliased Line Rendering Algorithm",
         description:
-          "Every line you draw is buttery smooth thanks to Bresenham's algorithm working behind the scenes to create beautiful anti-aliased strokes. I've optimized the pixel updates to eliminate any lag or jitter, so your artistic flow never gets interrupted. Whether you're drawing quick sketches or detailed artwork, the lines flow as naturally as if you were using a real pencil on paper!",
+          "A sophisticated line drawing system implementing Bresenham's algorithm with anti-aliasing for smooth stroke rendering. The system interpolates between points to eliminate gaps and provides consistent line quality regardless of drawing speed or direction. Features optimized pixel updates and smooth curve generation for professional-quality digital art creation.",
         codeSnippet: {
           title: "Smooth Line Drawing",
           language: "csharp",
@@ -212,9 +212,9 @@ const SketchinSpells = ({
         },
       },
       {
-        title: "Complete Canvas Management",
+        title: "Canvas Management & Export System",
         description:
-          "Your artwork deserves to be saved and shared! The canvas system handles everything from saving your masterpieces as crisp PNG files to managing layers and persistent storage. You can export your art with transparent backgrounds, clear the canvas for a fresh start, or load previous works to continue where you left off. All of this is powered by memory-friendly texture handling that keeps everything running smoothly!",
+          "A robust canvas system handling artwork persistence, export functionality, and layer management. Features PNG encoding for high-quality image exports, persistent storage integration, and memory-efficient texture handling. The system supports transparent backgrounds, format conversion, and cross-platform file operations for comprehensive artwork management.",
         codeSnippet: {
           title: "Canvas Save System",
           language: "csharp",
@@ -238,9 +238,9 @@ const SketchinSpells = ({
         },
       },
       {
-        title: "Lightning-Fast Performance",
+        title: "Optimized Texture Operations & Performance",
         description:
-          "I've squeezed every bit of performance out of Unity's native texture features and GPU acceleration to ensure your drawing experience is always fluid and responsive. The system uses batched pixel updates and smart rendering optimizations that keep everything smooth, even on mobile devices. No lag, no stuttering—just pure, uninterrupted creative flow that lets you focus on making beautiful art!",
+          "High-performance drawing system utilizing batched pixel updates and GPU acceleration for smooth operation across platforms. The system implements efficient texture manipulation with smart rendering optimizations, memory pooling, and frame rate-independent updates. Features include alpha blending calculations and distance-based brush rendering for consistent visual quality.",
         codeSnippet: {
           title: "Optimized Texture Operations",
           language: "csharp",

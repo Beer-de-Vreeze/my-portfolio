@@ -9,7 +9,7 @@ const BearlyStealthy = ({
   <SuspenseProjectCard
     projectId="Bearly-Stealthy"
     title="Bearly Stealthy"
-    description="Ever wanted to be a sneaky bear? Well, now's your chance! Bearly Stealthy is my take on the stealth genre with a furry twist—you play as a bear trying to sneak through dangerous environments without getting caught. I've packed this Unity game with sophisticated AI systems, dynamic noise detection, and layered stealth mechanics that make every step matter. The enemies are smart, the tension is real, and the bear is absolutely adorable (but deadly sneaky!). It's a technical showcase of advanced game AI that keeps you on your toes throughout every mission."
+    description="Bearly Stealthy is a stealth game where you play as a bear navigating through dangerous environments while avoiding detection. I built this Unity project to explore advanced AI systems and stealth mechanics, creating enemies with sophisticated behavior patterns including patrol routes, sound investigation, and dynamic vision systems. The game combines physics-based movement, realistic noise propagation, and multi-state AI to create engaging stealth gameplay where every step and sound matters."
     githubLink="https://github.com/Beer-de-Vreeze/Bearly-Stealthy"
     liveLink="https://bjeerpeer.itch.io/bearly-stealthy"
     media={[
@@ -42,9 +42,9 @@ const BearlyStealthy = ({
     techStack={["Unity", "C#", "Game Design"]}
     features={[
       {
-        title: "Brain-Powered Enemy AI",
+        title: "Multi-State Enemy AI System",
         description:
-         "These aren't your typical dumb NPCs! I've built a multi-state AI system where enemies patrol their routes, investigate suspicious sounds, and chase you down when spotted. Each enemy type has its own personality—some patrol in loops, others wander around exploring. They use Unity's NavMesh for smart pathfinding and have realistic vision cones and hearing ranges. When they spot you, things get intense fast! The AI adapts and reacts to your behavior, making every encounter feel dynamic and challenging.",
+         "The enemies feature a comprehensive multi-state AI system that handles patrolling, investigating, and chasing behaviors. Each enemy type has distinct movement patterns - some follow set patrol routes while others explore their territory randomly. They use Unity's NavMesh for pathfinding and have configurable vision cones and hearing ranges. The AI responds dynamically to player actions, creating varied and unpredictable encounters that keep the stealth experience challenging.",
         codeSnippet: {
           title: "BaseEnemy Vision Detection System",
           language: "csharp",
@@ -88,9 +88,9 @@ const BearlyStealthy = ({
         },
       },
       {
-        title: "Realistic Noise & Sound Propagation",
+        title: "Dynamic Noise & Sound Propagation",
         description:
-          "Every footstep matters in this world! I've created a dynamic noise system where different actions generate different sound levels—tiptoeing around is whisper-quiet, normal walking creates moderate noise, and running? Well, you might as well ring a dinner bell! The best part is the bear's special roar ability that creates a massive noise burst perfect for distracting enemies. Sound travels realistically through the environment, and enemies will investigate if they hear something suspicious. It's all about managing your noise footprint!",
+          "The game implements a dynamic noise system where different player actions generate varying sound levels - from silent tiptoeing to attention-grabbing sprinting. The bear's roar ability creates strategic noise bursts for enemy distraction. Sound propagates realistically through the environment, with enemies investigating suspicious noises based on proximity and volume thresholds. This creates a layered stealth experience where sound management is crucial to survival.",
         codeSnippet: {
           title: "NoiseManager - Centralized Sound System",
           language: "csharp",
@@ -137,9 +137,9 @@ public void RegisterEnemy(BaseEnemy enemy)
         },
       },
       {
-        title: "Intelligent Patrol & Exploration Systems",
+        title: "Patrol & Exploration Movement Systems",
         description:
-          "I've designed two distinct enemy movement patterns that feel naturally different. Patrol enemies follow set routes—some loop around in circles, others walk back and forth like they're guarding something important. Meanwhile, wandering enemies explore their territory randomly, making them unpredictable and exciting to avoid. Both systems integrate seamlessly with the investigation and chase behaviors, using Unity's NavMesh for obstacle avoidance and smooth pathfinding. No more enemies walking through walls!",
+          "I designed two distinct enemy movement patterns that create varied gameplay scenarios. Patrol enemies follow predetermined routes with options for looping or back-and-forth patterns, while wandering enemies explore their territory randomly. Both systems integrate seamlessly with investigation and chase states, using Unity's NavMesh for smooth obstacle avoidance and natural pathfinding through complex environments.",
         codeSnippet: {
           title: "Patrol Route Visualization System",
           language: "csharp",
@@ -186,9 +186,9 @@ public void RegisterEnemy(BaseEnemy enemy)
         },
       },
       {
-        title: "Bear Powers & Interactive Gameplay",
+        title: "Bear Abilities & Object Interaction",
         description:
-          "Being a bear has its perks! You can pick up and throw objects to create distractions, sneak around in stealth mode, or unleash a mighty roar that draws every enemy's attention (great for strategic misdirection!). The interaction system feels natural and responsive, built with Unity's modern Input System for smooth controls across different platforms. Whether you're carefully planning your route or improvising on the fly, the bear handles beautifully and makes stealth feel empowering rather than frustrating.",
+          "The player bear has multiple interaction capabilities including object pickup and throwing for creating distractions, stealth mode for silent movement, and a powerful roar for strategic misdirection. The system is built using Unity's Input System for responsive cross-platform controls. These abilities combine to offer multiple approaches to stealth scenarios, from careful planning to improvised solutions.",
         codeSnippet: {
           title: "Bear Object Interaction System",
           language: "csharp",
@@ -243,9 +243,9 @@ private void ThrowObject()
         },
       },
       {
-        title: "Smart Investigation Mechanics",
+        title: "Enemy Investigation Behavior",
         description:
-          "When enemies hear something suspicious, they don't just ignore it—they investigate! I've programmed them to move to the noise source, search the area by looking around, and only return to their normal routine if they don't find anything. This creates incredible tension as you watch guards carefully checking out that trash can you accidentally knocked over. The investigation system uses realistic timers and state transitions, making enemy behavior feel believable and adding strategic depth to every encounter.",
+          "When enemies detect suspicious sounds, they transition to an investigation state where they move to the noise source and actively search the area. The investigation system uses realistic timers and behavior patterns - enemies look around, check nearby areas, and only return to normal patrol after thorough searching. This creates tension and strategic depth as players must consider the consequences of every noise they make.",
         codeSnippet: {
           title: "Enemy Sound Investigation Coroutine",
           language: "csharp",
@@ -281,9 +281,9 @@ private void ThrowObject()
         },
       },
       {
-        title: "Rock-Solid State Machine Architecture",
+        title: "Finite State Machine Architecture",
         description:
-         "Under the hood, every enemy runs on a carefully crafted finite state machine that manages patrolling, investigating, chasing, and wandering behaviors. Each state has clear rules for when to enter, what to do while active, and when to exit to another state. I've included debug visualization tools that let me see exactly what each enemy is thinking, ensuring smooth transitions and consistent behavior. It's the kind of solid foundation that makes complex AI feel effortless and reliable!",
+         "Every enemy operates using a finite state machine that manages transitions between patrolling, investigating, chasing, and wandering states. Each state has defined entry conditions, behaviors, and exit criteria, ensuring consistent and predictable AI responses. The system includes debug visualization tools for monitoring enemy states during development, making it easier to balance and refine AI behavior patterns.",
         codeSnippet: {
           title: "Enemy State Management System",
           language: "csharp",
@@ -328,9 +328,9 @@ protected virtual void Update()
         },
       },
       {
-        title: "Physics-Based Bear Movement",
+        title: "Physics-Based Bear Movement System",
         description:
-          "This bear moves with realistic weight and momentum! Using Unity's Rigidbody physics system, I've created movement that feels natural and responsive. The bear has different speeds for sneaking, walking, and sprinting, with smooth direction changes and perfectly synchronized animations. Movement speed directly affects noise generation, so you're constantly making tactical decisions about how fast to move. The physics-based approach means the bear interacts naturally with the environment and terrain—no more floating or sliding around!",
+          "The bear movement system uses Unity's Rigidbody physics for realistic weight and momentum. Different movement speeds (sneaking, walking, sprinting) are tied to noise generation levels, creating tactical decision-making around movement choices. The physics-based approach ensures natural interaction with terrain and environmental objects, while smooth animation blending provides responsive character control.",
         codeSnippet: {
           title: "Player Movement & Animation System",
           language: "csharp",

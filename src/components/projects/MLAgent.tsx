@@ -9,7 +9,7 @@ const MLAgent = ({
   <SuspenseProjectCard
     projectId="ML-Agents"
     title="Unity ML-Agents Training"
-    description="Welcome to my AI playground! This Unity ML-Agents project is where I dive deep into the fascinating world of machine learning and artificial intelligence. I've created multiple training environments where AI agents learn to survive zombie attacks, engage in epic hunter-prey battles, and master complex pellet collection challenges. Using Unity's ML-Agents framework, I've built sophisticated reinforcement learning systems with custom reward mechanisms, observation spaces, and neural network training pipelines. It's like watching digital creatures evolve and get smarter right before your eyes—absolutely mind-blowing stuff!"
+    description="Unity ML-Agents Training is a comprehensive machine learning project exploring reinforcement learning through multiple AI training environments. I built three distinct scenarios: pellet collection with Jerry the agent, competitive hunter-prey dynamics, and zombie survival combat. Each environment features custom reward systems, observation spaces, and neural network training pipelines using Unity's ML-Agents framework. The project demonstrates progressive AI learning from basic navigation to complex tactical decision-making, showcasing how artificial agents can develop sophisticated behaviors through reinforcement learning techniques."
     githubLink="https://github.com/Beer-de-Vreeze/ML-Agents-Training"
     coverImage="/images/AI Images/Title.webp"
     media={[
@@ -48,9 +48,9 @@ const MLAgent = ({
     ]}
     features={[
       {
-        title: "Jerry the Pellet Collector",
+        title: "Pellet Collection Agent (Jerry)",
         description:
-          "Meet Jerry, my first AI agent who learned to collect pellets like a pro! Starting with simple transform-based movement, Jerry evolved through multiple iterations—first learning basic navigation, then getting raycast vision to see his surroundings, and finally mastering efficient pellet collection with visual feedback systems. Watch him go from confused wandering to strategic pellet hunting with smooth movement and smart pathfinding!",
+          "Jerry represents the foundational learning agent that progresses through multiple training iterations. Starting with basic transform-based movement, Jerry evolved to include raycast vision systems for environmental awareness and efficient pellet collection strategies. The training demonstrates core reinforcement learning concepts including reward shaping, observation space design, and progressive skill development from random movement to strategic navigation.",
         codeSnippet: {
           title: "Jerry's Core Movement & Reward System",
           language: "csharp",
@@ -105,9 +105,9 @@ const MLAgent = ({
         },
       },
       {
-        title: "Hunter vs Prey Dynamics",
+        title: "Competitive Multi-Agent Training System",
         description:
-          "Experience the thrill of predator-prey AI behavior! I've created a fascinating ecosystem where hunters chase prey agents while prey try to collect pellets and avoid capture. Both agents learn simultaneously through competitive training—hunters get rewarded for catching prey, while prey learn evasive maneuvers and efficient resource collection. It's like watching nature documentaries, but with neural networks!",
+          "A sophisticated competitive learning environment where hunter and prey agents train simultaneously through adversarial reinforcement learning. Hunters learn pursuit strategies while prey develop evasive behaviors and resource collection efficiency. The system demonstrates multi-agent dynamics, competitive reward structures, and emergent behavioral complexity that arises from agent interaction and competition.",
         codeSnippet: {
           title: "Hunter AI with Competitive Rewards",
           language: "csharp",
@@ -160,9 +160,9 @@ const MLAgent = ({
         },
       },
       {
-        title: "Zombie Survival Challenge",
+        title: "Combat AI with Tactical Decision-Making",
         description:
-          "This is where things get intense! I've built a zombie apocalypse survival scenario where the AI agent must eliminate waves of zombies using a gun while avoiding getting overwhelmed. The agent learns tactical shooting, movement patterns, and resource management. Zombies spawn continuously and hunt the player using NavMesh pathfinding, creating genuine survival pressure that forces the AI to develop smart combat strategies!",
+          "An advanced combat scenario where the AI agent learns tactical shooting, movement patterns, and survival strategies in a zombie-infested environment. The agent must master gun control, target prioritization, and resource management while dealing with continuous zombie spawning. This scenario demonstrates complex action spaces, multi-objective learning, and real-time tactical decision-making under pressure.",
         codeSnippet: {
           title: "Combat AI with Gun Control & Zombie Detection",
           language: "csharp",
@@ -261,9 +261,9 @@ const MLAgent = ({
         },
       },
       {
-        title: "Smart Zombie AI System",
+        title: "NavMesh-Based Enemy AI System",
         description:
-          "The zombies aren't just mindless drones—they're intelligent hunters! Each zombie uses NavMesh pathfinding to track the agent, has a health system with visual damage feedback, and spawns strategically around the environment. They create realistic threat patterns that force the player agent to develop tactical thinking and situational awareness.",
+          "Intelligent zombie opponents that use Unity's NavMesh pathfinding for realistic pursuit behavior. Each zombie features health systems, damage feedback, and strategic spawning patterns that create dynamic challenge scaling. The system demonstrates AI opponent design that adapts to player behavior while maintaining consistent threat levels throughout training sessions.",
         codeSnippet: {
           title: "Intelligent Zombie Behavior & Health System",
           language: "csharp",
@@ -352,9 +352,9 @@ public class ZombieController : MonoBehaviour
         },
       },
       {
-        title: "Advanced Gun & Combat System",
+        title: "Realistic Combat & Ballistics System",
         description:
-          "The combat system features realistic ballistics with raycast shooting, spread mechanics, and visual effects. The gun system includes laser visualization, hit detection for different target types, and damage calculation—creating an engaging combat experience that the AI must master to survive the zombie onslaught!",
+          "A comprehensive weapon system featuring raycast ballistics, spread mechanics, and visual feedback systems. The gun controller includes laser visualization, damage calculation, and hit detection for different target types. This system provides the foundation for combat-based AI training scenarios requiring precision, timing, and tactical weapon use.",
         codeSnippet: {
           title: "Precision Gun Control with Visual Effects",
           language: "csharp",
@@ -444,9 +444,9 @@ public class ZombieController : MonoBehaviour
         },
       },
       {
-        title: "Dynamic Environment & Spawning Systems",
+        title: "Performance-Optimized Training Environment",
         description:
-          "The world is alive and constantly changing! I've built sophisticated spawning systems that manage zombie populations, cleanup distant enemies for performance, and create dynamic challenge scaling. The environment responds to AI behavior and maintains optimal challenge levels throughout training sessions.",
+          "A sophisticated environment management system that handles dynamic spawning, performance optimization, and training scalability. Features include intelligent cleanup systems, batch processing for large numbers of entities, and adaptive challenge scaling. The system maintains optimal training conditions while managing computational resources effectively across extended training sessions.",
         codeSnippet: {
           title: "Intelligent Spawning & Environment Management",
           language: "csharp",
