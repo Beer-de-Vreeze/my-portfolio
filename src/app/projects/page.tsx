@@ -133,7 +133,7 @@ export default function Projects() {
       </div>
 
       <div
-        className={`fixed top-0 left-0 w-full z-10 transition-all duration-500 ease-out ${
+        className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-out ${
           isAnyModalOpen ? "opacity-0 -translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
         }`}
       >
@@ -185,7 +185,7 @@ export default function Projects() {
       </main>
 
       <div
-        className={`fixed bottom-0 left-0 w-full z-10 transition-all duration-500 ease-out ${
+        className={`fixed bottom-0 left-0 w-full z-40 transition-all duration-500 ease-out ${
           isAnyModalOpen ? "opacity-0 translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
         }`}
       >
