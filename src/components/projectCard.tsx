@@ -232,7 +232,7 @@ const useLoadingState = () => {
 
 
 /**
- * Enhanced intersection observer hook for lazy loading
+ * Enhanced intersection observer hook for lazy loading with mobile optimization
  */
 const useIntersectionObserver = (
   elementRef: React.RefObject<HTMLDivElement | null>,
@@ -242,6 +242,13 @@ const useIntersectionObserver = (
 
   useEffect(() => {
     if (!elementRef.current) return;
+
+    // Fallback for mobile devices - always visible if window width <= 768px
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+    if (isMobile) {
+      setIsIntersecting(true);
+      return;
+    }
 
     const observer = new IntersectionObserver(([entry]) => {
       setIsIntersecting(entry.isIntersecting);
@@ -298,11 +305,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const { error, handleError, clearError } = useErrorHandler();
   const { loading, setLoadingState } = useLoadingState();
   
-  // Intersection observer for lazy loading
+  // Intersection observer for lazy loading with mobile optimization
   const cardRef = useRef<HTMLDivElement>(null);
   const isVisible = useIntersectionObserver(cardRef, { 
-    threshold: 0.1,
-    rootMargin: '50px'
+    threshold: 0.01, // Lower threshold for better mobile performance
+    rootMargin: '100px' // Larger root margin for mobile devices
   });
   
   // Modal state management
@@ -314,6 +321,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [autoplay, setAutoplay] = useState(true);
+  
+  // Mobile device detection
+  const [isMobile, setIsMobile] = useState(false);
   
   // File size state
   const [autoFileSize, setAutoFileSize] = useState<string | null>(null);
@@ -340,6 +350,18 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   
   // Ref to track if we're programmatically closing the modal
   const isProgrammaticallyClosing = useRef(false);
+
+  // Mobile device detection effect
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(typeof window !== 'undefined' && window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   /**
    * Generate thumbnail from video file using Canvas API
@@ -712,8 +734,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   }, [coverImage, media, generatedThumbnails]);
 
   const shouldLoadMedia = useMemo(() => {
-    return !lazyLoad || isVisible || isModalOpen;
-  }, [lazyLoad, isVisible, isModalOpen]);
+    // Always load media on mobile devices or when modal is open
+    return !lazyLoad || isVisible || isModalOpen || isMobile;
+  }, [lazyLoad, isVisible, isModalOpen, isMobile]);
 
   /**
    * Effect to automatically generate thumbnails for videos without thumbnails
@@ -1650,10 +1673,23 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 fill 
                 sizes="(max-width: 768px) 100vw, 400px"
                 className="object-cover transition-all duration-300 group-hover/card:scale-105" 
-                priority={priority === 'high'}
+                priority={priority === 'high' || isMobile}
+                unoptimized={isMobile} // Disable optimization on mobile to avoid loading issues
                 placeholder="blur"
-                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkrHB0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
-                onError={() => handleError('Failed to load thumbnail image', 'media')}
+                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkrHB0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                onError={(e) => {
+                  // On mobile, try to reload the image once before showing error
+                  const img = e.target as HTMLImageElement;
+                  if (!img.dataset.retried && isMobile) {
+                    img.dataset.retried = 'true';
+                    // Force reload by adding timestamp
+                    const originalSrc = thumbnailImage;
+                    const separator = originalSrc.includes('?') ? '&' : '?';
+                    img.src = `${originalSrc}${separator}retry=${Date.now()}`;
+                  } else {
+                    handleError('Failed to load thumbnail image', 'media');
+                  }
+                }}
               />
             )
           ) : (
