@@ -14,6 +14,11 @@ const MLAgent = ({
     coverImage="/images/AI Images/Title.webp"
     media={[
       {
+        type: "youtube",
+        src: "https://youtu.be/FPXM00lVQjI",
+        alt: "ML-Agents Training Overview",
+      },
+      {
         type: "video",
         src: "/images/AI Images/Jerry Move.webm",
         alt: "Move 1 first itteration",

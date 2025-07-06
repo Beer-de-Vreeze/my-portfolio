@@ -22,7 +22,7 @@ interface ExtendedDocument extends Document {
  * Supports both images and videos with enhanced metadata
  */
 interface MediaItem {
-  type: 'image' | 'video';
+  type: 'image' | 'video' | 'youtube';
   src: string;
   alt?: string;
   thumbnail?: string; // Optional thumbnail for videos
@@ -260,6 +260,31 @@ const useIntersectionObserver = (
   }, [elementRef, options]);
 
   return isIntersecting;
+};
+
+/**
+ * Extract YouTube video ID from various YouTube URL formats
+ * @param url - YouTube video URL
+ * @returns The extracted YouTube video ID or null if invalid
+ */
+const extractYouTubeVideoId = (url: string): string | null => {
+  if (!url) return null;
+  
+  // Match YouTube video ID from various URL formats
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+  const match = url.match(regExp);
+  
+  return (match && match[2].length === 11) ? match[2] : null;
+};
+
+/**
+ * Check if URL is a valid YouTube URL
+ * @param url - URL to validate
+ * @returns Boolean indicating if URL is a valid YouTube URL
+ */
+export const isYouTubeUrl = (url: string): boolean => {
+  if (!url) return false;
+  return /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+/.test(url);
 };
 
 /**
@@ -705,6 +730,16 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     const firstMedia = media[0];
     if (!firstMedia) return "/gamepad.svg";
     
+    // For YouTube videos, use the standard YouTube thumbnail URL
+    if (firstMedia.type === 'youtube') {
+      const videoId = extractYouTubeVideoId(firstMedia.src);
+      if (videoId) {
+        // Use maxresdefault.jpg if available, fallback to hqdefault.jpg
+        return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+      }
+      return "/gamepad.svg";
+    }
+    
     // For videos, check multiple sources for thumbnails
     if (firstMedia.type === 'video') {
       // First, check if thumbnail is explicitly provided
@@ -1015,7 +1050,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     e.stopPropagation();
     
     // Determine the element to make fullscreen - video element for videos, media container for images
-    const elementToFullscreen = isVideo && videoRef.current ? videoRef.current : mediaContainerRef.current;
+    // For YouTube videos, we'll use the container to go fullscreen (iframe limitations)
+    const elementToFullscreen = (isVideo && videoRef.current) ? videoRef.current : mediaContainerRef.current;
     if (!elementToFullscreen) return;
     
     try {
@@ -1094,7 +1130,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
    * Only shown for video media types
    */
   const renderVideoControls = () => {
-    if (!isVideo) return null;
+    // Only show native video controls for local videos, not for YouTube videos
+    if (!isVideo || isYouTube) return null;
 
     return (
       <div className="absolute inset-0 z-20 pointer-events-none">
@@ -1130,7 +1167,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
    * Positioned outside the main controls overlay to avoid pointer event conflicts
    */
   const renderVideoFullscreenButton = () => {
-    if (!isVideo) return null;
+    // Show fullscreen button for both local videos and YouTube videos
+    if (!(isVideo || isYouTube)) return null;
 
     return (
       <button
@@ -1192,6 +1230,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   // Get current media item and determine if it's a video
   const currentMedia = media[currentMediaIndex];
   const isVideo = currentMedia?.type === 'video';
+  const isYouTube = currentMedia?.type === 'youtube';
 
   // Touch gesture handling state
   const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -1812,6 +1851,20 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                           />
                           {renderVideoControls()}
                           {renderVideoFullscreenButton()}
+                        </>
+                      ) : isYouTube ? (
+                        <>
+                          <iframe
+                            src={`https://www.youtube.com/embed/${extractYouTubeVideoId(currentMedia.src)}?rel=0&enablejsapi=1`}
+                            className="w-full h-full transition-all duration-500 animate-fadeIn"
+                            title={currentMedia.alt || title}
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowFullScreen
+                            onLoad={() => setLoadingState('media', false)}
+                            onError={() => handleError(`Failed to load YouTube video: ${currentMedia.src}`, 'media')}
+                            key={currentMediaIndex} // Force re-render when media changes
+                          ></iframe>
                         </>
                       ) : (
                         <>
