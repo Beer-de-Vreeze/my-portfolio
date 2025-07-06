@@ -335,19 +335,514 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   // Image preloading state and refs
   const preloadedImages = useRef<Set<string>>(new Set());
   
+  // Video thumbnail generation state
+  const [generatedThumbnails, setGeneratedThumbnails] = useState<Map<string, string>>(new Map());
+  
   // Ref to track if we're programmatically closing the modal
   const isProgrammaticallyClosing = useRef(false);
 
-  // Memoized values for performance
+  /**
+   * Generate thumbnail from video file using Canvas API
+   * @param videoSrc - Source URL of the video
+   * @param timeInSeconds - Time position to capture (default: 1 second)
+   * @returns Promise<string> - Data URL of the generated thumbnail
+   */
+  /**
+   * Utility function to detect iOS/Safari
+   */
+  const isIOSorSafari = useCallback(() => {
+    if (typeof window === 'undefined') return false;
+    
+    const userAgent = window.navigator.userAgent;
+    const isIOS = /iPad|iPhone|iPod/.test(userAgent);
+    const isSafari = /^((?!chrome|android).)*safari/i.test(userAgent);
+    
+    return isIOS || isSafari;
+  }, []);
+
+  /**
+   * Enhanced video thumbnail generation with mobile support
+   */
+  const generateVideoThumbnail = useCallback(async (
+    videoSrc: string, 
+    timeInSeconds: number = 1
+  ): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      // Check if we already have a generated thumbnail
+      const existingThumbnail = generatedThumbnails.get(videoSrc);
+      if (existingThumbnail) {
+        resolve(existingThumbnail);
+        return;
+      }
+
+      // Detect mobile devices
+      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const isIOSSafari = isIOSorSafari();
+      
+      // For WebM format on iOS/Safari, reject early as it's not supported
+      if (isIOSSafari && videoSrc.includes('.webm')) {
+        console.warn('WebM format not supported on iOS/Safari');
+        reject(new Error('WebM format not supported on iOS/Safari'));
+        return;
+      }
+      
+      console.log(`📱 Generating thumbnail on ${isMobile ? 'mobile' : 'desktop'} device`);
+
+      // Create video element for thumbnail generation
+      const video = document.createElement('video');
+      
+      // Mobile-optimized attributes
+      video.setAttribute('webkit-playsinline', 'true');
+      video.setAttribute('playsinline', 'true');
+      video.setAttribute('muted', 'true');
+      video.setAttribute('autoplay', 'false');
+      video.preload = 'metadata';
+      
+      // Set crossOrigin only for same-origin videos to avoid CORS issues
+      if (videoSrc.startsWith('/') || videoSrc.startsWith(window.location.origin)) {
+        video.crossOrigin = 'anonymous';
+      }
+      
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      if (!ctx) {
+        reject(new Error('Canvas context not available'));
+        return;
+      }
+
+      // Timeout to prevent hanging
+      const timeout = setTimeout(() => {
+        video.remove();
+        reject(new Error('Video thumbnail generation timeout'));
+      }, 10000); // 10 second timeout
+
+      video.onloadedmetadata = () => {
+        // Set canvas dimensions to maintain aspect ratio
+        const aspectRatio = video.videoWidth / video.videoHeight;
+        const thumbnailWidth = 320; // Standard thumbnail width
+        const thumbnailHeight = Math.round(thumbnailWidth / aspectRatio);
+        
+        canvas.width = thumbnailWidth;
+        canvas.height = thumbnailHeight;
+        
+        // Seek to the specified time (or 1 second by default)
+        const seekTime = Math.min(timeInSeconds, video.duration - 0.1);
+        
+        // For mobile devices, use a simpler approach
+        video.currentTime = seekTime;
+      };
+
+      video.onseeked = () => {
+        try {
+          clearTimeout(timeout);
+          
+          // Draw the video frame to canvas
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          
+          // Convert to data URL with error handling for mobile
+          let thumbnailDataUrl: string;
+          try {
+            // Try PNG first as it's more universally supported
+            thumbnailDataUrl = canvas.toDataURL('image/png');
+            console.log('✅ PNG thumbnail generated successfully');
+          } catch (pngError) {
+            console.warn('PNG generation failed, trying JPEG:', pngError);
+            try {
+              thumbnailDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+              console.log('✅ JPEG thumbnail generated successfully');
+            } catch (jpegError) {
+              console.error('Both PNG and JPEG generation failed:', jpegError);
+              video.remove();
+              reject(new Error('Canvas toDataURL failed'));
+              return;
+            }
+          }
+          
+          // Cache the generated thumbnail
+          setGeneratedThumbnails(prev => new Map(prev).set(videoSrc, thumbnailDataUrl));
+          
+          // Clean up
+          video.remove();
+          
+          resolve(thumbnailDataUrl);
+        } catch (error) {
+          clearTimeout(timeout);
+          console.error('Error generating video thumbnail:', error);
+          video.remove();
+          reject(error);
+        }
+      };
+
+      video.onerror = (error) => {
+        clearTimeout(timeout);
+        console.error('Video loading error:', error);
+        video.remove();
+        reject(new Error(`Failed to load video: ${videoSrc}`));
+      };
+
+      video.onloadstart = () => {
+        console.log(`Starting to load video for thumbnail: ${videoSrc}`);
+      };
+
+      // Enhanced error handling for unsupported formats
+      video.oncanplay = () => {
+        console.log(`Video can play: ${videoSrc}`);
+      };
+
+      video.oncanplaythrough = () => {
+        console.log(`Video can play through: ${videoSrc}`);
+      };
+
+      // Start loading the video
+      video.src = videoSrc;
+      video.load();
+    });
+  }, [generatedThumbnails, isIOSorSafari]);
+
+  /**
+   * Get alternative video source for iOS/Safari (e.g., MP4 instead of WebM)
+   */
+  const getCompatibleVideoSource = useCallback((videoSrc: string): string => {
+    // If we're on iOS/Safari and the video is WebM, try to find an MP4 alternative
+    if (isIOSorSafari() && videoSrc.includes('.webm')) {
+      // Try to find an MP4 version by replacing .webm with .mp4
+      const mp4Source = videoSrc.replace('.webm', '.mp4');
+      
+      // In a real implementation, you might want to check if the MP4 file exists
+      // For now, we'll return the original source and let the error handling take over
+      console.log(`iOS/Safari detected with WebM video. MP4 alternative would be: ${mp4Source}`);
+      
+      // You could implement a file existence check here if needed
+      // For now, return original source and let fallback handling work
+    }
+    
+    return videoSrc;
+  }, [isIOSorSafari]);
+
+  /**
+   * Enhanced video format detection with better browser support detection
+   */
+  const isVideoFormatSupported = useCallback((videoSrc: string): boolean => {
+    if (typeof window === 'undefined') return true;
+    
+    const video = document.createElement('video');
+    const extension = videoSrc.split('.').pop()?.toLowerCase();
+    
+    let canPlay = '';
+    switch (extension) {
+      case 'mp4':
+        canPlay = video.canPlayType('video/mp4');
+        break;
+      case 'webm':
+        canPlay = video.canPlayType('video/webm');
+        break;
+      case 'mov':
+        canPlay = video.canPlayType('video/quicktime');
+        break;
+      case 'avi':
+        canPlay = video.canPlayType('video/x-msvideo');
+        break;
+      default:
+        return true; // Assume supported if unknown
+    }
+    
+    const isSupported = canPlay !== '';
+    console.log(`🎥 Format support check for ${extension}: ${canPlay} (${isSupported ? 'SUPPORTED' : 'NOT SUPPORTED'})`);
+    
+    return isSupported;
+  }, []);
+
+  /**
+   * Simplified fallback thumbnail generation for mobile devices
+   */
+  const generateFallbackThumbnail = useCallback(async (videoSrc: string): Promise<string | null> => {
+    console.log('📱 Starting mobile fallback thumbnail generation for:', videoSrc);
+    
+    try {
+      const video = document.createElement('video');
+      video.src = videoSrc;
+      video.muted = true;
+      video.playsInline = true;
+      video.preload = 'metadata';
+      video.controls = false;
+      
+      // Mobile-specific attributes
+      video.setAttribute('webkit-playsinline', 'true');
+      video.setAttribute('playsinline', 'true');
+      
+      return new Promise((resolve) => {
+        const timeout = setTimeout(() => {
+          console.warn('📱 Mobile fallback thumbnail generation timeout');
+          video.remove();
+          resolve(null);
+        }, 5000); // Shorter timeout for mobile
+        
+        video.onloadedmetadata = async () => {
+          console.log('📱 Video metadata loaded');
+          clearTimeout(timeout);
+          
+          // Check if video has valid dimensions
+          if (video.videoWidth > 0 && video.videoHeight > 0) {
+            const canvas = document.createElement('canvas');
+            const aspectRatio = video.videoWidth / video.videoHeight;
+            canvas.width = 320;
+            canvas.height = Math.round(320 / aspectRatio);
+            
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+              try {
+                // Set video to first frame and wait a moment
+                video.currentTime = 0.1;
+                
+                // Wait for seek to complete
+                const waitForSeek = () => {
+                  return new Promise<void>((seekResolve) => {
+                    const onSeeked = () => {
+                      video.removeEventListener('seeked', onSeeked);
+                      seekResolve();
+                    };
+                    video.addEventListener('seeked', onSeeked);
+                    
+                    // Fallback timeout
+                    setTimeout(() => {
+                      video.removeEventListener('seeked', onSeeked);
+                      seekResolve();
+                    }, 1000);
+                  });
+                };
+                
+                await waitForSeek();
+                
+                // Small delay to ensure frame is ready
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                // Try to generate thumbnail
+                const dataUrl = canvas.toDataURL('image/png');
+                console.log('✅ Mobile fallback thumbnail generated successfully');
+                
+                video.remove();
+                resolve(dataUrl);
+              } catch (error) {
+                console.warn('📱 Mobile fallback canvas error:', error);
+                video.remove();
+                resolve(null);
+              }
+            } else {
+              console.warn('📱 Canvas context not available');
+              video.remove();
+              resolve(null);
+            }
+          } else {
+            console.warn('📱 Video has invalid dimensions');
+            video.remove();
+            resolve(null);
+          }
+        };
+        
+        video.onerror = (error) => {
+          console.error('📱 Mobile fallback video loading error:', error);
+          clearTimeout(timeout);
+          video.remove();
+          resolve(null);
+        };
+        
+        video.load();
+      });
+    } catch (error) {
+      console.warn('📱 Mobile fallback thumbnail generation error:', error);
+      return null;
+    }
+  }, []);
+
+  /**
+   * Enhanced thumbnail resolution with mobile device support
+   */
+  const enhancedThumbnailResolution = useCallback(async (videoSrc: string): Promise<string | null> => {
+    console.log('🎥 Starting enhanced thumbnail generation for:', videoSrc);
+    
+    // Check if the video format is supported on this platform
+    if (!isVideoFormatSupported(videoSrc)) {
+      console.warn(`Video format not supported on this platform: ${videoSrc}`);
+      // For unsupported formats, try fallback immediately
+      return await generateFallbackThumbnail(videoSrc);
+    }
+    
+    // Get compatible video source
+    const compatibleVideoSrc = getCompatibleVideoSource(videoSrc);
+    
+    // Try the main thumbnail generation method first
+    try {
+      console.log('🎥 Attempting primary thumbnail generation...');
+      const thumbnail = await generateVideoThumbnail(compatibleVideoSrc, 1);
+      if (thumbnail) {
+        console.log('✅ Primary thumbnail generation successful');
+        return thumbnail;
+      }
+    } catch (error) {
+      console.warn('⚠️ Primary thumbnail generation failed:', error);
+    }
+    
+    // If primary method fails, try fallback
+    try {
+      console.log('🎥 Attempting fallback thumbnail generation...');
+      const fallbackThumbnail = await generateFallbackThumbnail(compatibleVideoSrc);
+      if (fallbackThumbnail) {
+        console.log('✅ Fallback thumbnail generation successful');
+        return fallbackThumbnail;
+      }
+    } catch (error) {
+      console.warn('⚠️ Fallback thumbnail generation failed:', error);
+    }
+    
+    console.error('❌ All thumbnail generation methods failed for:', videoSrc);
+    return null;
+  }, [generateVideoThumbnail, generateFallbackThumbnail, getCompatibleVideoSource, isVideoFormatSupported]);
+
+  /**
+   * Memoized values for performance with enhanced video thumbnail support
+   */
   const thumbnailImage = useMemo(() => {
-    return coverImage || media[0]?.src || "/gamepad.svg";
-  }, [coverImage, media]);
+    if (coverImage) return coverImage;
+    
+    const firstMedia = media[0];
+    if (!firstMedia) return "/gamepad.svg";
+    
+    // For videos, check multiple sources for thumbnails
+    if (firstMedia.type === 'video') {
+      // First, check if thumbnail is explicitly provided
+      if (firstMedia.thumbnail) {
+        return firstMedia.thumbnail;
+      }
+      
+      // Check if we have a generated thumbnail cached
+      const generatedThumbnail = generatedThumbnails.get(firstMedia.src);
+      if (generatedThumbnail) {
+        return generatedThumbnail;
+      }
+      
+      // Try to find a related image file as thumbnail
+      const relatedImage = media.find(item => item.type === 'image');
+      if (relatedImage) {
+        return relatedImage.src;
+      }
+      
+      // For videos without thumbnails, we'll generate one when the component loads
+      // For now, return gamepad icon as placeholder
+      return "/gamepad.svg";
+    }
+    
+    // For images, use the image source directly
+    return firstMedia.src;
+  }, [coverImage, media, generatedThumbnails]);
 
   const shouldLoadMedia = useMemo(() => {
     return !lazyLoad || isVisible || isModalOpen;
   }, [lazyLoad, isVisible, isModalOpen]);
 
+  /**
+   * Effect to automatically generate thumbnails for videos without thumbnails
+   * Enhanced with mobile device support and more aggressive generation
+   */
+  useEffect(() => {
+    // Detect mobile devices
+    const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    // For mobile devices, always try to generate thumbnails regardless of visibility
+    // to overcome platform restrictions and improve UX
+    const forceGeneration = isMobile;
+    
+    if (!shouldLoadMedia && !forceGeneration) return;
 
+    const generateMissingThumbnails = async () => {
+      const videosNeedingThumbnails = media.filter(item => 
+        item.type === 'video' && 
+        !item.thumbnail && 
+        !generatedThumbnails.has(item.src)
+      );
+
+      if (videosNeedingThumbnails.length === 0) return;
+
+      console.log(`🎥 Generating thumbnails for ${videosNeedingThumbnails.length} videos`, {
+        isMobile,
+        forceGeneration,
+        shouldLoadMedia,
+        videos: videosNeedingThumbnails.map(v => v.src)
+      });
+
+      setLoadingState('media', true);
+      
+      try {
+        // Process thumbnails sequentially on mobile to avoid overwhelming the device
+        if (isMobile) {
+          for (const videoItem of videosNeedingThumbnails) {
+            try {
+              console.log(`📱 Mobile: Processing thumbnail for: ${videoItem.src}`);
+              const thumbnail = await enhancedThumbnailResolution(videoItem.src);
+              if (thumbnail) {
+                console.log(`✅ Mobile: Successfully generated thumbnail for: ${videoItem.src}`);
+                setGeneratedThumbnails(prev => 
+                  new Map(prev).set(videoItem.src, thumbnail)
+                );
+              } else {
+                console.warn(`❌ Mobile: No thumbnail generated for: ${videoItem.src}`);
+              }
+              
+              // Small delay between mobile thumbnail generations to prevent overwhelming
+              await new Promise(resolve => setTimeout(resolve, 100));
+            } catch (error) {
+              console.warn(`❌ Mobile: Failed to generate thumbnail for ${videoItem.src}:`, error);
+            }
+          }
+        } else {
+          // Desktop: Process in parallel for better performance
+          const thumbnailPromises = videosNeedingThumbnails.map(async (videoItem) => {
+            try {
+              console.log(`🖥️ Desktop: Processing thumbnail for: ${videoItem.src}`);
+              const thumbnail = await enhancedThumbnailResolution(videoItem.src);
+              if (thumbnail) {
+                console.log(`✅ Desktop: Successfully generated thumbnail for: ${videoItem.src}`);
+                return { src: videoItem.src, thumbnail };
+              } else {
+                console.warn(`❌ Desktop: No thumbnail generated for: ${videoItem.src}`);
+                return null;
+              }
+            } catch (error) {
+              console.warn(`❌ Desktop: Failed to generate thumbnail for ${videoItem.src}:`, error);
+              return null;
+            }
+          });
+
+          const results = await Promise.allSettled(thumbnailPromises);
+          
+          // Update state with successful thumbnail generations
+          results.forEach((result) => {
+            if (result.status === 'fulfilled' && result.value) {
+              setGeneratedThumbnails(prev => 
+                new Map(prev).set(result.value!.src, result.value!.thumbnail)
+              );
+            }
+          });
+        }
+
+        console.log(`🎥 Thumbnail generation complete for ${videosNeedingThumbnails.length} videos`);
+        clearError(); // Clear any previous thumbnail generation errors
+      } catch (error) {
+        console.error('Error in batch thumbnail generation:', error);
+        handleError('Failed to generate video thumbnails', 'media');
+      } finally {
+        setLoadingState('media', false);
+      }
+    };
+
+    // Immediate generation for mobile, slight delay for desktop
+    const delay = isMobile ? 0 : 500;
+    const timeoutId = setTimeout(generateMissingThumbnails, delay);
+    
+    return () => clearTimeout(timeoutId);
+  }, [shouldLoadMedia, media, generatedThumbnails, enhancedThumbnailResolution, setLoadingState, handleError, clearError]);
 
   /**
    * Preload all images in the media array for smoother carousel experience
@@ -1207,9 +1702,18 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           {shouldLoadMedia ? (
             error.hasError && error.type === 'media' ? (
               <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
-                <div className="text-red-400 text-center text-sm">
-                  <div>⚠️</div>
-                  <div>Image failed to load</div>
+                <div className="text-gray-400 text-center text-sm">
+                  {media[0]?.type === 'video' ? (
+                    <>
+                      <FaFileVideo className="mx-auto mb-2 text-2xl" />
+                      <div>Video Preview</div>
+                    </>
+                  ) : (
+                    <>
+                      <div>⚠️</div>
+                      <div>Image failed to load</div>
+                    </>
+                  )}
                 </div>
               </div>
             ) : (
@@ -1221,7 +1725,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 className="object-cover transition-all duration-300 group-hover/card:scale-105" 
                 priority={priority === 'high'}
                 placeholder="blur"
-                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkrHB0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkrHB0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                 onError={() => handleError('Failed to load thumbnail image', 'media')}
               />
             )
@@ -1475,7 +1979,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                   )}
                 </div>
                 
-                {/* Action buttons with modern styling */}
+                {/* Action buttons with enhanced styling */}
                 {(downloadLink || (liveLink && liveLink !== "#") || (sourceLink && sourceLink !== "#")) && (
                   <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                     {/* Download button with enhanced styling */}

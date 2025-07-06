@@ -22,6 +22,7 @@ const BearlyStealthy = ({
         type: "video",
         src: "/images/Bearly Stealth Images/Bearly Stealthjy vid.webm",
         alt: "Bearly Stealthy Vid",
+        thumbnail: "/images/Bearly Stealth Images/Bear.webp", // Use Bear image as thumbnail
       },
       {
         type: "image",

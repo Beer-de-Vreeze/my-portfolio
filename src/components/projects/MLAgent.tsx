@@ -17,26 +17,31 @@ const MLAgent = ({
         type: "video",
         src: "/images/AI Images/Jerry Move.webm",
         alt: "Move 1 first itteration",
+        thumbnail: "/images/AI Images/Title.webp", // Using cover image as thumbnail
       },
       {
         type: "video",
         src: "/images/AI Images/Jerry MoveWithVision.webm",
         alt: "Move with raycast training",
+        thumbnail: "/images/AI Images/Title.webp",
       },
       {
         type: "video",
         src: "/images/AI Images/Jerry MoveWithFEEDBACKV2.webm",
         alt: "Training with feedback",
+        thumbnail: "/images/AI Images/Title.webp",
       },
       {
         type: "video",
         src: "/images/AI Images/Jerry MoveWithFEEDBACKTRAINING2.webm",
         alt: "Training with Timer",
+        thumbnail: "/images/AI Images/Title.webp",
       },
       {
         type: "video",
         src: "/images/AI Images/HUNTERVSPREY.webm",
         alt: "Hunter VS Prey simulation",
+        thumbnail: "/images/AI Images/Zombie Arena.webp", // Different thumbnail for variety
       },
     ]}
     techStack={[
