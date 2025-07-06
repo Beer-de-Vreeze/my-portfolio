@@ -30,15 +30,15 @@ interface TechStackProps {
 const TechItem: React.FC<TechItemProps> = React.memo(({ icon, name }) => {
   return (
     <div 
-      className="flex flex-col items-center justify-center p-3 bg-black border border-[#27272a] rounded-lg shadow-md transition-all duration-300 hover:scale-105 hover:border-gray-600 hover:shadow-lg group"
+      className="flex flex-col items-center justify-center p-3 sm:p-4 bg-gradient-to-br from-blue-900/20 to-purple-900/20 border border-blue-400/20 rounded-xl shadow-lg transition-all duration-300 hover:scale-105 hover:border-blue-300/40 hover:shadow-blue-500/20 hover:shadow-xl group backdrop-blur-sm min-h-[100px] sm:min-h-[120px]"
       role="button"
       tabIndex={0}
       aria-label={`Technology: ${name}`}
     >
-      <div className="text-white text-5xl flex items-center justify-center transition-colors duration-300 group-hover:text-gray-300">
+      <div className="text-blue-200 text-3xl sm:text-4xl flex items-center justify-center transition-all duration-300 group-hover:text-blue-100 group-hover:scale-110 mb-2 sm:mb-3">
         {icon}
       </div>
-      <div className="text-white mt-2 text-xs font-light text-center w-full break-words hyphens-auto transition-colors duration-300 group-hover:text-gray-300">
+      <div className="text-blue-100 text-xs sm:text-sm font-medium text-center w-full break-words hyphens-auto transition-colors duration-300 group-hover:text-white leading-tight">
         {name}
       </div>
     </div>
@@ -106,40 +106,48 @@ const SkillCard: React.FC<TechStackProps> = ({ title = "Tech Stack" }) => {
   }, [handleCategoryChange]);
 
   return (
-    <div className="w-full max-w-[800px] bg-black border border-[#27272a] rounded-lg shadow-lg p-4 animate-fadeIn">
-      <div className="flex justify-between items-center border-b border-[#27272a] pb-3 mb-4">
-        <h1 className="text-xl font-semibold text-white gradient-text">{title}</h1>
-      </div>
+    <div className="w-full max-w-none sm:max-w-[800px] bg-gradient-to-br from-gray-900/60 to-black/80 border border-blue-500/20 rounded-2xl shadow-xl backdrop-blur-sm p-3 sm:p-4 md:p-6 relative overflow-hidden group mx-auto">
+      {/* Enhanced background pattern */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
       
-      <div className="flex space-x-3 overflow-x-auto scrollbar-hide whitespace-nowrap pb-1 mb-4" style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
-        {categories.map((category) => (
-          <div
-            key={category.name}
-            onClick={() => handleCategoryChange(category.name)}
-            onKeyDown={(event) => handleKeyDown(event, category.name)}
-            className={`cursor-pointer text-sm font-light flex-shrink-0 transition-colors duration-300 ease-in-out hover:text-gray-200 animate-pulseGlow px-1 py-1 rounded ${
-              category.active ? 'border-b-2 border-white text-white' : 'text-gray-400 border-b-2 border-transparent'
-            }`}
-            role="button"
-            tabIndex={0}
-            aria-label={`View ${category.name} technologies`}
-            aria-pressed={category.active}
-          >
-            {category.name}
-          </div>
-        ))}
-      </div>
+      <div className="relative z-10 w-full">
+        <div className="flex justify-between items-center border-b border-blue-500/20 pb-3 sm:pb-4 mb-4 sm:mb-6">
+          <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-white bg-gradient-to-r from-white to-blue-100 bg-clip-text">{title}</h1>
+        </div>
+        
+        <div className="grid grid-cols-2 gap-2 mb-6 sm:grid-cols-3 md:flex md:flex-wrap md:gap-3">
+          {categories.map((category) => (
+            <button
+              key={category.name}
+              onClick={() => handleCategoryChange(category.name)}
+              onKeyDown={(event) => handleKeyDown(event, category.name)}
+              className={`relative px-2 py-2.5 text-xs font-medium rounded-xl transition-all duration-300 border-2 ${
+                category.active 
+                  ? 'border-blue-400 bg-blue-500/20 text-blue-100 shadow-lg shadow-blue-500/30' 
+                  : 'border-gray-600/50 bg-gray-800/40 text-gray-300 hover:border-blue-500/50 hover:bg-blue-500/10 hover:text-blue-200'
+              } backdrop-blur-sm active:scale-95 transform text-center`}
+              type="button"
+              aria-pressed={category.active}
+              aria-label={`View ${category.name} technologies`}
+            >
+              <span className="relative z-10 block truncate">{category.name}</span>
+              {category.active && (
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl" />
+              )}
+            </button>
+          ))}
+        </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 animate-fadeIn">
-        {filteredTechnologies.map((tech, index) => (
-          <div
-            key={`${tech.category}-${tech.name}-${index}`}
-            className="animate-slideInUp"
-            style={{ animationDelay: `${index * 0.05}s` }}
-          >
-            <TechItem icon={tech.icon} name={tech.name} />
-          </div>
-        ))}
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+          {filteredTechnologies.map((tech, index) => (
+            <div
+              key={`${tech.category}-${tech.name}-${index}`}
+              className="w-full"
+            >
+              <TechItem icon={tech.icon} name={tech.name} />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

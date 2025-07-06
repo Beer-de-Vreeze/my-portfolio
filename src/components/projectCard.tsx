@@ -334,6 +334,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   
   // Image preloading state and refs
   const preloadedImages = useRef<Set<string>>(new Set());
+  
+  // Ref to track if we're programmatically closing the modal
+  const isProgrammaticallyClosing = useRef(false);
 
   // Memoized values for performance
   const thumbnailImage = useMemo(() => {
@@ -405,7 +408,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     setIsModalOpen(true);
     const url = new URL(window.location.href);
     url.searchParams.set('project', projectId);
-    router.push(url.pathname + url.search);
+    router.replace(url.pathname + url.search);
     onModalStateChange?.(true);
       // Initialize feature code snippets as collapsed, main snippet as open
     const initialCollapsedState: { [key: string]: boolean } = {};
@@ -432,63 +435,64 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     setIsPlaying(false);
     setIsClosing(true);
     
-    // Remove project parameter from URL
+    // Set flag to indicate we're programmatically closing
+    isProgrammaticallyClosing.current = true;
+    
+    // Immediately remove the URL parameter to prevent reopening
     const url = new URL(window.location.href);
     url.searchParams.delete('project');
-    router.push(url.pathname + url.search);
+    router.replace(url.pathname + url.search);
     
     setTimeout(() => {
       setIsModalOpen(false);
       setIsClosing(false);
       onModalStateChange?.(false);
+      
+      // Reset the flag after closing is complete
+      setTimeout(() => {
+        isProgrammaticallyClosing.current = false;
+      }, 100);
     }, 300);
-  }, [onModalStateChange, router]);  /**
-   * Effect to check URL parameters on component mount and handle direct links
-   */  useEffect(() => {
-    const currentProject = searchParams?.get('project');
-    if (currentProject === projectId && !isModalOpen) {
-      setIsModalOpen(true);
-      onModalStateChange?.(true);
-      
-      // Preload images for smoother carousel experience
-      preloadImages();
-      
-        // Initialize feature code snippets as collapsed, main snippet as open when opening via URL
-      const initialCollapsedState: { [key: string]: boolean } = {};
-      features.forEach((feature, index) => {
-        if (feature.codeSnippet) {
-          initialCollapsedState[`feature-${index}`] = true;
-        }
-      });
-      if (codeSnippet) {
-        initialCollapsedState['main'] = false; // Main snippet starts open
-      }
-      setCollapsedCodeSnippets(initialCollapsedState);
-    }
-  }, [searchParams, projectId, isModalOpen, onModalStateChange, features, codeSnippet, preloadImages]);
-  
+  }, [onModalStateChange, router]);
+
   /**
-   * Effect for handling ESC key press and body scroll locking
-   * when the modal is open
-   */
+   * Effect to check URL parameters on component mount and handle direct links
+   * Added flag to track if we're currently in a close operation
+   */  
   useEffect(() => {
-    const handleEscKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        closeModal();
-      }
-    };
+    const currentProject = searchParams?.get('project');
     
-    if (isModalOpen) {
-      document.body.style.overflow = 'hidden'; // Prevent background scrolling
-      document.addEventListener('keydown', handleEscKey);
-      onModalStateChange?.(true);
+    // Only open modal if:
+    // 1. URL parameter matches this project
+    // 2. Modal is not already open
+    // 3. We're not in the middle of closing
+    // 4. We're not programmatically closing
+    if (currentProject === projectId && !isModalOpen && !isClosing && !isProgrammaticallyClosing.current) {
+      // Small delay to ensure any previous close operations have completed
+      const timeoutId = setTimeout(() => {
+        setIsModalOpen(true);
+        onModalStateChange?.(true);
+        
+        // Preload images for smoother carousel experience
+        preloadImages();
+        
+        // Initialize feature code snippets as collapsed, main snippet as open when opening via URL
+        const initialCollapsedState: { [key: string]: boolean } = {};
+        features.forEach((feature, index) => {
+          if (feature.codeSnippet) {
+            initialCollapsedState[`feature-${index}`] = true;
+          }
+        });
+        if (codeSnippet) {
+          initialCollapsedState['main'] = false; // Main snippet starts open
+        }
+        setCollapsedCodeSnippets(initialCollapsedState);
+      }, 50);
+      
+      return () => clearTimeout(timeoutId);
     }
-    
-    return () => {
-      document.body.style.overflow = 'unset'; // Restore scrolling
-      document.removeEventListener('keydown', handleEscKey);
-    };
-  }, [isModalOpen, onModalStateChange, closeModal]);
+  }, [searchParams, projectId, isModalOpen, isClosing, onModalStateChange, features, codeSnippet, preloadImages]);
+  
   /**
    * Handler for tech stack icon clicks
    */
@@ -523,19 +527,19 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
    * Navigate to previous media item in the carousel
    * Pauses any playing video before changing slide
    */
-  const goToPreviousMedia = () => {
+  const goToPreviousMedia = useCallback(() => {
     if (videoRef.current && !videoRef.current.paused) {
       videoRef.current.pause();
     }
     setIsPlaying(false);
     setCurrentMediaIndex((prevIndex) => (prevIndex - 1 + media.length) % media.length);
-  };
+  }, [media.length]);
 
   /**
    * Toggles video playback state
    * Updates autoplay setting based on video state
    */
-  const handleVideoToggle = () => {
+  const handleVideoToggle = useCallback(() => {
     if (videoRef.current) {
       if (videoRef.current.paused) {
         videoRef.current.play();
@@ -547,7 +551,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         setAutoplay(true); // Re-enable autoplay when video is paused
       }
     }
-  };
+  }, []);
   
   /**
    * Handler for video end event
@@ -560,25 +564,29 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   
   /**
    * Toggle fullscreen mode with cross-browser compatibility
-   * Handles both entering and exiting fullscreen mode
+   * Handles both entering and exiting fullscreen mode for videos and images
    */
   const toggleFullscreen = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!videoRef.current) return;
+    
+    // Determine the element to make fullscreen - video element for videos, media container for images
+    const elementToFullscreen = isVideo && videoRef.current ? videoRef.current : mediaContainerRef.current;
+    if (!elementToFullscreen) return;
     
     try {
       if (!document.fullscreenElement) {
         // Enter fullscreen
-        if (videoRef.current.requestFullscreen) {
-          videoRef.current.requestFullscreen().then(() => {
+        if (elementToFullscreen.requestFullscreen) {
+          elementToFullscreen.requestFullscreen().then(() => {
             setIsFullscreen(true);
           }).catch(err => {
             console.error(`Error attempting to enable fullscreen: ${err.message}`);
-          });        } else if ((videoRef.current as ExtendedHTMLVideoElement).webkitRequestFullscreen) { // Safari
-          (videoRef.current as ExtendedHTMLVideoElement).webkitRequestFullscreen?.();
+          });
+        } else if ((elementToFullscreen as ExtendedHTMLVideoElement).webkitRequestFullscreen) { // Safari
+          (elementToFullscreen as ExtendedHTMLVideoElement).webkitRequestFullscreen?.();
           setIsFullscreen(true);
-        } else if ((videoRef.current as ExtendedHTMLVideoElement).msRequestFullscreen) { // IE11
-          (videoRef.current as ExtendedHTMLVideoElement).msRequestFullscreen?.();
+        } else if ((elementToFullscreen as ExtendedHTMLVideoElement).msRequestFullscreen) { // IE11
+          (elementToFullscreen as ExtendedHTMLVideoElement).msRequestFullscreen?.();
           setIsFullscreen(true);
         }
       } else {
@@ -588,7 +596,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             setIsFullscreen(false);
           }).catch(err => {
             console.error(`Error attempting to exit fullscreen: ${err.message}`);
-          });        } else if ((document as ExtendedDocument).webkitExitFullscreen) { // Safari
+          });
+        } else if ((document as ExtendedDocument).webkitExitFullscreen) { // Safari
           (document as ExtendedDocument).webkitExitFullscreen?.();
           setIsFullscreen(false);
         } else if ((document as ExtendedDocument).msExitFullscreen) { // IE11
@@ -643,17 +652,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     if (!isVideo) return null;
 
     return (
-      <div 
-        className="absolute inset-0 z-20 flex items-center justify-center cursor-pointer"
-        onClick={handleVideoToggle}
-      >
-        {/* Play/Pause Overlay with fade effect */}
+      <div className="absolute inset-0 z-20 pointer-events-none">
+        {/* Play/Pause Overlay with fade effect - only enable pointer events when visible */}
         <div 
           className={`${!isPlaying 
-            ? 'opacity-100 scale-100' 
+            ? 'opacity-100 scale-100 pointer-events-auto' 
             : 'opacity-0 scale-90 pointer-events-none'} 
             bg-black/50 hover:bg-black/70 p-4 rounded-full 
-            transition-all duration-300 ease-in-out group`}
+            transition-all duration-300 ease-in-out group absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer`}
+          onClick={handleVideoToggle}
         >
           <svg 
             width="48" 
@@ -669,13 +676,49 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             />
           </svg>
         </div>
-        
-        {/* Fullscreen button - always visible */}
+      </div>
+    );
+  };
+
+  /**
+   * Renders fullscreen button for videos
+   * Positioned outside the main controls overlay to avoid pointer event conflicts
+   */
+  const renderVideoFullscreenButton = () => {
+    if (!isVideo) return null;
+
+    return (
+      <button
+        onClick={toggleFullscreen}
+        className="absolute bottom-3 right-3 z-40 bg-black/60 hover:bg-black/80 rounded-full p-2.5
+          text-white transition-all duration-200 focus:outline-none pointer-events-auto"
+        aria-label="Toggle fullscreen"
+        style={{ pointerEvents: 'auto' }}
+      >
+        {isFullscreen ? (
+          <FaCompress className="text-white text-lg" />
+        ) : (
+          <FaExpand className="text-white text-lg" />
+        )}
+      </button>
+    );
+  };
+
+  /**
+   * Renders fullscreen button for images
+   * Shows enlarge button overlay for image media types
+   */
+  const renderImageControls = () => {
+    if (isVideo) return null;
+
+    return (
+      <div className="absolute bottom-3 right-3 z-30 pointer-events-none">
+        {/* Fullscreen button for images */}
         <button
           onClick={toggleFullscreen}
-          className="absolute bottom-3 right-3 z-30 bg-black/60 hover:bg-black/80 rounded-full p-2.5
-            text-white transition-all duration-200 focus:outline-none opacity-100"
-          aria-label="Toggle fullscreen"
+          className="bg-black/60 hover:bg-black/80 rounded-full p-2.5
+            text-white transition-all duration-200 focus:outline-none opacity-0 group-hover/carousel:opacity-100 hover:opacity-100 pointer-events-auto"
+          aria-label={isFullscreen ? "Exit fullscreen" : "Enlarge image"}
         >
           {isFullscreen ? (
             <FaCompress className="text-white text-lg" />
@@ -750,6 +793,72 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     setTouchEnd(null);
     setAutoplay(true); // Re-enable autoplay after interaction
   };
+
+  /**
+   * Effect for handling keyboard navigation and body scroll locking
+   * when the modal is open - enhanced with carousel navigation
+   */
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!isModalOpen) return;
+      
+      switch (event.key) {
+        case 'Escape':
+          closeModal();
+          break;
+        case 'ArrowLeft':
+          if (media.length > 1) {
+            event.preventDefault();
+            goToPreviousMedia();
+          }
+          break;
+        case 'ArrowRight':
+          if (media.length > 1) {
+            event.preventDefault();
+            goToNextMedia();
+          }
+          break;
+        case ' ': // Spacebar
+          if (isVideo && videoRef.current) {
+            event.preventDefault();
+            handleVideoToggle();
+          }
+          break;
+      }
+    };
+    
+    if (isModalOpen) {
+      // Store the current overflow and scroll position to restore later
+      const originalOverflow = document.body.style.overflow;
+      const scrollY = window.scrollY;
+      
+      // Prevent background scrolling while preserving scroll position
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+      
+      document.addEventListener('keydown', handleKeyDown);
+      onModalStateChange?.(true);
+      
+      return () => {
+        // Restore the original state
+        document.body.style.overflow = originalOverflow || '';
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        
+        // Restore scroll position
+        window.scrollTo(0, scrollY);
+        
+        document.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isModalOpen, onModalStateChange, closeModal, media.length, goToPreviousMedia, goToNextMedia, isVideo, handleVideoToggle]);
 
   /**
    * Effect for handling autoplay carousel functionality
@@ -1073,46 +1182,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const downloadFileInfo = getFileTypeInfo(downloadLink);
   const downloadInfo = getDownloadInfo();
 
-  // State for image zoom modal
-  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
-  const [isZoomClosing, setIsZoomClosing] = useState(false);
-
-  // Handler to open zoom modal
-  const handleImageZoom = (src: string) => {
-    setZoomedImage(src);
-    setIsZoomClosing(false);
-  };
-  // Handler to close zoom modal with animation
-  const closeZoomModal = () => {
-    setIsZoomClosing(true);
-    setTimeout(() => {
-      setZoomedImage(null);
-      setIsZoomClosing(false);
-    }, 300); // match animation duration
-  };
-  // ESC key closes zoom modal
-  useEffect(() => {
-    if (!zoomedImage) return;
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeZoomModal();
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [zoomedImage]);
-
-  // Pause carousel autoplay when zoomedImage is open
-  useEffect(() => {
-    if (zoomedImage) {
-      setAutoplay(false);
-    } else if (isModalOpen) {
-      setAutoplay(true);
-    }
-    // Only run when zoomedImage or isModalOpen changes
-  }, [zoomedImage, isModalOpen]);
-
   return (
     <>      
-      {/* Project Card with mobile-responsive design */}
+      {/* Project Card with modern gradient design matching the new design system */}
       <div 
         ref={cardRef}
         onClick={openModal}
@@ -1127,12 +1199,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         tabIndex={0}
         role="button"
         aria-label={`Open ${title} project details`}
-        className={`relative z-10 flex flex-col justify-between p-4 sm:p-5 bg-[#111111] border border-[#2a2a2a] rounded-lg transition-all duration-300 hover:border-[#4a4a4a] hover:translate-y-[-4px] overflow-hidden cursor-pointer w-full max-w-[500px] mx-auto h-48 sm:h-56 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 ${isClicked ? 'scale-95' : ''}`}
-      >        {/* Background thumbnail image with improved visibility and lazy loading */}
-        <div className="absolute top-0 left-0 w-full h-full z-0 opacity-60">
+        className={`relative flex flex-col justify-between p-4 sm:p-6 bg-gradient-to-br from-gray-900/60 to-black/80 border border-blue-500/20 rounded-2xl shadow-xl transition-all duration-300 hover:scale-105 hover:border-blue-300/40 hover:shadow-blue-500/20 hover:shadow-xl overflow-hidden cursor-pointer w-full max-w-[500px] mx-auto h-56 sm:h-64 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-transparent group/card ${isClicked ? 'scale-95' : ''}`}
+      >        {/* Enhanced background pattern */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500"></div>
+        {/* Background thumbnail image with enhanced overlay effects */}
+        <div className="absolute top-0 left-0 w-full h-full z-0 opacity-50">
           {shouldLoadMedia ? (
             error.hasError && error.type === 'media' ? (
-              <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+              <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
                 <div className="text-red-400 text-center text-sm">
                   <div>⚠️</div>
                   <div>Image failed to load</div>
@@ -1144,7 +1218,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 alt={title} 
                 fill 
                 sizes="(max-width: 768px) 100vw, 400px"
-                className="object-cover transition-opacity duration-300" 
+                className="object-cover transition-all duration-300 group-hover/card:scale-105" 
                 priority={priority === 'high'}
                 placeholder="blur"
                 blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkrHB0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
@@ -1152,26 +1226,27 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               />
             )
           ) : (
-            <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+            <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
               <div className="text-gray-400">Loading...</div>
             </div>
           )}
-          {/* Dark gradient overlay for text readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20"></div>
+          {/* Enhanced gradient overlays for better readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-transparent to-purple-900/20"></div>
         </div>
-          {/* Card content - title and description with enhanced readability */}
+          {/* Card content - title and description with modern styling */}
         <div className="relative z-10">
-          <h3 className="text-white text-xl sm:text-2xl font-bold mb-2 truncate drop-shadow-lg">
+          <h3 className="text-blue-100 font-bold text-xl sm:text-2xl group-hover/card:text-white transition-colors duration-300 mb-3 truncate drop-shadow-xl">
             {title}
           </h3>
-          <p className="text-gray-200 text-sm line-clamp-2 mb-3 drop-shadow-md">{description.split('.')[0]}.</p>
+          <p className="text-blue-200/70 group-hover/card:text-blue-100 transition-colors duration-300 text-sm line-clamp-2 mb-4 drop-shadow-lg leading-relaxed">{description.split('.')[0]}.</p>
         </div>
-        {/* Tech stack tags - enhanced visibility with backdrop */}
+        {/* Tech stack tags - modern glass morphism design */}
         <div className="relative z-10 flex flex-wrap gap-1.5 mt-auto max-w-full overflow-hidden">
           {techStack.slice(0, 4).map((tech, index) => (
             <span
               key={index} 
-              className="px-3 py-2 bg-black/80 backdrop-blur-sm border border-[#27272a] rounded-full flex items-center justify-center text-gray-300 text-sm shadow-lg whitespace-nowrap flex-shrink-0 min-w-0 cursor-pointer"
+              className="px-2 py-1.5 bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-400/30 rounded-full flex items-center justify-center text-blue-200 text-xs shadow-md hover:border-blue-300/50 transition-all duration-300 whitespace-nowrap flex-shrink-0 cursor-pointer group-hover/card:from-blue-400/30 group-hover/card:to-purple-400/30 group-hover/card:text-blue-100"
               onClick={(e) => {
                 e.stopPropagation();
                 handleTechIconClick(e, tech);
@@ -1179,135 +1254,241 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               aria-label={`Technology: ${tech}`}
             >
               {techIcons[tech] || null} 
-              <span className="truncate ml-1">{tech}</span>
+              <span className="ml-1">{tech}</span>
             </span>
           ))}
         </div>
       </div>
 
-      {/* Modal with animation - shown when card is clicked */}
+      {/* Enhanced Modal with modern design matching the new system */}
       {(isModalOpen || isClosing) && (
         <div 
-          className={`fixed inset-0 z-[1050] flex items-center justify-center bg-black/95 backdrop-blur-sm 
+          className={`fixed inset-0 z-[1000] flex items-center justify-center bg-gradient-to-br from-gray-900/95 to-black/90 
             ${isClosing ? 'animate-fadeOut' : 'animate-fadeIn'} 
             transition-opacity duration-300 ease-in-out py-2 sm:py-4`}
           onClick={(e) => {
             if (e.target === e.currentTarget) closeModal();
           }}
         >
-          {/* Close button - fixed position for better UX */}
-          <button 
-            onClick={closeModal}
-            className="fixed top-4 right-4 z-[1060] bg-black/70 hover:bg-black/90 
-              rounded-full p-3 w-10 h-10 flex items-center justify-center
-              text-gray-300 hover:text-white transition-all duration-200
-              shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            aria-label="Close modal"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-
-          {/* Modal Content - Responsive layout with scrolling */}
+          {/* Modal Content - Enhanced with consistent site design */}
           <div 
             className={`w-full max-w-7xl ${isClosing ? 'animate-fadeOut' : 'animate-fadeIn'} 
               transition-transform duration-300 ease-in-out py-6 overflow-y-auto 
-              max-h-[90vh] my-auto`}
-          >            <div className="flex flex-col lg:flex-row gap-4 lg:gap-4 px-2 sm:px-4 lg:px-2">              {/* Left Column - Media carousel and action buttons */}
+              max-h-[90vh] my-auto bg-gradient-to-br from-gray-900/95 to-black/90 rounded-2xl 
+              border border-blue-500/20 shadow-2xl shadow-black/50 mx-4 relative`}
+          >
+            {/* Enhanced close button with consistent styling - follows scroll */}
+            <div className="flex justify-end p-4">
+              <button 
+                onClick={closeModal}
+                className="sticky top-4 z-[1010] bg-gradient-to-r from-gray-800/90 to-black/90 hover:from-gray-700/90 hover:to-black/95 
+                  rounded-full p-3 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center
+                  text-white hover:text-blue-200 transition-all duration-300
+                  shadow-lg border border-blue-500/20 hover:border-blue-400/40 focus:outline-none focus:ring-2 focus:ring-blue-400/50
+                  backdrop-blur-sm"
+                aria-label="Close modal"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 px-4 sm:px-6 lg:px-8 relative z-10">              {/* Left Column - Media carousel and action buttons */}
               <div className="w-full lg:w-1/2 flex flex-col">
                 {/* Mobile: Title above carousel */}
                 <div className="mb-6 lg:hidden">
-                  <h2 className="text-2xl sm:text-3xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 
-                    bg-clip-text text-transparent leading-tight">
-                    {title}
-                  </h2>
+                  <div className="bg-gradient-to-br from-gray-900/90 to-black/85 rounded-lg p-4 border border-blue-500/20">
+                    <h2 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-lg leading-tight">
+                      {title}
+                    </h2>
+                  </div>
                 </div>
 
-                {/* Media Slideshow Container */}
-                <div className="relative w-full rounded-xl overflow-hidden border border-[#333333] mb-4">
-                  {/* Media Content with touch gesture support */}
+                {/* Enhanced Media Slideshow Container with modern carousel design */}
+                <div className="relative w-full rounded-xl overflow-hidden border border-blue-400/20 shadow-lg mb-4 group/carousel transition-all duration-300 hover:border-blue-300/40 hover:shadow-blue-500/10">
+                  {/* Media Content with touch gesture support and enhanced loading states */}
                   <div 
                     ref={mediaContainerRef}
-                    className="relative aspect-video w-full"
+                    className="relative aspect-video w-full bg-gradient-to-br from-gray-900/50 to-black/70"
                     onTouchStart={handleTouchStart}
                     onTouchMove={handleTouchMove}
                     onTouchEnd={handleTouchEnd}
                   >
-                    {isVideo ? (
-                      <>
-                        <video 
-                          ref={videoRef}
-                          src={currentMedia.src} 
-                          className={`w-full h-full object-${mediaObjectFit}`} 
-                          controls={false}
-                          onEnded={handleVideoEnd}
-                          onError={() => handleError(`Failed to load video: ${currentMedia.src}`, 'media')}
-                          preload={shouldLoadMedia ? 'metadata' : 'none'}
-                        />
-                        {renderVideoControls()}
-                      </>
-                    ) : (
-                      <Image 
-                        src={currentMedia.src} 
-                        alt={currentMedia.alt || title} 
-                        fill
-                        priority
-                        sizes="(max-width: 768px) 100vw, 800px"
-                        className={`object-${mediaObjectFit} cursor-zoom-in`}
-                        onClick={() => handleImageZoom(currentMedia.src)}
-                      />
+                    {/* Enhanced loading overlay with pulsing animation */}
+                    {loading.media && (
+                      <div className="absolute inset-0 z-10 flex items-center justify-center bg-gradient-to-br from-gray-900/90 to-black/85 backdrop-blur-sm">
+                        <div className="flex flex-col items-center gap-4">
+                          <div className="relative">
+                            <div className="w-10 h-10 border-3 border-blue-400/20 border-t-blue-400 rounded-full animate-spin"></div>
+                            <div className="absolute inset-0 w-10 h-10 border-3 border-purple-400/20 border-b-purple-400 rounded-full animate-spin animation-delay-150"></div>
+                          </div>
+                          <div className="text-blue-200 text-sm font-medium animate-pulse">Loading media...</div>
+                        </div>
+                      </div>
                     )}
+
+                    {/* Media content with enhanced transitions and animations */}
+                    <div className="relative w-full h-full">
+                      {isVideo ? (
+                        <>
+                          <video 
+                            ref={videoRef}
+                            src={currentMedia.src} 
+                            className={`w-full h-full object-${mediaObjectFit} transition-all duration-500 animate-fadeIn`} 
+                            controls={false}
+                            onEnded={handleVideoEnd}
+                            onError={() => handleError(`Failed to load video: ${currentMedia.src}`, 'media')}
+                            preload={shouldLoadMedia ? 'metadata' : 'none'}
+                            key={currentMediaIndex} // Force re-render when media changes
+                          />
+                          {renderVideoControls()}
+                          {renderVideoFullscreenButton()}
+                        </>
+                      ) : (
+                        <>
+                          <Image 
+                            src={currentMedia.src} 
+                            alt={currentMedia.alt || title} 
+                            fill
+                            priority
+                            sizes="(max-width: 768px) 100vw, 800px"
+                            className={`object-${mediaObjectFit} transition-all duration-500 hover:scale-105 animate-fadeIn`}
+                            onLoad={() => setLoadingState('media', false)}
+                            onError={() => handleError(`Failed to load image: ${currentMedia.src}`, 'media')}
+                            key={currentMediaIndex} // Force re-render when media changes
+                          />
+                          {renderImageControls()}
+                        </>
+                      )}
+                    </div>
                   </div>
 
-                  {/* Indicators for multiple media items */}
+                  {/* Enhanced Navigation Arrows - only show when multiple media items */}
                   {media.length > 1 && (
-                    <div className="absolute bottom-3 left-0 right-0 flex justify-center flex-wrap gap-1 z-20 px-2 max-w-full overflow-hidden">
-                      {media.map((_, index) => (
-                        <button
-                          key={index}
-                          onClick={(e) => { 
-                            e.stopPropagation();
-                            goToMedia(index);
-                          }}
-                          className={`rounded-full transition-all ${
-                            media.length > 8 
-                              ? 'w-0.5 h-0.5 gap-0.5' 
-                              : media.length > 5 
-                                ? 'w-0.5 h-0.5' 
-                                : 'w-1 h-1'
-                          } ${
-                            index === currentMediaIndex 
-                              ? 'bg-white scale-125' 
-                              : 'bg-white/50 hover:bg-white/80'
-                          }`}
-                          aria-label={`Go to media ${index + 1}`}
-                        />
-                      ))}
+                    <>
+                      {/* Previous Button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          goToPreviousMedia();
+                        }}
+                        className="absolute left-2 top-1/2 -translate-y-1/2 z-30 
+                          bg-gradient-to-r from-black/60 to-gray-900/60 hover:from-black/80 hover:to-gray-900/80
+                          backdrop-blur-sm rounded-full p-2.5 sm:p-3
+                          text-white/80 hover:text-white transition-all duration-300
+                          opacity-0 group-hover/carousel:opacity-100 hover:scale-110
+                          border border-white/10 hover:border-blue-400/30
+                          focus:outline-none focus:ring-2 focus:ring-blue-400/50"
+                        aria-label="Previous image"
+                      >
+                        <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                      </button>
+
+                      {/* Next Button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          goToNextMedia();
+                        }}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 z-30 
+                          bg-gradient-to-r from-black/60 to-gray-900/60 hover:from-black/80 hover:to-gray-900/80
+                          backdrop-blur-sm rounded-full p-2.5 sm:p-3
+                          text-white/80 hover:text-white transition-all duration-300
+                          opacity-0 group-hover/carousel:opacity-100 hover:scale-110
+                          border border-white/10 hover:border-blue-400/30
+                          focus:outline-none focus:ring-2 focus:ring-blue-400/50"
+                        aria-label="Next image"
+                      >
+                        <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    </>
+                  )}
+
+                  {/* Indicators for desktop only - hidden on mobile */}
+                  {media.length > 1 && (
+                    <div className="absolute bottom-1 sm:bottom-3 left-0 right-0 hidden sm:flex justify-center items-center gap-0.5 sm:gap-1.5 z-20 px-1 sm:px-4">
+                      <div className="flex items-center gap-0.5 sm:gap-1.5 bg-black/30 backdrop-blur-sm rounded-full px-1.5 py-0.5 sm:px-3 sm:py-2 border border-white/5 sm:border-white/10">
+                        {media.map((mediaItem, index) => (
+                          <button
+                            key={index}
+                            onClick={(e) => { 
+                              e.stopPropagation();
+                              goToMedia(index);
+                            }}
+                            className={`relative rounded-full transition-all duration-300 focus:outline-none focus:ring-1 focus:ring-blue-400/30 group ${
+                              media.length > 12 
+                                ? 'w-0.5 h-0.5 sm:w-1.5 sm:h-1.5' 
+                                : media.length > 8 
+                                  ? 'w-1 h-1 sm:w-2 sm:h-2' 
+                                  : 'w-1 h-1 sm:w-2.5 sm:h-2.5'
+                            } ${
+                              index === currentMediaIndex 
+                                ? 'bg-gradient-to-r from-blue-400 to-purple-400 scale-105 sm:scale-125 shadow-sm sm:shadow-lg shadow-blue-400/20 sm:shadow-blue-400/30' 
+                                : 'bg-white/30 hover:bg-white/50 sm:hover:bg-white/70 hover:scale-105 sm:hover:scale-110'
+                            }`}
+                            aria-label={`Go to media ${index + 1}${mediaItem.alt ? `: ${mediaItem.alt}` : ''}`}
+                            title={mediaItem.alt || `Media ${index + 1}`}
+                          >
+                            {/* Active indicator glow effect - reduced on mobile */}
+                            {index === currentMediaIndex && (
+                              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 blur-[1px] sm:blur-sm opacity-40 sm:opacity-60 animate-pulse"></div>
+                            )}
+                            
+
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   )}
 
-                  {/* Media counter indicator */}
-                  <div className={`absolute top-3 right-3 bg-black/60 px-2 py-1 rounded text-xs text-white font-medium z-20
-                    ${(isVideo && isPlaying) ? 'opacity-0 pointer-events-none' : 'opacity-100'}
-                    transition-opacity duration-300 ease-in-out`}>
-                    {currentMediaIndex + 1}/{media.length}
+                  {/* Media counter for desktop only - hidden on mobile */}
+                  <div className={`absolute top-1 right-1 sm:top-3 sm:right-3 z-20 transition-all duration-300 hidden sm:block ${
+                    (isVideo && isPlaying) ? 'opacity-0 pointer-events-none' : 'opacity-100'
+                  }`}>
+                    <div className="bg-gradient-to-r from-black/50 to-gray-900/50 sm:from-black/60 sm:to-gray-900/60 backdrop-blur-sm 
+                      px-1.5 py-0.5 sm:px-3 sm:py-1.5 rounded-full border border-white/5 sm:border-white/10 
+                      text-white font-medium text-[10px] sm:text-xs
+                      shadow-sm sm:shadow-lg">
+                      <span className="text-blue-200">{currentMediaIndex + 1}</span>
+                      <span className="text-white/60 mx-0.5">/</span>
+                      <span className="text-white/80">{media.length}</span>
+                    </div>
                   </div>
+
+                  {/* Enhanced Progress bar for autoplay with subtle design */}
+                  {media.length > 1 && autoplay && !isPlaying && !isFullscreen && (
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-black/40 to-gray-900/40 z-20 overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-blue-400/80 to-purple-400/80 transition-all duration-300 ease-linear shadow-lg"
+                        style={{
+                          width: '0%',
+                          animation: 'progressBar 5s linear infinite',
+                          boxShadow: '0 0 8px rgba(96, 165, 250, 0.4)'
+                        }}
+                      ></div>
+                    </div>
+                  )}
                 </div>
                 
-                {/* Action buttons - Conditionally rendered based on available links */}
+                {/* Action buttons with modern styling */}
                 {(downloadLink || (liveLink && liveLink !== "#") || (sourceLink && sourceLink !== "#")) && (
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    {/* Download button with file type indicator */}
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                    {/* Download button with enhanced styling */}
                     {downloadLink && (
                       <a 
                         href={downloadInfo.url} 
                         target="_blank" 
                         rel="noopener noreferrer"
                         download
-                        className="w-full sm:flex-1 text-center py-3 bg-gradient-to-r from-green-600 to-teal-600 
-                          hover:from-green-700 hover:to-teal-700 text-white rounded-md text-sm font-medium 
-                          transition-all flex items-center justify-center gap-2"
+                        className="w-full sm:flex-1 text-center py-3 px-4 bg-gradient-to-r from-green-600 to-teal-600 
+                          hover:from-green-700 hover:to-teal-700 text-white rounded-xl text-sm font-medium 
+                          transition-all duration-300 flex items-center justify-center gap-2 shadow-lg 
+                          border border-green-500/20 hover:border-green-400/40"
                       >
                         {downloadFileInfo.icon}
                         <span>
@@ -1321,15 +1502,16 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                       </a>
                     )}
                     
-                    {/* Live Link button - only if valid link provided */}
+                    {/* Live Link button with enhanced styling */}
                     {liveLink && liveLink !== "#" && (
                       <a 
                         href={liveLink} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="w-full sm:flex-1 text-center py-3 bg-gradient-to-r from-blue-600 to-purple-600 
-                          hover:from-blue-700 hover:to-purple-700 text-white rounded-md text-sm font-medium 
-                          transition-all flex items-center justify-center gap-2"
+                        className="w-full sm:flex-1 text-center py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 
+                          hover:from-blue-700 hover:to-purple-700 text-white rounded-xl text-sm font-medium 
+                          transition-all duration-300 flex items-center justify-center gap-2 shadow-lg
+                          border border-blue-500/20 hover:border-blue-400/40"
                       >
                         Live Link
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1339,15 +1521,16 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                       </a>
                     )}
                     
-                    {/* Source Code button - only if valid link provided */}
+                    {/* Source Code button with enhanced styling */}
                     {sourceLink && sourceLink !== "#" && (
                       <a 
                         href={sourceLink} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="w-full sm:flex-1 text-center py-3 bg-[#1a1a1a] border border-[#333333] 
-                          hover:border-[#555555] text-white rounded-md text-sm font-medium 
-                          transition-colors flex items-center justify-center gap-2"
+                        className="w-full sm:flex-1 text-center py-3 px-4 bg-gradient-to-r from-gray-800 to-gray-900 
+                          hover:from-gray-700 hover:to-gray-800 text-white rounded-xl text-sm font-medium 
+                          transition-all duration-300 flex items-center justify-center gap-2 shadow-lg
+                          border border-gray-600/20 hover:border-gray-500/40"
                       >
                         Source Code
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1358,26 +1541,28 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     )}                  </div>
                 )}                {/* Mobile: Description below carousel and buttons */}
                 <div className="mt-6 mb-4 lg:hidden">
-                  <h3 className="text-lg font-semibold mb-3 bg-gradient-to-r from-blue-500 to-purple-600 
-                    bg-clip-text text-transparent">
-                    About
-                  </h3>
-                  <p className="text-gray-300 leading-relaxed text-base sm:text-[1rem]">
-                    {description}
-                  </p>
+                  <div className="bg-gradient-to-br from-gray-900/95 to-black/90 rounded-lg p-4 border border-blue-500/20">
+                    <h3 className="text-lg font-semibold mb-3 text-white drop-shadow-lg">
+                      About
+                    </h3>
+                    <p className="text-gray-100 leading-relaxed text-base sm:text-[1rem]">
+                      {description}
+                    </p>
+                  </div>
                 </div>
                 
-                {/* Tech Stack section - moved from right column */}
-                <div className="mt-0 mb-4">
-                  <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 
-                    bg-clip-text text-transparent">
-                    Built with
-                  </h2>
+                {/* Tech Stack section with modern styling */}
+                <div className="mt-6 mb-6">
+                  <div className="bg-gradient-to-br from-gray-900/95 to-black/90 rounded-lg p-4 border border-blue-500/20 mb-4">
+                    <h2 className="text-xl font-bold text-white drop-shadow-lg">
+                      Built with
+                    </h2>
+                  </div>
                   <div className="flex flex-wrap gap-2.5 max-w-full">
                     {techStack.map((tech, index) => (
                       <span 
                         key={index} 
-                        className="px-4 py-2.5 bg-black border border-[#27272a] rounded-full flex items-center justify-center text-gray-300 text-base whitespace-nowrap flex-shrink-0 min-w-0 cursor-pointer"
+                        className="px-4 py-2.5 bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-400/30 rounded-full flex items-center justify-center text-blue-200 text-base whitespace-nowrap flex-shrink-0 min-w-0 cursor-pointer hover:border-blue-300/50 transition-all duration-300 shadow-md"
                         onClick={(e) => handleTechIconClick(e, tech)}
                       >
                         {techIcons[tech] || null} 
@@ -1390,42 +1575,44 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               <div className="w-full lg:w-1/2 mt-4 lg:mt-0">
                 {/* Title and Description - hidden on mobile since it's shown above carousel */}
                 <div className="mb-8 hidden lg:block">
-                  <h2 className="text-2xl sm:text-3xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 
-                    bg-clip-text text-transparent leading-tight">
-                    {title}
-                  </h2>
-                  <p className="text-gray-300 leading-relaxed text-base sm:text-[1rem]">
-                    {description}
-                  </p>
+                  <div className="bg-gradient-to-br from-gray-900/95 to-black/90 rounded-lg p-4 border border-blue-500/20">
+                    <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-white drop-shadow-lg leading-tight">
+                      {title}
+                    </h2>
+                    <p className="text-gray-100 leading-relaxed text-base sm:text-[1rem]">
+                      {description}
+                    </p>
+                  </div>
                 </div>
                 
                 {/* Features section with code snippets support */}
                 <div className="mb-8">
-                  <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 
-                    bg-clip-text text-transparent">
-                    Features
-                  </h2>
+                  <div className="bg-gradient-to-br from-gray-900/95 to-black/90 rounded-lg p-4 border border-blue-500/20 mb-4">
+                    <h2 className="text-xl font-bold text-white drop-shadow-lg">
+                      Features
+                    </h2>
+                  </div>
                   <ul className="grid grid-cols-1 gap-6">
                     {features.map((feature, index) => (
-                      <li key={index} className="flex flex-col gap-3">
-                        <span className="text-purple-500 font-semibold text-sm sm:text-base bg-gradient-to-r from-blue-500 to-purple-600 
-                          bg-clip-text text-transparent">
+                      <li key={index} className="flex flex-col gap-3 bg-gradient-to-br from-gray-900/95 to-black/90 rounded-lg p-4 border border-blue-500/20">
+                        <span className="text-blue-200 font-semibold text-sm sm:text-base drop-shadow-lg">
                           {feature.title}
                         </span>
-                        <span className="text-gray-300 text-sm sm:text-base leading-relaxed">
+                        <span className="text-gray-100 text-sm sm:text-base leading-relaxed">
                           {feature.description}
-                        </span>                          {/* Feature-specific code snippet if available */}
+                        </span>                          {/* Feature-specific code snippet with modern styling */}
                         {feature.codeSnippet && (
-                          <div className="mt-6 w-full">                            {/* Collapsible header */}
+                          <div className="mt-6 w-full">
+                            {/* Enhanced collapsible header */}
                             <button
                               onClick={() => toggleCodeSnippet(`feature-${index}`)}
-                              className="group w-full flex items-center justify-between p-3 bg-[#1a1a1a] hover:bg-white border border-[#333] transition-colors text-left rounded-none"
+                              className="group w-full flex items-center justify-between p-4 bg-gradient-to-r from-gray-900/50 to-gray-800/50 hover:from-blue-900/30 hover:to-purple-900/30 border border-blue-400/20 hover:border-blue-300/40 transition-all duration-300 text-left rounded-xl shadow-lg"
                             >
-                              <span className="text-sm text-gray-300 font-medium group-hover:text-black transition-colors">
+                              <span className="text-sm text-blue-200 font-medium group-hover:text-blue-100 transition-colors">
                                 {feature.codeSnippet.title || 'Code Example'}
                               </span>
                               <svg 
-                                className={`w-4 h-4 text-gray-400 group-hover:text-black transition-all duration-200 ${
+                                className={`w-4 h-4 text-blue-400 group-hover:text-blue-300 transition-all duration-300 ${
                                   collapsedCodeSnippets[`feature-${index}`] ? 'rotate-0' : 'rotate-180'
                                 }`}
                                 fill="none" 
@@ -1434,26 +1621,28 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                               >
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                               </svg>
-                            </button>                              {/* Collapsible content */}
+                            </button>                            {/* Enhanced collapsible content */}
                             <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
                               collapsedCodeSnippets[`feature-${index}`] ? 'max-h-0' : 'max-h-[72rem]'
-                            }`}>                              <div className="relative overflow-hidden border-x border-b border-[#333]">
-                                <div className="max-h-[32rem] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
-                                  <pre className="w-full overflow-x-auto p-5 text-sm sm:text-[14px] leading-relaxed bg-[#1e1e1e]">
-                                    <code className={`language-${feature.codeSnippet.language || 'javascript'} font-mono`}>
+                            }`}>
+                              <div className="relative overflow-hidden border border-blue-400/20 rounded-xl mt-2 shadow-lg">
+                                <div className="max-h-[32rem] overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500/50 scrollbar-track-gray-800/50">
+                                  <pre className="w-full overflow-x-auto p-5 text-sm sm:text-[14px] leading-relaxed bg-gradient-to-br from-gray-900/80 to-black/90">
+                                    <code className={`language-${feature.codeSnippet.language || 'javascript'} font-mono text-gray-100`}>
                                       {feature.codeSnippet.code}
                                     </code>
                                   </pre>
-                                </div>                                {/* Copy button for code snippet */}
+                                </div>
+                                {/* Enhanced copy button */}
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     handleCopyCode(feature.codeSnippet!.code, `feature-${index}`);
                                   }}
-                                  className={`absolute top-2 right-2 p-2 rounded-md text-xs transition-all duration-150 ${
+                                  className={`absolute top-3 right-3 p-2.5 rounded-lg text-xs transition-all duration-200 shadow-lg ${
                                     pressedButton === `feature-${index}` 
-                                      ? 'scale-90 bg-white text-black' 
-                                      : 'bg-black/70 text-gray-200 hover:bg-white hover:text-black'
+                                      ? 'scale-90 bg-blue-500 text-white' 
+                                      : 'bg-gray-800/70 text-gray-200 hover:bg-blue-600/80 hover:text-white border border-blue-500/20'
                                   }`}
                                   aria-label="Copy code"
                                 >
@@ -1470,23 +1659,27 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     ))}
                   </ul>
                 </div>
+                <hr className="border-t border-blue-500/20 my-8" />
                 
-                <hr className="border-t border-[#2a2a2a] my-6" />
-                  {/* Main code snippet section if available */}
+                {/* Main code snippet section with modern styling */}
                 {codeSnippet && (
-                  <div className="mb-8">                    <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-600 
-                      bg-clip-text text-transparent">
-                      Code Snippet
-                    </h2>                    {/* Collapsible header */}
+                  <div className="mb-8">
+                    <div className="bg-gradient-to-br from-gray-900/95 to-black/90 rounded-lg p-4 border border-blue-500/20 mb-4">
+                      <h2 className="text-xl font-bold text-white drop-shadow-lg">
+                        Code Snippet
+                      </h2>
+                    </div>
+                    
+                    {/* Enhanced collapsible header */}
                     <button
                       onClick={() => toggleCodeSnippet('main')}
-                      className="group w-full flex items-center justify-between p-3 bg-[#1a1a1a] hover:bg-white border border-[#333] transition-colors text-left rounded-none"
+                      className="group w-full flex items-center justify-between p-4 bg-gradient-to-r from-gray-900/50 to-gray-800/50 hover:from-blue-900/30 hover:to-purple-900/30 border border-blue-400/20 hover:border-blue-300/40 transition-all duration-300 text-left rounded-xl shadow-lg"
                     >
-                      <span className="text-sm text-gray-300 font-medium group-hover:text-black transition-colors">
+                      <span className="text-sm text-blue-200 font-medium group-hover:text-blue-100 transition-colors">
                         {codeSnippet.title || 'Main Code Example'}
                       </span>
                       <svg 
-                        className={`w-4 h-4 text-gray-400 group-hover:text-black transition-all duration-200 ${
+                        className={`w-4 h-4 text-blue-400 group-hover:text-blue-300 transition-all duration-300 ${
                           collapsedCodeSnippets['main'] ? 'rotate-0' : 'rotate-180'
                         }`}
                         fill="none" 
@@ -1495,27 +1688,28 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                       >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
-                    </button>                      {/* Collapsible content */}
+                    </button>                    {/* Enhanced collapsible content */}
                     <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
                       collapsedCodeSnippets['main'] ? 'max-h-0' : 'max-h-[72rem]'
                     }`}>
-                      <div className="relative overflow-hidden border-x border-b border-[#333]">
-                        <div className="max-h-[32rem] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
-                          <pre className="w-full overflow-x-auto p-5 text-sm sm:text-[14px] leading-relaxed bg-[#1e1e1e]">
-                            <code className={`language-${codeSnippet.language || 'javascript'} font-mono`}>
+                      <div className="relative overflow-hidden border border-blue-400/20 rounded-xl mt-2 shadow-lg">
+                        <div className="max-h-[32rem] overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500/50 scrollbar-track-gray-800/50">
+                          <pre className="w-full overflow-x-auto p-5 text-sm sm:text-[14px] leading-relaxed bg-gradient-to-br from-gray-900/80 to-black/90">
+                            <code className={`language-${codeSnippet.language || 'javascript'} font-mono text-gray-100`}>
                               {codeSnippet.code}
                             </code>
                           </pre>
-                        </div>                        {/* Copy button for main code snippet */}
+                        </div>
+                        {/* Enhanced copy button */}
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             handleCopyCode(codeSnippet.code, 'main-code');
                           }}
-                          className={`absolute top-2 right-2 p-2 rounded-md text-xs transition-all duration-150 ${
+                          className={`absolute top-3 right-3 p-2.5 rounded-lg text-xs transition-all duration-200 shadow-lg ${
                             pressedButton === 'main-code' 
-                              ? 'scale-90 bg-white text-black' 
-                              : 'bg-black/70 text-gray-200 hover:bg-white hover:text-black'
+                              ? 'scale-90 bg-blue-500 text-white' 
+                              : 'bg-gray-800/70 text-gray-200 hover:bg-blue-600/80 hover:text-white border border-blue-500/20'
                           }`}
                           aria-label="Copy code"
                         >
@@ -1530,42 +1724,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 )}
                 
                 {/* Visual separator after code snippet */}
-                {codeSnippet && <hr className="border-t border-[#2a2a2a] my-6" />}
+                {codeSnippet && <hr className="border-t border-blue-500/20 my-8" />}
               </div>
             </div>
           </div>
         </div>      )}
-
-      {/* Image zoom modal - shown when an image is clicked */}
-      {zoomedImage && (
-        <div
-          className={`fixed inset-0 z-[2000] flex items-center justify-center bg-black/95 backdrop-blur-sm 
-            ${isZoomClosing ? 'animate-fadeOut' : 'animate-fadeIn'}`}
-          onClick={closeZoomModal}
-          style={{ cursor: 'zoom-out' }}
-        >
-          <button
-            onClick={closeZoomModal}
-            className="fixed top-4 right-4 z-[2010] bg-black/70 hover:bg-black/90 rounded-full p-3 w-10 h-10 flex items-center justify-center text-gray-300 hover:text-white transition-all duration-200 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            aria-label="Close zoomed image"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-          <div className="relative w-full h-full flex items-center justify-center">
-            <Image
-              src={zoomedImage}
-              alt="Zoomed preview"
-              fill
-              className="max-w-full max-h-full object-contain drop-shadow-2xl"
-              style={{ pointerEvents: 'none' }}
-              sizes="100vw"
-              priority
-            />
-          </div>
-        </div>
-      )}
     </>
   );
 };

@@ -1,33 +1,150 @@
 'use client';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ContactForm from '@/components/ContactForm';
 import { motion } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaFileAlt } from 'react-icons/fa';
+import styles from '@/styles/page.module.css';
+
+// Custom hook for window size with proper SSR handling
+function useWindowSize() {
+  // Initialize with undefined to handle SSR
+  const [windowSize, setWindowSize] = useState<{
+    width: number | undefined;
+    height: number | undefined;
+  }>({
+    width: undefined,
+    height: undefined,
+  });
+
+  useEffect(() => {
+    // Handler to call on window resize
+    function handleResize() {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    }
+    
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+    
+    // Call handler right away so state gets updated with initial window size
+    handleResize();
+    
+    // Remove event listener on cleanup
+    return () => window.removeEventListener('resize', handleResize);
+  }, []); // Empty array ensures that effect is only run on mount and unmount
+
+  return windowSize;
+}
 
 export default function Contact() {
-  return (
-    <div className="min-h-screen flex flex-col bg-black text-white"           style={{
-      backgroundImage: `
-        linear-gradient(to right, rgba(9,9,9,0.8) 2px, transparent 1px),
-        linear-gradient(to bottom, rgba(9,9,9,0.8) 1px, transparent 1px)
-      `,
-      backgroundSize: '20.5px 21px',
-            backgroundAttachment: 'fixed'
-    }}>
-      <Navbar />      <main className="flex-grow flex flex-col max-w-2xl mx-auto pt-20 pb-32 px-4 sm:px-6 md:px-8">
-        <div className="select-content p-4 sm:p-6 md:p-8 rounded-2xl shadow-lg w-full">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-4 sm:mb-6">Let&apos;s chat.</h1>
-          <p className="text-base sm:text-lg md:text-xl text-neutral-400 mb-8 sm:mb-10 md:mb-12">Send me a message, and I&apos;ll get back to you soon.</p>
+  const { width } = useWindowSize();
+  const [isMounted, setIsMounted] = useState(false);
 
-          <ContactForm />          <div className="flex justify-center space-x-4 sm:space-x-6 mt-6 sm:mt-8">
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Responsive breakpoints
+  const isXSmall = width !== undefined && width < 480;
+  const isSmall = width !== undefined && width >= 480 && width < 640;
+  const isMedium = width !== undefined && width >= 640 && width < 768;
+  const isLarge = width !== undefined && width >= 768 && width < 1024;
+
+  // Determine layout based on screen size
+  const isMobile = isXSmall || isSmall || isMedium || isLarge;
+  const isDesktop = !isMobile;
+
+  // Only render UI if mounted (avoids hydration mismatch)
+  if (!isMounted) {
+    return null;
+  }
+
+  return (
+    <div className={`min-h-screen xl:h-screen flex flex-col ${styles.container} ${styles.enhancedBackground} xl:overflow-hidden`}>
+      {/* Animated background grid */}
+      <div className={styles.backgroundGrid}></div>
+      
+      {/* Cosmic dust layer */}
+      <div className={styles.cosmicDust}></div>
+      
+      {/* Enhanced Space Starfield - 50 stars */}
+      <div className={styles.particleContainer}>
+        {Array.from({ length: 50 }, (_, i) => {
+          // Create a more natural distribution with more tiny/small stars
+          const weightedTypes = [
+            'starTiny', 'starTiny', 'starTiny', 'starTiny', 'starTiny',
+            'starWhite', 'starWhite', 'starWhite',
+            'starSmall', 'starSmall', 'starSmall',
+            'starCyan', 'starCyan',
+            'starMedium', 'starMedium',
+            'starLarge',
+            'starXLarge'
+          ];
+          const starType = weightedTypes[i % weightedTypes.length];
+          return (
+            <div 
+              key={i} 
+              className={`${styles.particle} ${styles[starType]} ${styles[`particle${i + 1}`]}`}
+            ></div>
+          );
+        })}
+      </div>
+
+      <Navbar />
+      
+      <main className="flex-1 flex flex-col justify-center items-center max-w-2xl mx-auto px-4 sm:px-6 md:px-8 relative z-10 pt-16 pb-20 sm:pb-8 xl:pb-48">
+        {/* Enhanced header section with animated title - smaller and more compact */}
+        <div className={`${styles.headerContainer} ${styles.headerContainerSmall}`}>
+          <div className={styles.titleWrapper}>
+            <h1 className={`${styles.name} ${isDesktop ? styles.nameDesktopSmall : styles.nameMobileSmall} ${styles.animatedTitle}`}>
+              <span className={styles.titleCharacter}>L</span>
+              <span className={styles.titleCharacter}>e</span>
+              <span className={styles.titleCharacter}>t</span>
+              <span className={styles.titleCharacter}>&apos;</span>
+              <span className={styles.titleCharacter}>s</span>
+              <span className={styles.titleCharacter}>&nbsp;</span>
+              <span className={styles.titleCharacter}>c</span>
+              <span className={styles.titleCharacter}>h</span>
+              <span className={styles.titleCharacter}>a</span>
+              <span className={styles.titleCharacter}>t</span>
+              <span className={styles.titleCharacter}>.</span>
+            </h1>
+            <div className={`${styles.titleUnderline} ${isDesktop ? styles.titleUnderlineDesktop : ''}`}></div>
+          </div>
+          
+          <h2 className={`${styles.subtitle} ${isDesktop ? styles.titleDesktopSmall : styles.titleMobileSmall}`}>
+            <span className={styles.subtitleText}>Send me a message, and I&apos;ll get back to you soon.</span>
+          </h2>
+          
+          {/* Floating accent elements */}
+          <div className={styles.accentDots}>
+            <div className={`${styles.accentDot} ${styles.accentDot1}`}></div>
+            <div className={`${styles.accentDot} ${styles.accentDot2}`}></div>
+            <div className={`${styles.accentDot} ${styles.accentDot3}`}></div>
+          </div>
+        </div>
+
+        {/* Contact form card with enhanced styling - more compact */}
+        <div className={`${styles.cardWrapper} ${styles.cardHover} ${styles.cardDelay0} select-content p-3 sm:p-4 md:p-6 rounded-2xl shadow-lg w-full`}>
+
+          <ContactForm />
+          
+          {/* Social links with gradient colors - more compact */}
+          <div className="flex justify-center space-x-3 sm:space-x-4 mt-4 sm:mt-6">
             <motion.a 
               href="https://github.com/Beer-de-Vreeze" 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="text-2xl sm:text-3xl"
-              whileHover={{ scale: 1.2 }}
+              className="text-2xl sm:text-3xl p-3 rounded-lg bg-gradient-to-br from-gray-600 to-gray-800 text-white hover:from-gray-500 hover:to-gray-700 transition-all duration-300 shadow-lg hover:shadow-xl"
+              whileHover={{ scale: 1.2, rotate: 5 }}
               whileTap={{ scale: 0.9 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.8, duration: 0.6 }}
             >
               <FaGithub />
             </motion.a>
@@ -35,18 +152,25 @@ export default function Contact() {
               href="https://www.linkedin.com/in/beer-de-vreeze-59040919a/" 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="text-2xl sm:text-3xl"
-              whileHover={{ scale: 1.2 }}
+              className="text-2xl sm:text-3xl p-3 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 text-white hover:from-blue-400 hover:to-blue-600 transition-all duration-300 shadow-lg hover:shadow-xl"
+              whileHover={{ scale: 1.2, rotate: -5 }}
               whileTap={{ scale: 0.9 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.9, duration: 0.6 }}
             >
               <FaLinkedin />
-            </motion.a>            <motion.a 
+            </motion.a>
+            <motion.a 
               href="https://bjeerpeer.itch.io/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-2xl sm:text-3xl"
-              whileHover={{ scale: 1.2 }}
+              className="text-2xl sm:text-3xl p-3 rounded-lg bg-gradient-to-br from-red-500 to-pink-600 text-white hover:from-red-400 hover:to-pink-500 transition-all duration-300 shadow-lg hover:shadow-xl"
+              whileHover={{ scale: 1.2, rotate: 5 }}
               whileTap={{ scale: 0.9 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 2.0, duration: 0.6 }}
             >
               <svg 
                 width="24" 
@@ -62,9 +186,12 @@ export default function Contact() {
               href="/downloads/Beer%20de%20Vreeze%20CV.pdf" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-2xl sm:text-3xl"
-              whileHover={{ scale: 1.2 }}
+              className="text-2xl sm:text-3xl p-3 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-white hover:from-emerald-400 hover:to-teal-500 transition-all duration-300 shadow-lg hover:shadow-xl"
+              whileHover={{ scale: 1.2, rotate: -5 }}
               whileTap={{ scale: 0.9 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 2.1, duration: 0.6 }}
             >
               <FaFileAlt />
             </motion.a>

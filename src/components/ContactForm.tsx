@@ -315,10 +315,23 @@ const ContactForm = ({ onEmailSent }: ContactFormProps) => {
         isVisible={notification.isVisible}
         onClose={handleCloseNotification}
       />
-      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6" noValidate>
+      <motion.form 
+        onSubmit={handleSubmit} 
+        className="space-y-3 sm:space-y-4" 
+        noValidate
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.4, duration: 0.8 }}
+      >
         {/* Render form fields dynamically for better maintainability */}
-        {formFields.map((field) => (
-          <div key={field.id} className="space-y-1">
+        {formFields.map((field, index) => (
+          <motion.div 
+            key={field.id} 
+            className="space-y-1"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 1.6 + index * 0.1, duration: 0.6 }}
+          >
             <input 
               id={field.id}
               name={field.id}
@@ -326,29 +339,47 @@ const ContactForm = ({ onEmailSent }: ContactFormProps) => {
               value={field.value}
               onChange={handleChange}
               placeholder={field.placeholder}
-              className="select-content rounded-2xl w-full h-12 sm:h-14 text-base sm:text-lg px-3 sm:px-4"
+              className="select-content rounded-2xl w-full h-10 sm:h-12 text-sm sm:text-base px-3 sm:px-4 
+                         backdrop-blur-sm bg-gray-900/50 border border-gray-700/50 
+                         focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 
+                         transition-all duration-300 placeholder-gray-400"
               required={field.required}
               aria-label={field['aria-label']}
               aria-invalid={!!field.error}
               aria-describedby={field.error ? `${field.id}-error` : undefined}
             />
             {field.error && (
-              <p id={`${field.id}-error`} className="text-red-400 text-sm" role="alert">
+              <motion.p 
+                id={`${field.id}-error`} 
+                className="text-red-400 text-xs sm:text-sm" 
+                role="alert"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
                 {field.error}
-              </p>
+              </motion.p>
             )}
-          </div>
+          </motion.div>
         ))}
 
-        {/* Message textarea with character counter */}
-        <div className="space-y-1">
+        {/* Message textarea with character counter - more compact */}
+        <motion.div 
+          className="space-y-1"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 2.0, duration: 0.6 }}
+        >
           <textarea 
             id="message"
             name="message"
             value={formData.message}
             onChange={handleChange}
             placeholder="Message *"
-            className="select-content rounded-2xl resize-none w-full h-28 sm:h-32 text-base sm:text-lg px-3 sm:px-4 py-2"
+            className="select-content rounded-2xl resize-none w-full h-28 sm:h-32 md:h-36 text-sm sm:text-base px-3 sm:px-4 py-2
+                       backdrop-blur-sm bg-gray-900/50 border border-gray-700/50 
+                       focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 
+                       transition-all duration-300 placeholder-gray-400"
             maxLength={maxCharLimit}
             required
             aria-label="Your message"
@@ -356,29 +387,48 @@ const ContactForm = ({ onEmailSent }: ContactFormProps) => {
             aria-describedby={errors.message ? 'message-error' : 'message-counter'}
           />
           <div className="flex justify-between items-center">
-            <div id="message-counter" className="text-right text-xs sm:text-sm text-neutral-500">
+            <div id="message-counter" className="text-right text-xs text-neutral-500">
               {charCount}/{maxCharLimit}
             </div>
             {charCount > maxCharLimit * 0.9 && (
-              <div className="text-xs text-amber-400">
+              <motion.div 
+                className="text-xs text-amber-400"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              >
                 {maxCharLimit - charCount} characters remaining
-              </div>
+              </motion.div>
             )}
           </div>
           {errors.message && (
-            <p id="message-error" className="text-red-400 text-sm" role="alert">
+            <motion.p 
+              id="message-error" 
+              className="text-red-400 text-xs sm:text-sm" 
+              role="alert"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
               {errors.message}
-            </p>
+            </motion.p>
           )}
-        </div>
+        </motion.div>
 
-        {/* Submit button with improved accessibility and animations */}
+        {/* Submit button with improved accessibility and animations - more compact */}
         <motion.button 
           type="submit" 
           disabled={isSubmitting}
-          className="select-content rounded-2xl w-full h-12 sm:h-14 text-base sm:text-lg text-center cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2"
+          className="select-content rounded-2xl w-full h-10 sm:h-12 text-sm sm:text-base text-center cursor-pointer 
+                     disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2
+                     backdrop-blur-sm bg-gradient-to-r from-blue-600/80 to-purple-600/80 border border-blue-500/30
+                     hover:from-blue-500/90 hover:to-purple-500/90 hover:border-blue-400/50 hover:shadow-lg hover:shadow-blue-500/25
+                     focus:ring-2 focus:ring-blue-500/50 focus:outline-none"
           whileHover={{ scale: isSubmitting ? 1 : 1.05 }}
           whileTap={{ scale: isSubmitting ? 1 : 0.95 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 2.2, duration: 0.6 }}
           aria-label={isSubmitting ? 'Sending message' : 'Send message'}
         >
           {isSubmitting && (
@@ -386,7 +436,7 @@ const ContactForm = ({ onEmailSent }: ContactFormProps) => {
           )}
           {isSubmitting ? 'Sending...' : 'Send Message'}
         </motion.button>
-      </form>
+      </motion.form>
     </>
   );
 };

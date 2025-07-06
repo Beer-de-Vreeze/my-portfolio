@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import Image from 'next/image';
 
 // Enhanced TypeScript interface with readonly properties for better type safety
@@ -108,6 +109,8 @@ const EducationCard: React.FC = () => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && modalState.isOpen) {
+        e.preventDefault();
+        e.stopPropagation();
         toggleModal(null);
       }
     };
@@ -117,6 +120,13 @@ const EducationCard: React.FC = () => {
       
       // Prevent body scroll when modal is open
       document.body.style.overflow = 'hidden';
+      
+      // Focus the close button when modal opens
+      setTimeout(() => {
+        if (closeButtonRef.current) {
+          closeButtonRef.current.focus();
+        }
+      }, 100);
     } else {
       document.body.style.overflow = '';
     }
@@ -128,21 +138,26 @@ const EducationCard: React.FC = () => {
   }, [modalState.isOpen, toggleModal]);
 
   return (
-    <div className="w-full max-w-[800px]">
-      <div className="w-full max-w-[800px] bg-black border border-[#27272a] rounded-lg shadow-lg p-4">
-        <div className="flex justify-between items-center border-b border-[#27272a] pb-3 mb-4">
-          <h1 className="text-xl font-semibold text-white gradient-text">Education</h1>
-        </div>
+    <>
+      <div className="w-full max-w-none sm:max-w-[800px] mx-auto">
+        <div className="w-full bg-gradient-to-br from-gray-900/60 to-black/80 border border-blue-500/20 rounded-2xl shadow-xl backdrop-blur-sm p-3 sm:p-4 md:p-6 relative overflow-hidden group">
+          {/* Enhanced background pattern */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          
+          <div className="relative z-10 w-full">
+            <div className="flex justify-between items-center border-b border-blue-500/20 pb-3 sm:pb-4 mb-4 sm:mb-6">
+              <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-white bg-gradient-to-r from-white to-blue-100 bg-clip-text">Education</h1>
+            </div>
         
         <div 
-          className="grid grid-cols-1 md:grid-cols-2 gap-4"
+          className="grid grid-cols-1 gap-3 sm:gap-4"
           role="region"
           aria-label="Education timeline"
         >
           {schools.map((school, index) => (
             <button
               key={`${school.name}-${index}`}
-              className="relative flex items-center p-3 pb-8 bg-black hover:bg-black focus:bg-black border border-[#27272a] rounded-lg shadow-md transition-all duration-300 hover:scale-105 hover:border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-black cursor-pointer text-left w-full"
+              className="relative flex items-center p-3 sm:p-4 pb-8 sm:pb-10 bg-gradient-to-br from-blue-900/20 to-purple-900/20 border border-blue-400/20 rounded-xl shadow-lg transition-all duration-300 hover:scale-105 hover:border-blue-300/40 hover:shadow-blue-500/20 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-transparent cursor-pointer text-left w-full backdrop-blur-sm group/card"
               onClick={() => toggleModal(school)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -154,66 +169,84 @@ const EducationCard: React.FC = () => {
               aria-describedby={`education-${index}`}
               type="button"
             >
-              <div className="rounded-lg mr-4" aria-hidden="true">
+              <div className="rounded-xl mr-3 sm:mr-4 overflow-hidden border border-blue-400/20 shadow-lg group-hover/card:border-blue-300/40 transition-all duration-300 flex-shrink-0" aria-hidden="true">
                 <Image 
                   src={school.logo} 
                   alt={`${school.name} logo`} 
-                  width={80} 
-                  height={80} 
-                  className="object-cover"
+                  width={60} 
+                  height={60} 
+                  className="w-[60px] h-[60px] sm:w-[80px] sm:h-[80px] object-cover transition-transform duration-300 group-hover/card:scale-105"
                   priority={index < 2}
                 />
               </div>
-              <div className="flex-1" id={`education-${index}`}>
-                <h3 className="text-white font-semibold">{school.name}</h3>
-                <p className="text-gray-400 text-sm font-light">{school.subtitle}</p>
+              <div className="flex-1 min-w-0" id={`education-${index}`}>
+                <h3 className="text-blue-100 font-bold text-base sm:text-lg group-hover/card:text-white transition-colors duration-300 truncate">{school.name}</h3>
+                <p className="text-blue-200/70 text-sm font-medium group-hover/card:text-blue-100 transition-colors duration-300">{school.subtitle}</p>
               </div>
-              <div className="absolute bottom-2 right-2" aria-hidden="true">
-                <span className="px-2 py-0.5 text-xs bg-black border border-[#27272a] rounded-full text-gray-300">
+              <div className="absolute bottom-2 sm:bottom-3 right-2 sm:right-3" aria-hidden="true">
+                <span className="px-2 sm:px-3 py-1 text-xs bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-400/30 rounded-full text-blue-200 backdrop-blur-sm group-hover/card:from-blue-400/30 group-hover/card:to-purple-400/30 group-hover/card:text-blue-100 transition-all duration-300">
                   {school.educationType || 'Education'}
                 </span>
               </div>
             </button>
           ))}
         </div>
+        </div>
+      </div>
       </div>
 
-      {/* Enhanced Modal with improved accessibility, performance, and fade animations */}
-      {modalState.isOpen && activeSchool && (
+      {/* Enhanced Modal with improved accessibility, performance, and fade animations - Now positioned relative to viewport */}
+      {modalState.isOpen && activeSchool && typeof document !== 'undefined' && createPortal(
         <div 
-          className={`fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 transition-all duration-300 ${
+          className={`fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[9999] transition-all duration-300 ${
             modalState.isAnimatingOut 
               ? 'animate-fadeOut opacity-0' 
               : 'animate-fadeIn opacity-100'
           }`}
-          onClick={() => toggleModal(null)}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleModal(null);
+          }}
           role="dialog"
           aria-modal="true"
           aria-labelledby="modal-title"
           aria-describedby="modal-content"
+          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
         >
           <div 
-            className={`bg-black border border-[#27272a] text-white rounded-lg max-w-2xl w-full mx-4 relative shadow-lg transform transition-all duration-300 ${
+            className={`bg-gradient-to-br from-gray-900/95 to-black/95 border border-blue-500/30 text-white rounded-2xl max-w-2xl w-full mx-3 sm:mx-4 max-h-[90vh] overflow-y-auto relative shadow-2xl shadow-blue-500/10 backdrop-blur-md transform transition-all duration-300 ${
               modalState.isAnimatingOut 
                 ? 'animate-fadeOut opacity-0 scale-95 translate-y-4' 
                 : 'animate-fadeIn opacity-100 scale-100 translate-y-0'
             }`}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
           >
+            {/* Enhanced background pattern */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-2xl"></div>
+            
             {/* Enhanced close button with better accessibility */}
             <button 
               ref={closeButtonRef}
-              onClick={() => toggleModal(null)}
-              className="absolute top-4 right-4 z-10 bg-black/70 hover:bg-black/90 
-                rounded-full p-3 w-10 h-10 flex items-center justify-center
-                text-gray-300 hover:text-white transition-all duration-200
-                shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-black"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleModal(null);
+              }}
+              className="sticky top-3 sm:absolute sm:top-4 right-3 sm:right-4 z-[10000] bg-blue-900/50 hover:bg-blue-800/70 
+                rounded-full p-2 sm:p-3 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center
+                text-blue-200 hover:text-white transition-all duration-200
+                shadow-lg backdrop-blur-sm border border-blue-500/30 focus:outline-none focus:ring-2 focus:ring-blue-400/50 cursor-pointer ml-auto mb-2 sm:mb-0"
               aria-label={`Close ${activeSchool.name} details dialog`}
               type="button"
             >
               <svg 
-                width="20" 
-                height="20" 
+                width="16" 
+                height="16" 
+                className="sm:w-5 sm:h-5"
                 viewBox="0 0 24 24" 
                 fill="none" 
                 xmlns="http://www.w3.org/2000/svg"
@@ -229,64 +262,67 @@ const EducationCard: React.FC = () => {
               </svg>
             </button>
             
-            <div className="p-6 relative" id="modal-content">
-              <div className="flex items-start mb-4">
-                <div className="rounded-lg mr-4" aria-hidden="true">
+            <div className="p-4 sm:p-6 lg:p-8 relative z-10" id="modal-content">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center mb-4 sm:mb-6">
+                <div className="rounded-xl mb-3 sm:mb-0 sm:mr-4 lg:mr-6 overflow-hidden border border-blue-400/20 shadow-lg mx-auto sm:mx-0" aria-hidden="true">
                   <Image 
                     src={activeSchool.logo} 
                     alt={`${activeSchool.name} logo`} 
-                    width={96} 
-                    height={96} 
-                    className="object-cover" 
+                    width={80} 
+                    height={80}
+                    className="w-20 h-20 sm:w-24 sm:h-24 lg:w-24 lg:h-24 object-cover" 
                   />
                 </div>
-                <div>
-                  <div className="flex items-center gap-3 mb-1">
-                    <h2 id="modal-title" className="text-xl font-semibold text-white">
+                <div className="text-center sm:text-left">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
+                    <h2 id="modal-title" className="text-xl sm:text-2xl font-bold text-blue-100">
                       {activeSchool.name}
                     </h2>
                     {activeSchool.educationType && (
                       <span 
-                        className="px-2 py-0.5 text-xs bg-black border border-[#27272a] rounded-full text-gray-300 shadow-md"
+                        className="px-2 sm:px-3 py-1 text-xs bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-400/30 rounded-full text-blue-200 shadow-md backdrop-blur-sm mx-auto sm:mx-0 w-fit"
                         aria-label={`Education type: ${activeSchool.educationType}`}
                       >
                         {activeSchool.educationType}
                       </span>
                     )}
                   </div>
-                  <p className="text-gray-400 font-light">
+                  <p className="text-blue-200/80 font-medium text-base sm:text-lg">
                     {activeSchool.subtitle}
                     {activeSchool.finishedDate && (
-                      <span className="ml-2 text-sm">• {activeSchool.finishedDate}</span>
+                      <span className="block sm:inline sm:ml-3 text-sm text-blue-300/70 mt-1 sm:mt-0">• {activeSchool.finishedDate}</span>
                     )}
                   </p>
                 </div>
               </div>
               
               {activeSchool.program && (
-                <section className="mt-6" aria-labelledby="program-heading">
-                  <h3 id="program-heading" className="text-lg font-semibold text-white mb-2">
+                <section className="mt-6 sm:mt-8" aria-labelledby="program-heading">
+                  <h3 id="program-heading" className="text-lg sm:text-xl font-bold text-blue-100 mb-3 sm:mb-4">
                     Program included:
                   </h3>
-                  <ul className="space-y-1 font-mono text-gray-300 text-sm list-disc list-inside">
+                  <ul className="space-y-2 sm:space-y-3 text-blue-50/90 text-sm leading-relaxed">
                     {activeSchool.program.map((item, index) => (
-                      <li key={`program-${index}`}>{item}</li>
+                      <li key={`program-${index}`} className="flex items-start">
+                        <span className="inline-block w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-blue-400 mt-2 mr-2 sm:mr-3 flex-shrink-0"></span>
+                        <span>{item}</span>
+                      </li>
                     ))}
                   </ul>
                 </section>
               )}
               
               {activeSchool.technologies && (
-                <section className="mt-6" aria-labelledby="technologies-heading">
-                  <h3 id="technologies-heading" className="sr-only">Technologies and skills</h3>
-                  <div className="flex flex-wrap gap-2" role="list" aria-label="Technologies and skills learned">
+                <section className="mt-6 sm:mt-8" aria-labelledby="technologies-heading">
+                  <h3 id="technologies-heading" className="text-lg sm:text-xl font-bold text-blue-100 mb-3 sm:mb-4">Skills & Technologies:</h3>
+                  <div className="flex flex-wrap gap-2 sm:gap-3" role="list" aria-label="Technologies and skills learned">
                     {activeSchool.technologies.map((tech) => (
                       <div 
                         key={tech} 
-                        className="px-3 py-1 bg-black border border-[#27272a] rounded-full flex items-center gap-1.5 shadow-md"
+                        className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-400/30 rounded-full flex items-center gap-2 shadow-md backdrop-blur-sm hover:border-blue-300/50 transition-colors duration-200"
                         role="listitem"
                       >
-                        <span className="text-sm font-light text-gray-300">{tech}</span>
+                        <span className="text-xs sm:text-sm font-medium text-blue-200">{tech}</span>
                       </div>
                     ))}
                   </div>
@@ -294,9 +330,10 @@ const EducationCard: React.FC = () => {
               )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
-    </div>
+    </>
   );
 };
 

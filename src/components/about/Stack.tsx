@@ -33,10 +33,16 @@ const Stack = () => {
 
 
   return (
-    <div className="flex flex-col space-y-8">
-      <SkillCard />
-      <EducationCard />
-      <JourneyCard steps={journeySteps} />
+    <div className="flex flex-col space-y-3 sm:space-y-4 md:space-y-6 p-2 sm:p-4 md:p-6 w-full">
+      <div className="animate-stackSlideIn w-full">
+        <SkillCard />
+      </div>
+      <div className="animate-stackSlideIn w-full">
+        <EducationCard />
+      </div>
+      <div className="animate-stackSlideIn w-full">
+        <JourneyCard steps={journeySteps} />
+      </div>
     </div>
   );
 };

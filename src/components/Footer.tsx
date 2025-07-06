@@ -1,32 +1,84 @@
-const Footer: React.FC = () => {
+'use client';
 
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Mail } from 'lucide-react';
+
+const Footer: React.FC = () => {
   return (
     <footer 
-      className="fixed bottom-0 left-0 right-0 bg-black text-white py-4 flex justify-center items-center border-t border-[#27272a] z-50"
+      className="fixed bottom-0 left-0 right-0 bg-black/95 backdrop-blur-xl text-white py-4 flex justify-center items-center border-t border-gray-800/50 z-50"
       role="contentinfo"
       aria-label="Site footer"
     >
-      <div className="w-full max-w-5xl flex flex-row justify-between items-center gap-2 sm:gap-3 px-2 sm:px-4">
+      {/* Animated background pattern */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div 
-          className="px-2 sm:px-4 py-2 bg-black border border-[#27272a] rounded-full flex items-center justify-center flex-shrink"
+          className="absolute inset-0 opacity-20"
+          style={{
+            backgroundImage: `
+              linear-gradient(45deg, rgba(59, 130, 246, 0.02) 1px, transparent 1px),
+              linear-gradient(-45deg, rgba(139, 92, 246, 0.02) 1px, transparent 1px)
+            `,
+            backgroundSize: '20px 20px',
+            animation: 'gridShift 25s linear infinite reverse'
+          }}
+        />
+      </div>
+
+      <div className="w-full max-w-5xl flex flex-row justify-between items-center gap-2 sm:gap-3 px-2 sm:px-4 relative z-10">
+        <div 
+          className="relative"
           role="text"
           aria-label="Copyright information"
         >
-          <span className="tracking-tighter font-extralight text-xs sm:text-sm lg:text-lg">
-            © Beer de Vreeze
-          </span>
+          <div className="relative px-2 sm:px-4 py-2 bg-gradient-to-r from-gray-900/80 to-gray-800/80 border border-gray-700/50 rounded-full flex items-center justify-center backdrop-blur-sm">
+            <span className="relative tracking-tighter font-extralight text-xs sm:text-sm lg:text-lg text-gray-300">
+              © Beer de Vreeze
+            </span>
+          </div>
         </div>
-        <a
+
+        <motion.a
           href="mailto:beer@vreeze.com"
-          className="px-2 sm:px-4 py-2 bg-black border border-[#27272a] rounded-full flex items-center justify-center transition-all duration-300 hover:bg-gray-800 hover:border-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-black flex-shrink min-w-0"
+          whileHover={{ scale: 1.02, y: -1 }}
+          whileTap={{ scale: 0.98 }}
+          className="group relative flex-shrink min-w-0"
           aria-label="Send email to Beer de Vreeze"
           title="Contact Beer de Vreeze via email"
         >
-          <span className="tracking-tighter font-extralight text-xs sm:text-sm lg:text-lg truncate">
-            beer@vreeze.com
-          </span>
-        </a>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300" />
+          <div className="relative px-2 sm:px-4 py-2 bg-gradient-to-r from-gray-900/80 to-gray-800/80 border border-gray-700/50 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-300 group-hover:border-blue-500/30 group-hover:bg-gradient-to-r group-hover:from-gray-800/90 group-hover:to-gray-700/90">
+            {/* Enhanced glow effect for email */}
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500/0 to-purple-500/0 group-hover:from-blue-500/10 group-hover:to-purple-500/10 transition-all duration-300" />
+            
+            <Mail size={16} className="mr-2 text-gray-400 group-hover:text-blue-400 transition-all duration-300 group-hover:scale-110" />
+            <span className="relative tracking-tighter font-extralight text-xs sm:text-sm lg:text-lg truncate text-gray-300 group-hover:text-white transition-colors duration-300">
+              beer@vreeze.com
+            </span>
+            
+            {/* Enhanced particle effects for email */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+              <div className="absolute top-1/2 left-1/3 w-0.5 h-0.5 bg-blue-400/70 rounded-full animate-ping" 
+                   style={{ animationDelay: '0ms' }} />
+              <div className="absolute top-1/4 right-1/3 w-1 h-1 bg-purple-400/50 rounded-full animate-ping" 
+                   style={{ animationDelay: '150ms' }} />
+              <div className="absolute bottom-1/4 left-1/2 w-0.5 h-0.5 bg-pink-400/60 rounded-full animate-ping" 
+                   style={{ animationDelay: '300ms' }} />
+            </div>
+            
+            {/* Ripple effect */}
+            <div className="absolute inset-0 rounded-full border border-blue-400/0 group-hover:border-blue-400/20 group-hover:animate-ping transition-all duration-300" />
+          </div>
+        </motion.a>
       </div>
+
+      <style jsx>{`
+        @keyframes gridShift {
+          0% { transform: translate(0, 0); }
+          100% { transform: translate(20px, 20px); }
+        }
+      `}</style>
     </footer>
   );
 };

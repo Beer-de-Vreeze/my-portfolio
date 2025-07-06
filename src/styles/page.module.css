@@ -1,4 +1,5 @@
 .container {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -6,12 +7,620 @@
   min-height: 100vh;
   padding-left: 0.5rem;
   padding-right: 0.5rem;
-  background-color: black;
+  background: radial-gradient(
+    ellipse at center,
+    #111111 0%,
+    #000000 70%,
+    #000000 100%
+  );
   color: white;
   padding-top: 1rem;
   padding-bottom: 2rem;
   width: 100%;
   gap: 1.5rem;
+  overflow: hidden;
+}
+
+/* Enhanced background with cosmic patterns */
+.enhancedBackground::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    /* Distant nebula effects */ radial-gradient(
+      ellipse 800px 400px at 20% 30%,
+      rgba(59, 130, 246, 0.12) 0%,
+      rgba(59, 130, 246, 0.08) 25%,
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse 600px 300px at 80% 20%,
+      rgba(139, 92, 246, 0.15) 0%,
+      rgba(139, 92, 246, 0.1) 30%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 700px 350px at 40% 80%,
+      rgba(236, 72, 153, 0.12) 0%,
+      rgba(236, 72, 153, 0.08) 35%,
+      transparent 65%
+    ),
+    /* Additional cosmic dust clouds */
+      radial-gradient(
+        ellipse 500px 200px at 70% 60%,
+        rgba(6, 182, 212, 0.08) 0%,
+        rgba(6, 182, 212, 0.04) 40%,
+        transparent 70%
+      ),
+    radial-gradient(
+      ellipse 400px 600px at 10% 70%,
+      rgba(245, 158, 11, 0.06) 0%,
+      rgba(245, 158, 11, 0.03) 45%,
+      transparent 80%
+    );
+  pointer-events: none;
+  z-index: 1;
+  animation: nebulaShift 30s ease-in-out infinite;
+}
+
+@keyframes nebulaShift {
+  0%,
+  100% {
+    opacity: 0.8;
+    transform: translateX(0) translateY(0) scale(1);
+  }
+  25% {
+    opacity: 1;
+    transform: translateX(10px) translateY(-5px) scale(1.02);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translateX(20px) translateY(0) scale(1.04);
+  }
+  75% {
+    opacity: 1;
+    transform: translateX(15px) translateY(8px) scale(1.01);
+  }
+}
+
+/* Animated background grid */
+.backgroundGrid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: 60px 60px;
+  background-image: linear-gradient(
+      to right,
+      rgba(59, 130, 246, 0.05) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(59, 130, 246, 0.05) 1px, transparent 1px);
+  animation: gridMove 20s linear infinite;
+  z-index: 1;
+}
+
+@keyframes gridMove {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(60px, 60px);
+  }
+}
+
+/* Floating particles - Star-like effect */
+.particleContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.8;
+}
+
+/* Star-like particles with varying sizes and colors - Space Theme */
+.starTiny {
+  width: 1px;
+  height: 1px;
+  background: #ffffff;
+  box-shadow: 0 0 2px #ffffff, 0 0 4px #60a5fa;
+}
+
+.starSmall {
+  width: 2px;
+  height: 2px;
+  background: #3b82f6;
+  box-shadow: 0 0 4px #3b82f6, 0 0 8px #3b82f6, 0 0 12px rgba(59, 130, 246, 0.3);
+}
+
+.starMedium {
+  width: 3px;
+  height: 3px;
+  background: #8b5cf6;
+  box-shadow: 0 0 6px #8b5cf6, 0 0 12px #8b5cf6,
+    0 0 18px rgba(139, 92, 246, 0.4);
+}
+
+.starLarge {
+  width: 4px;
+  height: 4px;
+  background: #ec4899;
+  box-shadow: 0 0 8px #ec4899, 0 0 16px #ec4899,
+    0 0 24px rgba(236, 72, 153, 0.5);
+}
+
+.starXLarge {
+  width: 5px;
+  height: 5px;
+  background: #f59e0b;
+  box-shadow: 0 0 10px #f59e0b, 0 0 20px #f59e0b,
+    0 0 30px rgba(245, 158, 11, 0.6);
+}
+
+.starWhite {
+  width: 1.5px;
+  height: 1.5px;
+  background: #ffffff;
+  box-shadow: 0 0 3px #ffffff, 0 0 6px rgba(255, 255, 255, 0.8);
+}
+
+.starCyan {
+  width: 2.5px;
+  height: 2.5px;
+  background: #06b6d4;
+  box-shadow: 0 0 5px #06b6d4, 0 0 10px #06b6d4, 0 0 15px rgba(6, 182, 212, 0.4);
+}
+
+.particle1 {
+  top: 15%;
+  left: 8%;
+  animation: twinkle1 4s ease-in-out infinite, float1 8s ease-in-out infinite;
+}
+
+.particle2 {
+  top: 25%;
+  left: 85%;
+  animation: twinkle2 3s ease-in-out infinite, float2 10s ease-in-out infinite;
+}
+
+.particle3 {
+  top: 45%;
+  left: 15%;
+  animation: twinkle3 5s ease-in-out infinite, float3 12s ease-in-out infinite;
+}
+
+.particle4 {
+  top: 70%;
+  left: 75%;
+  animation: twinkle4 3.5s ease-in-out infinite, float4 9s ease-in-out infinite;
+}
+
+.particle5 {
+  top: 10%;
+  left: 60%;
+  animation: twinkle5 4.5s ease-in-out infinite, float5 11s ease-in-out infinite;
+}
+
+.particle6 {
+  top: 80%;
+  left: 25%;
+  animation: twinkle6 2.8s ease-in-out infinite, float6 7s ease-in-out infinite;
+}
+
+.particle7 {
+  top: 35%;
+  left: 92%;
+  animation: twinkle1 3.2s ease-in-out infinite,
+    float1 9.5s ease-in-out infinite;
+}
+
+.particle8 {
+  top: 65%;
+  left: 5%;
+  animation: twinkle2 4.8s ease-in-out infinite,
+    float2 8.5s ease-in-out infinite;
+}
+
+.particle9 {
+  top: 20%;
+  left: 40%;
+  animation: twinkle3 3.7s ease-in-out infinite,
+    float3 10.5s ease-in-out infinite;
+}
+
+.particle10 {
+  top: 55%;
+  left: 55%;
+  animation: twinkle4 5.2s ease-in-out infinite,
+    float4 7.8s ease-in-out infinite;
+}
+
+.particle11 {
+  top: 90%;
+  left: 45%;
+  animation: twinkle5 2.9s ease-in-out infinite,
+    float5 12.5s ease-in-out infinite;
+}
+
+.particle12 {
+  top: 5%;
+  left: 20%;
+  animation: twinkle6 4.1s ease-in-out infinite,
+    float6 9.2s ease-in-out infinite;
+}
+
+.particle13 {
+  top: 75%;
+  left: 10%;
+  animation: twinkle1 3.6s ease-in-out infinite,
+    float1 11.8s ease-in-out infinite;
+}
+
+.particle14 {
+  top: 40%;
+  left: 70%;
+  animation: twinkle2 5.5s ease-in-out infinite,
+    float2 8.8s ease-in-out infinite;
+}
+
+.particle15 {
+  top: 85%;
+  left: 80%;
+  animation: twinkle3 2.7s ease-in-out infinite,
+    float3 10.2s ease-in-out infinite;
+}
+
+.particle16 {
+  top: 30%;
+  left: 35%;
+  animation: twinkle4 4.3s ease-in-out infinite,
+    float4 9.7s ease-in-out infinite;
+}
+
+.particle17 {
+  top: 60%;
+  left: 90%;
+  animation: twinkle5 3.4s ease-in-out infinite,
+    float5 8.1s ease-in-out infinite;
+}
+
+.particle18 {
+  top: 12%;
+  left: 75%;
+  animation: twinkle6 5.1s ease-in-out infinite,
+    float6 11.3s ease-in-out infinite;
+}
+
+.particle19 {
+  top: 95%;
+  left: 15%;
+  animation: twinkle1 3.8s ease-in-out infinite,
+    float1 9.4s ease-in-out infinite;
+}
+
+.particle20 {
+  top: 50%;
+  left: 3%;
+  animation: twinkle2 4.6s ease-in-out infinite,
+    float2 10.7s ease-in-out infinite;
+}
+
+.particle21 {
+  top: 8%;
+  left: 45%;
+  animation: twinkle3 2.5s ease-in-out infinite,
+    float3 8.9s ease-in-out infinite;
+}
+
+.particle22 {
+  top: 33%;
+  left: 88%;
+  animation: twinkle4 5.3s ease-in-out infinite,
+    float4 12.1s ease-in-out infinite;
+}
+
+.particle23 {
+  top: 77%;
+  left: 52%;
+  animation: twinkle5 3.1s ease-in-out infinite,
+    float5 7.6s ease-in-out infinite;
+}
+
+.particle24 {
+  top: 18%;
+  left: 12%;
+  animation: twinkle6 4.9s ease-in-out infinite,
+    float6 11.7s ease-in-out infinite;
+}
+
+.particle25 {
+  top: 63%;
+  left: 78%;
+  animation: twinkle1 2.3s ease-in-out infinite,
+    float1 9.8s ease-in-out infinite;
+}
+
+.particle26 {
+  top: 41%;
+  left: 25%;
+  animation: twinkle2 5.7s ease-in-out infinite,
+    float2 8.3s ease-in-out infinite;
+}
+
+.particle27 {
+  top: 87%;
+  left: 67%;
+  animation: twinkle3 3.9s ease-in-out infinite,
+    float3 10.9s ease-in-out infinite;
+}
+
+.particle28 {
+  top: 26%;
+  left: 58%;
+  animation: twinkle4 4.2s ease-in-out infinite,
+    float4 7.4s ease-in-out infinite;
+}
+
+.particle29 {
+  top: 72%;
+  left: 8%;
+  animation: twinkle5 2.8s ease-in-out infinite,
+    float5 12.8s ease-in-out infinite;
+}
+
+.particle30 {
+  top: 14%;
+  left: 82%;
+  animation: twinkle6 5.4s ease-in-out infinite,
+    float6 9.1s ease-in-out infinite;
+}
+
+.particle31 {
+  top: 58%;
+  left: 38%;
+  animation: twinkle1 3.3s ease-in-out infinite,
+    float1 11.2s ease-in-out infinite;
+}
+
+.particle32 {
+  top: 92%;
+  left: 73%;
+  animation: twinkle2 4.7s ease-in-out infinite,
+    float2 8.7s ease-in-out infinite;
+}
+
+.particle33 {
+  top: 37%;
+  left: 18%;
+  animation: twinkle3 2.6s ease-in-out infinite,
+    float3 10.4s ease-in-out infinite;
+}
+
+.particle34 {
+  top: 81%;
+  left: 93%;
+  animation: twinkle4 5.8s ease-in-out infinite,
+    float4 9.6s ease-in-out infinite;
+}
+
+.particle35 {
+  top: 23%;
+  left: 48%;
+  animation: twinkle5 3.5s ease-in-out infinite,
+    float5 8.2s ease-in-out infinite;
+}
+
+.particle36 {
+  top: 67%;
+  left: 13%;
+  animation: twinkle6 4.4s ease-in-out infinite,
+    float6 11.9s ease-in-out infinite;
+}
+
+.particle37 {
+  top: 11%;
+  left: 63%;
+  animation: twinkle1 2.9s ease-in-out infinite,
+    float1 7.8s ease-in-out infinite;
+}
+
+.particle38 {
+  top: 54%;
+  left: 83%;
+  animation: twinkle2 5.2s ease-in-out infinite,
+    float2 12.3s ease-in-out infinite;
+}
+
+.particle39 {
+  top: 96%;
+  left: 28%;
+  animation: twinkle3 3.7s ease-in-out infinite,
+    float3 9.5s ease-in-out infinite;
+}
+
+.particle40 {
+  top: 42%;
+  left: 6%;
+  animation: twinkle4 4.8s ease-in-out infinite,
+    float4 10.8s ease-in-out infinite;
+}
+
+.particle41 {
+  top: 78%;
+  left: 48%;
+  animation: twinkle5 2.4s ease-in-out infinite,
+    float5 8.6s ease-in-out infinite;
+}
+
+.particle42 {
+  top: 17%;
+  left: 73%;
+  animation: twinkle6 5.6s ease-in-out infinite,
+    float6 11.4s ease-in-out infinite;
+}
+
+.particle43 {
+  top: 61%;
+  left: 23%;
+  animation: twinkle1 3.2s ease-in-out infinite,
+    float1 9.7s ease-in-out infinite;
+}
+
+.particle44 {
+  top: 84%;
+  left: 88%;
+  animation: twinkle2 4.5s ease-in-out infinite,
+    float2 7.9s ease-in-out infinite;
+}
+
+.particle45 {
+  top: 29%;
+  left: 53%;
+  animation: twinkle3 2.7s ease-in-out infinite,
+    float3 12.6s ease-in-out infinite;
+}
+
+.particle46 {
+  top: 74%;
+  left: 18%;
+  animation: twinkle4 5.9s ease-in-out infinite,
+    float4 10.1s ease-in-out infinite;
+}
+
+.particle47 {
+  top: 6%;
+  left: 38%;
+  animation: twinkle5 3.4s ease-in-out infinite,
+    float5 8.4s ease-in-out infinite;
+}
+
+.particle48 {
+  top: 48%;
+  left: 78%;
+  animation: twinkle6 4.1s ease-in-out infinite,
+    float6 11.8s ease-in-out infinite;
+}
+
+.particle49 {
+  top: 89%;
+  left: 43%;
+  animation: twinkle1 2.2s ease-in-out infinite,
+    float1 9.3s ease-in-out infinite;
+}
+
+.particle50 {
+  top: 35%;
+  left: 8%;
+  animation: twinkle2 5.5s ease-in-out infinite,
+    float2 12.7s ease-in-out infinite;
+}
+
+@keyframes float1 {
+  0%,
+  100% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0.6;
+  }
+  25% {
+    transform: translateY(-20px) translateX(10px);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-10px) translateX(20px);
+    opacity: 0.8;
+  }
+  75% {
+    transform: translateY(-30px) translateX(5px);
+    opacity: 0.9;
+  }
+}
+
+@keyframes float2 {
+  0%,
+  100% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0.5;
+  }
+  33% {
+    transform: translateY(-25px) translateX(-15px);
+    opacity: 1;
+  }
+  66% {
+    transform: translateY(-5px) translateX(-25px);
+    opacity: 0.7;
+  }
+}
+
+@keyframes float3 {
+  0%,
+  100% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateY(-35px) translateX(15px);
+    opacity: 1;
+  }
+}
+
+@keyframes float4 {
+  0%,
+  100% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0.4;
+  }
+  25% {
+    transform: translateY(-15px) translateX(-10px);
+    opacity: 0.9;
+  }
+  75% {
+    transform: translateY(-25px) translateX(-20px);
+    opacity: 0.6;
+  }
+}
+
+@keyframes float5 {
+  0%,
+  100% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0.8;
+  }
+  40% {
+    transform: translateY(-20px) translateX(-5px);
+    opacity: 1;
+  }
+  80% {
+    transform: translateY(-30px) translateX(-15px);
+    opacity: 0.5;
+  }
+}
+
+@keyframes float6 {
+  0%,
+  100% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0.6;
+  }
+  30% {
+    transform: translateY(-18px) translateX(12px);
+    opacity: 1;
+  }
+  70% {
+    transform: translateY(-8px) translateX(25px);
+    opacity: 0.8;
+  }
 }
 
 @media (min-width: 640px) {
@@ -29,16 +638,264 @@
 }
 
 .headerContainer {
+  position: relative;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-bottom: 1.5rem;
   width: 100%;
+  z-index: 10;
+}
+
+/* Title wrapper with enhanced styling */
+.titleWrapper {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+/* Animated title characters */
+.animatedTitle {
+  position: relative;
+}
+
+.titleCharacter {
+  display: inline-block;
+  animation: titleReveal 0.8s ease-out forwards;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.titleCharacter:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.titleCharacter:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.titleCharacter:nth-child(3) {
+  animation-delay: 0.2s;
+}
+.titleCharacter:nth-child(4) {
+  animation-delay: 0.25s;
+}
+.titleCharacter:nth-child(5) {
+  animation-delay: 0.3s;
+}
+.titleCharacter:nth-child(6) {
+  animation-delay: 0.35s;
+}
+.titleCharacter:nth-child(7) {
+  animation-delay: 0.4s;
+}
+.titleCharacter:nth-child(8) {
+  animation-delay: 0.45s;
+}
+.titleCharacter:nth-child(9) {
+  animation-delay: 0.5s;
+}
+.titleCharacter:nth-child(10) {
+  animation-delay: 0.55s;
+}
+.titleCharacter:nth-child(11) {
+  animation-delay: 0.6s;
+}
+.titleCharacter:nth-child(12) {
+  animation-delay: 0.65s;
+}
+.titleCharacter:nth-child(13) {
+  animation-delay: 0.7s;
+}
+.titleCharacter:nth-child(14) {
+  animation-delay: 0.75s;
+}
+
+@keyframes titleReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile-specific title fade-in animation */
+@keyframes titleFadeIn {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Animated underline */
+.titleUnderline {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 3px;
+  width: 0;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+  animation: underlineExpand 1.2s ease-out 0.8s forwards;
+}
+
+/* Responsive underline scaling */
+@media (min-width: 640px) {
+  .titleUnderline {
+    height: 4px;
+    bottom: -10px;
+  }
+}
+
+@media (min-width: 768px) {
+  .titleUnderline {
+    height: 5px;
+    bottom: -12px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .titleUnderline {
+    height: 6px;
+    bottom: -14px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .titleUnderline {
+    height: 7px;
+    bottom: -16px;
+  }
+}
+
+@keyframes underlineExpand {
+  to {
+    width: 100%; /* Scale to match title width */
+  }
+}
+
+/* Desktop-specific underline that extends further */
+.titleUnderlineDesktop {
+  animation: underlineExpandDesktop 1.2s ease-out 0.8s forwards;
+}
+
+@keyframes underlineExpandDesktop {
+  to {
+    width: 120%; /* Extend 20% beyond title width on desktop */
+  }
+}
+
+/* Remove responsive width scaling since we want consistent relative sizing */
+
+/* Subtitle with enhanced styling */
+.subtitle {
+  position: relative;
+  animation: subtitleFadeIn 1s ease-out 1s forwards;
+  opacity: 0;
+  transform: translateY(20px);
+  color: #d1d5db;
+  font-weight: 300;
+  width: 100%;
+  max-width: 95vw;
+  word-break: break-word;
+  line-height: 1.2;
+  transition: font-size 0.3s ease;
+}
+
+.titleDesktop {
+  margin-bottom: 1.5rem;
+  font-size: clamp(1.5rem, 2vw + 1rem, 3.5rem);
+}
+
+.titleMobile {
+  margin-bottom: 0.75rem;
+  font-size: clamp(1.5rem, 5vw, 3rem);
+}
+
+.subtitleText {
+  color: #d1d5db;
+  font-weight: 300;
+}
+
+.subtitleGradient {
+  position: relative;
+  background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6);
+  background-size: 300% 300%;
+  animation: gradientShift 3s ease-in-out infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@keyframes subtitleFadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile-specific subtitle fade-in animation */
+@keyframes subtitleMobileFadeIn {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes gradientShift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Floating accent dots */
+.accentDots {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.accentDot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+  border-radius: 50%;
+  opacity: 0;
+  animation: dotAppear 0.5s ease-out forwards;
+}
+
+.accentDot1 {
+  top: 20%;
+  right: 10%;
+  animation-delay: 1.5s;
+}
+
+.accentDot2 {
+  bottom: 30%;
+  left: 5%;
+  animation-delay: 1.8s;
+}
+
+.accentDot3 {
+  top: 60%;
+  right: 20%;
+  animation-delay: 2.1s;
+}
+
+@keyframes dotAppear {
+  to {
+    opacity: 0.8;
+    transform: scale(1.2);
+  }
 }
 
 .headerContainerDesktop {
-  margin-top: -5vh; /* Increased from -10vh to move lower */
+  margin-top: -2vh; /* Reduced from -5vh */
   margin-bottom: 1.5rem; /* Reduced from 2rem */
 }
 
@@ -49,7 +906,7 @@
 /* Adjust header position for smaller screens and laptops */
 @media (max-width: 1023px) {
   .headerContainerDesktop {
-    margin-top: 5vh; /* Increased from -2vh to move much lower */
+    margin-top: 2vh; /* Reduced from 5vh */
     margin-bottom: 1.5rem; /* Reduced from 3rem */
   }
 }
@@ -57,7 +914,7 @@
 /* For tablets/small laptops */
 @media (max-width: 1200px) and (min-width: 768px) {
   .headerContainerDesktop {
-    margin-top: 8vh; /* Increased from 2vh to move even lower */
+    margin-top: 4vh; /* Reduced from 8vh */
     margin-bottom: 1.5rem; /* Reduced from 3rem */
   }
 }
@@ -65,7 +922,7 @@
 /* For mobile screens */
 @media (max-width: 767px) {
   .headerContainerMobile {
-    margin-top: 8vh; /* Increased from 4vh to move lower */
+    margin-top: 4vh; /* Reduced from 8vh */
     margin-bottom: 1rem; /* Reduced from 2rem */
   }
 }
@@ -94,28 +951,57 @@
   font-size: clamp(2rem, 8vw, 4rem);
 }
 
-.title {
-  color: #d1d5db; /* text-gray-300 */
-  font-weight: 300;
-  width: 100%;
-  max-width: 95vw;
-  word-break: break-word;
-  line-height: 1.2;
-  transition: font-size 0.3s ease;
-}
-
-.titleDesktop {
-  margin-bottom: 1.5rem;
+/* Smaller title variants for pages that need more compact headers */
+.nameDesktopSmall {
+  margin-bottom: 1rem;
   font-size: clamp(
-    1.5rem,
-    2vw + 1rem,
-    3.5rem
-  ); /* Increased size for larger screens */
+    2rem,
+    3.5vw + 1rem,
+    4.5rem
+  ); /* Smaller than the main nameDesktop */
 }
 
-.titleMobile {
-  margin-bottom: 0.75rem;
-  font-size: clamp(1.5rem, 5vw, 3rem);
+.nameMobileSmall {
+  margin-bottom: 0.5rem;
+  font-size: clamp(1.5rem, 6vw, 3rem);
+}
+
+.titleDesktopSmall {
+  margin-bottom: 1rem;
+  font-size: clamp(1.2rem, 1.5vw + 0.5rem, 2rem);
+}
+
+.titleMobileSmall {
+  margin-bottom: 0.5rem;
+  font-size: clamp(1rem, 4vw, 1.8rem);
+}
+
+.headerContainerSmall {
+  margin-top: 0vh;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 1023px) {
+  .headerContainerSmall {
+    margin-top: 0vh;
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .headerContainerSmall {
+    margin-top: 0vh;
+    margin-bottom: 1rem;
+  }
+}
+
+/* Cards section with enhanced styling */
+.cardsSection {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .cardsContainer {
@@ -123,13 +1009,46 @@
   justify-content: center;
   gap: 1.5rem;
   width: 100%;
-  max-width: 1600px; /* Increased from 1400px to allow more space */
+  max-width: 1600px;
   margin: 0 auto;
   transition: all 0.3s ease;
+  position: relative;
+}
+
+/* Card wrapper with staggered animations */
+.cardWrapper {
+  opacity: 0;
+  transform: translateY(40px) scale(0.95);
+  animation: cardSlideUp 0.8s ease-out forwards;
+}
+
+@keyframes cardSlideUp {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Mobile-specific fade-in animation */
+@keyframes cardFadeIn {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.cardDelay0 {
+  animation-delay: 1.2s;
+}
+.cardDelay1 {
+  animation-delay: 1.35s;
+}
+.cardDelay2 {
+  animation-delay: 1.5s;
 }
 
 .cardsContainerDesktop {
-  gap: 2rem; /* Increased gap from 6 to 8 */
+  gap: 2rem;
   flex-direction: row;
   justify-content: center;
   align-items: stretch;
@@ -145,21 +1064,507 @@
 }
 
 .cardHover {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
   flex: 1;
+  background: linear-gradient(145deg, #111111, #000000);
+  border: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+/* Enhanced grid background for cards */
+.cardHover::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    /* Complex geometric pattern */ linear-gradient(
+      45deg,
+      rgba(59, 130, 246, 0.04) 1px,
+      transparent 1px
+    ),
+    linear-gradient(-45deg, rgba(139, 92, 246, 0.04) 1px, transparent 1px),
+    linear-gradient(to right, rgba(59, 130, 246, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(139, 92, 246, 0.02) 1px, transparent 1px),
+    /* Hexagonal pattern */
+      radial-gradient(
+        circle at 33% 33%,
+        rgba(236, 72, 153, 0.03) 2px,
+        transparent 2px
+      ),
+    radial-gradient(
+      circle at 66% 66%,
+      rgba(59, 130, 246, 0.03) 1px,
+      transparent 1px
+    ),
+    /* Subtle noise texture */
+      linear-gradient(120deg, rgba(139, 92, 246, 0.01) 50%, transparent 50%);
+  background-size: 18px 18px, 18px 18px, 12px 12px, 12px 12px, 24px 24px,
+    16px 16px, 6px 6px;
+  background-position: 0 0, 0 0, 0 0, 0 0, 8px 8px, 4px 4px, 0 0;
+  opacity: 0;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  pointer-events: none;
+  z-index: 1;
+  animation: complexGridShift 12s linear infinite;
+}
+
+@keyframes complexGridShift {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(6px, 6px) rotate(0.5deg);
+  }
+  50% {
+    transform: translate(12px, 12px) rotate(0deg);
+  }
+  75% {
+    transform: translate(18px, 6px) rotate(-0.5deg);
+  }
+  100% {
+    transform: translate(24px, 24px) rotate(0deg);
+  }
+}
+
+/* Card-specific grid animations */
+@keyframes aboutGridDance {
+  0% {
+    transform: translateX(0) translateY(0) rotate(0deg) scale(1);
+    opacity: 0.4;
+  }
+  25% {
+    transform: translateX(2px) translateY(-2px) rotate(0.5deg) scale(1.01);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateX(4px) translateY(0) rotate(0deg) scale(1.02);
+    opacity: 0.8;
+  }
+  75% {
+    transform: translateX(2px) translateY(2px) rotate(-0.5deg) scale(1.01);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateX(0) translateY(0) rotate(0deg) scale(1);
+    opacity: 0.4;
+  }
+}
+
+@keyframes projectGridFlow {
+  0% {
+    transform: translateX(0) translateY(0) skewX(0deg);
+    opacity: 0.5;
+  }
+  20% {
+    transform: translateX(5px) translateY(2px) skewX(1deg);
+    opacity: 0.7;
+  }
+  40% {
+    transform: translateX(10px) translateY(5px) skewX(0deg);
+    opacity: 0.9;
+  }
+  60% {
+    transform: translateX(15px) translateY(3px) skewX(-1deg);
+    opacity: 0.7;
+  }
+  80% {
+    transform: translateX(20px) translateY(8px) skewX(0deg);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateX(24px) translateY(10px) skewX(0deg);
+    opacity: 0.3;
+  }
+}
+
+@keyframes contactGridSpiral {
+  0% {
+    transform: rotate(0deg) scale(1) translateX(0);
+    opacity: 0.3;
+  }
+  25% {
+    transform: rotate(90deg) scale(1.02) translateX(1px);
+    opacity: 0.6;
+  }
+  50% {
+    transform: rotate(180deg) scale(1.04) translateX(2px);
+    opacity: 0.8;
+  }
+  75% {
+    transform: rotate(270deg) scale(1.02) translateX(1px);
+    opacity: 0.6;
+  }
+  100% {
+    transform: rotate(360deg) scale(1) translateX(0);
+    opacity: 0.3;
+  }
+}
+
+/* Gradient overlay for depth */
+.cardHover::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+      circle at 20% 30%,
+      rgba(59, 130, 246, 0.04) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      circle at 80% 70%,
+      rgba(139, 92, 246, 0.04) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(236, 72, 153, 0.03) 0%,
+      transparent 70%
+    );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.cardHover:hover::before {
+  opacity: 1;
+  transform: translate(0, 0) scale(1.03) rotate(1deg);
+  animation-play-state: paused;
+}
+
+.cardHover:hover::after {
+  opacity: 1;
+}
+
+/* Card-specific grid enhancements */
+.cardHover:nth-child(1)::before {
+  /* About card - more blue tones */
+  background-image: linear-gradient(
+      45deg,
+      rgba(59, 130, 246, 0.06) 1px,
+      transparent 1px
+    ),
+    linear-gradient(-45deg, rgba(99, 102, 241, 0.04) 1px, transparent 1px),
+    linear-gradient(to right, rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+    radial-gradient(
+      circle at 33% 33%,
+      rgba(59, 130, 246, 0.05) 2px,
+      transparent 2px
+    );
+}
+
+.cardHover:nth-child(2)::before {
+  /* Projects card - more purple tones */
+  background-image: linear-gradient(
+      45deg,
+      rgba(139, 92, 246, 0.06) 1px,
+      transparent 1px
+    ),
+    linear-gradient(-45deg, rgba(168, 85, 247, 0.04) 1px, transparent 1px),
+    linear-gradient(to right, rgba(139, 92, 246, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(168, 85, 247, 0.03) 1px, transparent 1px),
+    radial-gradient(
+      circle at 33% 33%,
+      rgba(139, 92, 246, 0.05) 2px,
+      transparent 2px
+    );
+}
+
+.cardHover:nth-child(3)::before {
+  /* Contact card - more pink tones */
+  background-image: linear-gradient(
+      45deg,
+      rgba(236, 72, 153, 0.06) 1px,
+      transparent 1px
+    ),
+    linear-gradient(-45deg, rgba(244, 114, 182, 0.04) 1px, transparent 1px),
+    linear-gradient(to right, rgba(236, 72, 153, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(244, 114, 182, 0.03) 1px, transparent 1px),
+    radial-gradient(
+      circle at 33% 33%,
+      rgba(236, 72, 153, 0.05) 2px,
+      transparent 2px
+    );
 }
 
 .cardHover:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  transform: translateY(-8px) scale(1.02);
+  border-color: rgba(139, 92, 246, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(59, 130, 246, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Twinkling animations for star-like effect */
+@keyframes twinkle1 {
+  0%,
+  100% {
+    opacity: 0.3;
+    box-shadow: 0 0 6px currentColor, 0 0 12px currentColor;
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 10px currentColor, 0 0 20px currentColor,
+      0 0 30px currentColor;
+  }
+}
+
+@keyframes twinkle2 {
+  0%,
+  100% {
+    opacity: 0.4;
+    box-shadow: 0 0 8px currentColor, 0 0 16px currentColor;
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 12px currentColor, 0 0 24px currentColor,
+      0 0 36px currentColor;
+  }
+}
+
+@keyframes twinkle3 {
+  0%,
+  100% {
+    opacity: 0.2;
+    box-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 15px currentColor, 0 0 30px currentColor,
+      0 0 45px currentColor;
+  }
+}
+
+@keyframes twinkle4 {
+  0%,
+  100% {
+    opacity: 0.5;
+    box-shadow: 0 0 4px currentColor, 0 0 8px currentColor;
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 8px currentColor, 0 0 16px currentColor,
+      0 0 24px currentColor;
+  }
+}
+
+@keyframes twinkle5 {
+  0%,
+  100% {
+    opacity: 0.3;
+    box-shadow: 0 0 6px currentColor, 0 0 12px currentColor;
+  }
+  50% {
+    opacity: 0.9;
+    box-shadow: 0 0 10px currentColor, 0 0 20px currentColor,
+      0 0 30px currentColor;
+  }
+}
+
+@keyframes twinkle6 {
+  0%,
+  100% {
+    opacity: 0.4;
+    box-shadow: 0 0 5px currentColor, 0 0 10px currentColor;
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 8px currentColor, 0 0 16px currentColor,
+      0 0 24px currentColor;
+  }
+}
+
+/* Additional twinkling animations for space theme */
+@keyframes twinkle7 {
+  0%,
+  100% {
+    opacity: 0.2;
+    box-shadow: 0 0 3px currentColor, 0 0 6px currentColor;
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 6px currentColor, 0 0 12px currentColor,
+      0 0 18px currentColor;
+  }
+}
+
+@keyframes twinkle8 {
+  0%,
+  100% {
+    opacity: 0.6;
+    box-shadow: 0 0 4px currentColor, 0 0 8px currentColor;
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 8px currentColor, 0 0 16px currentColor,
+      0 0 24px currentColor;
+  }
+}
+
+@keyframes twinkle9 {
+  0%,
+  100% {
+    opacity: 0.3;
+    box-shadow: 0 0 5px currentColor, 0 0 10px currentColor;
+  }
+  50% {
+    opacity: 0.9;
+    box-shadow: 0 0 10px currentColor, 0 0 20px currentColor,
+      0 0 30px currentColor;
+  }
+}
+
+/* Cosmic dust effect for background */
+.cosmicDust {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(
+      circle at 25% 25%,
+      rgba(255, 255, 255, 0.02) 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      circle at 75% 75%,
+      rgba(59, 130, 246, 0.02) 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      circle at 50% 10%,
+      rgba(139, 92, 246, 0.02) 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      circle at 10% 60%,
+      rgba(236, 72, 153, 0.02) 1px,
+      transparent 1px
+    );
+  background-size: 40px 40px, 35px 35px, 45px 45px, 38px 38px;
+  background-position: 0 0, 20px 20px, 30px 5px, 5px 30px;
+  animation: dustFloat 40s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes dustFloat {
+  0% {
+    transform: translateX(0) translateY(0);
+    opacity: 0.3;
+  }
+  25% {
+    transform: translateX(20px) translateY(-10px);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateX(40px) translateY(0);
+    opacity: 0.4;
+  }
+  75% {
+    transform: translateX(60px) translateY(15px);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateX(80px) translateY(0);
+    opacity: 0.3;
+  }
 }
 
 @media (max-width: 480px) {
   .container {
-    padding: 1rem;
+    padding: 0.75rem;
+    gap: 0.75rem;
+  }
+
+  .backgroundGrid {
+    background-size: 40px 40px;
+  }
+
+  .particle {
+    width: 2px;
+    height: 2px;
+  }
+
+  .titleCharacter {
+    transform: translateY(15px);
+  }
+
+  .accentDot {
+    width: 3px;
+    height: 3px;
+  }
+
+  /* Mobile-specific title sizing */
+  .animatedTitle {
+    line-height: 1.1;
+  }
+
+  /* Improve mobile subtitle spacing */
+  .subtitle {
+    line-height: 1.3;
+    padding: 0 0.5rem;
+  }
+
+  /* Better mobile spacing for subtitleText */
+  .subtitleText {
+    display: block;
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .container {
+    padding: 1.25rem;
+  }
+
+  /* Tablet animations - fade in instead of slide */
+  .cardWrapper {
+    opacity: 0;
+    transform: scale(0.98);
+    animation: cardFadeIn 0.8s ease-out forwards;
+  }
+
+  /* Tablet-specific title character animations - fade in instead of slide */
+  .titleCharacter {
+    opacity: 0;
+    transform: scale(0.98);
+    animation: titleFadeIn 0.8s ease-out forwards;
+  }
+
+  /* Tablet-specific subtitle animation - fade in instead of slide */
+  .subtitle {
+    opacity: 0;
+    transform: scale(0.98);
+    animation: subtitleMobileFadeIn 1s ease-out 1s forwards;
+  }
+
+  /* Tablet adjustments */
+  .animatedTitle {
+    line-height: 1.2;
+  }
+
+  .subtitle {
+    line-height: 1.4;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .container {
+    padding: 2rem;
+  }
+
+  .backgroundGrid {
+    background-size: 80px 80px;
   }
 }
 
@@ -167,47 +1572,350 @@
   .container {
     padding: 3rem 2rem;
   }
+
+  .backgroundGrid {
+    background-size: 100px 100px;
+  }
+
+  .particle {
+    width: 4px;
+    height: 4px;
+  }
 }
 
-/* Adding at the bottom of the file */
+/* Ultra-large screen enhancements */
 .ultraLargeScreen .headerContainerDesktop {
   margin-top: calc(-15vh);
   margin-bottom: 6rem;
 }
 
 .ultraLargeScreen .nameDesktop {
-  font-size: clamp(
-    4rem,
-    6vw + 2rem,
-    9rem
-  ); /* Even larger size for ultra-large screens */
+  font-size: clamp(4rem, 6vw + 2rem, 9rem);
   margin-bottom: 1rem;
 }
 
 .ultraLargeScreen .titleDesktop {
-  font-size: clamp(
-    2rem,
-    3vw + 1rem,
-    4.5rem
-  ); /* Larger size for ultra-large screens */
+  font-size: clamp(2rem, 3vw + 1rem, 4.5rem);
   margin-bottom: 2rem;
 }
 
 .ultraLargeScreen .cardsContainerDesktop {
-  gap: 2rem;
+  gap: 3rem;
   max-width: 1800px;
   padding: 0 2rem;
 }
 
-/* Enhance card hover effects on ultra-large screens */
-.ultraLargeScreen .cardHover:hover {
-  transform: translateY(-10px) scale(1.03);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-    box-shadow 0.4s ease;
+.ultraLargeScreen .cardsContainer {
+  gap: 3rem;
 }
 
-/* Add additional spacing between cards for ultra-large screens */
-.ultraLargeScreen .cardsContainer {
-  gap: 2.5rem;
+/* Enhanced animations for ultra-large screens */
+.ultraLargeScreen .cardHover:hover {
+  transform: translateY(-12px) scale(1.05);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4), 0 0 40px rgba(59, 130, 246, 0.15);
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.5s ease;
+}
+
+.ultraLargeScreen .backgroundGrid {
+  background-size: 120px 120px;
+}
+
+.ultraLargeScreen .particle {
+  width: 5px;
+  height: 5px;
+}
+
+.ultraLargeScreen .titleUnderline {
+  height: 8px;
+  bottom: -18px;
+}
+
+/* Custom grid backgrounds for individual cards */
+.aboutCardGrid::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: linear-gradient(
+      30deg,
+      rgba(59, 130, 246, 0.06) 1px,
+      transparent 1px
+    ),
+    linear-gradient(150deg, rgba(99, 102, 241, 0.04) 1px, transparent 1px),
+    linear-gradient(to right, rgba(59, 130, 246, 0.03) 0.5px, transparent 0.5px),
+    linear-gradient(
+      to bottom,
+      rgba(99, 102, 241, 0.03) 0.5px,
+      transparent 0.5px
+    ),
+    radial-gradient(
+      circle at 20% 30%,
+      rgba(59, 130, 246, 0.08) 1.5px,
+      transparent 1.5px
+    ),
+    radial-gradient(
+      circle at 70% 80%,
+      rgba(99, 102, 241, 0.06) 1px,
+      transparent 1px
+    );
+  background-size: 14px 14px, 14px 14px, 7px 7px, 7px 7px, 28px 28px, 20px 20px;
+  background-position: 0 0, 7px 7px, 0 0, 0 0, 10px 15px, 35px 25px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  z-index: 5;
+  animation: aboutGridDance 6s ease-in-out infinite;
+}
+
+.aboutCardGrid:hover::before {
+  opacity: 1;
+}
+
+.projectCardGrid::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: linear-gradient(
+      45deg,
+      rgba(139, 92, 246, 0.08) 2px,
+      transparent 2px
+    ),
+    linear-gradient(-45deg, rgba(168, 85, 247, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139, 92, 246, 0.04) 0.5px, transparent 0.5px),
+    linear-gradient(0deg, rgba(168, 85, 247, 0.04) 0.5px, transparent 0.5px),
+    repeating-linear-gradient(
+      45deg,
+      rgba(139, 92, 246, 0.02),
+      rgba(139, 92, 246, 0.02) 2px,
+      transparent 2px,
+      transparent 8px
+    ),
+    radial-gradient(
+      ellipse at 30% 40%,
+      rgba(168, 85, 247, 0.1) 2px,
+      transparent 2px
+    );
+  background-size: 20px 20px, 20px 20px, 10px 10px, 10px 10px, 24px 24px,
+    32px 32px;
+  background-position: 0 0, 10px 10px, 0 0, 0 0, 5px 5px, 12px 8px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  z-index: 5;
+  animation: projectGridFlow 8s linear infinite;
+}
+
+.projectCardGrid:hover::before {
+  opacity: 1;
+}
+
+.contactCardGrid::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(
+      circle at 25% 25%,
+      rgba(236, 72, 153, 0.1) 2px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle at 75% 75%,
+      rgba(244, 114, 182, 0.08) 1.5px,
+      transparent 1.5px
+    ),
+    linear-gradient(60deg, rgba(236, 72, 153, 0.05) 1px, transparent 1px),
+    linear-gradient(-60deg, rgba(244, 114, 182, 0.05) 1px, transparent 1px),
+    linear-gradient(120deg, rgba(236, 72, 153, 0.03) 0.5px, transparent 0.5px),
+    linear-gradient(to right, rgba(236, 72, 153, 0.02) 0.5px, transparent 0.5px);
+  background-size: 22px 22px, 18px 18px, 16px 16px, 16px 16px, 8px 8px, 6px 6px;
+  background-position: 0 0, 11px 9px, 0 0, 8px 8px, 0 0, 0 0;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.contactCardGrid:hover::before {
+  opacity: 1;
+}
+
+/* Grid animations */
+@keyframes aboutGridDance {
+  0% {
+    transform: translateX(0) translateY(0) rotate(0deg) scale(1);
+    opacity: 0.4;
+  }
+  25% {
+    transform: translateX(2px) translateY(-2px) rotate(0.5deg) scale(1.01);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateX(4px) translateY(0) rotate(0deg) scale(1.02);
+    opacity: 0.8;
+  }
+  75% {
+    transform: translateX(2px) translateY(2px) rotate(-0.5deg) scale(1.01);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateX(0) translateY(0) rotate(0deg) scale(1);
+    opacity: 0.4;
+  }
+}
+
+@keyframes projectGridFlow {
+  0% {
+    transform: translateX(0) translateY(0) skewX(0deg);
+    opacity: 0.5;
+  }
+  20% {
+    transform: translateX(5px) translateY(2px) skewX(1deg);
+    opacity: 0.7;
+  }
+  40% {
+    transform: translateX(10px) translateY(5px) skewX(0deg);
+    opacity: 0.9;
+  }
+  60% {
+    transform: translateX(15px) translateY(3px) skewX(-1deg);
+    opacity: 0.7;
+  }
+  80% {
+    transform: translateX(20px) translateY(8px) skewX(0deg);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateX(24px) translateY(10px) skewX(0deg);
+    opacity: 0.3;
+  }
+}
+
+@keyframes contactGridSpiral {
+  0% {
+    transform: rotate(0deg) scale(1) translateX(0);
+    opacity: 0.3;
+  }
+  25% {
+    transform: rotate(90deg) scale(1.02) translateX(1px);
+    opacity: 0.6;
+  }
+  50% {
+    transform: rotate(180deg) scale(1.04) translateX(2px);
+    opacity: 0.8;
+  }
+  75% {
+    transform: rotate(270deg) scale(1.02) translateX(1px);
+    opacity: 0.6;
+  }
+  100% {
+    transform: rotate(360deg) scale(1) translateX(0);
+    opacity: 0.3;
+  }
+}
+
+/* Additional mobile optimizations */
+@media (max-width: 640px) {
+  .container {
+    min-height: 100vh;
+    padding-top: 0.5rem;
+    padding-bottom: 1rem;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+  }
+
+  /* Mobile-specific card animations - fade in instead of slide */
+  .cardWrapper {
+    opacity: 0;
+    transform: scale(0.95);
+    animation: cardFadeIn 0.8s ease-out forwards;
+  }
+
+  /* Mobile-specific title character animations - fade in instead of slide */
+  .titleCharacter {
+    opacity: 0;
+    transform: scale(0.95);
+    animation: titleFadeIn 0.8s ease-out forwards;
+  }
+
+  /* Mobile-specific subtitle animation - fade in instead of slide */
+  .subtitle {
+    opacity: 0;
+    transform: scale(0.95);
+    animation: subtitleMobileFadeIn 1s ease-out 1s forwards;
+    line-height: 0.7; /* Extremely tight line height for mobile */
+  }
+
+  /* Improve button touch targets on mobile */
+  .particle {
+    display: none; /* Hide particles on very small screens for performance */
+  }
+
+  /* Better mobile scroll behavior */
+  .backgroundGrid {
+    animation-duration: 30s; /* Slower animation on mobile for better performance */
+  }
+
+  /* Ensure full viewport height usage */
+  .headerContainer {
+    margin-bottom: 1rem;
+  }
+
+  /* Mobile-specific title adjustments */
+  .titleUnderline {
+    bottom: -6px;
+    height: 2.5px;
+    width: 0; /* Start with 0 width for animation */
+    left: 50%;
+    transform: translateX(-50%);
+    animation: underlineExpandMobile 1.2s ease-out 0.8s forwards;
+  }
+
+  /* Better mobile subtitle readability */
+  .subtitleText {
+    line-height: 0.7; /* Extremely tight line height for mobile */
+    word-break: break-word;
+  }
+
+  /* Prevent horizontal scroll */
+  .animatedTitle {
+    max-width: 100%;
+    word-break: break-word;
+  }
+
+  .subtitle {
+    max-width: 100%;
+    word-break: break-word;
+  }
+}
+
+/* Ensure smooth scrolling on mobile */
+@media (max-width: 768px) {
+  .container {
+    scroll-behavior: smooth;
+  }
+
+  /* Better modal positioning on mobile */
+  .modalOverlay {
+    align-items: flex-start;
+    padding-top: 2rem;
+  }
+}
+
+/* Mobile-specific underline animation */
+@keyframes underlineExpandMobile {
+  to {
+    width: 100vw; /* Expand to full viewport width on mobile */
+  }
 }

@@ -257,32 +257,41 @@ const ProfileCard: React.FC<ProfileCardProps> = React.memo(({
   ], []);
 
   return (
-    <div className={`w-full max-w-[500px] h-auto md:w-[495px] bg-black border border-[#27272a] rounded-lg shadow-lg p-4 ${className}`}>
-      <div className="w-full">
+    <div className={`w-full max-w-none sm:max-w-[500px] h-auto bg-gradient-to-br from-gray-900/80 to-black/90 border border-blue-500/20 rounded-2xl shadow-xl backdrop-blur-sm p-3 sm:p-4 md:p-6 ${className} 
+                    transition-all duration-500 hover:border-blue-400/30 hover:shadow-2xl hover:shadow-blue-500/10 
+                    relative overflow-hidden group mx-auto`}>
+      {/* Enhanced background pattern */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+      
+      {/* Subtle grid pattern */}
+      <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(59,130,246,0.03)_1px,transparent_1px),linear-gradient(-45deg,rgba(139,92,246,0.03)_1px,transparent_1px)] bg-[size:12px_12px] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+      
+      <div className="w-full relative z-10">
         {/* Profile header */}
-        <div className="flex items-center justify-start gap-3 mb-0">
-          <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-900 border-2 border-gray-600 shadow-md">
+        <div className="flex flex-col sm:flex-row items-center sm:items-center justify-center sm:justify-start gap-3 sm:gap-4 mb-4 text-center sm:text-left">
+          <div className="w-20 sm:w-24 h-20 sm:h-24 rounded-full overflow-hidden bg-gradient-to-br from-blue-500/20 to-purple-500/20 border-2 border-blue-400/30 shadow-xl relative group/avatar flex-shrink-0">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-400/10 to-purple-400/10 opacity-0 group-hover/avatar:opacity-100 transition-opacity duration-300"></div>
             <Image 
               src="/images/Beer.webp" 
               alt={`${name} profile picture`}
-              width={80}
-              height={80}
-              className="w-full h-full object-cover object-center"
+              width={96}
+              height={96}
+              className="w-full h-full object-cover object-center relative z-10 transition-transform duration-300 group-hover/avatar:scale-105"
               priority
             />
           </div>
-          <div className="flex flex-col justify-start gap-0.5 pt-8">
-            <h2 className="text-2xl font-bold text-white tracking-tighter">{name}</h2>
-            <p className="text-base text-gray-400 tracking-tighter font-extralight flex items-center gap-2">
-              {username}
-              <span className="flex items-center gap-2 ml-2" role="list" aria-label="Social media links">
+          <div className="flex flex-col justify-start gap-1 pt-0 sm:pt-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight bg-gradient-to-r from-white to-blue-100 bg-clip-text">{name}</h2>
+            <p className="text-base sm:text-lg text-blue-200/80 tracking-tight font-light flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
+              <span>{username}</span>
+              <span className="flex items-center gap-3" role="list" aria-label="Social media links">
                 {socialLinks.map((link, index) => (
                   <a
                     key={index}
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-white text-gray-400 transition-colors text-lg focus:outline-none rounded"
+                    className="hover:text-blue-300 text-blue-200/60 transition-all duration-300 text-lg sm:text-xl hover:scale-110 focus:outline-none rounded p-1"
                     aria-label={link.label}
                     role="listitem"
                   >
@@ -295,12 +304,12 @@ const ProfileCard: React.FC<ProfileCardProps> = React.memo(({
         </div>
         
         {/* Bubbles section - Enhanced with accessibility */}
-        <div className="border-t border-[#27272a] mt-1 py-3 bubble-container">
-          <div className="flex flex-wrap gap-2 w-full" role="list" aria-label="Skills and interests">
+        <div className="border-t border-blue-500/20 mt-3 sm:mt-2 py-3 sm:py-4 bubble-container">
+          <div className="flex flex-wrap gap-2 sm:gap-2.5 w-full justify-center sm:justify-start" role="list" aria-label="Skills and interests">
             {bubbles.map((bubble) => (
               <div 
                 key={bubble.id}
-                className="px-3 py-1 bg-black border border-[#27272a] rounded-full flex items-center gap-1.5 relative cursor-pointer shadow-md transition-transform duration-200 hover:scale-[1.03] overflow-visible focus:outline-none"
+                className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-blue-900/40 to-purple-900/40 border border-blue-400/30 rounded-full flex items-center gap-1.5 sm:gap-2 relative cursor-pointer shadow-lg transition-all duration-300 hover:scale-105 hover:border-blue-300/50 hover:shadow-blue-500/20 hover:shadow-xl overflow-visible focus:outline-none focus:ring-2 focus:ring-blue-400/50 backdrop-blur-sm"
                 onMouseEnter={() => handleMouseEnter(bubble.id)}
                 onMouseLeave={handleMouseLeave}
                 onTouchStart={(e) => handleBubbleInteraction(bubble.id, e)}
@@ -316,22 +325,22 @@ const ProfileCard: React.FC<ProfileCardProps> = React.memo(({
                 aria-label={bubble.additionalInfo ? `${bubble.label}: ${bubble.additionalInfo}` : bubble.label}
                 aria-expanded={hoveredBubble === bubble.id}
               >
-                <div className="flex-shrink-0" aria-hidden="true">
+                <div className="flex-shrink-0 text-blue-200 text-sm sm:text-base" aria-hidden="true">
                   {bubble.icon}
                 </div>
-                <span className="tracking-tighter font-extralight text-sm text-white">{bubble.label}</span>
+                <span className="tracking-tight font-medium text-xs sm:text-sm text-blue-100">{bubble.label}</span>
                 
                 {bubble.additionalInfo && hoveredBubble === bubble.id && (
                   <div 
                     className={`
                       absolute transform -translate-x-1/2 
-                      bg-gray-800 border border-[#27272a] rounded-xl 
-                      text-white text-xs w-max max-w-[180px] shadow-lg z-50 
-                      transition-all duration-200 p-2.5
+                      bg-gradient-to-br from-gray-800/95 to-gray-900/95 border border-blue-400/30 rounded-xl 
+                      text-blue-100 text-xs w-max max-w-[200px] shadow-2xl shadow-blue-500/20 z-50 
+                      transition-all duration-300 p-3 backdrop-blur-sm text-center
                       ${fadingBubble === bubble.id ? 'tooltip-close' : 'tooltip-popup'}
                     `}
                     style={{
-                      bottom: 'calc(100% + 8px)',
+                      bottom: 'calc(100% + 10px)',
                       left: '50%',
                       pointerEvents: 'none'
                     }}
@@ -339,7 +348,7 @@ const ProfileCard: React.FC<ProfileCardProps> = React.memo(({
                     aria-live="polite"
                   >
                     {bubble.additionalInfo}
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-45 w-2 h-2 bg-gray-800 border-r border-b border-[#27272a]" aria-hidden="true"></div>
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-45 w-2.5 h-2.5 bg-gradient-to-br from-gray-800 to-gray-900 border-r border-b border-blue-400/30" aria-hidden="true"></div>
                   </div>
                 )}
               </div>
@@ -348,15 +357,15 @@ const ProfileCard: React.FC<ProfileCardProps> = React.memo(({
         </div>
         
         {/* About Me section - Enhanced readability */}
-        <div className="border-t border-[#27272a] mt-1 pt-1 pb-0">
-          <div>
-            <p className="text-base text-gray-300 leading-tight tracking-tight mb-3">
+        <div className="border-t border-blue-500/20 mt-3 sm:mt-2 pt-3 sm:pt-4 pb-2">
+          <div className="space-y-3 sm:space-y-4">
+            <p className="text-sm sm:text-base text-blue-50/90 leading-relaxed tracking-normal">
               I&apos;m a software enthusiast driven by a love for clean code, creative problem-solving, and constant learning. I get a kick out of debugging, building systems that just work, and experimenting with the latest in tech.
             </p>
-            <p className="text-base text-gray-300 leading-tight tracking-tight mb-3">
+            <p className="text-sm sm:text-base text-blue-50/90 leading-relaxed tracking-normal">
               I&apos;m always looking to grow whether that&apos;s diving into a new framework, collaborating with a team, or literally scuba diving (yes, I do that too). I&apos;m a gamer and someone who finds joy in cooking from scratch.
             </p>
-            <p className="text-base text-gray-300 leading-tight tracking-tight mb-0">
+            <p className="text-sm sm:text-base text-blue-50/90 leading-relaxed tracking-normal">
               I thrive in environments where curiosity, teamwork, and hands-on building meet. If there&apos;s a challenge, I&apos;m all in.
             </p>
           </div>
@@ -376,27 +385,30 @@ const ProfileCard: React.FC<ProfileCardProps> = React.memo(({
 // Set display name for better debugging
 ProfileCard.displayName = 'ProfileCard';
 
-// Enhanced tooltip styles with better animations
+// Enhanced tooltip styles with better animations and modern design
 const TOOLTIP_STYLES = `
   .tooltip-popup {
-    animation: tooltipPopup 0.2s ease-out forwards;
+    animation: tooltipPopup 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   }
   
   .tooltip-close {
-    animation: tooltipClose 0.2s ease-in forwards;
+    animation: tooltipClose 0.25s ease-in forwards;
   }
   
   @keyframes tooltipPopup {
     0% {
       opacity: 0;
-      transform: translate(-50%, 10px) scale(0.9);
+      transform: translate(-50%, 15px) scale(0.8);
+      filter: blur(4px);
     }
     50% {
-      transform: translate(-50%, -3px) scale(1.02);
+      transform: translate(-50%, -5px) scale(1.05);
+      filter: blur(1px);
     }
     100% {
       opacity: 1;
       transform: translate(-50%, 0) scale(1);
+      filter: blur(0);
     }
   }
   
@@ -404,13 +416,16 @@ const TOOLTIP_STYLES = `
     0% {
       opacity: 1;
       transform: translate(-50%, 0) scale(1);
+      filter: blur(0);
     }
     50% {
-      transform: translate(-50%, -2px) scale(0.98);
+      transform: translate(-50%, -3px) scale(0.95);
+      filter: blur(1px);
     }
     100% {
       opacity: 0;
-      transform: translate(-50%, 8px) scale(0.9);
+      transform: translate(-50%, 12px) scale(0.8);
+      filter: blur(4px);
     }
   }
 `;

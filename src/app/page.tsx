@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import AboutCard from "../components/AboutCard";
 import ProjectCard from "../components/ProjectCardMenu";
 import ContactCard from "@/components/ContactCardMenu";
-import { useRouter } from "next/navigation";
 import styles from "@/styles/page.module.css";
 
 // Custom hook for window size with proper SSR handling
@@ -41,7 +40,6 @@ function useWindowSize() {
 }
 
 export default function Home() {
-  const router = useRouter();
   const { width } = useWindowSize();
   const [isMounted, setIsMounted] = useState(false);
 
@@ -50,19 +48,10 @@ export default function Home() {
     setIsMounted(true);
   }, []);
 
-  const handleNavigation = (path: string) => {
-    router.push(path);
-  };
   const cards = [
-    <div key="about" onClick={() => handleNavigation('/about')} className={styles.cardHover}>
-      <AboutCard />
-    </div>,
-    <div key="project" onClick={() => handleNavigation('/projects')} className={styles.cardHover}>
-      <ProjectCard />
-    </div>,
-    <div key="contact" onClick={() => handleNavigation('/contact')} className={styles.cardHover}>
-      <ContactCard />
-    </div>,
+    <AboutCard key="about" />,
+    <ProjectCard key="project" />,
+    <ContactCard key="contact" />,
   ];
   // Responsive breakpoints
   const isXSmall = width !== undefined && width < 480;
@@ -84,20 +73,83 @@ export default function Home() {
   }
 
   return (
-    <main className={`${styles.container}`}>
-      <div className={`${styles.headerContainer} ${isDesktop ? styles.headerContainerDesktop : styles.headerContainerMobile}`}>
-        <h1 className={`${styles.name} ${isDesktop ? styles.nameDesktop : styles.nameMobile}`}>
-          Beer de Vreeze
-        </h1>
-        <h2 className={`${styles.title} ${isDesktop ? styles.titleDesktop : styles.titleMobile}`}>
-          <span className="text-white">Dutch-based </span>
-          {width !== undefined && width < 900 && <br />}
-          <span className="gradient-text" style={{ marginTop: '0.5rem' }}>Game Developer</span>
-        </h2>
+    <main className={`${styles.container} ${styles.enhancedBackground}`}>
+      {/* Animated background grid */}
+      <div className={styles.backgroundGrid}></div>
+      
+      {/* Cosmic dust layer */}
+      <div className={styles.cosmicDust}></div>
+      
+      {/* Enhanced Space Starfield - 50 stars */}
+      <div className={styles.particleContainer}>
+        {Array.from({ length: 50 }, (_, i) => {
+          // Create a more natural distribution with more tiny/small stars
+          const weightedTypes = [
+            'starTiny', 'starTiny', 'starTiny', 'starTiny', 'starTiny',
+            'starWhite', 'starWhite', 'starWhite',
+            'starSmall', 'starSmall', 'starSmall',
+            'starCyan', 'starCyan',
+            'starMedium', 'starMedium',
+            'starLarge',
+            'starXLarge'
+          ];
+          const starType = weightedTypes[i % weightedTypes.length];
+          return (
+            <div 
+              key={i} 
+              className={`${styles.particle} ${styles[starType]} ${styles[`particle${i + 1}`]}`}
+            ></div>
+          );
+        })}
       </div>
 
-      <div className={`${styles.cardsContainer} ${isDesktop ? styles.cardsContainerDesktop : styles.cardsContainerMobile}`}>
-        {cards}
+      <div className={`${styles.headerContainer} ${isDesktop ? styles.headerContainerDesktop : styles.headerContainerMobile}`}>
+        <div className={styles.titleWrapper}>
+          <h1 className={`${styles.name} ${isDesktop ? styles.nameDesktop : styles.nameMobile} ${styles.animatedTitle}`}>
+            <span className={styles.titleCharacter}>B</span>
+            <span className={styles.titleCharacter}>e</span>
+            <span className={styles.titleCharacter}>e</span>
+            <span className={styles.titleCharacter}>r</span>
+            <span className={styles.titleCharacter}>&nbsp;</span>
+            <span className={styles.titleCharacter}>d</span>
+            <span className={styles.titleCharacter}>e</span>
+            <span className={styles.titleCharacter}>&nbsp;</span>
+            <span className={styles.titleCharacter}>V</span>
+            <span className={styles.titleCharacter}>r</span>
+            <span className={styles.titleCharacter}>e</span>
+            <span className={styles.titleCharacter}>e</span>
+            <span className={styles.titleCharacter}>z</span>
+            <span className={styles.titleCharacter}>e</span>
+          </h1>
+          <div className={`${styles.titleUnderline} ${isDesktop ? styles.titleUnderlineDesktop : ''}`}></div>
+        </div>
+        
+        <h2 className={`${styles.subtitle} ${isDesktop ? styles.titleDesktop : styles.titleMobile}`}>
+          <span className={styles.subtitleText}>Dutch-based </span>
+          {width !== undefined && width < 900 && <br />}
+          <span className={`gradient-text ${styles.subtitleGradient}`}>Game Developer</span>
+        </h2>
+        
+        {/* Floating accent elements */}
+        <div className={styles.accentDots}>
+          <div className={`${styles.accentDot} ${styles.accentDot1}`}></div>
+          <div className={`${styles.accentDot} ${styles.accentDot2}`}></div>
+          <div className={`${styles.accentDot} ${styles.accentDot3}`}></div>
+        </div>
+      </div>
+
+      <div className={`${styles.cardsSection}`}>
+        <div className={`${styles.cardsContainer} ${isDesktop ? styles.cardsContainerDesktop : styles.cardsContainerMobile}`}>
+          {cards.map((card, index) => (
+            <div 
+              key={index} 
+              className={`${styles.cardWrapper} ${styles.cardHover} ${styles[`cardDelay${index}`]}`}
+              style={{ animationDelay: `${index * 150}ms` }}
+            >
+              {card}
+            </div>
+          ))}
+        </div>
       </div>
     </main>
   );

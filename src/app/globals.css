@@ -119,11 +119,219 @@ body {
 
 /* Common utility classes */
 .gradient-text {
-  @apply bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 text-transparent bg-clip-text transition-all duration-150;
+  @apply bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 text-transparent bg-clip-text transition-all duration-300;
+  background-size: 200% 200%;
+  animation: gradientFlow 4s ease-in-out infinite;
+}
+
+@keyframes gradientFlow {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
 .card-hover {
-  @apply cursor-pointer transition-transform hover:scale-105;
+  @apply cursor-pointer transition-all duration-500;
+  transform-style: preserve-3d;
+}
+
+.card-hover:hover {
+  transform: translateY(-8px) rotateX(5deg) rotateY(5deg);
+}
+
+/* Enhanced gradient styles */
+.gradient-bg {
+  @apply bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500;
+}
+
+.gradient-border {
+  @apply border-4 border-transparent bg-clip-padding;
+  background-image: linear-gradient(to right, #3b82f6, #8b5cf6, #ec4899);
+  background-origin: border-box;
+}
+
+/* Enhanced glow effects */
+.glow-blue {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+.glow-purple {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+}
+
+.glow-pink {
+  box-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
+}
+
+/* Card-specific grid hover effects */
+.card-grid-blue:hover {
+  background: radial-gradient(
+    circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(59, 130, 246, 0.05) 0%,
+    transparent 50%
+  );
+}
+
+.card-grid-purple:hover {
+  background: radial-gradient(
+    circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(139, 92, 246, 0.05) 0%,
+    transparent 50%
+  );
+}
+
+.card-grid-pink:hover {
+  background: radial-gradient(
+    circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(236, 72, 153, 0.05) 0%,
+    transparent 50%
+  );
+}
+
+/* Subtle animations for enhanced interactivity */
+@keyframes subtlePulse {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+.animate-subtle-pulse {
+  animation: subtlePulse 3s ease-in-out infinite;
+}
+
+/* Grid animation keyframes for cards */
+@keyframes gridPulse {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes gridSlide {
+  0% {
+    transform: translateX(0) translateY(0);
+  }
+  100% {
+    transform: translateX(16px) translateY(16px);
+  }
+}
+
+@keyframes gridWave {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.4;
+  }
+  33% {
+    transform: scale(1.02) rotate(1deg);
+    opacity: 0.6;
+  }
+  66% {
+    transform: scale(0.98) rotate(-1deg);
+    opacity: 0.5;
+  }
+}
+
+/* New enhanced grid animations */
+@keyframes aboutGridDance {
+  0% {
+    transform: translateX(0) translateY(0) rotate(0deg) scale(1);
+    opacity: 0.4;
+  }
+  25% {
+    transform: translateX(2px) translateY(-2px) rotate(0.5deg) scale(1.01);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateX(4px) translateY(0) rotate(0deg) scale(1.02);
+    opacity: 0.8;
+  }
+  75% {
+    transform: translateX(2px) translateY(2px) rotate(-0.5deg) scale(1.01);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateX(0) translateY(0) rotate(0deg) scale(1);
+    opacity: 0.4;
+  }
+}
+
+@keyframes projectGridFlow {
+  0% {
+    transform: translateX(0) translateY(0) skewX(0deg);
+    opacity: 0.5;
+  }
+  20% {
+    transform: translateX(5px) translateY(2px) skewX(1deg);
+    opacity: 0.7;
+  }
+  40% {
+    transform: translateX(10px) translateY(5px) skewX(0deg);
+    opacity: 0.9;
+  }
+  60% {
+    transform: translateX(15px) translateY(3px) skewX(-1deg);
+    opacity: 0.7;
+  }
+  80% {
+    transform: translateX(20px) translateY(8px) skewX(0deg);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateX(24px) translateY(10px) skewX(0deg);
+    opacity: 0.3;
+  }
+}
+
+@keyframes contactGridSpiral {
+  0% {
+    transform: rotate(0deg) scale(1) translateX(0);
+    opacity: 0.3;
+  }
+  25% {
+    transform: rotate(90deg) scale(1.02) translateX(1px);
+    opacity: 0.6;
+  }
+  50% {
+    transform: rotate(180deg) scale(1.04) translateX(2px);
+    opacity: 0.8;
+  }
+  75% {
+    transform: rotate(270deg) scale(1.02) translateX(1px);
+    opacity: 0.6;
+  }
+  100% {
+    transform: rotate(360deg) scale(1) translateX(0);
+    opacity: 0.3;
+  }
+}
+
+/* Enhanced backdrop blur effects */
+.backdrop-blur-subtle {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Improved text rendering */
+.text-crisp {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 /* New gradient styles */
@@ -224,6 +432,31 @@ select:focus {
 @media (max-width: 768px) {
   .form-container {
     padding: 1rem;
+  }
+}
+
+/* Mobile touch target improvements */
+@media (max-width: 768px) {
+  html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Improve touch targets for tablets and mobile */
+@media (min-width: 481px) and (max-width: 1024px) {
+  button,
+  [role="button"] {
+    min-height: 44px; /* iOS recommended touch target size */
+  }
+}
+
+/* Mobile button accessibility */
+@media (max-width: 480px) {
+  button,
+  [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
   }
 }
 
@@ -339,12 +572,23 @@ p {
   }
 }
 
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
 .animate-fadeIn {
   animation: fadeIn 0.4s ease-in-out;
 }
 
-.animate-slideInUp {
-  animation: slideInUp 0.5s ease-out both;
+.animate-fadeOut {
+  animation: fadeOut 0.3s ease-in-out;
 }
 
 /* Hover effect for category buttons */
@@ -362,8 +606,73 @@ p {
   animation: pulseGlow 1.5s ease-in-out infinite;
 }
 
+/* Staggered stack animations */
+@keyframes stackSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-30px) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) translateY(0);
+  }
+}
+
+.animate-stackSlideIn {
+  opacity: 0;
+  animation: stackSlideIn 0.6s ease-out forwards;
+}
+
+.animate-stackSlideIn:nth-child(1) {
+  animation-delay: 0.2s;
+}
+
+.animate-stackSlideIn:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+.animate-stackSlideIn:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+/* Profile card animation */
+@keyframes profileSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(30px) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) translateY(0);
+  }
+}
+
+/* Mobile-specific fade-in animation for profile */
+@keyframes profileFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-profileSlideIn {
+  opacity: 0;
+  animation: profileSlideIn 0.8s ease-out forwards;
+  animation-delay: 0.1s;
+}
+
 /* Mobile scrollbar styles */
 @media (max-width: 768px) {
+  /* Use fade-in animation instead of slide-in on mobile */
+  .animate-profileSlideIn {
+    animation: profileFadeIn 0.8s ease-out forwards;
+    animation-delay: 0.1s;
+  }
+
   .custom-scrollbar::-webkit-scrollbar {
     width: 8px;
   }
@@ -371,4 +680,58 @@ p {
   .custom-scrollbar::-webkit-scrollbar-thumb {
     border: 2px solid #333;
   }
+}
+
+/* Carousel progress bar animation */
+@keyframes progressBar {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+/* Enhanced carousel animations */
+@keyframes carouselSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes carouselSlideOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+}
+
+.animate-carouselSlideIn {
+  animation: carouselSlideIn 0.3s ease-out;
+}
+
+.animate-carouselSlideOut {
+  animation: carouselSlideOut 0.3s ease-out;
+}
+
+/* Animation delay utilities */
+.animation-delay-150 {
+  animation-delay: 150ms;
+}
+
+.animation-delay-300 {
+  animation-delay: 300ms;
+}
+
+.animation-delay-500 {
+  animation-delay: 500ms;
 }
