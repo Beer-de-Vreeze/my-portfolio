@@ -34,6 +34,11 @@ const Website = ({ onModalStateChange }: { onModalStateChange: (isOpen: boolean)
         type: "image",
         src: "/images/Website Images/Web4.webp",
         alt: "Contact page with form and social links",
+      },
+      {
+        type: "image" ,
+        src: "/images/Website Images/Web6.webp",
+        alt: "Mobile view of the portfolio website showcasing responsive design",
       }
     ]}
     techStack={[
