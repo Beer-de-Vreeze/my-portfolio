@@ -129,7 +129,12 @@ export default function Contact() {
         </div>
 
         {/* Contact form card with enhanced styling - more compact */}
-        <div className={`${styles.cardWrapper} ${styles.cardHover} ${styles.cardDelay0} select-content p-3 sm:p-4 md:p-6 rounded-2xl shadow-lg w-full`}>
+        <motion.div 
+          className={`${styles.cardWrapper} ${styles.cardHover} select-content p-3 sm:p-4 md:p-6 rounded-2xl shadow-lg w-full`}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: -0.2 }}
+        >
 
           <ContactForm />
           
@@ -144,7 +149,7 @@ export default function Contact() {
               whileTap={{ scale: 0.9 }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.8, duration: 0.6 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 1.8 }}
             >
               <FaGithub />
             </motion.a>
@@ -157,7 +162,7 @@ export default function Contact() {
               whileTap={{ scale: 0.9 }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.9, duration: 0.6 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 2.0 }}
             >
               <FaLinkedin />
             </motion.a>
@@ -170,7 +175,7 @@ export default function Contact() {
               whileTap={{ scale: 0.9 }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 2.0, duration: 0.6 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 2.2 }}
             >
               <svg 
                 width="24" 
@@ -191,12 +196,12 @@ export default function Contact() {
               whileTap={{ scale: 0.9 }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 2.1, duration: 0.6 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 2.4 }}
             >
               <FaFileAlt />
             </motion.a>
           </div>
-        </div>
+        </motion.div>
       </main>
       <Footer />
     </div>

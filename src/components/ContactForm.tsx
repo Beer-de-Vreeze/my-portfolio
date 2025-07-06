@@ -321,7 +321,7 @@ const ContactForm = ({ onEmailSent }: ContactFormProps) => {
         noValidate
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.4, duration: 0.8 }}
+        transition={{ delay: 0.6, duration: 0.8 }}
       >
         {/* Render form fields dynamically for better maintainability */}
         {formFields.map((field, index) => (
@@ -330,7 +330,7 @@ const ContactForm = ({ onEmailSent }: ContactFormProps) => {
             className="space-y-1"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 1.6 + index * 0.1, duration: 0.6 }}
+            transition={{ delay: 0.8 + index * 0.1, duration: 0.6 }}
           >
             <input 
               id={field.id}
@@ -368,7 +368,7 @@ const ContactForm = ({ onEmailSent }: ContactFormProps) => {
           className="space-y-1"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 2.0, duration: 0.6 }}
+          transition={{ delay: 1.2, duration: 0.6 }}
         >
           <textarea 
             id="message"
@@ -428,7 +428,7 @@ const ContactForm = ({ onEmailSent }: ContactFormProps) => {
           whileTap={{ scale: isSubmitting ? 1 : 0.95 }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2.2, duration: 0.6 }}
+          transition={{ delay: 0.6, duration: 0.6 }}
           aria-label={isSubmitting ? 'Sending message' : 'Send message'}
         >
           {isSubmitting && (
