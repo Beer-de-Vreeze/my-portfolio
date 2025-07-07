@@ -269,14 +269,13 @@ const ProfileCard: React.FC<ProfileCardProps> = React.memo(({
       <div className="w-full relative z-10">
         {/* Profile header */}
         <div className="flex flex-col sm:flex-row items-center sm:items-center justify-center sm:justify-start gap-3 sm:gap-4 mb-4 text-center sm:text-left">
-          <div className="w-20 sm:w-24 h-20 sm:h-24 rounded-full overflow-hidden bg-gradient-to-br from-blue-500/20 to-purple-500/20 border-2 border-blue-400/30 shadow-xl relative group/avatar flex-shrink-0">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-400/10 to-purple-400/10 opacity-0 group-hover/avatar:opacity-100 transition-opacity duration-300"></div>
+          <div className="w-20 sm:w-24 h-20 sm:h-24 rounded-full overflow-hidden bg-gradient-to-br from-blue-500/20 to-purple-500/20 border-2 border-blue-400/30 shadow-xl relative flex-shrink-0">
             <Image 
               src="/images/Beer.webp" 
               alt={`${name} profile picture`}
               width={96}
               height={96}
-              className="w-full h-full object-cover object-center relative z-10 transition-transform duration-300 group-hover/avatar:scale-105"
+              className="w-full h-full object-cover object-center relative z-10"
               priority
             />
           </div>
