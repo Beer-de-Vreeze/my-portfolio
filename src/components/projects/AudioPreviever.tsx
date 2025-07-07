@@ -15,7 +15,7 @@ const AudioPreviever = ({ onModalStateChange }: { onModalStateChange: (isOpen: b
     description="Working with audio files in Unity can be surprisingly tedious - you often have to rely on external tools just to preview sounds or dig through folders to find the right audio clip. I created this Unity Editor extension to solve that problem by bringing comprehensive audio management directly into the Unity interface. It features real-time waveform visualizations, seamless playback controls, and intelligent project organization, making it much easier for developers and sound designers to work with audio assets without constantly switching between applications."
     coverImage="/images/CoverImageSound.webp"
     downloadLink={{
-      url: "/assets/downloads/audio-previewer.zip",
+      url: "/downloads/audio-previewer.zip",
       filename: "Unity Audio Previewer v1.2",
       fileSize: "2.4 MB",
     }}
