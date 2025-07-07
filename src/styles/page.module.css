@@ -53,8 +53,7 @@
   padding-bottom: 0.5rem;
   width: 100%;
   gap: 0.75rem;
-  overflow-x: hidden;
-  overflow-y: visible;
+  overflow: visible;
 }
 
 @media (min-width: 640px) {
@@ -172,7 +171,6 @@
   bottom: 0;
   pointer-events: none;
   z-index: 2;
-  overflow: hidden;
 }
 
 .particle {
@@ -2027,52 +2025,5 @@
   /* Compact spacing */
   .backgroundGrid {
     background-size: 70px 70px;
-  }
-}
-
-/* Mobile-specific scrolling fixes */
-@media screen and (max-width: 767px) {
-  .containerScrollable {
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
-    height: auto;
-    max-height: none;
-    overflow-y: auto;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
-    position: relative;
-  }
-
-  /* Fix main content area on mobile */
-  .containerScrollable main {
-    min-height: 0;
-    height: auto;
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* Ensure proper content flow on mobile */
-  .containerScrollable .flex-1 {
-    flex: 1 1 auto;
-    min-height: 0;
-    height: auto;
-  }
-
-  /* Fix grid/flex container heights on mobile */
-  .containerScrollable .max-w-6xl {
-    height: auto;
-    min-height: 0;
-  }
-}
-
-/* Additional iOS Safari fixes */
-@supports (-webkit-appearance: none) and (stroke-color: transparent) {
-  @media screen and (max-width: 767px) {
-    .containerScrollable {
-      min-height: 100vh;
-      min-height: -webkit-fill-available;
-      height: auto;
-    }
   }
 }

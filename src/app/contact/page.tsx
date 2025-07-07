@@ -58,7 +58,7 @@ export default function Contact() {
   }
 
   return (
-    <div className={`min-h-screen flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground} overflow-x-hidden`}>
+    <div className={`min-h-screen flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground}`}>
       {/* Animated background grid */}
       <div className={styles.backgroundGrid}></div>
       
@@ -90,7 +90,7 @@ export default function Contact() {
 
       <Navbar />
       
-      <main className={`flex-1 flex flex-col justify-center items-center ${isLaptop ? 'max-w-lg' : isDesktop ? 'max-w-xl' : 'max-w-2xl'} mx-auto px-4 sm:px-6 md:px-8 relative z-10 pt-20 pb-32 sm:pb-24 md:pb-32 lg:pb-40 w-full box-border`}>
+      <main className={`flex-1 flex flex-col justify-center items-center ${isLaptop ? 'max-w-lg' : isDesktop ? 'max-w-xl' : 'max-w-2xl'} mx-auto px-4 sm:px-6 md:px-8 relative z-10 pt-20 pb-32 sm:pb-24 md:pb-32 lg:pb-40`}>
         {/* Enhanced header section with animated title - smaller and more compact */}
         <div className={`${styles.headerContainer} ${styles.headerContainerSmall} mb-8 sm:mb-10 md:mb-12`}>
           <div className={styles.titleWrapper}>
