@@ -54,6 +54,20 @@ export default function Projects() {
     setIsAnyModalOpen(isOpen);
   };
 
+  useEffect(() => {
+    if (isMounted && isDesktop) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+    // If not desktop, ensure scrolling is enabled
+    if (isMounted && !isDesktop) {
+      document.body.style.overflow = '';
+    }
+  }, [isMounted, isDesktop]);
+
   // Only render UI if mounted (avoids hydration mismatch)
   if (!isMounted) {
     return null;

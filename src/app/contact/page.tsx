@@ -16,6 +16,19 @@ export default function Contact() {
     setIsMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (isMounted && isDesktop) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+    if (isMounted && !isDesktop) {
+      document.body.style.overflow = '';
+    }
+  }, [isMounted, isDesktop]);
+
   // Only render UI if mounted (avoids hydration mismatch)
   if (!isMounted) {
     return null;

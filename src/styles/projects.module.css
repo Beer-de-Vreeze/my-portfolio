@@ -1,0 +1,35 @@
+/* Projects page styles - copy of page.module.css */
+
+/* MOBILE-FIRST CONTAINER - CRITICAL FIX */
+.container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
+  padding: 1rem 0.5rem;
+  background: radial-gradient(
+    ellipse at center,
+    #111111 0%,
+    #000000 70%,
+    #000000 100%
+  );
+  color: white;
+  gap: 1rem;
+  /* CRITICAL: Allow scrolling on ALL devices */
+  overflow: visible;
+  /* Start with mobile-first: flex-start for mobile */
+  justify-content: flex-start;
+}
+
+/* Desktop only: center content if it fits */
+@media (min-width: 1025px) {
+  .container {
+    justify-content: center;
+    padding: 0.5rem 2rem;
+    gap: 0.75rem;
+  }
+}
+
+/* ...existing code from page.module.css... */
