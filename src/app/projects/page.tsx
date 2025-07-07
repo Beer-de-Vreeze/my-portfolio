@@ -7,6 +7,7 @@ import "highlight.js/styles/monokai.css";
 // Import custom highlighting styles
 import "@/styles/code-highlight.css";
 import styles from "@/styles/page.module.css";
+import { useResponsiveSize } from "@/components/utils/useScrolling";
 import AudioPreviever from "@/components/projects/AudioPreviever";
 import BearlyStealthy from "@/components/projects/Bearly Stealthy";
 import MLAgent from "@/components/projects/MLAgent";
@@ -14,39 +15,6 @@ import SketchinSpells from "@/components/projects/Sketchin Spells";
 import Tetrtis from "@/components/projects/Tetrtis";
 import Website from "@/components/projects/Website";
 import LPCafe from "@/components/projects/LPCafe";
-
-// Custom hook for window size with proper SSR handling
-function useWindowSize() {
-  // Initialize with undefined to handle SSR
-  const [windowSize, setWindowSize] = useState<{
-    width: number | undefined;
-    height: number | undefined;
-  }>({
-    width: undefined,
-    height: undefined,
-  });
-
-  useEffect(() => {
-    // Handler to call on window resize
-    function handleResize() {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    }
-    
-    // Add event listener
-    window.addEventListener('resize', handleResize);
-    
-    // Call handler right away so state gets updated with initial window size
-    handleResize();
-    
-    // Remove event listener on cleanup
-    return () => window.removeEventListener('resize', handleResize);
-  }, []); // Empty array ensures that effect is only run on mount and unmount
-
-  return windowSize;
-}
 
 // Loading component for the projects grid
 const ProjectsLoading = () => (
@@ -73,23 +41,13 @@ const ProjectsContent = ({ onModalStateChange }: { onModalStateChange: (isOpen: 
 );
 
 export default function Projects() {
-  const { width } = useWindowSize();
+  const { isMobile, isDesktop } = useResponsiveSize();
   const [isMounted, setIsMounted] = useState(false);
   const [isAnyModalOpen, setIsAnyModalOpen] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
-  // Responsive breakpoints
-  const isXSmall = width !== undefined && width < 480;
-  const isSmall = width !== undefined && width >= 480 && width < 640;
-  const isMedium = width !== undefined && width >= 640 && width < 768;
-  const isLarge = width !== undefined && width >= 768 && width < 1024;
-
-  // Determine layout based on screen size
-  const isMobile = isXSmall || isSmall || isMedium || isLarge;
-  const isDesktop = !isMobile;
 
   // Handle modal state changes from the ProjectCard component
   const handleModalStateChange = (isOpen: boolean) => {
@@ -162,7 +120,7 @@ export default function Projects() {
           
           <h2 className={`${styles.subtitle} ${isDesktop ? styles.titleDesktopSmall : styles.titleMobileSmall}`}>
             <span className={styles.subtitleText}>
-              Explore my collection of {width !== undefined && width < 640 && <br />}
+              Explore my collection of {isMobile && <br />}
               <span>games, tools, and creative works</span>
             </span>
           </h2>

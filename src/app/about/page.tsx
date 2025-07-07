@@ -5,58 +5,17 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ProfileCard from "@/components/about/ProfileCard";
 import Stack from "@/components/about/Stack";
+import { useScrolling, useResponsiveSize } from "@/components/utils/useScrolling";
 import styles from "@/styles/page.module.css";
 
-// Custom hook for window size with proper SSR handling
-function useWindowSize() {
-  // Initialize with undefined to handle SSR
-  const [windowSize, setWindowSize] = useState<{
-    width: number | undefined;
-    height: number | undefined;
-  }>({
-    width: undefined,
-    height: undefined,
-  });
-
-  useEffect(() => {
-    // Handler to call on window resize
-    function handleResize() {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    }
-    
-    // Add event listener
-    window.addEventListener('resize', handleResize);
-    
-    // Call handler right away so state gets updated with initial window size
-    handleResize();
-    
-    // Remove event listener on cleanup
-    return () => window.removeEventListener('resize', handleResize);
-  }, []); // Empty array ensures that effect is only run on mount and unmount
-
-  return windowSize;
-}
-
 export default function About() {
-  const { width } = useWindowSize();
+  const { isMobile, isTablet, isDesktop } = useResponsiveSize();
+  const { scrollToTop } = useScrolling();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
-  // Responsive breakpoints
-  const isXSmall = width !== undefined && width < 480;
-  const isSmall = width !== undefined && width >= 480 && width < 640;
-  const isMedium = width !== undefined && width >= 640 && width < 768;
-  const isLarge = width !== undefined && width >= 768 && width < 1024;
-
-  // Determine layout based on screen size
-  const isMobile = isXSmall || isSmall || isMedium || isLarge;
-  const isDesktop = !isMobile;
 
   // Only render UI if mounted (avoids hydration mismatch)
   if (!isMounted) {
@@ -115,7 +74,7 @@ export default function About() {
           
           <h2 className={`${styles.subtitle} ${isDesktop ? styles.titleDesktopSmall : styles.titleMobileSmall}`}>
             <span className={styles.subtitleText}>
-              Dive into my skills, journey, and {width !== undefined && width < 640 && <br />}
+              Dive into my skills, journey, and {isMobile && <br />}
               what makes me tick as a creator
             </span>
           </h2>

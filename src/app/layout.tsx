@@ -33,9 +33,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
   viewportFit: 'cover', // Important for iPhone X and newer
+  // Remove userScalable: false and maximumScale to allow proper mobile scrolling
 };
 
 export default function RootLayout({
@@ -49,7 +48,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
-      <body className="bg-black text-white custom-scrollbar">
+      <body className="bg-black text-white custom-scrollbar min-h-screen">
         <LoadingBar />
         {children}
       </body>

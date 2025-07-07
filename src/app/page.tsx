@@ -4,43 +4,12 @@ import { useState, useEffect } from 'react';
 import AboutCard from "../components/AboutCard";
 import ProjectCard from "../components/ProjectCardMenu";
 import ContactCard from "@/components/ContactCardMenu";
+import { useScrolling, useResponsiveSize } from "@/components/utils/useScrolling";
 import styles from "@/styles/page.module.css";
 
-// Custom hook for window size with proper SSR handling
-function useWindowSize() {
-  // Initialize with undefined to handle SSR
-  const [windowSize, setWindowSize] = useState<{
-    width: number | undefined;
-    height: number | undefined;
-  }>({
-    width: undefined,
-    height: undefined,
-  });
-
-  useEffect(() => {
-    // Handler to call on window resize
-    function handleResize() {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    }
-    
-    // Add event listener
-    window.addEventListener('resize', handleResize);
-    
-    // Call handler right away so state gets updated with initial window size
-    handleResize();
-    
-    // Remove event listener on cleanup
-    return () => window.removeEventListener('resize', handleResize);
-  }, []); // Empty array ensures that effect is only run on mount and unmount
-
-  return windowSize;
-}
-
 export default function Home() {
-  const { width } = useWindowSize();
+  const { isMobile, isTablet, isDesktop } = useResponsiveSize();
+  const { scrollToTop } = useScrolling();
   const [isMounted, setIsMounted] = useState(false);
 
   // Handle hydration
@@ -53,19 +22,6 @@ export default function Home() {
     <ProjectCard key="project" />,
     <ContactCard key="contact" />,
   ];
-  // Responsive breakpoints
-  const isXSmall = width !== undefined && width < 480;
-  const isSmall = width !== undefined && width >= 480 && width < 640;
-  const isMedium = width !== undefined && width >= 640 && width < 768;
-  const isLarge = width !== undefined && width >= 768 && width < 1024;
-  // These variables are declared but not used, keeping them for future use
-  // const isXLarge = width !== undefined && width >= 1024 && width < 1280;
-  // const isXXLarge = width !== undefined && width >= 1280 && width < 1536;
-
-
-  // Determine layout based on screen size
-  const isMobile = isXSmall || isSmall || isMedium || isLarge;
-  const isDesktop = !isMobile;
 
   // Only render UI if mounted (avoids hydration mismatch)
   if (!isMounted) {
@@ -126,7 +82,7 @@ export default function Home() {
         
         <h2 className={`${styles.subtitle} ${isDesktop ? styles.titleDesktop : styles.titleMobile}`}>
           <span className={styles.subtitleText}>Systems & Tools </span>
-          {width !== undefined && width < 900 && <br />}
+          {!isDesktop && <br />}
           <span className={`gradient-text ${styles.subtitleGradient}`}>Game Developer</span>
         </h2>
         

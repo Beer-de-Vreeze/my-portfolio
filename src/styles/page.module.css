@@ -1,13 +1,12 @@
+/* MOBILE-FIRST CONTAINER - CRITICAL FIX */
 .container {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  height: 100vh;
-  max-height: 100vh;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+  width: 100%;
+  min-height: 100vh;
+  padding: 1rem 0.5rem;
   background: radial-gradient(
     ellipse at center,
     #111111 0%,
@@ -15,33 +14,32 @@
     #000000 100%
   );
   color: white;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  width: 100%;
-  gap: 0.75rem;
-  overflow: hidden;
+  gap: 1rem;
+  /* CRITICAL: Allow scrolling on ALL devices */
+  overflow: visible;
+  /* Start with mobile-first: flex-start for mobile */
+  justify-content: flex-start;
 }
 
-/* Allow scrolling on mobile devices */
-@media (max-width: 768px) {
+/* Desktop only: center content if it fits */
+@media (min-width: 1025px) {
   .container {
-    min-height: 100vh;
-    height: auto;
-    max-height: none;
-    overflow: visible;
+    justify-content: center;
+    padding: 0.5rem 2rem;
+    gap: 0.75rem;
   }
 }
 
-/* Container for pages that need scrolling (about, projects, contact) */
+/* MOBILE-FIRST SCROLLABLE CONTAINER */
 .containerScrollable {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+  width: 100%;
   min-height: 100vh;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+  padding: 1rem 0.5rem;
   background: radial-gradient(
     ellipse at center,
     #111111 0%,
@@ -49,24 +47,21 @@
     #000000 100%
   );
   color: white;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  width: 100%;
-  gap: 0.75rem;
+  gap: 1rem;
+  /* CRITICAL: Always allow scrolling */
   overflow: visible;
 }
 
-@media (min-width: 640px) {
+/* Tablet and desktop adjustments */
+@media (min-width: 769px) {
   .containerScrollable {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding: 1rem 1.5rem;
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1025px) {
   .containerScrollable {
-    padding-left: 2.5rem;
-    padding-right: 2.5rem;
+    padding: 1.5rem 2.5rem;
   }
 }
 

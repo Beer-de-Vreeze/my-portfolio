@@ -5,52 +5,17 @@ import Footer from '@/components/Footer';
 import ContactForm from '@/components/ContactForm';
 import { motion } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaFileAlt } from 'react-icons/fa';
+import { useScrolling, useResponsiveSize } from '@/components/utils/useScrolling';
 import styles from '@/styles/page.module.css';
 
-// Custom hook for window size with proper SSR handling
-function useWindowSize() {
-  // Initialize with undefined to handle SSR
-  const [windowSize, setWindowSize] = useState<{
-    width: number | undefined;
-    height: number | undefined;
-  }>({
-    width: undefined,
-    height: undefined,
-  });
-
-  useEffect(() => {
-    // Handler to call on window resize
-    function handleResize() {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    }
-    
-    // Add event listener
-    window.addEventListener('resize', handleResize);
-    
-    // Call handler right away so state gets updated with initial window size
-    handleResize();
-    
-    // Remove event listener on cleanup
-    return () => window.removeEventListener('resize', handleResize);
-  }, []); // Empty array ensures that effect is only run on mount and unmount
-
-  return windowSize;
-}
-
 export default function Contact() {
-  const { width } = useWindowSize();
+  const { isMobile, isTablet, isDesktop } = useResponsiveSize();
+  const { scrollToTop } = useScrolling();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
-  // Responsive breakpoints for laptop and desktop
-  const isLaptop = width !== undefined && width >= 1024 && width < 1280;
-  const isDesktop = width !== undefined && width >= 1280;
 
   // Only render UI if mounted (avoids hydration mismatch)
   if (!isMounted) {
@@ -90,11 +55,11 @@ export default function Contact() {
 
       <Navbar />
       
-      <main className={`flex-1 flex flex-col justify-center items-center ${isLaptop ? 'max-w-lg' : isDesktop ? 'max-w-xl' : 'max-w-2xl'} mx-auto px-4 sm:px-6 md:px-8 relative z-10 pt-20 pb-32 sm:pb-24 md:pb-32 lg:pb-40`}>
+      <main className={`flex-1 flex flex-col justify-center items-center ${isTablet ? 'max-w-lg' : isDesktop ? 'max-w-xl' : 'max-w-2xl'} mx-auto px-4 sm:px-6 md:px-8 relative z-10 pt-20 pb-32 sm:pb-24 md:pb-32 lg:pb-40`}>
         {/* Enhanced header section with animated title - smaller and more compact */}
         <div className={`${styles.headerContainer} ${styles.headerContainerSmall} mb-8 sm:mb-10 md:mb-12`}>
           <div className={styles.titleWrapper}>
-            <h1 className={`${styles.name} ${isLaptop || isDesktop ? styles.nameDesktopSmall : styles.nameMobileSmall} ${styles.animatedTitle}`}>
+            <h1 className={`${styles.name} ${isTablet || isDesktop ? styles.nameDesktopSmall : styles.nameMobileSmall} ${styles.animatedTitle}`}>
               <span className={styles.titleCharacter}>L</span>
               <span className={styles.titleCharacter}>e</span>
               <span className={styles.titleCharacter}>t</span>
@@ -107,10 +72,10 @@ export default function Contact() {
               <span className={styles.titleCharacter}>t</span>
               <span className={styles.titleCharacter}>.</span>
             </h1>
-            <div className={`${styles.titleUnderline} ${isLaptop || isDesktop ? styles.titleUnderlineDesktop : ''}`}></div>
+            <div className={`${styles.titleUnderline} ${isTablet || isDesktop ? styles.titleUnderlineDesktop : ''}`}></div>
           </div>
           
-          <h2 className={`${styles.subtitle} ${isLaptop || isDesktop ? styles.titleDesktopSmall : styles.titleMobileSmall}`}>
+          <h2 className={`${styles.subtitle} ${isTablet || isDesktop ? styles.titleDesktopSmall : styles.titleMobileSmall}`}>
             <span className={styles.subtitleText}>Send me a message, and I&apos;ll get back to you soon.</span>
           </h2>
           
@@ -124,7 +89,7 @@ export default function Contact() {
 
         {/* Contact form card with enhanced styling - more compact */}
         <motion.div 
-          className={`${styles.cardWrapper} ${styles.cardHover} select-content ${isLaptop ? 'p-4 md:p-5' : 'p-3 sm:p-4 md:p-6'} rounded-2xl shadow-lg w-full`}
+          className={`${styles.cardWrapper} ${styles.cardHover} select-content ${isTablet ? 'p-4 md:p-5' : 'p-3 sm:p-4 md:p-6'} rounded-2xl shadow-lg w-full`}
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut", delay: -0.2 }}
