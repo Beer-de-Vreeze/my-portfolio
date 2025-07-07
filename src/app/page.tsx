@@ -125,7 +125,7 @@ export default function Home() {
         </div>
         
         <h2 className={`${styles.subtitle} ${isDesktop ? styles.titleDesktop : styles.titleMobile}`}>
-          <span className={styles.subtitleText}>Dutch-based </span>
+          <span className={styles.subtitleText}>Systems & Tools </span>
           {width !== undefined && width < 900 && <br />}
           <span className={`gradient-text ${styles.subtitleGradient}`}>Game Developer</span>
         </h2>
