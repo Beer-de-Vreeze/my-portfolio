@@ -35,7 +35,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: 'cover', // Important for iPhone X and newer
   // Remove userScalable: false and maximumScale to allow proper mobile scrolling
-};
+}
 
 export default function RootLayout({
   children,

@@ -317,7 +317,7 @@ const ContactForm = ({ onEmailSent }: ContactFormProps) => {
       />
       <motion.form 
         onSubmit={handleSubmit} 
-        className="space-y-3 sm:space-y-4" 
+        className="space-y-8 sm:space-y-10" 
         noValidate
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -327,7 +327,7 @@ const ContactForm = ({ onEmailSent }: ContactFormProps) => {
         {formFields.map((field, index) => (
           <motion.div 
             key={field.id} 
-            className="space-y-1"
+            className="space-y-2"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.8 + index * 0.1, duration: 0.6 }}
@@ -365,7 +365,7 @@ const ContactForm = ({ onEmailSent }: ContactFormProps) => {
 
         {/* Message textarea with character counter - more compact */}
         <motion.div 
-          className="space-y-1"
+          className="space-y-2"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 1.2, duration: 0.6 }}

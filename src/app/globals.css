@@ -56,12 +56,37 @@ body {
   }
 }
 
-/* Support for iPhone X and newer with safe areas */
+/* Support for iPhone X and newer with safe areas - only vertical padding */
 body {
   padding-bottom: env(safe-area-inset-bottom);
   padding-top: env(safe-area-inset-top);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
+  /* Removed horizontal safe area insets to prevent unwanted right spacing */
+}
+
+/* Prevent unwanted right-side spacing on all pages */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  max-width: 100vw;
+  margin: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Ensure all main containers don't exceed viewport width */
+main,
+.container,
+.containerScrollable,
+#__next,
+[data-nextjs-scroll-focus-boundary] {
+  max-width: 100vw;
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 /* iOS Safari specific fixes */
@@ -274,7 +299,7 @@ html {
     transform: translateX(0) translateY(0);
   }
   100% {
-    transform: translateX(16px) translateY(16px);
+    transform: translateX(0) translateY(16px);
   }
 }
 
@@ -301,15 +326,15 @@ html {
     opacity: 0.4;
   }
   25% {
-    transform: translateX(2px) translateY(-2px) rotate(0.5deg) scale(1.01);
+    transform: translateX(0) translateY(-2px) rotate(0.5deg) scale(1.01);
     opacity: 0.6;
   }
   50% {
-    transform: translateX(4px) translateY(0) rotate(0deg) scale(1.02);
+    transform: translateX(0) translateY(0) rotate(0deg) scale(1.02);
     opacity: 0.8;
   }
   75% {
-    transform: translateX(2px) translateY(2px) rotate(-0.5deg) scale(1.01);
+    transform: translateX(0) translateY(2px) rotate(-0.5deg) scale(1.01);
     opacity: 0.6;
   }
   100% {
@@ -324,23 +349,23 @@ html {
     opacity: 0.5;
   }
   20% {
-    transform: translateX(5px) translateY(2px) skewX(1deg);
+    transform: translateX(0) translateY(2px) skewX(1deg);
     opacity: 0.7;
   }
   40% {
-    transform: translateX(10px) translateY(5px) skewX(0deg);
+    transform: translateX(0) translateY(5px) skewX(0deg);
     opacity: 0.9;
   }
   60% {
-    transform: translateX(15px) translateY(3px) skewX(-1deg);
+    transform: translateX(0) translateY(3px) skewX(-1deg);
     opacity: 0.7;
   }
   80% {
-    transform: translateX(20px) translateY(8px) skewX(0deg);
+    transform: translateX(0) translateY(8px) skewX(0deg);
     opacity: 0.5;
   }
   100% {
-    transform: translateX(24px) translateY(10px) skewX(0deg);
+    transform: translateX(0) translateY(10px) skewX(0deg);
     opacity: 0.3;
   }
 }
@@ -351,15 +376,15 @@ html {
     opacity: 0.3;
   }
   25% {
-    transform: rotate(90deg) scale(1.02) translateX(1px);
+    transform: rotate(90deg) scale(1.02) translateX(0);
     opacity: 0.6;
   }
   50% {
-    transform: rotate(180deg) scale(1.04) translateX(2px);
+    transform: rotate(180deg) scale(1.04) translateX(0);
     opacity: 0.8;
   }
   75% {
-    transform: rotate(270deg) scale(1.02) translateX(1px);
+    transform: rotate(270deg) scale(1.02) translateX(0);
     opacity: 0.6;
   }
   100% {
@@ -501,259 +526,134 @@ select:focus {
   }
 }
 
-:root {
-  --foreground-rgb: 255, 255, 255;
-  --background-rgb: 0, 0, 0;
+/* Prevent horizontal scrolling and content shifting - CRITICAL FIX */
+html {
+  overflow-x: hidden !important;
+  width: 100% !important;
+  max-width: 100vw !important;
+  position: relative !important;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
+  overflow-x: hidden !important;
+  width: 100% !important;
+  max-width: 100vw !important;
+  position: relative !important;
+  margin: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  transform: none !important;
 }
 
-input,
-textarea,
-select {
-  background-color: transparent;
-  border: none;
-  border-bottom: 1px solid #52525b;
-  color: white;
-  padding: 0.5rem 0;
-  width: 100%;
+/* Ensure all containers and main elements don't cause horizontal overflow */
+main,
+#__next,
+[data-nextjs-scroll-focus-boundary] {
+  overflow-x: hidden !important;
+  width: 100% !important;
+  max-width: 100vw !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  transform: none !important;
+  position: relative !important;
 }
 
-input:focus,
-textarea:focus,
-select:focus {
-  outline: none;
-  border-bottom-color: #a1a1aa;
+/* Allow specific containers to have max-width constraints for content layout */
+.container,
+.containerScrollable {
+  overflow-x: hidden !important;
+  width: 100% !important;
+  max-width: 100vw !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  transform: none !important;
+  position: relative !important;
 }
 
-button {
-  background-color: transparent;
-  border: 1px solid #52525b;
-  color: white;
-  padding: 0.5rem 1.5rem;
-  border-radius: 9999px;
-  transition: all 0.2s ease;
+/* Prevent any background elements from causing horizontal shifts */
+*::before,
+*::after {
+  max-width: 100vw !important;
+  overflow-x: hidden !important;
 }
 
-button:hover:not(:disabled) {
-  /* Removed the white background and black text that was causing the issue */
-  border-color: #a1a1aa;
+/* Contact form specific width constraints - made wider with more spacing */
+.contact-form-container,
+.contact-form-container > * {
+  max-width: 500px !important;
 }
 
-button:disabled {
-  opacity: 0.5;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-label {
-  font-size: 0.875rem;
-  color: #a1a1aa;
-}
-
-h1 {
-  font-size: 2.25rem;
-  line-height: 2.5rem;
-  font-weight: 300;
-  margin-bottom: 0.75rem;
-}
-
-p {
-  font-size: 1.125rem;
-  line-height: 1.75rem;
-  color: #a1a1aa;
-  font-weight: 200;
-  margin-bottom: 3rem;
-}
-
-/* Custom animations for SkillCard component */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-}
-
-.animate-fadeIn {
-  animation: fadeIn 0.4s ease-in-out;
-}
-
-.animate-fadeOut {
-  animation: fadeOut 0.3s ease-in-out;
-}
-
-/* Hover effect for category buttons */
-@keyframes pulseGlow {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.1);
-  }
-  50% {
-    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.05);
-  }
-}
-
-.animate-pulseGlow:hover {
-  animation: pulseGlow 1.5s ease-in-out infinite;
-}
-
-/* Staggered stack animations */
-@keyframes stackSlideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-30px) translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0) translateY(0);
-  }
-}
-
-.animate-stackSlideIn {
-  opacity: 0;
-  animation: stackSlideIn 0.6s ease-out forwards;
-}
-
-.animate-stackSlideIn:nth-child(1) {
-  animation-delay: 0.2s;
-}
-
-.animate-stackSlideIn:nth-child(2) {
-  animation-delay: 0.4s;
-}
-
-.animate-stackSlideIn:nth-child(3) {
-  animation-delay: 0.6s;
-}
-
-/* Profile card animation */
-@keyframes profileSlideIn {
-  from {
-    opacity: 0;
-    transform: translateX(30px) translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0) translateY(0);
-  }
-}
-
-/* Mobile-specific fade-in animation for profile */
-@keyframes profileFadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.animate-profileSlideIn {
-  opacity: 0;
-  animation: profileSlideIn 0.8s ease-out forwards;
-  animation-delay: 0.1s;
-}
-
-/* Mobile scrollbar styles */
 @media (max-width: 768px) {
-  /* Use fade-in animation instead of slide-in on mobile */
-  .animate-profileSlideIn {
-    animation: profileFadeIn 0.8s ease-out forwards;
-    animation-delay: 0.1s;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    border: 2px solid #333;
+  .contact-form-container,
+  .contact-form-container > * {
+    max-width: 95% !important;
+    width: 95% !important;
   }
 }
 
-/* Carousel progress bar animation */
-@keyframes progressBar {
-  from {
-    width: 0%;
-  }
-  to {
-    width: 100%;
-  }
+/* Contact page specific width constraints - made wider */
+.contact-page-main {
+  max-width: 550px !important;
+  width: 100% !important;
+  margin: 0 auto !important;
 }
 
-/* Enhanced carousel animations */
-@keyframes carouselSlideIn {
-  from {
-    opacity: 0;
-    transform: translateX(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
+@media (max-width: 768px) {
+  .contact-page-main {
+    max-width: 100% !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
   }
 }
 
-@keyframes carouselSlideOut {
-  from {
-    opacity: 1;
-    transform: translateX(0);
+/* Specific form element width constraints to prevent stretching */
+.contact-form-container input,
+.contact-form-container textarea,
+.contact-form-container .select-content {
+  max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Ensure contact form respects Tailwind max-width classes - restored to original */
+.max-w-xl {
+  max-width: 36rem !important; /* 576px */
+}
+
+.max-w-2xl {
+  max-width: 28rem !important; /* 448px - reduced for more compact design */
+}
+
+/* Add max-w-lg for compact contact form */
+.max-w-lg {
+  max-width: 32rem !important; /* 512px - wider design */
+}
+
+/* Add max-w-md for contact form wrapper */
+.max-w-md {
+  max-width: 32rem !important; /* 512px - wider size */
+}
+
+/* Mobile contact page fixes to prevent bottom cutoff */
+@media (max-width: 768px) {
+  .contact-page-main {
+    min-height: auto !important;
+    height: auto !important;
+    padding-bottom: 6rem !important; /* Extra space for social buttons */
   }
-  to {
-    opacity: 0;
-    transform: translateX(-30px);
+
+  /* Ensure the contact form container has enough bottom space */
+  .contact-form-container {
+    margin-bottom: 2rem !important;
   }
 }
 
-.animate-carouselSlideIn {
-  animation: carouselSlideIn 0.3s ease-out;
-}
-
-.animate-carouselSlideOut {
-  animation: carouselSlideOut 0.3s ease-out;
-}
-
-/* Animation delay utilities */
-.animation-delay-150 {
-  animation-delay: 150ms;
-}
-
-.animation-delay-300 {
-  animation-delay: 300ms;
-}
-
-.animation-delay-500 {
-  animation-delay: 500ms;
+/* Mobile viewport fixes for contact page */
+@media (max-height: 800px) and (max-width: 768px) {
+  .contact-page-main {
+    padding-top: 4rem !important;
+    padding-bottom: 8rem !important;
+  }
 }

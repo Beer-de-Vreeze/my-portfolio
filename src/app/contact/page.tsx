@@ -67,7 +67,7 @@ export default function Contact() {
 
       <Navbar />
       
-      <main className={`flex-1 flex flex-col justify-center items-center ${isDesktop ? 'max-w-xl' : 'max-w-2xl'} mx-auto px-4 sm:px-6 md:px-8 relative z-10 pt-20 pb-32 sm:pb-24 md:pb-32 lg:pb-40`}>
+      <main className={`contact-page-main flex-1 flex flex-col ${isDesktop ? 'justify-center' : 'justify-start'} items-center ${isDesktop ? 'max-w-lg' : 'max-w-xl'} mx-auto px-4 sm:px-6 md:px-8 relative z-10 pt-20 pb-40 sm:pb-32 md:pb-40 lg:pb-40`}>
         {/* Enhanced header section with animated title - smaller and more compact */}
         <div className={`${styles.headerContainer} ${styles.headerContainerSmall} mb-8 sm:mb-10 md:mb-12`}>
           <div className={styles.titleWrapper}>
@@ -101,7 +101,7 @@ export default function Contact() {
 
         {/* Contact form card with enhanced styling - more compact */}
         <motion.div 
-          className={`${styles.cardWrapper} ${styles.cardHover} select-content ${isDesktop ? 'p-4 md:p-5' : 'p-3 sm:p-4 md:p-6'} rounded-2xl shadow-lg w-full`}
+          className={`${styles.cardWrapper} ${styles.cardHover} select-content contact-form-container ${isDesktop ? 'p-4 md:p-5' : 'p-3 sm:p-4 md:p-6'} rounded-2xl shadow-lg w-full max-w-md`}
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut", delay: -0.2 }}
