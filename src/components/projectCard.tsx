@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, TouchEvent, useCallback, useMemo, memo } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo, memo } from 'react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiApple, SiDocker, SiGooglecloud, SiNextdotjs, SiTailwindcss, SiBlender, SiAdobephotoshop, SiMysql, SiPhp, SiPython, SiCplusplus, SiUnrealengine, SiGodotengine, SiTensorflow, SiPytorch, SiAndroidstudio, SiVercel, SiDotnet, SiEslint, SiFramer } from 'react-icons/si';
@@ -425,11 +425,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           if (playerState === 1) {
             // Video is playing
             setIsYouTubePlaying(true);
-            setAutoplay(false);
+            setAutoplay(false); // Disable autoplay when YouTube video starts playing
           } else if (playerState === 2 || playerState === 0) {
             // Video is paused or ended
             setIsYouTubePlaying(false);
-            setAutoplay(true);
+            setAutoplay(true); // Re-enable autoplay when YouTube video is paused or ended
+          } else if (playerState === 3) {
+            // Video is buffering - treat as playing to prevent autoplay
+            setIsYouTubePlaying(true);
+            setAutoplay(false);
           }
         }
       } catch {
@@ -1311,7 +1315,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
    * Handler for touch start event
    * Captures initial touch position and disables autoplay
    */
-  const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);
     setAutoplay(false); // Temporarily disable autoplay during touch interaction
@@ -1321,7 +1325,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
    * Handler for touch move event
    * Tracks finger position during swipe
    */
-  const handleTouchMove = (e: TouchEvent<HTMLDivElement>) => {
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
     setTouchEnd(e.targetTouches[0].clientX);
   };
   
@@ -1345,6 +1349,50 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     setTouchEnd(null);
     setAutoplay(true); // Re-enable autoplay after interaction
   };
+
+  /**
+   * Effect to handle YouTube state changes when switching between media items
+   * Ensures YouTube playing state is reset when switching away from YouTube videos
+   */
+  useEffect(() => {
+    // If we're not on a YouTube video anymore, reset YouTube playing state
+    if (currentMedia?.type !== 'youtube' && isYouTubePlaying) {
+      setIsYouTubePlaying(false);
+      setAutoplay(true);
+    }
+    
+    // If we switch to a YouTube video, ensure autoplay is enabled by default
+    if (currentMedia?.type === 'youtube' && !isYouTubePlaying) {
+      setAutoplay(true);
+    }
+  }, [currentMediaIndex, currentMedia?.type, isYouTubePlaying]);
+
+  /**
+   * Autoplay effect for carousel
+   * Automatically advances to the next media item when conditions are met
+   */
+  useEffect(() => {
+    // Don't autoplay if:
+    // - Modal is not open
+    // - Only one media item
+    // - Autoplay is disabled
+    // - A video is currently playing
+    // - A YouTube video is playing
+    // - User is on mobile (to save battery and data)
+    if (!isModalOpen || media.length <= 1 || !autoplay || isPlaying || isYouTubePlaying || isMobile) {
+      return;
+    }
+
+    // Set up autoplay timer
+    const autoplayTimer = setTimeout(() => {
+      goToNextMedia();
+    }, 5000); // 5 seconds between slides
+
+    // Cleanup timer on unmount or when dependencies change
+    return () => {
+      clearTimeout(autoplayTimer);
+    };
+  }, [isModalOpen, media.length, autoplay, isPlaying, isYouTubePlaying, isMobile, currentMediaIndex, goToNextMedia]);
 
   /**
    * Effect for handling keyboard navigation and body scroll locking
@@ -1411,26 +1459,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [isModalOpen, onModalStateChange, closeModal, media.length, goToPreviousMedia, goToNextMedia, isVideo, handleVideoToggle]);
-
-  /**
-   * Effect for handling autoplay carousel functionality
-   * Changes slides automatically when conditions are met
-   */
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-    // Only autoplay when modal is open, autoplay is enabled, video is not playing,
-    // YouTube is not playing, not in fullscreen, and there are multiple media items
-    if (isModalOpen && autoplay && !isPlaying && !isYouTubePlaying && !isFullscreen && media.length > 1) {
-      intervalId = setInterval(() => {
-        goToNextMedia();
-      }, 5000); // Change slide every 5 seconds
-    }
-    
-    // Cleanup function to clear the interval when dependencies change
-    return () => {
-      if (intervalId) clearInterval(intervalId);
-    };
-  }, [isModalOpen, autoplay, isPlaying, isYouTubePlaying, isFullscreen, currentMediaIndex, media.length, goToNextMedia]);
 
   /**
    * Effect for applying syntax highlighting to code snippets
@@ -1805,38 +1833,76 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             </div>
           )}
         </div>
+
+        {/* Enhanced gradient overlays for better readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-transparent to-purple-900/20"></div>
+
+        {/* Card content - title and description with modern styling */}
+        <div className="relative z-10">
+          <h3 className="text-blue-100 fontbold text-xl sm:text-2xl group-hover/card:text-white transition-colors duration-300 mb-3 truncate drop-shadow-xl">
+            {title}
+          </h3>
+          <p className="text-blue-200/70 group-hover/card:text-blue-100 transition-colors duration-300 text-sm line-clamp-2 mb-4 drop-shadow-lg leading-relaxed">{description.split('.')[0]}.</p>
+        </div>
+        
+        {/* Tech stack tags - modern glass morphism design */}
+        <div className="relative z-10 flex flex-wrap gap-1.5 mt-auto max-w-full overflow-hidden">
+          {techStack.slice(0, 4).map((tech, index) => (
+            <span 
+              key={index} 
+              className="px-2 py-1.5 bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-400/30 rounded-full flex items-center justify-center text-blue-200 text-xs shadow-md hover:border-blue-300/50 transition-all duration-300 whitespace-nowrap flex-shrink-0 cursor-pointer group-hover/card:from-blue-400/30 group-hover/card:to-purple-400/30 group-hover/card:text-blue-100"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleTechIconClick(e, tech);
+              }}
+              aria-label={`Technology: ${tech}`}
+            >
+              {techIcons[tech] || null} 
+              <span className="ml-1">{tech}</span>
+            </span>
+          ))}
+        </div>
       </div>
 
       {/* Modal with backdrop blur and enhanced animations */}
       {isModalOpen && (
         <div 
-          className={`fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-sm transition-all duration-300 ${
-            isClosing ? 'opacity-0 backdrop-blur-none' : 'opacity-100'
+          className={`fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-sm transition-all duration-500 ease-out ${
+            isClosing ? 'opacity-0 backdrop-blur-none' : 'opacity-100 animate-fadeIn'
           }`}
           onClick={closeModal}
           role="dialog"
           aria-modal="true"
           aria-labelledby="modal-title"
+          style={{
+            animation: isClosing ? 'fadeOut 0.3s ease-out forwards' : 'fadeIn 0.5s ease-out forwards'
+          }}
         >
           {/* Enhanced Modal Container with modern design and responsive sizing */}
           <div 
-            className={`relative w-full max-w-7xl max-h-[95vh] bg-gradient-to-br from-gray-900/95 to-black/90 backdrop-blur-md rounded-2xl shadow-2xl overflow-y-auto transition-all duration-300 border border-blue-500/30 ${
-              isClosing ? 'scale-95 opacity-0' : 'scale-100 opacity-100'
+            className={`relative w-full max-w-7xl max-h-[95vh] bg-gradient-to-br from-gray-900/95 to-black/90 backdrop-blur-md rounded-2xl shadow-2xl overflow-y-auto transition-all duration-500 ease-out border border-blue-500/30 ${
+              isClosing ? 'scale-95 opacity-0 translate-y-4' : 'scale-100 opacity-100 translate-y-0 animate-slideInUp'
             }`}
             onClick={(e) => e.stopPropagation()}
+            style={{
+              animation: isClosing 
+                ? 'slideOutDown 0.3s ease-out forwards' 
+                : 'slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+            }}
           >
-            {/* Enhanced Close button with better positioning and accessibility */}
+            {/* Enhanced Close button with modern styling matching the design system */}
             <button
               onClick={closeModal}
-              className="absolute top-4 right-4 z-50 bg-gradient-to-r from-red-600/80 to-red-700/80 hover:from-red-500 hover:to-red-600 text-white rounded-full p-3 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-400/50 focus:ring-offset-2 focus:ring-offset-transparent shadow-lg"
+              className="absolute top-4 right-4 z-50 bg-gradient-to-r from-gray-900/90 to-black/90 backdrop-blur-sm hover:from-gray-800/90 hover:to-gray-900/90 text-gray-300 hover:text-white rounded-full p-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-transparent shadow-xl border border-gray-600/30 hover:border-gray-500/50 group"
               aria-label="Close modal"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="transition-transform duration-200 group-hover:scale-110">
                 <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
             
-            <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 px-4 sm:px-6 lg:px-8 relative z-10">              {/* Left Column - Media carousel and action buttons */}
+            <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 px-4 sm:px-6 lg:px-8 pt-16 pb-6 relative z-10">              {/* Left Column - Media carousel and action buttons */}
               <div className="w-full lg:w-1/2 flex flex-col">
                 {/* Mobile: Title above carousel */}
                 <div className="mb-6 lg:hidden">
@@ -1891,13 +1957,18 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                       ) : isYouTube ? (
                         <>
                           <iframe
-                            src={`https://www.youtube.com/embed/${extractYouTubeVideoId(currentMedia.src)}?rel=0&enablejsapi=1&origin=${typeof window !== 'undefined' ? window.location.origin : ''}&modestbranding=1&showinfo=0`}
+                            src={`https://www.youtube.com/embed/${extractYouTubeVideoId(currentMedia.src)}?rel=0&enablejsapi=1&origin=${typeof window !== 'undefined' ? window.location.origin : ''}&modestbranding=1&showinfo=0&controls=1&autoplay=0&fs=1&iv_load_policy=3&widget_referrer=${typeof window !== 'undefined' ? window.location.origin : ''}`}
                             className="w-full h-full transition-all duration-500 animate-fadeIn"
                             title={currentMedia.alt || title}
                             frameBorder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             allowFullScreen
-                            onLoad={() => setLoadingState('media', false)}
+                            onLoad={() => {
+                              setLoadingState('media', false);
+                              // Reset YouTube playing state when a new video loads
+                              setIsYouTubePlaying(false);
+                              setAutoplay(true);
+                            }}
                             onError={() => handleError(`Failed to load YouTube video: ${currentMedia.src}`, 'media')}
                             key={currentMediaIndex} // Force re-render when media changes
                           ></iframe>
@@ -1931,14 +2002,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                           e.stopPropagation();
                           goToPreviousMedia();
                         }}
-                        className="absolute left-2 top-1/2 -translate-y-1/2 z-30 
+                        className={`absolute left-2 top-1/2 -translate-y-1/2 z-30 
                           bg-gradient-to-r from-black/60 to-gray-900/60
                           backdrop-blur-sm rounded-full p-2.5 sm:p-3
                           text-white/80 transition-all duration-300
                           md:opacity-0 md:group-hover/carousel:opacity-100
-                          opacity-100
                           border border-white/10
-                          focus:outline-none focus:ring-2 focus:ring-blue-400/50"
+                          focus:outline-none focus:ring-2 focus:ring-blue-400/50 ${
+                          (isYouTube && isYouTubePlaying) ? 'opacity-0 pointer-events-none' : 'opacity-100'
+                        }`}
                         aria-label="Previous image"
                       >
                         <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1952,14 +2024,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                           e.stopPropagation();
                           goToNextMedia();
                         }}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 z-30 
+                        className={`absolute right-2 top-1/2 -translate-y-1/2 z-30 
                           bg-gradient-to-r from-black/60 to-gray-900/60
                           backdrop-blur-sm rounded-full p-2.5 sm:p-3
                           text-white/80 transition-all duration-300
                           md:opacity-0 md:group-hover/carousel:opacity-100
-                          opacity-100
                           border border-white/10
-                          focus:outline-none focus:ring-2 focus:ring-blue-400/50"
+                          focus:outline-none focus:ring-2 focus:ring-blue-400/50 ${
+                          (isYouTube && isYouTubePlaying) ? 'opacity-0 pointer-events-none' : 'opacity-100'
+                        }`}
                         aria-label="Next image"
                       >
                         <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2021,7 +2094,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                   </div>
 
                   {/* Enhanced Progress bar for autoplay with subtle design */}
-                  {media.length > 1 && autoplay && !isPlaying && !isYouTubePlaying && !isFullscreen && (
+                  {media.length > 1 && autoplay && !isPlaying && !isYouTubePlaying && !isYouTube && !isFullscreen && (
                     <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-black/40 to-gray-900/40 z-20 overflow-hidden">
                       <div 
                         className="h-full bg-gradient-to-r from-blue-400/80 to-purple-400/80 transition-all duration-300 ease-linear shadow-lg"
@@ -2236,7 +2309,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                       className="group w-full flex items-center justify-between p-4 bg-gradient-to-r from-gray-900/50 to-gray-800/50 hover:from-blue-900/30 hover:to-purple-900/30 border border-blue-400/20 hover:border-blue-300/40 transition-all duration-300 text-left rounded-xl shadow-lg"
                     >
                       <span className="text-sm text-blue-200 font-medium group-hover:text-blue-100 transition-colors">
-                        {codeSnippet.title || 'Main Code Example'}
+                        {codeSnippet?.title || 'Main Code Example'}
                       </span>
                       <svg 
                         className={`w-4 h-4 text-blue-400 group-hover:text-blue-300 transition-all duration-300 ${
@@ -2255,8 +2328,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                       <div className="relative overflow-hidden border border-blue-400/20 rounded-xl mt-2 shadow-lg">
                         <div className="max-h-[32rem] overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500/50 scrollbar-track-gray-800/50">
                           <pre className="w-full overflow-x-auto p-5 text-sm sm:text-[14px] leading-relaxed bg-gradient-to-br from-gray-900/80 to-black/90">
-                            <code className={`language-${codeSnippet.language || 'javascript'} font-mono text-gray-100`}>
-                              {codeSnippet.code}
+                            <code className={`language-${codeSnippet?.language || 'javascript'} font-mono text-gray-100`}>
+                              {codeSnippet?.code}
                             </code>
                           </pre>
                         </div>
