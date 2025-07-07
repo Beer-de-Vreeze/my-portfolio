@@ -1944,7 +1944,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         tabIndex={0}
         role="button"
         aria-label={`Open ${title} project details`}
-        className={`relative flex flex-col justify-between p-4 sm:p-6 bg-gradient-to-br from-gray-900/60 to-black/80 border border-blue-500/20 rounded-2xl shadow-xl transition-all duration-300 hover:scale-105 hover:border-blue-300/40 hover:shadow-blue-500/20 hover:shadow-xl overflow-hidden cursor-pointer w-full max-w-[500px] mx-auto h-56 sm:h-64 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-transparent group/card ${isClicked ? 'scale-95' : ''}`}
+        className={`relative flex flex-col justify-between p-4 sm:p-6 bg-gradient-to-br from-gray-900/60 to-black/80 border border-blue-500/20 rounded-2xl shadow-xl transition-all duration-300 hover:scale-105 hover:border-blue-300/40 hover:shadow-blue-500/20 hover:shadow-xl overflow-hidden cursor-pointer w-full max-w-[400px] mx-auto h-56 sm:h-64 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-transparent group/card ${isClicked ? 'scale-95' : ''}`}
       >        {/* Enhanced background pattern */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500"></div>
         {/* Background thumbnail image with enhanced overlay effects */}
@@ -2056,10 +2056,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 : 'slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards'
             }}
           >
-            {/* Enhanced Close button with modern styling matching the design system */}
+            {/* Enhanced Close button with modern styling matching the design system - positioned sticky inside container */}
             <button
               onClick={closeModal}
-              className="absolute top-4 right-4 z-50 bg-gradient-to-r from-gray-900/90 to-black/90 backdrop-blur-sm hover:from-gray-800/90 hover:to-gray-900/90 text-gray-300 hover:text-white rounded-full p-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-transparent shadow-xl border border-gray-600/30 hover:border-gray-500/50 group"
+              className="sticky top-2 left-full transform -translate-x-6 z-50 bg-gradient-to-r from-gray-900/90 to-black/90 backdrop-blur-sm hover:from-gray-800/90 hover:to-gray-900/90 text-gray-300 hover:text-white rounded-full p-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-transparent shadow-xl border border-gray-600/30 hover:border-gray-500/50 group"
               aria-label="Close modal"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="transition-transform duration-200 group-hover:scale-110">
