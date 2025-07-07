@@ -36,7 +36,6 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: 'cover', // Important for iPhone X and newer
-  themeColor: '#000000',
 };
 
 export default function RootLayout({
@@ -50,7 +49,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
-      <body className="bg-black text-white custom-scrollbar" suppressHydrationWarning={true}>
+      <body className="bg-black text-white custom-scrollbar">
         <LoadingBar />
         {children}
       </body>

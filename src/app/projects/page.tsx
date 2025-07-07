@@ -98,64 +98,11 @@ export default function Projects() {
 
   // Only render UI if mounted (avoids hydration mismatch)
   if (!isMounted) {
-    return (
-      <div className={`min-h-screen flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground}`} style={{ overscrollBehavior: 'none' }}>
-        {/* Animated background grid */}
-        <div className={styles.backgroundGrid}></div>
-        
-        {/* Cosmic dust layer */}
-        <div className={styles.cosmicDust}></div>
-        
-        {/* Enhanced Space Starfield - 50 stars */}
-        <div className={styles.particleContainer}>
-          {Array.from({ length: 50 }, (_, i) => (
-            <div 
-              key={i} 
-              className={`${styles.particle} ${styles.starTiny} ${styles[`particle${i + 1}`]}`}
-            ></div>
-          ))}
-        </div>
-
-        <div className="fixed top-0 left-0 w-full z-50">
-          <Navbar />
-        </div>
-
-        <main className="flex-1 pt-16 pb-20 sm:pb-16 md:pb-20 px-2 sm:px-4 md:px-6 text-white relative z-10 w-full flex flex-col">
-          {/* Enhanced header section with animated title */}
-          <div className={`${styles.headerContainer} ${styles.headerContainerSmall}`}>
-            <div className={styles.titleWrapper}>
-              <h1 className={`${styles.name} ${styles.nameDesktop} ${styles.animatedTitle}`}>
-                <span className={styles.titleCharacter}>M</span>
-                <span className={styles.titleCharacter}>y</span>
-                <span className={styles.titleCharacter}>&nbsp;</span>
-                <span className={styles.titleCharacter}>P</span>
-                <span className={styles.titleCharacter}>r</span>
-                <span className={styles.titleCharacter}>o</span>
-                <span className={styles.titleCharacter}>j</span>
-                <span className={styles.titleCharacter}>e</span>
-                <span className={styles.titleCharacter}>c</span>
-                <span className={styles.titleCharacter}>t</span>
-                <span className={styles.titleCharacter}>s</span>
-              </h1>
-              <div className={styles.titleUnderline}></div>
-            </div>
-            <h2 className={`${styles.subtitle} ${styles.titleDesktop}`}>
-              <span className={styles.subtitleText}>Loading...</span>
-            </h2>
-          </div>
-
-          <div className="w-full max-w-6xl mx-auto px-0 flex-1 flex items-center justify-center">
-            <ProjectsLoading />
-          </div>
-        </main>
-
-        <Footer />
-      </div>
-    );
+    return null;
   }
 
   return (
-    <div className={`min-h-screen flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground}`} style={{ overscrollBehavior: 'none' }}>
+    <div className={`min-h-screen flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground}`}>
       {/* Animated background grid */}
       <div className={styles.backgroundGrid}></div>
       

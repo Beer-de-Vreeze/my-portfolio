@@ -11,9 +11,6 @@
 html {
   height: 100%;
   height: -webkit-fill-available;
-  /* Prevent rubber banding on mobile */
-  overscroll-behavior: none;
-  -webkit-overflow-scrolling: touch;
 }
 
 body {
@@ -25,9 +22,6 @@ body {
   background-attachment: fixed;
   overflow-x: hidden;
   overflow-y: auto;
-  /* Prevent rubber banding on mobile */
-  overscroll-behavior: none;
-  -webkit-overflow-scrolling: touch;
 }
 
 /* iOS Safari specific fixes */
@@ -75,25 +69,11 @@ body {
     min-height: -webkit-fill-available;
     overflow-x: hidden;
     overflow-y: auto;
-    /* Prevent bounce/rubber banding on mobile */
-    touch-action: pan-y;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: none;
-    overscroll-behavior-y: none;
   }
 
   body {
     position: relative;
     background-attachment: scroll; /* Better for mobile performance */
-  }
-
-  /* Ensure main content containers allow scrolling */
-  .containerScrollable {
-    position: relative !important;
-    overflow: visible !important;
-    height: auto !important;
-    min-height: 100vh !important;
-    overscroll-behavior: none !important;
   }
 }
 
@@ -134,23 +114,6 @@ body {
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
-  }
-}
-
-/* Global overscroll behavior fix for main containers */
-.containerScrollable,
-main {
-  overscroll-behavior: none;
-  overscroll-behavior-y: none;
-}
-
-/* Specific mobile scroll fixes */
-@media (max-width: 767px) {
-  .containerScrollable,
-  main {
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: none;
-    overscroll-behavior-y: none;
   }
 }
 
