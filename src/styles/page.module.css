@@ -40,8 +40,8 @@
 @media (min-width: 1024px) and (max-width: 1439px) {
   .container {
     justify-content: flex-start; /* Start from top to prevent unnecessary scroll */
-    padding: 2rem 2rem 1rem 2rem; /* Add top padding for spacing */
-    gap: 1.5rem;
+    padding: 0.5rem 2rem 1rem 2rem; /* Minimal top padding to reduce space */
+    gap: 1rem; /* Reduced gap */
     min-height: 100vh;
     overflow: visible; /* Let page handle scrolling instead of container */
   }
@@ -718,9 +718,9 @@
   .container {
     padding-left: 2rem;
     padding-right: 2rem;
-    padding-top: 2rem; /* Add top padding */
+    /* Remove duplicate padding-top to prevent doubling */
     padding-bottom: 1rem; /* Reduce bottom padding */
-    overflow: visible; /* Let page handle scrolling */
+    overflow: visible !important; /* Force visible to prevent double scroll */
     min-height: 100vh;
     justify-content: flex-start; /* Start from top to prevent unnecessary scroll */
   }
@@ -728,7 +728,7 @@
   .containerScrollable {
     padding-left: 2rem;
     padding-right: 2rem;
-    overflow: visible; /* Let page handle scrolling */
+    overflow: visible !important; /* Force visible to prevent double scroll */
     min-height: 100vh;
     max-height: none; /* Remove height restrictions */
     justify-content: flex-start; /* Start from top for better scrolling */
@@ -987,12 +987,12 @@
 /* For laptops - optimize spacing to prevent unnecessary scroll */
 @media (min-width: 1024px) and (max-width: 1439px) {
   .headerContainerDesktop {
-    margin-top: 1rem; /* Minimal top margin for laptops */
-    margin-bottom: 1rem; /* Minimal bottom margin */
+    margin-top: 0.5rem; /* Even more minimal top margin for laptops */
+    margin-bottom: 0.75rem; /* Minimal bottom margin */
   }
 
   .headerContainer {
-    margin-bottom: 1rem; /* Reduce overall header spacing */
+    margin-bottom: 0.75rem; /* Reduce overall header spacing */
   }
 }
 
@@ -1079,8 +1079,8 @@
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-top: 2rem; /* Add spacing from header */
-  padding-bottom: 2rem; /* Add bottom padding */
+  margin-top: 1rem; /* Reduced spacing from header */
+  padding-bottom: 1rem; /* Reduced bottom padding */
 }
 
 .cardsContainer {
@@ -1177,25 +1177,25 @@
 
 @media (min-width: 1024px) and (max-width: 1439px) {
   .cardsContainer {
-    gap: 2rem; /* Reduced gap */
-    padding: 0 2rem; /* Reduced padding */
+    gap: 1.5rem; /* Further reduced gap */
+    padding: 0 1.5rem; /* Reduced padding */
     max-width: 1600px;
     flex-direction: row; /* Ensure side-by-side for laptops */
   }
 
   .cardsSection {
-    margin-top: 1rem; /* Reduced top margin */
-    padding-bottom: 1rem; /* Reduced bottom padding */
+    margin-top: 0.5rem; /* Minimal top margin */
+    padding-bottom: 0.5rem; /* Minimal bottom padding */
   }
 
   .cardWrapper {
-    min-width: 380px; /* Reduced min width */
-    max-width: 480px; /* Reduced max width */
+    min-width: 360px; /* Slightly reduced min width */
+    max-width: 460px; /* Slightly reduced max width */
   }
 
   .cardsContainerDesktop {
-    gap: 2rem; /* Reduced gap */
-    padding: 0 1.5rem; /* Reduced padding */
+    gap: 1.5rem; /* Further reduced gap */
+    padding: 0 1rem; /* Reduced padding */
   }
 }
 

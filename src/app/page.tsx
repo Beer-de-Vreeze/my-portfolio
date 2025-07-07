@@ -21,6 +21,12 @@ export default function Home() {
       // Always ensure page-level scrolling is enabled
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
+      
+      // For laptops, ensure no container overflow conflicts
+      if (window.innerWidth >= 1024 && window.innerWidth <= 1439) {
+        document.body.style.overflowY = 'auto';
+        document.body.style.overflowX = 'hidden';
+      }
     }
   }, [isMounted]);
 
