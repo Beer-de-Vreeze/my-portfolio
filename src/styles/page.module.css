@@ -68,7 +68,8 @@
   .containerScrollable {
     padding: 0;
     min-height: 100vh;
-    /* Allow content to expand beyond viewport on desktop too if needed */
+    height: 100vh; /* Only restrict height on desktop */
+    /* Remove overflow: hidden to allow scrolling */
     overflow-y: auto;
   }
 }
