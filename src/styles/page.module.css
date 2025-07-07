@@ -39,9 +39,9 @@
 /* Laptop-specific container adjustments */
 @media (min-width: 1024px) and (max-width: 1439px) {
   .container {
-    justify-content: center; /* Center content for main page on laptops */
-    padding: 1.5rem 2rem;
-    gap: 1rem;
+    justify-content: flex-start; /* Start from top to prevent unnecessary scroll */
+    padding: 2rem 2rem 1rem 2rem; /* Add top padding for spacing */
+    gap: 1.5rem;
     min-height: 100vh;
     overflow: visible; /* Let page handle scrolling instead of container */
   }
@@ -718,9 +718,11 @@
   .container {
     padding-left: 2rem;
     padding-right: 2rem;
+    padding-top: 2rem; /* Add top padding */
+    padding-bottom: 1rem; /* Reduce bottom padding */
     overflow: visible; /* Let page handle scrolling */
     min-height: 100vh;
-    justify-content: center; /* Center content for main page */
+    justify-content: flex-start; /* Start from top to prevent unnecessary scroll */
   }
 
   .containerScrollable {
@@ -982,6 +984,18 @@
   }
 }
 
+/* For laptops - optimize spacing to prevent unnecessary scroll */
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .headerContainerDesktop {
+    margin-top: 1rem; /* Minimal top margin for laptops */
+    margin-bottom: 1rem; /* Minimal bottom margin */
+  }
+
+  .headerContainer {
+    margin-bottom: 1rem; /* Reduce overall header spacing */
+  }
+}
+
 /* For mobile screens */
 @media (max-width: 767px) {
   .headerContainerMobile {
@@ -1163,20 +1177,25 @@
 
 @media (min-width: 1024px) and (max-width: 1439px) {
   .cardsContainer {
-    gap: 2.5rem;
-    padding: 0 3rem;
+    gap: 2rem; /* Reduced gap */
+    padding: 0 2rem; /* Reduced padding */
     max-width: 1600px;
     flex-direction: row; /* Ensure side-by-side for laptops */
   }
 
+  .cardsSection {
+    margin-top: 1rem; /* Reduced top margin */
+    padding-bottom: 1rem; /* Reduced bottom padding */
+  }
+
   .cardWrapper {
-    min-width: 420px;
-    max-width: 520px;
+    min-width: 380px; /* Reduced min width */
+    max-width: 480px; /* Reduced max width */
   }
 
   .cardsContainerDesktop {
-    gap: 2.5rem;
-    padding: 0 2.5rem;
+    gap: 2rem; /* Reduced gap */
+    padding: 0 1.5rem; /* Reduced padding */
   }
 }
 

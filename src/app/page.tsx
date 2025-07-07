@@ -36,7 +36,7 @@ export default function Home() {
   }
 
   return (
-    <main className={`${styles.container} ${styles.enhancedBackground} px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16`}>
+    <main className={`${styles.container} ${styles.enhancedBackground} px-4 sm:px-6 md:px-8 lg:px-8 xl:px-16`}>
       {/* Animated background grid */}
       <div className={styles.backgroundGrid}></div>
       
@@ -101,7 +101,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className={`${styles.cardsSection} max-w-6xl mx-auto w-full`}>
+      <div className={`${styles.cardsSection} max-w-5xl mx-auto w-full`}>
         <div className={`${styles.cardsContainer} ${isDesktop ? styles.cardsContainerDesktop : styles.cardsContainerMobile}`}>
           {cards.map((card, index) => (
             <div 
