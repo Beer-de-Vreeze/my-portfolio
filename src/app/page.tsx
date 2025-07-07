@@ -18,14 +18,14 @@ export default function Home() {
   // Ensure proper scrolling behavior for all devices
   useEffect(() => {
     if (isMounted) {
-      // Always ensure page-level scrolling is enabled
-      document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
-      
-      // For laptops, ensure no container overflow conflicts
+      // For laptops, completely disable scrolling
       if (window.innerWidth >= 1024 && window.innerWidth <= 1439) {
-        document.body.style.overflowY = 'auto';
-        document.body.style.overflowX = 'hidden';
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+      } else {
+        // For other devices, ensure page-level scrolling is enabled
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
       }
     }
   }, [isMounted]);
