@@ -117,7 +117,7 @@ export default function About() {
             <span className={styles.subtitleText}>
               Dive into my skills, journey, and {width !== undefined && width < 640 && <br />}
               what makes me tick as a creator
-            </span>45
+            </span>
           </h2>
           
           {/* Floating accent elements */}
@@ -128,7 +128,7 @@ export default function About() {
           </div>
         </div>
 
-        <div className="w-full max-w-6xl mx-auto px-0 flex-1 flex flex-col justify-center">
+        <div className="w-full max-w-6xl mx-auto px-0 flex-1 flex items-center">
           <div className="flex flex-col lg:grid lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-12 relative w-full mb-8 sm:mb-0">
             <div className="lg:col-span-2 lg:h-full order-1 lg:order-1 w-full">
               <div className="h-full flex flex-col justify-between animate-profileSlideIn w-full">
