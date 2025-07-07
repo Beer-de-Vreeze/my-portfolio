@@ -58,7 +58,7 @@ export default function Contact() {
   }
 
   return (
-    <div className={`${isDesktop ? 'h-screen overflow-hidden' : 'min-h-screen'} flex flex-col ${isDesktop ? styles.container : styles.containerScrollable} ${styles.enhancedBackground}`}>
+    <div className={`min-h-screen flex flex-col ${isDesktop ? styles.container : styles.containerScrollable} ${styles.enhancedBackground}`}>
       {/* Animated background grid */}
       <div className={styles.backgroundGrid}></div>
       
@@ -88,13 +88,9 @@ export default function Contact() {
         })}
       </div>
 
-      <div
-        className="fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-out opacity-100 translate-y-0"
-      >
-        <Navbar />
-      </div>
+      <Navbar />
       
-      <main className={`flex-1 ${isDesktop ? 'pt-16 pb-0 overflow-y-auto' : 'pt-16 pb-20 sm:pb-16 md:pb-20'} px-2 sm:px-4 md:px-6 text-white relative z-10 w-full flex flex-col justify-start items-center ${isLaptop ? 'max-w-lg' : isDesktop ? 'max-w-xl' : 'max-w-2xl'} mx-auto`}>
+      <main className={`flex-1 flex flex-col ${isLaptop || isDesktop ? 'justify-center' : 'justify-start'} items-center ${isLaptop ? 'max-w-lg' : isDesktop ? 'max-w-xl' : 'max-w-2xl'} mx-auto px-4 sm:px-6 md:px-8 relative z-10 ${isLaptop || isDesktop ? 'py-0' : 'pt-20 pb-32'} sm:pb-24 md:pb-32 lg:pb-40`}>
         {/* Enhanced header section with animated title - smaller and more compact */}
         <div className={`${styles.headerContainer} ${styles.headerContainerSmall} mb-8 sm:mb-10 md:mb-12`}>
           <div className={styles.titleWrapper}>
@@ -201,12 +197,7 @@ export default function Contact() {
           </div>
         </motion.div>
       </main>
-      
-      <div
-        className="fixed bottom-0 left-0 w-full z-40 transition-all duration-500 ease-out opacity-100 translate-y-0"
-      >
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 }

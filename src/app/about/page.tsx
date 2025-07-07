@@ -64,7 +64,7 @@ export default function About() {
   }
 
   return (
-    <div className={`${isDesktop ? 'h-screen overflow-hidden' : 'min-h-screen'} flex flex-col ${isDesktop ? styles.container : styles.containerScrollable} ${styles.enhancedBackground}`}>
+    <div className={`min-h-screen flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground}`}>
       {/* Animated background grid */}
       <div className={styles.backgroundGrid}></div>
       
@@ -94,13 +94,9 @@ export default function About() {
         })}
       </div>
 
-      <div
-        className="fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-out opacity-100 translate-y-0"
-      >
-        <Navbar />
-      </div>
+      <Navbar />
       
-      <main className={`flex-1 ${isDesktop ? 'pt-16 pb-0 overflow-y-auto' : 'pt-16 pb-20 sm:pb-16 md:pb-20'} px-2 sm:px-4 md:px-6 text-white relative z-10 w-full`}>
+      <main className="flex-1 pt-16 pb-20 sm:pb-16 md:pb-20 lg:pb-24 px-2 sm:px-4 md:px-6 text-white relative z-10 w-full flex flex-col">
         {/* Enhanced header section with animated title - smaller and more compact */}
         <div className={`${styles.headerContainer} ${styles.headerContainerSmall}`}>
           <div className={styles.titleWrapper}>
@@ -121,7 +117,7 @@ export default function About() {
             <span className={styles.subtitleText}>
               Dive into my skills, journey, and {width !== undefined && width < 640 && <br />}
               what makes me tick as a creator
-            </span>
+            </span>45
           </h2>
           
           {/* Floating accent elements */}
@@ -132,25 +128,21 @@ export default function About() {
           </div>
         </div>
 
-        <div className="w-full max-w-6xl mx-auto px-0 flex-1">
+        <div className="w-full max-w-6xl mx-auto px-0 flex-1 flex flex-col justify-center">
           <div className="flex flex-col lg:grid lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-12 relative w-full mb-8 sm:mb-0">
-            <div className="lg:col-span-2 order-1 lg:order-1 w-full">
-              <div className="h-full flex flex-col animate-profileSlideIn w-full">
+            <div className="lg:col-span-2 lg:h-full order-1 lg:order-1 w-full">
+              <div className="h-full flex flex-col justify-between animate-profileSlideIn w-full">
                 <ProfileCard />
               </div>
             </div>
-            <div className="lg:col-span-2 order-2 lg:order-2 w-full">
+            <div className="lg:col-span-2 lg:flex lg:flex-col lg:gap-4 order-2 lg:order-2 w-full">
               <Stack />
             </div>
           </div>
         </div>
       </main>
       
-      <div
-        className="fixed bottom-0 left-0 w-full z-40 transition-all duration-500 ease-out opacity-100 translate-y-0"
-      >
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 }

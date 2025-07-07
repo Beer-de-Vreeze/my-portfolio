@@ -33,7 +33,9 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  viewportFit: 'cover',
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover', // Important for iPhone X and newer
 };
 
 export default function RootLayout({
