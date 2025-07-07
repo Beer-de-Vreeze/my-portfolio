@@ -7,73 +7,41 @@
   --background-rgb: 0, 0, 0;
 }
 
-/* Fix for iOS Safari viewport height and white space issues */
+/* Base styles for all devices */
 html {
   height: 100%;
-  height: -webkit-fill-available;
+  overflow-x: hidden;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-rgb));
   min-height: 100vh;
-  min-height: -webkit-fill-available;
-  /* Prevent iOS Safari from showing white space */
-  background-attachment: fixed;
   overflow-x: hidden;
   overflow-y: auto;
-}
-
-/* iOS Safari specific fixes */
-@supports (-webkit-appearance: none) {
-  html {
-    height: 100%;
-    height: -webkit-fill-available;
-  }
-
-  body {
-    height: 100%;
-    height: -webkit-fill-available;
-  }
-}
-
-/* Support for iPhone X and newer with safe areas */
-body {
+  width: 100%;
   padding-bottom: env(safe-area-inset-bottom);
   padding-top: env(safe-area-inset-top);
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
 }
 
-/* Prevent iOS Safari bounce scroll and address bar issues */
-html {
-  height: 100%;
-  height: -webkit-fill-available;
-}
-
-body {
-  width: 100%;
-  min-height: 100%;
-  min-height: -webkit-fill-available;
-  overflow-x: hidden;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Alternative approach - less restrictive */
-@media screen and (max-device-width: 767px) {
-  html,
+/* Mobile-specific fixes */
+@media (max-width: 768px) {
+  html {
+    height: auto;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+  
   body {
     height: auto;
     min-height: 100vh;
     min-height: -webkit-fill-available;
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
-
-  body {
+    background-attachment: scroll;
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: auto;
     position: relative;
-    background-attachment: scroll; /* Better for mobile performance */
   }
 }
 
@@ -114,6 +82,19 @@ body {
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
+  }
+
+  /* Fix for iOS Safari scroll bounce and improve touch behavior */
+  body {
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: auto;
+  }
+
+  /* Prevent iOS Safari from bouncing when scrolling */
+  .container,
+  .containerScrollable {
+    -webkit-overflow-scrolling: auto;
+    overflow-y: auto;
   }
 }
 

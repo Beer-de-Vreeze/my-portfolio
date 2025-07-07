@@ -25,10 +25,15 @@
 /* Allow scrolling on mobile devices */
 @media (max-width: 768px) {
   .container {
-    min-height: 100vh;
     height: auto;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
     max-height: none;
     overflow: visible;
+    position: relative;
+    justify-content: flex-start;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
   }
 }
 

@@ -73,7 +73,7 @@ export default function Home() {
   }
 
   return (
-    <main className={`${styles.container} ${styles.enhancedBackground}`}>
+    <div className={`${isDesktop ? 'h-screen overflow-hidden' : 'min-h-screen'} flex flex-col ${isDesktop ? styles.container : styles.containerScrollable} ${styles.enhancedBackground}`}>
       {/* Animated background grid */}
       <div className={styles.backgroundGrid}></div>
       
@@ -103,54 +103,56 @@ export default function Home() {
         })}
       </div>
 
-      <div className={`${styles.headerContainer} ${isDesktop ? styles.headerContainerDesktop : styles.headerContainerMobile}`}>
-        <div className={styles.titleWrapper}>
-          <h1 className={`${styles.name} ${isDesktop ? styles.nameDesktop : styles.nameMobile} ${styles.animatedTitle}`}>
-            <span className={styles.titleCharacter}>B</span>
-            <span className={styles.titleCharacter}>e</span>
-            <span className={styles.titleCharacter}>e</span>
-            <span className={styles.titleCharacter}>r</span>
-            <span className={styles.titleCharacter}>&nbsp;</span>
-            <span className={styles.titleCharacter}>d</span>
-            <span className={styles.titleCharacter}>e</span>
-            <span className={styles.titleCharacter}>&nbsp;</span>
-            <span className={styles.titleCharacter}>V</span>
-            <span className={styles.titleCharacter}>r</span>
-            <span className={styles.titleCharacter}>e</span>
-            <span className={styles.titleCharacter}>e</span>
-            <span className={styles.titleCharacter}>z</span>
-            <span className={styles.titleCharacter}>e</span>
-          </h1>
-          <div className={`${styles.titleUnderline} ${isDesktop ? styles.titleUnderlineDesktop : ''}`}></div>
+      <main className={`flex-1 ${isDesktop ? 'overflow-y-auto' : ''} px-2 sm:px-4 md:px-6 text-white relative z-10 w-full flex flex-col`}>
+        <div className={`${styles.headerContainer} ${isDesktop ? styles.headerContainerDesktop : styles.headerContainerMobile}`}>
+          <div className={styles.titleWrapper}>
+            <h1 className={`${styles.name} ${isDesktop ? styles.nameDesktop : styles.nameMobile} ${styles.animatedTitle}`}>
+              <span className={styles.titleCharacter}>B</span>
+              <span className={styles.titleCharacter}>e</span>
+              <span className={styles.titleCharacter}>e</span>
+              <span className={styles.titleCharacter}>r</span>
+              <span className={styles.titleCharacter}>&nbsp;</span>
+              <span className={styles.titleCharacter}>d</span>
+              <span className={styles.titleCharacter}>e</span>
+              <span className={styles.titleCharacter}>&nbsp;</span>
+              <span className={styles.titleCharacter}>V</span>
+              <span className={styles.titleCharacter}>r</span>
+              <span className={styles.titleCharacter}>e</span>
+              <span className={styles.titleCharacter}>e</span>
+              <span className={styles.titleCharacter}>z</span>
+              <span className={styles.titleCharacter}>e</span>
+            </h1>
+            <div className={`${styles.titleUnderline} ${isDesktop ? styles.titleUnderlineDesktop : ''}`}></div>
+          </div>
+          
+          <h2 className={`${styles.subtitle} ${isDesktop ? styles.titleDesktop : styles.titleMobile}`}>
+            <span className={styles.subtitleText}>Systems & Tools </span>
+            {width !== undefined && width < 900 && <br />}
+            <span className={`gradient-text ${styles.subtitleGradient}`}>Game Developer</span>
+          </h2>
+          
+          {/* Floating accent elements */}
+          <div className={styles.accentDots}>
+            <div className={`${styles.accentDot} ${styles.accentDot1}`}></div>
+            <div className={`${styles.accentDot} ${styles.accentDot2}`}></div>
+            <div className={`${styles.accentDot} ${styles.accentDot3}`}></div>
+          </div>
         </div>
-        
-        <h2 className={`${styles.subtitle} ${isDesktop ? styles.titleDesktop : styles.titleMobile}`}>
-          <span className={styles.subtitleText}>Systems & Tools </span>
-          {width !== undefined && width < 900 && <br />}
-          <span className={`gradient-text ${styles.subtitleGradient}`}>Game Developer</span>
-        </h2>
-        
-        {/* Floating accent elements */}
-        <div className={styles.accentDots}>
-          <div className={`${styles.accentDot} ${styles.accentDot1}`}></div>
-          <div className={`${styles.accentDot} ${styles.accentDot2}`}></div>
-          <div className={`${styles.accentDot} ${styles.accentDot3}`}></div>
-        </div>
-      </div>
 
-      <div className={`${styles.cardsSection}`}>
-        <div className={`${styles.cardsContainer} ${isDesktop ? styles.cardsContainerDesktop : styles.cardsContainerMobile}`}>
-          {cards.map((card, index) => (
-            <div 
-              key={index} 
-              className={`${styles.cardWrapper} ${styles.cardHover} ${styles[`cardDelay${index}`]}`}
-              style={{ animationDelay: `${index * 150}ms` }}
-            >
-              {card}
-            </div>
-          ))}
+        <div className={`${styles.cardsSection}`}>
+          <div className={`${styles.cardsContainer} ${isDesktop ? styles.cardsContainerDesktop : styles.cardsContainerMobile}`}>
+            {cards.map((card, index) => (
+              <div 
+                key={index} 
+                className={`${styles.cardWrapper} ${styles.cardHover} ${styles[`cardDelay${index}`]}`}
+                style={{ animationDelay: `${index * 150}ms` }}
+              >
+                {card}
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }
