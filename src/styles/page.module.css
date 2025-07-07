@@ -73,7 +73,7 @@
 /* Enhanced background with cosmic patterns */
 .enhancedBackground::before {
   content: "";
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -137,7 +137,7 @@
 
 /* Animated background grid */
 .backgroundGrid {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -164,7 +164,7 @@
 
 /* Floating particles - Star-like effect */
 .particleContainer {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -905,51 +905,6 @@
   }
   50% {
     background-position: 100% 50%;
-  }
-}
-
-/* Floating accent dots */
-.accentDots {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-}
-
-.accentDot {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  background: linear-gradient(45deg, #3b82f6, #8b5cf6);
-  border-radius: 50%;
-  opacity: 0;
-  animation: dotAppear 0.5s ease-out forwards;
-}
-
-.accentDot1 {
-  top: 20%;
-  right: 10%;
-  animation-delay: 1.5s;
-}
-
-.accentDot2 {
-  bottom: 30%;
-  left: 5%;
-  animation-delay: 1.8s;
-}
-
-.accentDot3 {
-  top: 60%;
-  right: 20%;
-  animation-delay: 2.1s;
-}
-
-@keyframes dotAppear {
-  to {
-    opacity: 0.8;
-    transform: scale(1.2);
   }
 }
 
@@ -2025,5 +1980,16 @@
   /* Compact spacing */
   .backgroundGrid {
     background-size: 70px 70px;
+  }
+}
+
+/* Prevent scroll on desktop, allow on mobile */
+:global(body) {
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  :global(body) {
+    overflow: auto;
   }
 }

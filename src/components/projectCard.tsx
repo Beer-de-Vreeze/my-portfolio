@@ -374,8 +374,38 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   // Video thumbnail generation state
   const [generatedThumbnails, setGeneratedThumbnails] = useState<Map<string, string>>(new Map());
   
+  // Progress bar animation reset key - increments when navigation occurs
+  const [progressBarKey, setProgressBarKey] = useState(0);
+  
   // Ref to track if we're programmatically closing the modal
   const isProgrammaticallyClosing = useRef(false);
+
+  /**
+   * Extract YouTube video ID from various YouTube URL formats
+   * @param url - YouTube URL in various formats
+   * @returns Video ID string or null if not found
+   */
+  const extractYouTubeVideoId = useCallback((url: string): string | null => {
+    if (!url) return null;
+    
+    // Handle different YouTube URL formats
+    const patterns = [
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([^&\n?#]+)/,
+      /youtube\.com\/watch\?.*v=([^&\n?#]+)/,
+      /youtu\.be\/([^&\n?#]+)/,
+      /youtube\.com\/embed\/([^&\n?#]+)/,
+      /youtube\.com\/v\/([^&\n?#]+)/
+    ];
+    
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match && match[1]) {
+        return match[1];
+      }
+    }
+    
+    return null;
+  }, []);
 
   // Mobile device detection effect
   useEffect(() => {
@@ -418,6 +448,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           // This event is sent periodically during playback
           setIsYouTubePlaying(true);
           setAutoplay(false);
+          setProgressBarKey(prev => prev + 1); // Reset progress bar when YouTube starts playing
         } else if (data.event === 'onStateChange') {
           // YouTube player states: -1 (unstarted), 0 (ended), 1 (playing), 2 (paused), 3 (buffering), 5 (cued)
           const playerState = data.info?.playerState;
@@ -426,6 +457,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             // Video is playing
             setIsYouTubePlaying(true);
             setAutoplay(false); // Disable autoplay when YouTube video starts playing
+            setProgressBarKey(prev => prev + 1); // Reset progress bar animation
           } else if (playerState === 2) {
             // Video is paused - keep autoplay disabled to give user control
             setIsYouTubePlaying(false);
@@ -434,6 +466,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             // Video ended - re-enable autoplay to continue carousel
             setIsYouTubePlaying(false);
             setAutoplay(true);
+            setProgressBarKey(prev => prev + 1); // Reset progress bar for next slide
           } else if (playerState === 3) {
             // Video is buffering - treat as playing to prevent autoplay
             setIsYouTubePlaying(true);
@@ -840,7 +873,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     
     // For images, use the image source directly
     return firstMedia.src;
-  }, [coverImage, media, generatedThumbnails]);
+  }, [coverImage, media, generatedThumbnails, extractYouTubeVideoId]);
 
   const shouldLoadMedia = useMemo(() => {
     // Always load media on mobile devices or when modal is open
@@ -1079,6 +1112,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     setIsPlaying(false);
     setIsYouTubePlaying(false); // Reset YouTube playing state when changing slides
     setCurrentMediaIndex((prevIndex) => (prevIndex + 1) % media.length);
+    setProgressBarKey(prev => prev + 1); // Reset progress bar animation
   }, [media.length]);
 
   /**
@@ -1092,6 +1126,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     setIsPlaying(false);
     setIsYouTubePlaying(false); // Reset YouTube playing state when changing slides
     setCurrentMediaIndex((prevIndex) => (prevIndex - 1 + media.length) % media.length);
+    setProgressBarKey(prev => prev + 1); // Reset progress bar animation
   }, [media.length]);
 
   /**
@@ -1311,6 +1346,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     setCurrentMediaIndex(index);
     // Reset autoplay timer when manually changing slides
     setAutoplay(true);
+    setProgressBarKey(prev => prev + 1); // Reset progress bar animation
   };
 
   // Get current media item and determine if it's a video
@@ -1369,15 +1405,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
    * Ensures YouTube playing state is reset when switching away from YouTube videos
    */
   useEffect(() => {
-    // If we're not on a YouTube video anymore, reset YouTube playing state
-    if (currentMedia?.type !== 'youtube' && isYouTubePlaying) {
-      setIsYouTubePlaying(false);
-      setAutoplay(true);
-    }
-    
-    // If we switch to a YouTube video, reset playing state and enable autoplay
-    if (currentMedia?.type === 'youtube') {
-      setIsYouTubePlaying(false);
+    // If we're not on a YouTube video anymore and YouTube was playing, reset state
+    if (currentMedia?.type !== 'youtube') {
+      if (isYouTubePlaying) {
+        setIsYouTubePlaying(false);
+        setAutoplay(true);
+        setProgressBarKey(prev => prev + 1); // Reset progress bar when leaving YouTube
+      }
+    } else {
+      // If we switch to a YouTube video, ensure autoplay is enabled initially
       setAutoplay(true);
     }
   }, [currentMediaIndex, currentMedia?.type, isYouTubePlaying]);
@@ -2112,6 +2148,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                               // Reset YouTube playing state when a new video loads
                               setIsYouTubePlaying(false);
                               setAutoplay(true);
+                              setProgressBarKey(prev => prev + 1); // Reset progress bar when YouTube iframe loads
                             }}
                             onError={() => handleError(`Failed to load YouTube video: ${currentMedia.src}`, 'media')}
                             key={currentMediaIndex} // Force re-render when media changes
@@ -2238,13 +2275,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                   </div>
 
                   {/* Enhanced Progress bar for autoplay with subtle design */}
-                  {media.length > 1 && autoplay && !isPlaying && !isYouTubePlaying && !isYouTube && !isFullscreen && (
+                  {media.length > 1 && autoplay && !isPlaying && !isYouTubePlaying && !isFullscreen && (
                     <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-black/40 to-gray-900/40 z-20 overflow-hidden">
                       <div 
+                        key={progressBarKey} // Key to force remount and restart animation on navigation
                         className="h-full bg-gradient-to-r from-blue-400/80 to-purple-400/80 transition-all duration-300 ease-linear shadow-lg"
                         style={{
                           width: '0%',
-                          animation: 'progressBar 5s linear infinite',
+                          animation: isYouTube ? 'progressBar 8s linear infinite' : 'progressBar 5s linear infinite',
                           boxShadow: '0 0 8px rgba(96, 165, 250, 0.4)'
                         }}
                       ></div>
