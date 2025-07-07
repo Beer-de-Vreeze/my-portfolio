@@ -145,12 +145,22 @@ const ProfileCard: React.FC<ProfileCardProps> = React.memo(({
       }
     };
 
-    document.addEventListener('touchstart', handleClickOutside);
+    // Prevent scrolling interference on mobile
+    const preventDefault = (e: TouchEvent) => {
+      const target = e.target as Element;
+      if (target.closest('.bubble-container')) {
+        e.stopPropagation();
+      }
+    };
+
+    document.addEventListener('touchstart', handleClickOutside, { passive: true });
     document.addEventListener('click', handleClickOutside);
+    document.addEventListener('touchmove', preventDefault, { passive: false });
     
     return () => {
       document.removeEventListener('touchstart', handleClickOutside);
       document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener('touchmove', preventDefault);
     };
   }, [isMobile]);
 
@@ -337,8 +347,16 @@ const ProfileCard: React.FC<ProfileCardProps> = React.memo(({
                       text-blue-100 text-xs w-max max-w-[200px] shadow-2xl shadow-blue-500/20 z-50 
                       transition-all duration-300 p-3 backdrop-blur-sm text-center
                       ${fadingBubble === bubble.id ? 'tooltip-close' : 'tooltip-popup'}
+                      ${isMobile ? 'fixed' : 'absolute'}
                     `}
-                    style={{
+                    style={isMobile ? {
+                      top: '10px',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      position: 'fixed',
+                      zIndex: 9999,
+                      pointerEvents: 'none'
+                    } : {
                       bottom: 'calc(100% + 10px)',
                       left: '50%',
                       pointerEvents: 'none'

@@ -64,7 +64,7 @@ export default function About() {
   }
 
   return (
-    <div className={`min-h-screen flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground}`}>
+    <div className={`min-h-screen flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground}`} style={{ minHeight: width !== undefined && width < 768 ? 'auto' : '100vh' }}>
       {/* Animated background grid */}
       <div className={styles.backgroundGrid}></div>
       
@@ -96,7 +96,7 @@ export default function About() {
 
       <Navbar />
       
-      <main className="flex-1 pt-16 pb-20 sm:pb-16 md:pb-20 lg:pb-24 px-2 sm:px-4 md:px-6 text-white relative z-10 w-full flex flex-col">
+      <main className={`flex-1 pt-16 pb-20 sm:pb-16 md:pb-20 lg:pb-24 px-2 sm:px-4 md:px-6 text-white relative z-10 w-full flex flex-col ${isMobile ? 'min-h-0' : ''}`}>
         {/* Enhanced header section with animated title - smaller and more compact */}
         <div className={`${styles.headerContainer} ${styles.headerContainerSmall}`}>
           <div className={styles.titleWrapper}>
@@ -128,8 +128,8 @@ export default function About() {
           </div>
         </div>
 
-        <div className="w-full max-w-6xl mx-auto px-0 flex-1 flex items-center">
-          <div className="flex flex-col lg:grid lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-12 relative w-full mb-8 sm:mb-0">
+        <div className={`w-full max-w-6xl mx-auto px-0 flex-1 flex items-center ${isMobile ? 'items-start pt-4' : ''}`}>
+          <div className={`flex flex-col lg:grid lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-12 relative w-full mb-8 sm:mb-0 ${isMobile ? 'min-h-0' : ''}`}>
             <div className="lg:col-span-2 lg:h-full order-1 lg:order-1 w-full">
               <div className="h-full flex flex-col justify-between animate-profileSlideIn w-full">
                 <ProfileCard />

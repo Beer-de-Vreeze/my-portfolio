@@ -33,7 +33,7 @@ const Stack = () => {
 
 
   return (
-    <div className="flex flex-col space-y-3 sm:space-y-4 md:space-y-6 p-2 sm:p-4 md:p-6 w-full">
+    <div className="flex flex-col space-y-3 sm:space-y-4 md:space-y-6 p-2 sm:p-4 md:p-6 w-full" style={{ minHeight: 'auto', height: 'auto' }}>
       <div className="animate-stackSlideIn w-full">
         <SkillCard />
       </div>
