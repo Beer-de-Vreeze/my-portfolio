@@ -426,15 +426,27 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             // Video is playing
             setIsYouTubePlaying(true);
             setAutoplay(false); // Disable autoplay when YouTube video starts playing
-          } else if (playerState === 2 || playerState === 0) {
-            // Video is paused or ended
+          } else if (playerState === 2) {
+            // Video is paused - keep autoplay disabled to give user control
             setIsYouTubePlaying(false);
-            setAutoplay(true); // Re-enable autoplay when YouTube video is paused or ended
+            setAutoplay(false);
+          } else if (playerState === 0) {
+            // Video ended - re-enable autoplay to continue carousel
+            setIsYouTubePlaying(false);
+            setAutoplay(true);
           } else if (playerState === 3) {
             // Video is buffering - treat as playing to prevent autoplay
             setIsYouTubePlaying(true);
             setAutoplay(false);
+          } else if (playerState === -1 || playerState === 5) {
+            // Video unstarted or cued - enable autoplay for potential auto-advance
+            setIsYouTubePlaying(false);
+            setAutoplay(true);
           }
+        } else if (data.event === 'onReady') {
+          // Player is ready - ensure autoplay is enabled for potential auto-advance
+          setIsYouTubePlaying(false);
+          setAutoplay(true);
         }
       } catch {
         // Ignore parsing errors from non-JSON messages
@@ -1361,8 +1373,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       setAutoplay(true);
     }
     
-    // If we switch to a YouTube video, ensure autoplay is enabled by default
-    if (currentMedia?.type === 'youtube' && !isYouTubePlaying) {
+    // If we switch to a YouTube video, reset playing state and enable autoplay
+    if (currentMedia?.type === 'youtube') {
+      setIsYouTubePlaying(false);
       setAutoplay(true);
     }
   }, [currentMediaIndex, currentMedia?.type, isYouTubePlaying]);
@@ -1370,20 +1383,40 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   /**
    * Autoplay effect for carousel
    * Automatically advances to the next media item when conditions are met
+   * Enhanced with YouTube-specific handling
    */
   useEffect(() => {
     // Don't autoplay if:
     // - Modal is not open
     // - Only one media item
     // - Autoplay is disabled
-    // - A video is currently playing
-    // - A YouTube video is playing
+    // - A regular video is currently playing
     // - User is on mobile (to save battery and data)
-    if (!isModalOpen || media.length <= 1 || !autoplay || isPlaying || isYouTubePlaying || isMobile) {
+    if (!isModalOpen || media.length <= 1 || !autoplay || isPlaying || isMobile) {
       return;
     }
 
-    // Set up autoplay timer
+    // For YouTube videos, we need special handling
+    if (currentMedia?.type === 'youtube') {
+      // If YouTube is playing, don't advance
+      if (isYouTubePlaying) {
+        return;
+      }
+      
+      // For YouTube videos, give more time for user interaction before auto-advancing
+      const youtubeTimer = setTimeout(() => {
+        // Only advance if YouTube is still not playing after the timeout
+        if (!isYouTubePlaying) {
+          goToNextMedia();
+        }
+      }, 8000); // 8 seconds for YouTube videos to give users time to interact
+
+      return () => {
+        clearTimeout(youtubeTimer);
+      };
+    }
+
+    // For regular images and non-YouTube content
     const autoplayTimer = setTimeout(() => {
       goToNextMedia();
     }, 5000); // 5 seconds between slides
@@ -1392,7 +1425,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     return () => {
       clearTimeout(autoplayTimer);
     };
-  }, [isModalOpen, media.length, autoplay, isPlaying, isYouTubePlaying, isMobile, currentMediaIndex, goToNextMedia]);
+  }, [isModalOpen, media.length, autoplay, isPlaying, isYouTubePlaying, isMobile, currentMediaIndex, goToNextMedia, currentMedia?.type]);
 
   /**
    * Effect for handling keyboard navigation and body scroll locking
@@ -1957,7 +1990,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                       ) : isYouTube ? (
                         <>
                           <iframe
-                            src={`https://www.youtube.com/embed/${extractYouTubeVideoId(currentMedia.src)}?rel=0&enablejsapi=1&origin=${typeof window !== 'undefined' ? window.location.origin : ''}&modestbranding=1&showinfo=0&controls=1&autoplay=0&fs=1&iv_load_policy=3&widget_referrer=${typeof window !== 'undefined' ? window.location.origin : ''}`}
+                            src={`https://www.youtube.com/embed/${extractYouTubeVideoId(currentMedia.src)}?rel=0&enablejsapi=1&origin=${typeof window !== 'undefined' ? window.location.origin : ''}&modestbranding=1&showinfo=0&controls=1&autoplay=0&fs=1&iv_load_policy=3&widget_referrer=${typeof window !== 'undefined' ? window.location.origin : ''}&wmode=transparent`}
                             className="w-full h-full transition-all duration-500 animate-fadeIn"
                             title={currentMedia.alt || title}
                             frameBorder="0"
