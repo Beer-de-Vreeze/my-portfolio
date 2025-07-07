@@ -140,7 +140,7 @@ export default function Projects() {
         <Navbar />
       </div>
 
-      <main className="flex-1 pt-16 pb-12 sm:pb-8 px-2 sm:px-4 md:px-6 text-white relative z-10 w-full flex flex-col">
+      <main className="flex-1 pt-16 pb-20 sm:pb-16 md:pb-20 px-2 sm:px-4 md:px-6 text-white relative z-10 w-full flex flex-col">
         {/* Enhanced header section with animated title */}
         <div className={`${styles.headerContainer} ${styles.headerContainerSmall}`}>
           <div className={styles.titleWrapper}>
