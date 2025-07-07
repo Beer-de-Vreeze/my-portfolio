@@ -19,18 +19,31 @@
   gap: 1rem;
   /* CRITICAL: Allow scrolling on ALL devices */
   overflow: visible;
-  /* Start with mobile-first: flex-start for mobile */
-  justify-content: flex-start;
+  /* Center content for main page, but allow scrolling when needed */
+  justify-content: center;
   /* Prevent horizontal overflow */
   box-sizing: border-box;
 }
 
 /* Desktop only: center content if it fits */
-@media (min-width: 1025px) {
+@media (min-width: 1440px) {
   .container {
-    justify-content: center;
+    justify-content: center; /* Center content for main page */
     padding: 0.5rem 1rem;
     gap: 0.75rem;
+    min-height: 100vh;
+    max-height: none; /* Remove height restrictions */
+  }
+}
+
+/* Laptop-specific container adjustments */
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .container {
+    justify-content: center; /* Center content for main page on laptops */
+    padding: 1.5rem 2rem;
+    gap: 1rem;
+    min-height: 100vh;
+    overflow: visible; /* Let page handle scrolling instead of container */
   }
 }
 
@@ -52,8 +65,8 @@
   );
   color: white;
   gap: 1rem;
-  /* CRITICAL: Always allow scrolling */
-  overflow-y: auto;
+  /* CRITICAL: Remove container overflow to move scrollbar to page level */
+  overflow: visible;
   /* Remove fixed height on mobile to allow content to expand */
 }
 
@@ -64,13 +77,25 @@
   }
 }
 
-@media (min-width: 1025px) {
+/* Laptop adjustments - show full contact form with scroll capability */
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .containerScrollable {
+    padding: 1rem 2rem;
+    min-height: 100vh;
+   
+    overflow: visible; /* Let page handle scrolling instead of container */
+    justify-content: flex-start; /* Start from top to show full form */
+  }
+}
+
+@media (min-width: 1440px) {
   .containerScrollable {
     padding: 0;
     min-height: 100vh;
-    height: 100vh; /* Only restrict height on desktop */
-    /* Remove overflow: hidden to allow scrolling */
-    overflow-y: auto;
+    /* Remove fixed height to allow content expansion */
+    max-height: none;
+    /* Let page handle scrolling instead of container */
+    overflow: visible;
   }
 }
 
@@ -688,6 +713,26 @@
   }
 }
 
+/* Laptop-specific padding adjustments for all containers */
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    overflow: visible; /* Let page handle scrolling */
+    min-height: 100vh;
+    justify-content: center; /* Center content for main page */
+  }
+
+  .containerScrollable {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    overflow: visible; /* Let page handle scrolling */
+    min-height: 100vh;
+    max-height: none; /* Remove height restrictions */
+    justify-content: flex-start; /* Start from top for better scrolling */
+  }
+}
+
 @media (min-width: 768px) {
   .container {
     padding-left: 2.5rem;
@@ -1020,17 +1065,21 @@
   width: 100%;
   display: flex;
   justify-content: center;
+  margin-top: 2rem; /* Add spacing from header */
+  padding-bottom: 2rem; /* Add bottom padding */
 }
 
 .cardsContainer {
   display: flex;
   justify-content: center;
-  gap: 1rem;
+  gap: 2rem;
   width: 100%;
   max-width: 1600px;
   margin: 0 auto;
   transition: all 0.3s ease;
   position: relative;
+  padding: 0 1.5rem; /* Add horizontal padding for all devices */
+  flex-direction: row; /* Ensure side-by-side layout by default */
 }
 
 /* Card wrapper with staggered animations */
@@ -1038,6 +1087,9 @@
   opacity: 0;
   transform: translateY(40px) scale(0.95);
   animation: cardSlideUp 0.8s ease-out forwards;
+  flex: 1;
+  min-width: 320px; /* Increase minimum card width */
+  max-width: 500px; /* Allow cards to be much wider */
 }
 
 @keyframes cardSlideUp {
@@ -1066,19 +1118,100 @@
 }
 
 .cardsContainerDesktop {
-  gap: 2rem;
+  gap: 3rem;
   flex-direction: row;
   justify-content: center;
   align-items: stretch;
+  padding: 0 2rem; /* More padding for desktop */
+  flex-wrap: nowrap; /* Prevent wrapping to keep side-by-side layout */
 }
 
 .cardsContainerMobile {
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
   width: 100%;
   align-items: center;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+  padding: 0 1rem; /* Consistent padding for mobile */
+}
+
+/* Responsive improvements for cards */
+@media (max-width: 767px) {
+  .cardsContainer {
+    flex-direction: column; /* Stack vertically on mobile */
+    gap: 1.5rem;
+    padding: 0 1rem;
+  }
+  
+  .cardWrapper {
+    min-width: 280px;
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .cardsContainer {
+    gap: 2.5rem;
+    padding: 0 2rem;
+    flex-direction: row; /* Side-by-side for tablets */
+  }
+  
+  .cardWrapper {
+    min-width: 280px;
+    max-width: 350px;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .cardsContainer {
+    gap: 2.5rem;
+    padding: 0 3rem;
+    max-width: 1600px;
+    flex-direction: row; /* Ensure side-by-side for laptops */
+  }
+  
+  .cardWrapper {
+    min-width: 420px;
+    max-width: 520px;
+  }
+  
+  .cardsContainerDesktop {
+    gap: 2.5rem;
+    padding: 0 2.5rem;
+  }
+}
+
+@media (min-width: 1440px) {
+  .cardsContainer {
+    gap: 3.5rem;
+    padding: 0 4rem;
+    max-width: 1800px;
+    flex-direction: row; /* Side-by-side for desktops */
+  }
+  
+  .cardWrapper {
+    min-width: 480px;
+    max-width: 600px;
+  }
+  
+  .cardsContainerDesktop {
+    gap: 3.5rem;
+    padding: 0 3rem;
+  }
+}
+
+/* Ultra-wide screen improvements */
+@media (min-width: 1920px) {
+  .cardsContainer {
+    gap: 4rem;
+    padding: 0 6rem;
+    max-width: 2000px;
+    flex-direction: row; /* Side-by-side for ultra-wide */
+  }
+  
+  .cardWrapper {
+    min-width: 500px;
+    max-width: 650px;
+  }
 }
 
 .cardHover {
@@ -1953,11 +2086,13 @@
   }
 }
 
-/* Laptop-specific adjustments (1024px - 1280px) */
-@media (min-width: 1024px) and (max-width: 1279px) {
+/* Laptop-specific adjustments (1024px - 1439px) */
+@media (min-width: 1024px) and (max-width: 1439px) {
   .container {
     padding: 2rem 1.5rem;
     min-height: 100vh;
+    overflow: visible; /* Let page handle scrolling */
+    justify-content: center; /* Center content for main page */
   }
 
   /* More compact card wrapper for laptops */
@@ -1987,5 +2122,12 @@
   /* Compact spacing */
   .backgroundGrid {
     background-size: 70px 70px;
+  }
+
+  /* Ensure contact forms fit properly on laptops */
+  .containerScrollable {
+    padding: 1.5rem 2rem;
+    max-height: none; /* Allow full height expansion */
+    overflow: visible; /* Let page handle scrolling */
   }
 }

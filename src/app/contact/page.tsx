@@ -9,7 +9,7 @@ import { useResponsiveSize } from '@/components/utils/useScrolling';
 import styles from '@/styles/page.module.css';
 
 export default function Contact() {
-  const { isDesktop } = useResponsiveSize();
+  const { isDesktop, width } = useResponsiveSize();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -17,17 +17,23 @@ export default function Contact() {
   }, []);
 
   useEffect(() => {
-    if (isMounted && isDesktop) {
-      const originalOverflow = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = originalOverflow;
-      };
+    if (isMounted) {
+      // Only disable scrolling on very large desktops (1440px+) where content fits
+      const isVeryLargeDesktop = width && width >= 1440;
+      
+      if (isVeryLargeDesktop) {
+        const originalOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        return () => {
+          document.body.style.overflow = originalOverflow;
+        };
+      } else {
+        // For all other devices (mobile, tablet, laptop), ensure page-level scrolling
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+      }
     }
-    if (isMounted && !isDesktop) {
-      document.body.style.overflow = '';
-    }
-  }, [isMounted, isDesktop]);
+  }, [isMounted, width]);
 
   // Only render UI if mounted (avoids hydration mismatch)
   if (!isMounted) {

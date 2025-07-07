@@ -24,12 +24,73 @@
 }
 
 /* Desktop only: center content if it fits */
-@media (min-width: 1025px) {
+@media (min-width: 1440px) {
   .container {
-    justify-content: center;
+    justify-content: flex-start; /* Allow scrolling even on large desktops */
     padding: 0.5rem 2rem;
     gap: 0.75rem;
+    min-height: 100vh;
+    max-height: none; /* Remove height restrictions */
   }
 }
 
-/* ...existing code from page.module.css... */
+/* Laptop-specific adjustments for contact forms */
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .container {
+    justify-content: flex-start; /* Allow scrolling on laptops */
+    padding: 1.5rem 2rem;
+    gap: 1rem;
+    min-height: 100vh;
+    overflow: visible; /* Let page handle scrolling */
+  }
+}
+
+/* MOBILE-FIRST SCROLLABLE CONTAINER */
+.containerScrollable {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  min-height: 100vh;
+  padding: 1rem 0.5rem;
+  background: radial-gradient(
+    ellipse at center,
+    #111111 0%,
+    #000000 70%,
+    #000000 100%
+  );
+  color: white;
+  gap: 1rem;
+  /* CRITICAL: Let page handle scrolling */
+  overflow: visible;
+}
+
+/* Tablet adjustments */
+@media (min-width: 769px) {
+  .containerScrollable {
+    padding: 1rem 1.5rem;
+  }
+}
+
+/* Laptop adjustments - ensure full contact form visibility with scroll */
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .containerScrollable {
+    padding: 1.5rem 2rem;
+    min-height: 100vh;
+    max-height: none; /* Remove height restrictions for contact forms */
+    overflow: visible; /* Let page handle scrolling */
+    justify-content: flex-start; /* Start from top to show full form */
+  }
+}
+
+/* Large desktop adjustments */
+@media (min-width: 1440px) {
+  .containerScrollable {
+    padding: 0;
+    min-height: 100vh;
+    max-height: none; /* Remove height restrictions */
+    overflow: visible; /* Let page handle scrolling */
+  }
+}

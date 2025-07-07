@@ -12,6 +12,8 @@ html {
   height: 100%;
   height: -webkit-fill-available;
   scroll-behavior: smooth;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 body {
@@ -25,6 +27,28 @@ body {
   -webkit-overflow-scrolling: touch;
   /* Use scroll for better mobile performance */
   background-attachment: scroll;
+}
+
+/* Laptop and desktop scrolling improvements */
+@media screen and (min-width: 769px) {
+  html {
+    height: auto;
+    overflow-y: auto;
+  }
+
+  body {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  /* Ensure containers don't interfere with page scrolling */
+  .container,
+  .containerScrollable {
+    overflow: visible !important;
+    max-height: none !important;
+  }
 }
 
 /* SIMPLIFIED MOBILE SCROLLING - CRITICAL FIX */

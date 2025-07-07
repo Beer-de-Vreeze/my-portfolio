@@ -41,7 +41,7 @@ const ProjectsContent = ({ onModalStateChange }: { onModalStateChange: (isOpen: 
 );
 
 export default function Projects() {
-  const { isMobile, isDesktop } = useResponsiveSize();
+  const { isMobile, isDesktop, width } = useResponsiveSize();
   const [isMounted, setIsMounted] = useState(false);
   const [isAnyModalOpen, setIsAnyModalOpen] = useState(false);
 
@@ -55,18 +55,23 @@ export default function Projects() {
   };
 
   useEffect(() => {
-    if (isMounted && isDesktop) {
-      const originalOverflow = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = originalOverflow;
-      };
+    if (isMounted) {
+      // Only disable scrolling on very large desktops (1440px+) where content fits
+      const isVeryLargeDesktop = width && width >= 1440;
+      
+      if (isVeryLargeDesktop) {
+        const originalOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        return () => {
+          document.body.style.overflow = originalOverflow;
+        };
+      } else {
+        // For all other devices (mobile, tablet, laptop), ensure page-level scrolling
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+      }
     }
-    // If not desktop, ensure scrolling is enabled
-    if (isMounted && !isDesktop) {
-      document.body.style.overflow = '';
-    }
-  }, [isMounted, isDesktop]);
+  }, [isMounted, width]);
 
   // Only render UI if mounted (avoids hydration mismatch)
   if (!isMounted) {

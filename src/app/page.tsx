@@ -7,13 +7,22 @@ import { useResponsiveSize } from "@/components/utils/useScrolling";
 import styles from "@/styles/page.module.css";
 
 export default function Home() {
-  const { isDesktop } = useResponsiveSize();
+  const { isDesktop, width } = useResponsiveSize();
   const [isMounted, setIsMounted] = useState(false);
 
   // Handle hydration
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // Ensure proper scrolling behavior for all devices
+  useEffect(() => {
+    if (isMounted) {
+      // Always ensure page-level scrolling is enabled
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    }
+  }, [isMounted]);
 
   const cards = [
     <AboutCard key="about" />,
@@ -27,7 +36,7 @@ export default function Home() {
   }
 
   return (
-    <main className={`${styles.container} ${styles.enhancedBackground}`}>
+    <main className={`${styles.container} ${styles.enhancedBackground} px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16`}>
       {/* Animated background grid */}
       <div className={styles.backgroundGrid}></div>
       
@@ -57,7 +66,7 @@ export default function Home() {
         })}
       </div>
 
-      <div className={`${styles.headerContainer} ${isDesktop ? styles.headerContainerDesktop : styles.headerContainerMobile}`}>
+      <div className={`${styles.headerContainer} ${isDesktop ? styles.headerContainerDesktop : styles.headerContainerMobile} max-w-4xl mx-auto`}>
         <div className={styles.titleWrapper}>
           <h1 className={`${styles.name} ${isDesktop ? styles.nameDesktop : styles.nameMobile} ${styles.animatedTitle}`}>
             <span className={styles.titleCharacter}>B</span>
@@ -92,7 +101,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className={`${styles.cardsSection}`}>
+      <div className={`${styles.cardsSection} max-w-6xl mx-auto w-full`}>
         <div className={`${styles.cardsContainer} ${isDesktop ? styles.cardsContainerDesktop : styles.cardsContainerMobile}`}>
           {cards.map((card, index) => (
             <div 
