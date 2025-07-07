@@ -1,35 +1,12 @@
 /* MOBILE-FIRST CONTAINER - CRITICAL FIX */
-html,
-body {
-  width: 100vw;
-  min-height: 100dvh;
-  max-width: 100vw;
-  max-height: 100dvh;
-  overflow-x: hidden !important;
-  overflow-y: auto;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.container,
-.containerScrollable {
+.container {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  width: 100vw;
-  min-height: 100dvh; /* Use dynamic viewport height to avoid extra scroll room */
-  max-width: 100vw; /* Prevent horizontal overflow */
-  max-height: 100dvh;
-  padding: 0.25rem 0.5rem;
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-  overflow-x: hidden;
-  margin: 0 !important;
-  box-sizing: border-box;
-  flex: 1 0 auto;
+  width: 100%;
+  min-height: 100vh;
+  padding: 1rem 0.5rem;
   background: radial-gradient(
     ellipse at center,
     #111111 0%,
@@ -38,14 +15,18 @@ body {
   );
   color: white;
   gap: 1rem;
+  /* CRITICAL: Allow scrolling on ALL devices */
+  overflow: visible;
+  /* Start with mobile-first: flex-start for mobile */
+  justify-content: flex-start;
 }
 
 /* Desktop only: center content if it fits */
 @media (min-width: 1025px) {
   .container {
     justify-content: center;
-    padding: 0.25rem 1rem; /* Reduced desktop padding */
-    gap: 0.5rem;
+    padding: 0.5rem 2rem;
+    gap: 0.75rem;
   }
 }
 
@@ -56,15 +37,9 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  width: 100vw;
-  min-height: 100dvh; /* Use dynamic viewport height to avoid extra scroll room */
-  max-width: 100vw; /* Prevent horizontal overflow */
-  padding: 0.25rem 0.5rem;
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-  overflow-x: hidden;
-  margin: 0 !important;
-  box-sizing: border-box;
+  width: 100%;
+  min-height: 100vh;
+  padding: 1rem 0.5rem;
   background: radial-gradient(
     ellipse at center,
     #111111 0%,
@@ -73,6 +48,8 @@ body {
   );
   color: white;
   gap: 1rem;
+  /* CRITICAL: Always allow scrolling */
+  overflow: visible;
 }
 
 /* Tablet and desktop adjustments */
@@ -84,7 +61,10 @@ body {
 
 @media (min-width: 1025px) {
   .containerScrollable {
-    padding: 1.5rem 2.5rem;
+    padding: 0;
+    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
   }
 }
 
@@ -692,21 +672,25 @@ body {
 
 @media (min-width: 640px) {
   .container {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .containerScrollable {
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 }
 
 @media (min-width: 768px) {
   .container {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
   }
-}
 
-@media (min-width: 1280px) {
-  .container {
-    padding: 2rem 1rem;
+  .containerScrollable {
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
   }
 }
 
@@ -716,8 +700,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 0 !important;
-  margin-bottom: 0.25rem !important;
+  margin-bottom: 0.75rem;
   width: 100%;
   z-index: 10;
 }
@@ -969,32 +952,35 @@ body {
 }
 
 .headerContainerDesktop {
-  margin-top: 0vh; /* Further reduced */
-  margin-bottom: 0.75rem; /* Further reduced */
+  margin-top: -2vh; /* Reduced from -5vh */
+  margin-bottom: 1.5rem; /* Reduced from 2rem */
 }
 
 .headerContainerMobile {
-  margin-bottom: 0.5rem; /* Further reduced */
+  margin-bottom: 0.75rem; /* Reduced from 1rem */
 }
 
+/* Adjust header position for smaller screens and laptops */
 @media (max-width: 1023px) {
   .headerContainerDesktop {
-    margin-top: 1vh;
-    margin-bottom: 0.75rem;
+    margin-top: 2vh; /* Reduced from 5vh */
+    margin-bottom: 1.5rem; /* Reduced from 3rem */
   }
 }
 
+/* For tablets/small laptops */
 @media (max-width: 1200px) and (min-width: 768px) {
   .headerContainerDesktop {
-    margin-top: 2vh;
-    margin-bottom: 0.75rem;
+    margin-top: 4vh; /* Reduced from 8vh */
+    margin-bottom: 1.5rem; /* Reduced from 3rem */
   }
 }
 
+/* For mobile screens */
 @media (max-width: 767px) {
   .headerContainerMobile {
-    margin-top: 2vh;
-    margin-bottom: 0.5rem;
+    margin-top: 4vh; /* Reduced from 8vh */
+    margin-bottom: 1rem; /* Reduced from 2rem */
   }
 }
 
@@ -1073,35 +1059,17 @@ body {
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
 }
 
 .cardsContainer {
   display: flex;
   justify-content: center;
-  gap: 0.5rem; /* Reduced gap */
+  gap: 1rem;
   width: 100%;
   max-width: 1600px;
   margin: 0 auto;
   transition: all 0.3s ease;
   position: relative;
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-}
-
-.cardsContainerDesktop {
-  gap: 1rem; /* Reduced desktop gap */
-}
-
-.cardsContainerMobile {
-  gap: 0.5rem; /* Reduced mobile gap */
-  padding-left: 0.25rem;
-  padding-right: 0.25rem;
 }
 
 /* Card wrapper with staggered animations */
@@ -1109,7 +1077,6 @@ body {
   opacity: 0;
   transform: translateY(40px) scale(0.95);
   animation: cardSlideUp 0.8s ease-out forwards;
-  margin-bottom: 0.5rem; /* Add a small margin for vertical stacking */
 }
 
 @keyframes cardSlideUp {
@@ -1572,8 +1539,8 @@ body {
 
 @media (max-width: 480px) {
   .container {
-    padding: 0.5rem 0.25rem;
-    gap: 0.5rem;
+    padding: 1rem 0.75rem;
+    gap: 1rem;
     min-height: 100vh;
   }
 
@@ -1927,9 +1894,11 @@ body {
 /* Additional mobile optimizations */
 @media (max-width: 640px) {
   .container {
-    min-height: 100dvh;
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
+    min-height: 100vh;
+    padding-top: 0.5rem;
+    padding-bottom: 1rem;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
     overflow-x: hidden;
     width: 100%;
     max-width: 100vw;
