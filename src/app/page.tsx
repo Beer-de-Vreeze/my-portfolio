@@ -69,11 +69,65 @@ export default function Home() {
 
   // Only render UI if mounted (avoids hydration mismatch)
   if (!isMounted) {
-    return null; // Return null on first render to avoid hydration mismatch
+    return (
+      <main className={`${styles.container} ${styles.enhancedBackground}`}>
+        {/* Animated background grid */}
+        <div className={styles.backgroundGrid}></div>
+        
+        {/* Cosmic dust layer */}
+        <div className={styles.cosmicDust}></div>
+        
+        {/* Enhanced Space Starfield - 50 stars */}
+        <div className={styles.particleContainer}>
+          {Array.from({ length: 50 }, (_, i) => (
+            <div 
+              key={i} 
+              className={`${styles.particle} ${styles.starTiny} ${styles[`particle${i + 1}`]}`}
+            ></div>
+          ))}
+        </div>
+
+        {/* Enhanced header section with animated title */}
+        <div className={styles.headerContainer}>
+          <div className={styles.titleWrapper}>
+            <h1 className={`${styles.name} ${styles.nameDesktop} ${styles.animatedTitle}`}>
+              <span className={styles.titleCharacter}>B</span>
+              <span className={styles.titleCharacter}>e</span>
+              <span className={styles.titleCharacter}>e</span>
+              <span className={styles.titleCharacter}>r</span>
+              <span className={styles.titleCharacter}>&nbsp;</span>
+              <span className={styles.titleCharacter}>d</span>
+              <span className={styles.titleCharacter}>e</span>
+              <span className={styles.titleCharacter}>&nbsp;</span>
+              <span className={styles.titleCharacter}>V</span>
+              <span className={styles.titleCharacter}>r</span>
+              <span className={styles.titleCharacter}>e</span>
+              <span className={styles.titleCharacter}>e</span>
+              <span className={styles.titleCharacter}>z</span>
+              <span className={styles.titleCharacter}>e</span>
+            </h1>
+            <div className={styles.titleUnderline}></div>
+          </div>
+          
+          <h2 className={`${styles.subtitle} ${styles.titleDesktop}`}>
+            <span className={styles.subtitleText}>
+              Loading...
+            </span>
+          </h2>
+        </div>
+
+        {/* Grid container with loading state */}
+        <div className={styles.gridContainer}>
+          <div className="animate-pulse bg-gray-800 rounded-lg h-64"></div>
+          <div className="animate-pulse bg-gray-800 rounded-lg h-64"></div>
+          <div className="animate-pulse bg-gray-800 rounded-lg h-64"></div>
+        </div>
+      </main>
+    );
   }
 
   return (
-    <main className={`${styles.container} ${styles.enhancedBackground}`}>
+    <main className={`${styles.container} ${styles.enhancedBackground}`} style={{ overscrollBehavior: 'none' }}>
       {/* Animated background grid */}
       <div className={styles.backgroundGrid}></div>
       
