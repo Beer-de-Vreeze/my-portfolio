@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useEffect } from 'react';
 import AboutCard from "../components/AboutCard";
 import ProjectCard from "../components/ProjectCardMenu";

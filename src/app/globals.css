@@ -44,9 +44,11 @@ body {
     /* Remove any constraints that prevent scrolling */
     max-height: none !important;
   }
-  
+
   /* Ensure all main containers allow scrolling */
-  main, .container, .containerScrollable {
+  main,
+  .container,
+  .containerScrollable {
     height: auto !important;
     min-height: auto !important;
     max-height: none !important;
@@ -82,7 +84,7 @@ body {
     scroll-behavior: smooth;
     overscroll-behavior: contain;
   }
-  
+
   /* Re-enable text selection on desktop */
   * {
     -webkit-user-select: initial;
@@ -478,7 +480,7 @@ select:focus {
   .form-container {
     padding: 1rem;
   }
-  
+
   /* These rules are already handled above - removing duplicates */
 }
 
