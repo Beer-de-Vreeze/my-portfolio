@@ -5,12 +5,11 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ProfileCard from "@/components/about/ProfileCard";
 import Stack from "@/components/about/Stack";
-import { useScrolling, useResponsiveSize } from "@/components/utils/useScrolling";
+import { useResponsiveSize } from "@/components/utils/useScrolling";
 import styles from "@/styles/page.module.css";
 
 export default function About() {
-  const { isMobile, isTablet, isDesktop } = useResponsiveSize();
-  const { scrollToTop } = useScrolling();
+  const { isMobile, isDesktop } = useResponsiveSize();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {

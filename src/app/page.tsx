@@ -4,12 +4,11 @@ import { useState, useEffect } from 'react';
 import AboutCard from "../components/AboutCard";
 import ProjectCard from "../components/ProjectCardMenu";
 import ContactCard from "@/components/ContactCardMenu";
-import { useScrolling, useResponsiveSize } from "@/components/utils/useScrolling";
+import { useResponsiveSize } from "@/components/utils/useScrolling";
 import styles from "@/styles/page.module.css";
 
 export default function Home() {
-  const { isMobile, isTablet, isDesktop } = useResponsiveSize();
-  const { scrollToTop } = useScrolling();
+  const { isDesktop } = useResponsiveSize();
   const [isMounted, setIsMounted] = useState(false);
 
   // Handle hydration
