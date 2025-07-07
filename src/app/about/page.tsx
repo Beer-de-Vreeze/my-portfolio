@@ -64,7 +64,7 @@ export default function About() {
   }
 
   return (
-    <div className={`min-h-screen flex flex-col ${styles.container} ${styles.enhancedBackground}`}>
+    <div className={`min-h-screen flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground}`}>
       {/* Animated background grid */}
       <div className={styles.backgroundGrid}></div>
       

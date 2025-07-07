@@ -24,7 +24,7 @@ const MLAgent = ({
       {
         type: isMobile ? "youtube" : "video",
         src: isMobile 
-          ? "https://youtu.be/MhUCYR9Tbgk" // YouTube link for Jerry Move
+          ? "https://youtu.be/FPXM00lVQjI" // YouTube link for Jerry Move
           : "/images/AI Images/Jerry Move.webm",
         alt: "Move 1 first iteration",
         thumbnail: "/images/AI Images/Title.webp",

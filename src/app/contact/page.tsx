@@ -48,15 +48,9 @@ export default function Contact() {
     setIsMounted(true);
   }, []);
 
-  // Responsive breakpoints
-  const isXSmall = width !== undefined && width < 480;
-  const isSmall = width !== undefined && width >= 480 && width < 640;
-  const isMedium = width !== undefined && width >= 640 && width < 768;
-  const isLarge = width !== undefined && width >= 768 && width < 1024;
-
-  // Determine layout based on screen size
-  const isMobile = isXSmall || isSmall || isMedium || isLarge;
-  const isDesktop = !isMobile;
+  // Responsive breakpoints for laptop and desktop
+  const isLaptop = width !== undefined && width >= 1024 && width < 1280;
+  const isDesktop = width !== undefined && width >= 1280;
 
   // Only render UI if mounted (avoids hydration mismatch)
   if (!isMounted) {
@@ -64,7 +58,7 @@ export default function Contact() {
   }
 
   return (
-    <div className={`min-h-screen xl:h-screen flex flex-col ${styles.container} ${styles.enhancedBackground} xl:overflow-hidden`}>
+    <div className={`min-h-screen flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground}`}>
       {/* Animated background grid */}
       <div className={styles.backgroundGrid}></div>
       
@@ -96,11 +90,11 @@ export default function Contact() {
 
       <Navbar />
       
-      <main className="flex-1 flex flex-col justify-center items-center max-w-2xl mx-auto px-4 sm:px-6 md:px-8 relative z-10 pt-16 pb-20 sm:pb-8 xl:pb-48">
+      <main className={`flex-1 flex flex-col justify-center items-center ${isLaptop ? 'max-w-lg' : isDesktop ? 'max-w-xl' : 'max-w-2xl'} mx-auto px-4 sm:px-6 md:px-8 relative z-10 pt-20 pb-32 sm:pb-24 md:pb-32 lg:pb-40`}>
         {/* Enhanced header section with animated title - smaller and more compact */}
-        <div className={`${styles.headerContainer} ${styles.headerContainerSmall}`}>
+        <div className={`${styles.headerContainer} ${styles.headerContainerSmall} mb-8 sm:mb-10 md:mb-12`}>
           <div className={styles.titleWrapper}>
-            <h1 className={`${styles.name} ${isDesktop ? styles.nameDesktopSmall : styles.nameMobileSmall} ${styles.animatedTitle}`}>
+            <h1 className={`${styles.name} ${isLaptop || isDesktop ? styles.nameDesktopSmall : styles.nameMobileSmall} ${styles.animatedTitle}`}>
               <span className={styles.titleCharacter}>L</span>
               <span className={styles.titleCharacter}>e</span>
               <span className={styles.titleCharacter}>t</span>
@@ -113,10 +107,10 @@ export default function Contact() {
               <span className={styles.titleCharacter}>t</span>
               <span className={styles.titleCharacter}>.</span>
             </h1>
-            <div className={`${styles.titleUnderline} ${isDesktop ? styles.titleUnderlineDesktop : ''}`}></div>
+            <div className={`${styles.titleUnderline} ${isLaptop || isDesktop ? styles.titleUnderlineDesktop : ''}`}></div>
           </div>
           
-          <h2 className={`${styles.subtitle} ${isDesktop ? styles.titleDesktopSmall : styles.titleMobileSmall}`}>
+          <h2 className={`${styles.subtitle} ${isLaptop || isDesktop ? styles.titleDesktopSmall : styles.titleMobileSmall}`}>
             <span className={styles.subtitleText}>Send me a message, and I&apos;ll get back to you soon.</span>
           </h2>
           
@@ -130,7 +124,7 @@ export default function Contact() {
 
         {/* Contact form card with enhanced styling - more compact */}
         <motion.div 
-          className={`${styles.cardWrapper} ${styles.cardHover} select-content p-3 sm:p-4 md:p-6 rounded-2xl shadow-lg w-full`}
+          className={`${styles.cardWrapper} ${styles.cardHover} select-content ${isLaptop ? 'p-4 md:p-5' : 'p-3 sm:p-4 md:p-6'} rounded-2xl shadow-lg w-full`}
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut", delay: -0.2 }}
