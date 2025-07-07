@@ -17,17 +17,11 @@ export default function Contact() {
   }, []);
 
   useEffect(() => {
-    if (isMounted && isDesktop) {
-      const originalOverflow = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = originalOverflow;
-      };
-    }
-    if (isMounted && !isDesktop) {
+    // Remove the overflow hidden restriction to allow scrolling when content is tall
+    if (isMounted) {
       document.body.style.overflow = '';
     }
-  }, [isMounted, isDesktop]);
+  }, [isMounted]);
 
   // Only render UI if mounted (avoids hydration mismatch)
   if (!isMounted) {
@@ -67,7 +61,7 @@ export default function Contact() {
 
       <Navbar />
       
-      <main className={`contact-page-main flex-1 flex flex-col ${isDesktop ? 'justify-center' : 'justify-start'} items-center ${isDesktop ? 'max-w-lg' : 'max-w-xl'} mx-auto px-4 sm:px-6 md:px-8 relative z-10 pt-20 pb-40 sm:pb-32 md:pb-40 lg:pb-40`}>
+      <main className={`contact-page-main flex-1 flex flex-col justify-start items-center ${isDesktop ? 'max-w-lg' : 'max-w-xl'} mx-auto px-4 sm:px-6 md:px-8 relative z-10 pt-20 pb-40 sm:pb-32 md:pb-40 lg:pb-40`}>
         {/* Enhanced header section with animated title - smaller and more compact */}
         <div className={`${styles.headerContainer} ${styles.headerContainerSmall} mb-8 sm:mb-10 md:mb-12`}>
           <div className={styles.titleWrapper}>
