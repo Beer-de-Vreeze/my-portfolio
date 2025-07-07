@@ -263,21 +263,6 @@ const useIntersectionObserver = (
 };
 
 /**
- * Extract YouTube video ID from various YouTube URL formats
- * @param url - YouTube video URL
- * @returns The extracted YouTube video ID or null if invalid
- */
-const extractYouTubeVideoId = (url: string): string | null => {
-  if (!url) return null;
-  
-  // Match YouTube video ID from various URL formats
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-  const match = url.match(regExp);
-  
-  return (match && match[2].length === 11) ? match[2] : null;
-};
-
-/**
  * Check if URL is a valid YouTube URL
  * @param url - URL to validate
  * @returns Boolean indicating if URL is a valid YouTube URL
