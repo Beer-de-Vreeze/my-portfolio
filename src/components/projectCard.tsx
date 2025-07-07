@@ -993,6 +993,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     // Set flag to indicate we're programmatically closing
     isProgrammaticallyClosing.current = true;
     
+    // Call onModalStateChange immediately to show navbar/footer
+    onModalStateChange?.(false);
+    
     // Immediately remove the URL parameter to prevent reopening
     const url = new URL(window.location.href);
     url.searchParams.delete('project');
@@ -1001,7 +1004,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     setTimeout(() => {
       setIsModalOpen(false);
       setIsClosing(false);
-      onModalStateChange?.(false);
       
       // Reset the flag after closing is complete
       setTimeout(() => {
@@ -1460,7 +1462,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       }
     };
     
-    if (isModalOpen) {
+    if (isModalOpen && !isClosing) {
       // Store the current overflow and scroll position to restore later
       const originalOverflow = document.body.style.overflow;
       const scrollY = window.scrollY;
@@ -1491,7 +1493,21 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isModalOpen, onModalStateChange, closeModal, media.length, goToPreviousMedia, goToNextMedia, isVideo, handleVideoToggle]);
+  }, [isModalOpen, isClosing, onModalStateChange, closeModal, media.length, goToPreviousMedia, goToNextMedia, isVideo, handleVideoToggle]);
+
+  /**
+   * Effect to restore body styles when modal starts closing
+   * This ensures navbar/footer become visible immediately when closing starts
+   */
+  useEffect(() => {
+    if (isClosing) {
+      // Restore body styles immediately when closing animation starts
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+    }
+  }, [isClosing]);
 
   /**
    * Effect for applying syntax highlighting to code snippets
