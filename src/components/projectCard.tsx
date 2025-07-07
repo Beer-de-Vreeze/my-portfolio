@@ -2067,7 +2067,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               </svg>
             </button>
             
-            <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 px-4 sm:px-6 lg:px-8 pt-16 pb-6 relative z-10">              {/* Left Column - Media carousel and action buttons */}
+            <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 lg:pt-14 pb-6 relative z-10">              {/* Left Column - Media carousel and action buttons */}
               <div className="w-full lg:w-1/2 flex flex-col">
                 {/* Mobile: Title above carousel */}
                 <div className="mb-6 lg:hidden">
@@ -2293,11 +2293,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                         {downloadFileInfo.icon}
                         <span>
                           {downloadInfo.label}
-                          {loading.fileSize ? (
+                          {!isMobile && (loading.fileSize ? (
                             <span className="text-xs opacity-75 ml-1">(Loading...)</span>
                           ) : downloadInfo.fileSize ? (
                             <span className="text-xs opacity-75 ml-1">({downloadInfo.fileSize})</span>
-                          ) : null}
+                          ) : null)}
                         </span>
                       </a>
                     )}
