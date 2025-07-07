@@ -7,7 +7,7 @@ import { useResponsiveSize } from "@/components/utils/useScrolling";
 import styles from "@/styles/page.module.css";
 
 export default function Home() {
-  const { isDesktop, width } = useResponsiveSize();
+  const { isDesktop } = useResponsiveSize();
   const [isMounted, setIsMounted] = useState(false);
 
   // Handle hydration

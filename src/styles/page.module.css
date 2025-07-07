@@ -82,7 +82,7 @@
   .containerScrollable {
     padding: 1rem 2rem;
     min-height: 100vh;
-   
+
     overflow: visible; /* Let page handle scrolling instead of container */
     justify-content: flex-start; /* Start from top to show full form */
   }
@@ -1141,7 +1141,7 @@
     gap: 1.5rem;
     padding: 0 1rem;
   }
-  
+
   .cardWrapper {
     min-width: 280px;
     max-width: 100%;
@@ -1154,7 +1154,7 @@
     padding: 0 2rem;
     flex-direction: row; /* Side-by-side for tablets */
   }
-  
+
   .cardWrapper {
     min-width: 280px;
     max-width: 350px;
@@ -1168,12 +1168,12 @@
     max-width: 1600px;
     flex-direction: row; /* Ensure side-by-side for laptops */
   }
-  
+
   .cardWrapper {
     min-width: 420px;
     max-width: 520px;
   }
-  
+
   .cardsContainerDesktop {
     gap: 2.5rem;
     padding: 0 2.5rem;
@@ -1187,12 +1187,12 @@
     max-width: 1800px;
     flex-direction: row; /* Side-by-side for desktops */
   }
-  
+
   .cardWrapper {
     min-width: 480px;
     max-width: 600px;
   }
-  
+
   .cardsContainerDesktop {
     gap: 3.5rem;
     padding: 0 3rem;
@@ -1207,7 +1207,7 @@
     max-width: 2000px;
     flex-direction: row; /* Side-by-side for ultra-wide */
   }
-  
+
   .cardWrapper {
     min-width: 500px;
     max-width: 650px;
