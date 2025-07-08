@@ -120,13 +120,6 @@ const EducationCard: React.FC = () => {
       
       // Prevent body scroll when modal is open
       document.body.style.overflow = 'hidden';
-      
-      // Focus the close button when modal opens
-      setTimeout(() => {
-        if (closeButtonRef.current) {
-          closeButtonRef.current.focus();
-        }
-      }, 100);
     } else {
       document.body.style.overflow = '';
     }
@@ -215,7 +208,7 @@ const EducationCard: React.FC = () => {
           style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
         >
           <div 
-            className={`bg-gradient-to-br from-gray-900/95 to-black/95 border border-blue-500/30 text-white rounded-2xl max-w-2xl w-full mx-3 sm:mx-4 max-h-[90vh] overflow-y-auto relative shadow-2xl shadow-blue-500/10 backdrop-blur-md transform transition-all duration-300 ${
+            className={`bg-gradient-to-br from-gray-900/95 to-black/90 border border-blue-500/30 text-white rounded-2xl max-w-2xl w-full mx-3 sm:mx-4 max-h-[90vh] overflow-y-auto relative shadow-2xl backdrop-blur-md transform transition-all duration-300 ${
               modalState.isAnimatingOut 
                 ? 'animate-fadeOut opacity-0 scale-95 translate-y-4' 
                 : 'animate-fadeIn opacity-100 scale-100 translate-y-0'
@@ -226,9 +219,9 @@ const EducationCard: React.FC = () => {
             }}
           >
             {/* Enhanced background pattern */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-2xl"></div>
+            <div className="absolute inset-0 rounded-2xl"></div>
             
-            {/* Enhanced close button with better accessibility */}
+            {/* Enhanced close button with modern styling matching the project card design system */}
             <button 
               ref={closeButtonRef}
               onClick={(e) => {
@@ -236,20 +229,17 @@ const EducationCard: React.FC = () => {
                 e.stopPropagation();
                 toggleModal(null);
               }}
-              className="sticky top-3 sm:absolute sm:top-4 right-3 sm:right-4 z-[10000] bg-blue-900/50 hover:bg-blue-800/70 
-                rounded-full p-2 sm:p-3 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center
-                text-blue-200 hover:text-white transition-all duration-200
-                shadow-lg backdrop-blur-sm border border-blue-500/30 focus:outline-none focus:ring-2 focus:ring-blue-400/50 cursor-pointer ml-auto mb-2 sm:mb-0"
+              className="sticky top-6 sm:top-2 left-full transform -translate-x-6 z-50 bg-gradient-to-r from-gray-900/90 to-black/90 backdrop-blur-sm hover:from-gray-800/90 hover:to-gray-900/90 text-gray-300 hover:text-white rounded-full p-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-transparent shadow-xl border border-gray-600/30 hover:border-gray-500/50 group"
               aria-label={`Close ${activeSchool.name} details dialog`}
               type="button"
             >
               <svg 
-                width="16" 
-                height="16" 
-                className="sm:w-5 sm:h-5"
+                width="18" 
+                height="18" 
                 viewBox="0 0 24 24" 
                 fill="none" 
                 xmlns="http://www.w3.org/2000/svg"
+                className="transition-transform duration-200 group-hover:scale-110"
                 aria-hidden="true"
               >
                 <path 
