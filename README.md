@@ -75,7 +75,8 @@ src/
 
 The portfolio is fully responsive and tested across:
 
-- Desktop (1024px+)
+- Desktop (1440px+)
+- Laptop (1024px - 1439px)
 - Tablet (768px - 1023px)
 - Mobile (< 768px)
 
