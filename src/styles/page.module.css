@@ -64,15 +64,17 @@
   }
 }
 
-/* MOBILE-FIRST SCROLLABLE CONTAINER */
+/* MOBILE-FIRST SCROLLABLE CONTAINER - NO EDGE SPACING */
 .containerScrollable {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  width: 100%;
+  width: 100vw;
+  max-width: 100vw;
   min-height: 100vh;
+  margin: 0;
   padding: 1rem 0.5rem;
   background: radial-gradient(
     ellipse at center,
@@ -88,11 +90,18 @@
   /* Performance optimizations to reduce repaints */
   contain: layout style;
   will-change: auto;
+  /* Ensure no border or outline creates spacing */
+  border: 0;
+  outline: 0;
+  box-sizing: border-box;
 }
 
-/* Tablet and desktop adjustments - allow scrolling */
+/* Tablet and desktop adjustments - allow scrolling, no edge spacing */
 @media (min-width: 769px) and (max-width: 1023px) {
   .containerScrollable {
+    width: 100vw;
+    max-width: 100vw;
+    margin: 0;
     padding: 1rem 1.5rem; /* Add proper padding */
     min-height: 100vh;
     /* Remove max-height to allow scrolling */
@@ -2108,5 +2117,44 @@
   }
   to {
     filter: drop-shadow(0 0 15px #00ff00) drop-shadow(0 0 25px #00ff88);
+  }
+}
+
+/* SCROLLBAR POSITIONING FIXES FOR CONTAINERS */
+/* Ensure container padding doesn't push scrollbar inward */
+.container,
+.containerScrollable {
+  /* Use margin instead of padding-right for spacing to avoid affecting scrollbar */
+  margin-right: 0 !important;
+  border-right: none !important;
+  /* Ensure containers don't constrain viewport width */
+  max-width: 100vw !important;
+}
+
+/* Override any padding-right that could affect scrollbar positioning */
+@media (min-width: 640px) {
+  .container,
+  .containerScrollable {
+    /* Use only left padding and margin for spacing, not right padding */
+    padding-right: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .container,
+  .containerScrollable {
+    /* Use only left padding and margin for spacing, not right padding */
+    padding-right: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .container,
+  .containerScrollable {
+    /* Use only left padding and margin for spacing, not right padding */
+    padding-right: 0 !important;
+    margin-right: 0 !important;
   }
 }
