@@ -2259,18 +2259,33 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     </div>
                   </div>
 
-                  {/* Enhanced Progress bar for autoplay with subtle design */}
-                  {media.length > 1 && autoplay && !isPlaying && !isYouTubePlaying && !isFullscreen && (
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-black/40 to-gray-900/40 z-20 overflow-hidden">
-                      <div 
-                        key={progressBarKey} // Key to force remount and restart animation on navigation
-                        className="h-full bg-gradient-to-r from-blue-400/80 to-purple-400/80 transition-all duration-300 ease-linear shadow-lg"
-                        style={{
-                          width: '0%',
-                          animation: isYouTube ? 'progressBar 8s linear infinite' : 'progressBar 5s linear infinite',
-                          boxShadow: '0 0 8px rgba(96, 165, 250, 0.4)'
-                        }}
-                      ></div>
+                  {/* Enhanced Progress bar for autoplay with improved visibility - Hidden on mobile */}
+                  {media.length > 1 && (
+                    <div className="absolute bottom-0 left-0 right-0 z-20 group-hover/carousel:opacity-80 transition-opacity duration-300 hidden sm:block">
+                      {/* Background track with improved visibility */}
+                      <div className="h-1.5 bg-gradient-to-r from-black/80 to-gray-900/80 backdrop-blur-sm border-t border-white/5">
+                        {/* Progress indicator - only animates when autoplay is active */}
+                        {autoplay && !isPlaying && !isYouTubePlaying && !isFullscreen && (
+                          <div 
+                            key={progressBarKey} // Key to force remount and restart animation on navigation
+                            className="h-full bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 shadow-lg relative overflow-hidden transition-all duration-300 group-hover/carousel:animation-play-state-paused"
+                            style={{
+                              width: '0%',
+                              animation: isYouTube ? 'progressBar 8s linear forwards' : 'progressBar 5s linear forwards',
+                              boxShadow: '0 0 12px rgba(96, 165, 250, 0.8), 0 0 24px rgba(147, 51, 234, 0.4)'
+                            }}
+                          >
+                            {/* Enhanced shimmer effect */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer"></div>
+                            {/* Glow effect */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-blue-300/20 via-purple-300/20 to-blue-300/20 blur-sm"></div>
+                          </div>
+                        )}
+                        {/* Static progress indicator when autoplay is paused */}
+                        {(!autoplay || isPlaying || isYouTubePlaying || isFullscreen) && (
+                          <div className="h-full bg-gradient-to-r from-gray-600/60 to-gray-500/60 w-0 transition-all duration-300"></div>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>

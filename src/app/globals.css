@@ -708,6 +708,58 @@ main,
   }
 }
 
+/* Progress bar animation for media carousel */
+@keyframes progressBar {
+  0% {
+    width: 0%;
+    opacity: 0.8;
+  }
+  5% {
+    opacity: 1;
+  }
+  95% {
+    opacity: 1;
+  }
+  100% {
+    width: 100%;
+    opacity: 0.9;
+  }
+}
+
+/* Enhanced progress bar pulse effect */
+@keyframes progressPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 12px rgba(96, 165, 250, 0.6),
+      0 0 24px rgba(147, 51, 234, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(96, 165, 250, 0.8),
+      0 0 32px rgba(147, 51, 234, 0.5);
+  }
+}
+
+/* Progress bar container background enhancement */
+@keyframes progressBg {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Progress bar glow effect */
+@keyframes progressGlow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.6));
+  }
+  50% {
+    filter: drop-shadow(0 0 12px rgba(96, 165, 250, 0.9));
+  }
+}
+
 .animate-fadeInUp {
   animation: fadeInUp 0.6s ease-out forwards;
 }
