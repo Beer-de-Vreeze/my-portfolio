@@ -28,27 +28,27 @@
   will-change: auto;
 }
 
-/* Tablet-specific container adjustments - no scrolling */
+/* Tablet-specific container adjustments - allow scrolling */
 @media (min-width: 769px) and (max-width: 1023px) {
   .container {
-    justify-content: center; /* Center content to fit in viewport */
-    padding: 0.5rem 1.5rem 0 1.5rem; /* Remove bottom padding */
+    justify-content: flex-start; /* Allow content to flow naturally */
+    padding: 1rem 1.5rem; /* Add proper padding */
     gap: 0.75rem; /* Moderate gap */
     min-height: 100vh;
-    max-height: 100vh; /* Lock to viewport height */
-    overflow: hidden; /* Prevent scrolling */
+    /* Remove max-height to allow scrolling */
+    overflow: visible; /* Allow scrolling */
   }
 }
 
-/* Laptop-specific container adjustments */
+/* Laptop-specific container adjustments - allow scrolling */
 @media (min-width: 1024px) and (max-width: 1439px) {
   .container {
-    justify-content: center; /* Center content to fit in viewport */
-    padding: 0.25rem 2rem 0 2rem; /* Remove bottom padding */
+    justify-content: flex-start; /* Allow content to flow naturally */
+    padding: 1rem 2rem; /* Add proper padding */
     gap: 0.5rem; /* Minimal gap */
     min-height: 100vh;
-    max-height: 100vh; /* Lock to viewport height */
-    overflow: hidden; /* Completely prevent scrolling */
+    /* Remove max-height to allow scrolling */
+    overflow: visible; /* Allow scrolling */
   }
 }
 
@@ -90,25 +90,25 @@
   will-change: auto;
 }
 
-/* Tablet and desktop adjustments */
+/* Tablet and desktop adjustments - allow scrolling */
 @media (min-width: 769px) and (max-width: 1023px) {
   .containerScrollable {
-    padding: 1rem 1.5rem 0 1.5rem; /* Remove bottom padding */
+    padding: 1rem 1.5rem; /* Add proper padding */
     min-height: 100vh;
-    max-height: 100vh; /* Lock to viewport height */
-    overflow: hidden; /* Prevent scrolling on tablets */
-    justify-content: center; /* Center content */
+    /* Remove max-height to allow scrolling */
+    overflow: visible; /* Allow scrolling on tablets */
+    justify-content: flex-start; /* Allow content to flow naturally */
   }
 }
 
-/* Laptop adjustments - prevent scrolling */
+/* Laptop adjustments - allow scrolling */
 @media (min-width: 1024px) and (max-width: 1439px) {
   .containerScrollable {
-    padding: 1rem 2rem 0 2rem; /* Remove bottom padding */
+    padding: 1rem 2rem; /* Add proper padding */
     min-height: 100vh;
-    max-height: 100vh; /* Lock to viewport height */
-    overflow: hidden; /* Prevent scrolling */
-    justify-content: center; /* Center content */
+    /* Remove max-height to allow scrolling */
+    overflow: visible; /* Allow scrolling */
+    justify-content: flex-start; /* Allow content to flow naturally */
   }
 }
 
