@@ -50,6 +50,12 @@ export default function RootLayout({
         <meta name="theme-color" content="#000000" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        {/* 
+          🎮 Developer Easter Egg:
+          Try the classic gaming sequence: ↑↑↓↓←→←→BA
+          (Use arrow keys and B, A keys on your keyboard)
+          What could it unlock? 🤔
+        */}
       </head>
       <body className="bg-black text-white custom-scrollbar min-h-screen">
         <LoadingProvider>

@@ -29,23 +29,22 @@ body {
   background-attachment: scroll;
 }
 
-/* Tablet, laptop and desktop scrolling - prevent scrolling on larger screens */
-@media screen and (min-width: 769px) {
+/* Only disable scrolling on very large desktops where content actually fits */
+@media screen and (min-width: 1440px) and (min-height: 900px) {
   html {
     height: 100vh;
-    overflow: hidden; /* Prevent scrolling on larger screens */
+    overflow: hidden;
   }
 
   body {
     height: 100vh;
     min-height: 100vh;
-    overflow: hidden; /* Prevent scrolling on larger screens */
+    overflow: hidden;
   }
 }
 
-/* Large desktop overflow control - CSS only approach */
+/* Fallback class for manual scroll control if needed */
 @media screen and (min-width: 1440px) {
-  /* Only disable scrolling on very large desktops where content fits */
   body.no-scroll {
     overflow: hidden;
   }

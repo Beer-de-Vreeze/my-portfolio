@@ -99,7 +99,7 @@ export default function Home() {
             <span className={styles.titleCharacter}>V</span>
             <span className={styles.titleCharacter}>r</span>
             <span className={styles.titleCharacter}>e</span>
-            <span className={styles.titleCharacter}>e</span>
+            <span className={styles.titleCharacter} data-easter-egg="↑↑↓↓←→←→BA" title="🎮">e</span>
             <span className={styles.titleCharacter}>z</span>
             <span className={styles.titleCharacter}>e</span>
           </h1>
@@ -131,6 +131,11 @@ export default function Home() {
               {card}
             </div>
           ))}
+        </div>
+        
+        {/* Hidden Konami Code Easter Egg Hint */}
+        <div className={styles.konamiHint}>
+          Secret Code: ↑↑↓↓←→←→BA
         </div>
       </div>
     </main>

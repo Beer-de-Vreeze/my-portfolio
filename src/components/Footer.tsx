@@ -7,7 +7,7 @@ import { Mail } from 'lucide-react';
 const Footer: React.FC = () => {
   return (
     <footer 
-      className="fixed bottom-0 left-0 right-0 bg-black/95 backdrop-blur-xl text-white py-4 flex justify-center items-center border-t border-gray-800/50 z-50"
+      className="fixed bottom-0 left-0 right-0 bg-black/95 backdrop-blur-xl text-white py-4 flex justify-center items-center border-t border-gray-800/50 z-50 pointer-events-none"
       role="contentinfo"
       aria-label="Site footer"
     >
@@ -26,16 +26,25 @@ const Footer: React.FC = () => {
         />
       </div>
 
-      <div className="w-full max-w-5xl flex flex-row justify-between items-center gap-2 sm:gap-3 px-2 sm:px-4 relative z-10">
+      <div className="w-full max-w-5xl flex flex-row justify-between items-center gap-2 sm:gap-3 px-2 sm:px-4 relative z-10 pointer-events-auto">
         <div 
-          className="relative"
+          className="relative group/copyright"
           role="text"
           aria-label="Copyright information"
         >
           <div className="relative px-2 sm:px-4 py-2 bg-gradient-to-r from-gray-900/80 to-gray-800/80 border border-gray-700/50 rounded-full flex items-center justify-center backdrop-blur-sm">
-            <span className="relative tracking-tighter font-extralight text-xs sm:text-sm lg:text-lg text-gray-300">
+            <span className="relative tracking-tighter font-extralight text-xs sm:text-sm lg:text-lg text-gray-300 cursor-help">
               © Beer de Vreeze
             </span>
+            
+            {/* Hidden Konami Code Easter Egg - Only shows on direct text hover */}
+            <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 opacity-0 group-hover/copyright:opacity-100 transition-opacity duration-500 pointer-events-none z-50">
+              <div className="bg-black/95 border border-green-500/70 rounded-lg px-3 py-2 text-xs text-green-400 font-mono whitespace-nowrap shadow-xl backdrop-blur-sm">
+                <span className="text-green-300">🎮 Secret:</span> <span className="text-green-200">↑↑↓↓←→←→BA</span>
+              </div>
+              {/* Small arrow pointing down */}
+              <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-green-500/70"></div>
+            </div>
           </div>
         </div>
 

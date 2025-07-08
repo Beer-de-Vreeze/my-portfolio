@@ -2059,146 +2059,54 @@
   }
 }
 
-/* Additional mobile optimizations */
-@media (max-width: 640px) {
-  .container {
-    min-height: 100vh;
-    padding-top: 0.5rem;
-    padding-bottom: 1rem;
-    padding-left: 0.25rem;
-    padding-right: 0.25rem;
-    overflow-x: hidden;
-    width: 100%;
-    max-width: 100vw;
-  }
-
-  /* Mobile-specific card animations - fade in instead of slide */
-  .cardWrapper {
-    opacity: 0;
-    transform: scale(0.95);
-    animation: cardFadeIn 0.8s ease-out forwards;
-  }
-
-  /* Mobile-specific title character animations - fade in instead of slide */
-  .titleCharacter {
-    opacity: 0;
-    transform: scale(0.95);
-    animation: titleFadeIn 0.8s ease-out forwards;
-  }
-
-  /* Mobile-specific subtitle animation - fade in instead of slide */
-  .subtitle {
-    opacity: 0;
-    transform: scale(0.95);
-    animation: subtitleMobileFadeIn 1s ease-out 1s forwards;
-    line-height: 0.7; /* Extremely tight line height for mobile */
-  }
-
-  /* Improve button touch targets on mobile */
-  .particle {
-    display: none; /* Hide particles on very small screens for performance */
-  }
-
-  /* Better mobile scroll behavior */
-  .backgroundGrid {
-    animation-duration: 30s; /* Slower animation on mobile for better performance */
-  }
-
-  /* Ensure full viewport height usage */
-  .headerContainer {
-    margin-bottom: 1rem;
-  }
-
-  /* Mobile-specific title adjustments */
-  .titleUnderline {
-    bottom: -6px;
-    height: 2.5px;
-    width: 0; /* Start with 0 width for animation */
-    left: 50%;
-    transform: translateX(-50%);
-    animation: underlineExpandMobile 1.2s ease-out 0.8s forwards;
-  }
-
-  /* Better mobile subtitle readability */
-  .subtitleText {
-    line-height: 0.7; /* Extremely tight line height for mobile */
-    word-break: break-word;
-  }
-
-  /* Prevent horizontal scroll */
-  .animatedTitle {
-    max-width: 100%;
-    word-break: break-word;
-  }
-
-  .subtitle {
-    max-width: 100%;
-    word-break: break-word;
-  }
+/* Hidden Konami Code Easter Egg */
+.konamiHint {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  opacity: 0;
+  pointer-events: none;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  border: 1px solid #00ff00;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  color: #00ff00;
+  transform: translateY(10px);
+  transition: all 0.5s ease;
+  z-index: 1000;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3), inset 0 0 5px rgba(0, 255, 0, 0.1);
+  white-space: nowrap;
 }
 
-/* Ensure smooth scrolling on mobile */
-@media (max-width: 768px) {
-  .container {
-    scroll-behavior: smooth;
-  }
-
-  /* Better modal positioning on mobile */
-  .modalOverlay {
-    align-items: flex-start;
-    padding-top: 2rem;
-  }
+.konamiHint::before {
+  content: "🎮 ";
+  margin-right: 4px;
 }
 
-/* Mobile-specific underline animation */
-@keyframes underlineExpandMobile {
+/* Only trigger when hovering specifically over the special 42nd particle */
+.particle:nth-child(42):hover ~ .konamiHint {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Alternative trigger - show hint when hovering over the 42nd star (easter egg reference) */
+.particle:nth-child(42) {
+  cursor: help;
+}
+
+.particle:nth-child(42):hover {
+  filter: drop-shadow(0 0 8px #00ff00) !important;
+  animation: konamiGlow 1s ease-in-out infinite alternate !important;
+}
+
+@keyframes konamiGlow {
+  from {
+    filter: drop-shadow(0 0 8px #00ff00);
+  }
   to {
-    width: 100vw; /* Expand to full viewport width on mobile */
-  }
-}
-
-/* Laptop-specific adjustments (1024px - 1439px) */
-@media (min-width: 1024px) and (max-width: 1439px) {
-  .container {
-    padding: 2rem 1.5rem;
-    min-height: 100vh;
-    overflow: visible; /* Let page handle scrolling */
-    justify-content: center; /* Center content for main page */
-  }
-
-  /* More compact card wrapper for laptops */
-  .cardWrapper {
-    max-width: 500px; /* Limit card width on laptops */
-    margin: 0 auto;
-  }
-
-  /* Adjust header container for laptops */
-  .headerContainer {
-    margin-bottom: 2rem;
-  }
-
-  .headerContainerSmall {
-    margin-bottom: 1.5rem;
-  }
-
-  /* Slightly smaller title sizing for laptops */
-  .nameDesktopSmall {
-    font-size: clamp(2.5rem, 5vw, 3.5rem);
-  }
-
-  .titleDesktopSmall {
-    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
-  }
-
-  /* Compact spacing */
-  .backgroundGrid {
-    background-size: 70px 70px;
-  }
-
-  /* Ensure contact forms fit properly on laptops */
-  .containerScrollable {
-    padding: 1.5rem 2rem;
-    max-height: none; /* Allow full height expansion */
-    overflow: visible; /* Let page handle scrolling */
+    filter: drop-shadow(0 0 15px #00ff00) drop-shadow(0 0 25px #00ff88);
   }
 }
