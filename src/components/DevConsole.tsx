@@ -72,7 +72,6 @@ const DevConsole: React.FC = () => {
             { name: 'network', desc: 'Show network information and test connectivity' }
           ],
           'Developer Tools': [
-            { name: 'inspect', desc: 'Inspect element properties (hover, click, focus)' },
             { name: 'storage', desc: 'Manage local storage (list, get, set, remove, clear)' },
             { name: 'calc', desc: 'Calculator (supports +, -, *, /, %, sqrt, pow)' },
             { name: 'encode', desc: 'Encode/decode text (base64, url, html)' }
@@ -85,7 +84,8 @@ const DevConsole: React.FC = () => {
             { name: 'weather', desc: 'Get real weather information for any city' }
           ],
           'Fun & Entertainment': [
-            { name: 'joke', desc: 'Get a random joke (programming, general, dad, or specific category)' }
+            { name: 'joke', desc: 'Get a random joke (programming, general, dad, or specific category)' },
+            { name: 'beer', desc: 'Show information about Beer de Vreeze' }
           ]
         };
 
@@ -149,47 +149,6 @@ const DevConsole: React.FC = () => {
         return 'Console closed';
       }
     },
-    {
-      name: 'inspect',
-      description: 'Inspect element properties (hover, click, focus)',
-      execute: (args) => {
-        const mode = args[0] || 'hover';
-        let isInspecting = false;
-        
-        const handleInspect = (event: Event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          
-          const target = event.target as HTMLElement;
-          const info = [
-            `Tag: ${target.tagName.toLowerCase()}`,
-            `ID: ${target.id || 'none'}`,
-            `Classes: ${target.className || 'none'}`,
-            `Text: ${target.textContent?.slice(0, 50) || 'none'}`,
-            `Position: ${target.getBoundingClientRect().x}x${target.getBoundingClientRect().y}`,
-            `Size: ${target.offsetWidth}x${target.offsetHeight}`,
-            `Z-index: ${getComputedStyle(target).zIndex}`,
-            `Display: ${getComputedStyle(target).display}`,
-          ];
-          
-          console.log(`Element Inspector`, 'font-weight: bold; color: #ff6b35;', target);
-          console.log(info.join('\n'));
-          
-          // Remove the event listener after first use
-          document.removeEventListener(mode, handleInspect, true);
-          isInspecting = false;
-        };
-        
-        if (!isInspecting) {
-          document.addEventListener(mode, handleInspect, true);
-          isInspecting = true;
-          return `Inspector activated! ${mode} on any element to inspect it.`;
-        }
-        
-        return 'Inspector already active';
-      }
-    },
-
     {
       name: 'network',
       description: 'Show network information and test connectivity',
@@ -331,6 +290,43 @@ const DevConsole: React.FC = () => {
           `Platform: ${navigator.platform}`,
         ];
         return info.join('\n');
+      }
+    },
+    {
+      name: 'beer',
+      description: 'Show information about Beer de Vreeze (portfolio owner)',
+      execute: () => {
+        // Calculate age from birth date (19-08-2005)
+        const birthDate = new Date(2005, 7, 19); // Month is 0-indexed (August = 7)
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+          age--;
+        }
+        
+        return `Beer de Vreeze - Portfolio Information
+
+Personal Info:
+   Name: Beer de Vreeze
+   Age: ${age} years old
+   Born: August 19, 2005
+   Location: Beusichem, Netherlands
+
+Professional:
+   Role: Game Developer
+   Focus: Tools and Systems in Game Development
+
+Links & Profiles:
+   Portfolio: https://beer-de-vreeze.vercel.app
+   Email: beer@vreeze.com
+   GitHub: https://github.com/Beer-de-Vreeze
+   LinkedIn: https://linkedin.com/in/beer-de-vreeze-59040919a/
+   Itch.io: https://bjeerpeer.itch.io
+
+Based in the Netherlands
+Passionate about creating interactive experiences and innovative solutions`;
       }
     },
     {
@@ -837,6 +833,64 @@ Examples:
         } catch (error) {
           return `❌ Navigation error: ${error}`;
         }
+      }
+    },
+    {
+      name: 'quote',
+      description: 'Get a random inspirational quote',
+      execute: async () => {
+        const quotes = [
+          'The best way to get started is to quit talking and begin doing. – Walt Disney',
+          'Success is not in what you have, but who you are. – Bo Bennett',
+          'The harder you work for something, the greater you’ll feel when you achieve it.',
+          'Don’t watch the clock; do what it does. Keep going. – Sam Levenson',
+          'Dream bigger. Do bigger.',
+          'Don’t stop when you’re tired. Stop when you’re done.'
+        ];
+        return quotes[Math.floor(Math.random() * quotes.length)];
+      }
+    },
+    {
+      name: 'flip',
+      description: 'Flip a coin (heads or tails)',
+      execute: () => {
+        return `Coin flip: ${Math.random() < 0.5 ? 'Heads' : 'Tails'}`;
+      }
+    },
+    {
+      name: 'dice',
+      description: 'Roll a dice (1-6 or custom sides)',
+      execute: (args) => {
+        const sides = parseInt(args[0]) || 6;
+        return `Rolled a ${sides}-sided dice: ${Math.floor(Math.random() * sides) + 1}`;
+      }
+    },
+    {
+      name: 'palindrome',
+      description: 'Check if a word or phrase is a palindrome',
+      execute: (args) => {
+        const text = args.join(' ').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+        if (!text) return 'Usage: palindrome <text>';
+        const isPalindrome = text === text.split('').reverse().join('');
+        return isPalindrome ? 'Yes, it\'s a palindrome!' : 'No, not a palindrome.';
+      }
+    },
+    {
+      name: 'age',
+      description: 'Calculate your age from your birth year (usage: age <year>)',
+      execute: (args) => {
+        const year = parseInt(args[0]);
+        if (!year || year > new Date().getFullYear()) return 'Usage: age <birth year>';
+        return `You are ${new Date().getFullYear() - year} years old.`;
+      }
+    },
+    {
+      name: 'reverse',
+      description: 'Reverse any text',
+      execute: (args) => {
+        const text = args.join(' ');
+        if (!text) return 'Usage: reverse <text>';
+        return text.split('').reverse().join('');
       }
     },
     {

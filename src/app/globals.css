@@ -681,3 +681,131 @@ main,
     padding-bottom: 8rem !important;
   }
 }
+
+/* Shimmer animation for loading skeletons */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite linear;
+}
+
+/* Progressive loading animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+/* Staggered animation delays */
+.animate-delay-100 {
+  animation-delay: 100ms;
+}
+
+.animate-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animate-delay-300 {
+  animation-delay: 300ms;
+}
+
+.animate-delay-400 {
+  animation-delay: 400ms;
+}
+
+.animate-delay-500 {
+  animation-delay: 500ms;
+}
+
+/* Skeleton loading specific styles */
+.skeleton {
+  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.skeleton-dark {
+  background: linear-gradient(90deg, #1f2937 25%, #374151 50%, #1f2937 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Image loading transitions */
+.image-loading {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.image-loaded {
+  opacity: 1;
+}
+
+.image-loading:not(.image-loaded) {
+  opacity: 0;
+}
+
+/* Blur-up effect for images */
+.blur-up {
+  filter: blur(5px);
+  transition: filter 0.3s ease-in-out;
+}
+
+.blur-up.loaded {
+  filter: blur(0);
+}
+
+/* Offline indicator */
+.offline-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #ef4444;
+  color: white;
+  text-align: center;
+  padding: 0.5rem;
+  z-index: 9999;
+  transform: translateY(-100%);
+  transition: transform 0.3s ease-in-out;
+}
+
+.offline-indicator.show {
+  transform: translateY(0);
+}
+
+/* Loading progress bar enhancements */
+.loading-progress {
+  height: 3px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  border-radius: 0 0 2px 2px;
+  box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+  transition: width 0.3s ease-out;
+}
+
+/* Accessibility improvements for loading states */
+@media (prefers-reduced-motion: reduce) {
+  .animate-shimmer,
+  .animate-fadeInUp,
+  .skeleton,
+  .skeleton-dark,
+  .image-loading,
+  .blur-up {
+    animation: none !important;
+    transition: none !important;
+  }
+}

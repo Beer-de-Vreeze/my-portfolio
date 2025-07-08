@@ -1,30 +1,120 @@
-import React from 'react';
-import Image from 'next/image';
+"use client";
 
-interface ProjectCardProps {
-  image: string;
-  title: string;
-  techStack: string[];
+import React, { useState, useEffect } from 'react';
+import { isOffline } from '@/lib/serviceWorker';
+
+interface OnlineStatusProps {
+  className?: string;
+  showText?: boolean;
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ image, title, techStack }) => {
+export const OnlineStatus: React.FC<OnlineStatusProps> = ({ 
+  className = '', 
+  showText = true 
+}) => {
+  const [isOfflineMode, setIsOfflineMode] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
+
+  useEffect(() => {
+    const updateOnlineStatus = () => {
+      const offline = isOffline();
+      setIsOfflineMode(offline);
+      
+      // Show notification when status changes
+      if (offline !== isOfflineMode) {
+        setShowNotification(true);
+        setTimeout(() => setShowNotification(false), 3000);
+      }
+    };
+
+    // Check initial status
+    updateOnlineStatus();
+
+    // Listen for online/offline events
+    const handleOnline = () => {
+      setIsOfflineMode(false);
+      setShowNotification(true);
+      setTimeout(() => setShowNotification(false), 3000);
+    };
+
+    const handleOffline = () => {
+      setIsOfflineMode(true);
+      setShowNotification(true);
+      setTimeout(() => setShowNotification(false), 3000);
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, [isOfflineMode]);
+
   return (
-    <div className="relative z-10 flex flex-col items-center justify-center p-4 sm:p-5 bg-black border border-[#27272a] rounded-lg transition-all duration-300 group-hover:border-gray-500 group-hover:scale-105 overflow-hidden" style={{ width: '400px', height: '200px' }}>
-      <Image src={image} alt={title} layout="fill" objectFit="cover" className="rounded-lg" />
-      <div className="absolute inset-0 flex flex-col justify-between bg-black bg-opacity-50 rounded-lg p-4">
-        <h3 className="text-white text-xl sm:text-2xl md:text-3xl tracking-tighter font-extralight antialiased">
-          {title}
-        </h3>
-        <div className="flex flex-wrap gap-2 bg-black bg-opacity-70 p-2 rounded-md self-end mt-auto">
-          {techStack.map((tech, index) => (
-            <span key={index} className="bg-gray-800 text-white text-xs px-2 py-1 rounded-md shadow-md">
-              {tech}
-            </span>
-          ))}
-        </div>
+    <>
+      {/* Status indicator */}
+      <div className={`flex items-center space-x-2 ${className}`}>
+        <div 
+          className={`w-3 h-3 rounded-full transition-colors duration-300 ${
+            isOfflineMode ? 'bg-red-500' : 'bg-green-500'
+          }`}
+          title={isOfflineMode ? 'Offline' : 'Online'}
+        />
+        {showText && (
+          <span className={`text-sm font-medium ${
+            isOfflineMode ? 'text-red-400' : 'text-green-400'
+          }`}>
+            {isOfflineMode ? 'Offline' : 'Online'}
+          </span>
+        )}
       </div>
-    </div>
+
+      {/* Notification banner */}
+      {showNotification && (
+        <div className={`
+          fixed top-0 left-0 right-0 z-50 p-3 text-center text-white font-medium
+          transition-transform duration-300 ease-in-out
+          ${isOfflineMode 
+            ? 'bg-red-600 transform translate-y-0' 
+            : 'bg-green-600 transform translate-y-0'
+          }
+        `}>
+          {isOfflineMode 
+            ? '📱 You\'re offline. Some features may be limited.' 
+            : '🌐 You\'re back online!'
+          }
+        </div>
+      )}
+    </>
   );
 };
 
-export default ProjectCard;
+// Hook for using online status in components
+export const useOnlineStatus = () => {
+  const [isOfflineMode, setIsOfflineMode] = useState(false);
+
+  useEffect(() => {
+    const updateStatus = () => {
+      setIsOfflineMode(isOffline());
+    };
+
+    updateStatus();
+
+    const handleOnline = () => setIsOfflineMode(false);
+    const handleOffline = () => setIsOfflineMode(true);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  return { isOffline: isOfflineMode, isOnline: !isOfflineMode };
+};
+
+export default OnlineStatus;

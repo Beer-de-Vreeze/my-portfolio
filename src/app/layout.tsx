@@ -1,6 +1,8 @@
 import "../app/globals.css"; 
 import LoadingBar from "@/components/loadingbar";
 import DevConsole from "@/components/DevConsole";
+import { LoadingProvider } from "@/context/LoadingContext";
+import { ServiceWorkerInitializer } from "@/components/ServiceWorkerInitializer";
 import { Metadata, Viewport } from 'next';
 
 export const metadata: Metadata = {
@@ -50,9 +52,12 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
       <body className="bg-black text-white custom-scrollbar min-h-screen">
-        <LoadingBar />
-        <DevConsole />
-        {children}
+        <LoadingProvider>
+          <ServiceWorkerInitializer />
+          <LoadingBar />
+          <DevConsole />
+          {children}
+        </LoadingProvider>
       </body>
     </html>
   );

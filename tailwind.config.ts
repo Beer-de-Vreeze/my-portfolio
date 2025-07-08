@@ -21,11 +21,61 @@ export default {
         fadeOut: {
           '0%': { opacity: '1' },
           '100%': { opacity: '0' }
+        },
+        shimmer: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(100%)' }
+        },
+        fadeInUp: {
+          '0%': { 
+            opacity: '0',
+            transform: 'translateY(20px)'
+          },
+          '100%': { 
+            opacity: '1',
+            transform: 'translateY(0)'
+          }
+        },
+        slideInLeft: {
+          '0%': {
+            opacity: '0',
+            transform: 'translateX(-50px)'
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateX(0)'
+          }
+        },
+        slideInRight: {
+          '0%': {
+            opacity: '0',
+            transform: 'translateX(50px)'
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateX(0)'
+          }
         }
       },
       animation: {
         'fadeIn': 'fadeIn 0.3s ease-in-out forwards',
-        'fadeOut': 'fadeOut 0.3s ease-in-out forwards'
+        'fadeOut': 'fadeOut 0.3s ease-in-out forwards',
+        'shimmer': 'shimmer 2s infinite linear',
+        'fadeInUp': 'fadeInUp 0.6s ease-out forwards',
+        'slideInLeft': 'slideInLeft 0.5s ease-out forwards',
+        'slideInRight': 'slideInRight 0.5s ease-out forwards'
+      },
+      animationDelay: {
+        '100': '100ms',
+        '200': '200ms',
+        '300': '300ms',
+        '400': '400ms',
+        '500': '500ms',
+        '600': '600ms',
+        '700': '700ms',
+        '800': '800ms',
+        '900': '900ms',
+        '1000': '1000ms'
       }
     },
   },
