@@ -49,7 +49,7 @@ const Notification = ({ message, type, isVisible, onClose, duration = 5000 }: No
             duration: 0.3 
           }}
           style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
-          className="fixed top-12 sm:top-6 right-4 sm:right-6 z-50 max-w-sm sm:max-w-md w-auto"
+          className="fixed top-4 sm:top-6 right-4 sm:right-6 z-[9999] max-w-sm sm:max-w-md w-auto"
           onClick={(e) => e.stopPropagation()}
         >
           <div className={`

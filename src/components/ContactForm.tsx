@@ -1,9 +1,9 @@
 import { FormEvent, useState, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import Notification from './Notification';
 
 interface ContactFormProps {
   onEmailSent?: () => void;
+  onNotification?: (message: string, type: 'success' | 'error') => void;
 }
 
 interface FormData {
@@ -20,12 +20,6 @@ interface FormErrors {
   phone: string;
   subject: string;
   message: string;
-}
-
-interface NotificationState {
-  message: string;
-  type: 'success' | 'error';
-  isVisible: boolean;
 }
 
 // Phone validation patterns - moved outside component for better performance
@@ -85,7 +79,7 @@ const PHONE_PATTERNS = [
   /^\d{7,15}$/
 ];
 
-const ContactForm = ({ onEmailSent }: ContactFormProps) => {
+const ContactForm = ({ onEmailSent, onNotification }: ContactFormProps) => {
   const [formData, setFormData] = useState<FormData>({ 
     name: '', 
     email: '', 
@@ -101,11 +95,6 @@ const ContactForm = ({ onEmailSent }: ContactFormProps) => {
     phone: '', 
     subject: '', 
     message: '' 
-  });
-  const [notification, setNotification] = useState<NotificationState>({
-    message: '',
-    type: 'success',
-    isVisible: false,
   });
   
   const maxCharLimit = 500;
@@ -205,13 +194,12 @@ const ContactForm = ({ onEmailSent }: ContactFormProps) => {
     
     if (!validation.isValid) {
       setErrors(validation.errors);
-      setNotification({
-        message: validation.errorMessages.length === 1 
+      onNotification?.(
+        validation.errorMessages.length === 1 
           ? validation.errorMessages[0] 
           : `Please fix the following: ${validation.errorMessages.join(', ')}`,
-        type: 'error',
-        isVisible: true,
-      });
+        'error'
+      );
       return;
     }
 
@@ -243,29 +231,20 @@ const ContactForm = ({ onEmailSent }: ContactFormProps) => {
       setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
       setCharCount(0);
       setErrors({ name: '', email: '', phone: '', subject: '', message: '' });
-      setNotification({
-        message: 'Message sent successfully! I\'ll get back to you soon.',
-        type: 'success',
-        isVisible: true,
-      });
+      onNotification?.('Message sent successfully! I\'ll get back to you soon.', 'success');
       
       // Call the callback if provided
       onEmailSent?.();
     } catch (error) {
       console.error('Error sending email:', error);
-      setNotification({
-        message: error instanceof Error ? error.message : 'Failed to send message. Please try again later.',
-        type: 'error',
-        isVisible: true,
-      });
+      onNotification?.(
+        error instanceof Error ? error.message : 'Failed to send message. Please try again later.',
+        'error'
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
-
-  const handleCloseNotification = useCallback(() => {
-    setNotification(prev => ({ ...prev, isVisible: false }));
-  }, []);
 
   // Memoized form fields configuration for better organization
   const formFields = useMemo(() => [
@@ -308,21 +287,14 @@ const ContactForm = ({ onEmailSent }: ContactFormProps) => {
   ], [formData, errors]);
 
   return (
-    <>
-      <Notification
-        message={notification.message}
-        type={notification.type}
-        isVisible={notification.isVisible}
-        onClose={handleCloseNotification}
-      />
-      <motion.form 
-        onSubmit={handleSubmit} 
-        className="space-y-8 sm:space-y-10" 
-        noValidate
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6, duration: 0.8 }}
-      >
+    <motion.form 
+      onSubmit={handleSubmit} 
+      className="space-y-8 sm:space-y-10" 
+      noValidate
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.6, duration: 0.8 }}
+    >
         {/* Render form fields dynamically for better maintainability */}
         {formFields.map((field, index) => (
           <motion.div 
@@ -437,7 +409,6 @@ const ContactForm = ({ onEmailSent }: ContactFormProps) => {
           {isSubmitting ? 'Sending...' : 'Send Message'}
         </motion.button>
       </motion.form>
-    </>
   );
 };
 

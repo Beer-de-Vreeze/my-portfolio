@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ContactForm from '@/components/ContactForm';
+import Notification from '@/components/Notification';
 import { motion } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaFileAlt } from 'react-icons/fa';
 import { useResponsiveSize } from '@/components/utils/useScrolling';
@@ -11,6 +12,27 @@ import styles from '@/styles/page.module.css';
 export default function Contact() {
   const { isDesktop, width } = useResponsiveSize();
   const [isMounted, setIsMounted] = useState(false);
+  
+  // Notification state moved to page level
+  const [notification, setNotification] = useState({
+    message: '',
+    type: 'success' as 'success' | 'error',
+    isVisible: false,
+  });
+
+  // Handler to show notifications from the contact form
+  const showNotification = (message: string, type: 'success' | 'error') => {
+    setNotification({
+      message,
+      type,
+      isVisible: true,
+    });
+  };
+
+  // Handler to close notification
+  const handleCloseNotification = () => {
+    setNotification(prev => ({ ...prev, isVisible: false }));
+  };
 
   useEffect(() => {
     setIsMounted(true);
@@ -42,6 +64,14 @@ export default function Contact() {
 
   return (
     <div className={`min-h-screen flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground}`}>
+      {/* Page-level notification - always visible at top right of viewport */}
+      <Notification
+        message={notification.message}
+        type={notification.type}
+        isVisible={notification.isVisible}
+        onClose={handleCloseNotification}
+      />
+      
       {/* Animated background grid */}
       <div className={styles.backgroundGrid}></div>
       
@@ -113,7 +143,7 @@ export default function Contact() {
           transition={{ duration: 0.8, ease: "easeOut", delay: -0.2 }}
         >
 
-          <ContactForm />
+          <ContactForm onNotification={showNotification} />
           
           {/* Social links with gradient colors - more compact */}
           <div className="flex justify-center space-x-3 sm:space-x-4 mt-4 sm:mt-6">
