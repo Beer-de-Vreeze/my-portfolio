@@ -23,10 +23,6 @@
   justify-content: center;
   /* Prevent horizontal overflow */
   box-sizing: border-box;
-  /* Isolation and performance optimizations */
-  isolation: isolate;
-  will-change: auto;
-  transform: translateZ(0);
 }
 
 /* Desktop only: center content if it fits */
@@ -73,10 +69,6 @@
   /* CRITICAL: Remove container overflow to move scrollbar to page level */
   overflow: visible;
   /* Remove fixed height on mobile to allow content to expand */
-  /* Isolation and performance optimizations */
-  isolation: isolate;
-  will-change: auto;
-  transform: translateZ(0);
 }
 
 /* Tablet and desktop adjustments */
@@ -151,29 +143,25 @@
   pointer-events: none;
   z-index: 1;
   animation: nebulaShift 30s ease-in-out infinite;
-  /* Force GPU acceleration and prevent layout shifts */
-  will-change: transform, opacity;
-  transform: translateZ(0);
-  contain: layout style paint;
 }
 
 @keyframes nebulaShift {
   0%,
   100% {
     opacity: 0.8;
-    transform: translate3d(0, 0, 0) scale(1);
+    transform: translateX(0) translateY(0) scale(1);
   }
   25% {
     opacity: 1;
-    transform: translate3d(0, -5px, 0) scale(1.02);
+    transform: translateX(0) translateY(-5px) scale(1.02);
   }
   50% {
     opacity: 0.9;
-    transform: translate3d(0, 0, 0) scale(1.04);
+    transform: translateX(0) translateY(0) scale(1.04);
   }
   75% {
     opacity: 1;
-    transform: translate3d(0, 8px, 0) scale(1.01);
+    transform: translateX(0) translateY(8px) scale(1.01);
   }
 }
 
@@ -193,18 +181,14 @@
     linear-gradient(to bottom, rgba(59, 130, 246, 0.05) 1px, transparent 1px);
   animation: gridMove 20s linear infinite;
   z-index: 1;
-  /* Force GPU acceleration and prevent layout shifts */
-  will-change: transform;
-  transform: translateZ(0);
-  contain: layout style paint;
 }
 
 @keyframes gridMove {
   0% {
-    transform: translate3d(0, 0, 0);
+    transform: translate(0, 0);
   }
   100% {
-    transform: translate3d(0, 60px, 0);
+    transform: translate(0, 60px);
   }
 }
 
@@ -217,24 +201,12 @@
   bottom: 0;
   pointer-events: none;
   z-index: 2;
-  /* Prevent layout shifts and force GPU acceleration */
-  will-change: transform;
-  transform: translateZ(0);
-  /* Contain layout and style to prevent any interference */
-  contain: layout style paint;
-  /* Ensure no overflow affects main content */
-  overflow: hidden;
 }
 
 .particle {
   position: absolute;
   border-radius: 50%;
   opacity: 0.8;
-  /* Force GPU acceleration and prevent layout shifts */
-  will-change: transform, opacity;
-  transform: translateZ(0);
-  /* Contain painting to prevent reflow */
-  contain: layout style paint;
 }
 
 /* Star-like particles with varying sizes and colors - Space Theme */
@@ -637,19 +609,19 @@
 @keyframes float1 {
   0%,
   100% {
-    transform: translate3d(0px, 0px, 0px);
+    transform: translateY(0px) translateX(0px);
     opacity: 0.6;
   }
   25% {
-    transform: translate3d(10px, -20px, 0px);
+    transform: translateY(-20px) translateX(10px);
     opacity: 1;
   }
   50% {
-    transform: translate3d(20px, -10px, 0px);
+    transform: translateY(-10px) translateX(20px);
     opacity: 0.8;
   }
   75% {
-    transform: translate3d(5px, -30px, 0px);
+    transform: translateY(-30px) translateX(5px);
     opacity: 0.9;
   }
 }
@@ -657,15 +629,15 @@
 @keyframes float2 {
   0%,
   100% {
-    transform: translate3d(0px, 0px, 0px);
+    transform: translateY(0px) translateX(0px);
     opacity: 0.5;
   }
   33% {
-    transform: translate3d(-15px, -25px, 0px);
+    transform: translateY(-25px) translateX(-15px);
     opacity: 1;
   }
   66% {
-    transform: translate3d(-25px, -5px, 0px);
+    transform: translateY(-5px) translateX(-25px);
     opacity: 0.7;
   }
 }
@@ -673,11 +645,11 @@
 @keyframes float3 {
   0%,
   100% {
-    transform: translate3d(0px, 0px, 0px);
+    transform: translateY(0px) translateX(0px);
     opacity: 0.7;
   }
   50% {
-    transform: translate3d(15px, -35px, 0px);
+    transform: translateY(-35px) translateX(15px);
     opacity: 1;
   }
 }
@@ -685,15 +657,15 @@
 @keyframes float4 {
   0%,
   100% {
-    transform: translate3d(0px, 0px, 0px);
+    transform: translateY(0px) translateX(0px);
     opacity: 0.4;
   }
   25% {
-    transform: translate3d(-10px, -15px, 0px);
+    transform: translateY(-15px) translateX(-10px);
     opacity: 0.9;
   }
   75% {
-    transform: translate3d(-20px, -25px, 0px);
+    transform: translateY(-25px) translateX(-20px);
     opacity: 0.6;
   }
 }
@@ -701,15 +673,15 @@
 @keyframes float5 {
   0%,
   100% {
-    transform: translate3d(0px, 0px, 0px);
+    transform: translateY(0px) translateX(0px);
     opacity: 0.8;
   }
   40% {
-    transform: translate3d(-5px, -20px, 0px);
+    transform: translateY(-20px) translateX(-5px);
     opacity: 1;
   }
   80% {
-    transform: translate3d(-15px, -30px, 0px);
+    transform: translateY(-30px) translateX(-15px);
     opacity: 0.5;
   }
 }
@@ -717,15 +689,15 @@
 @keyframes float6 {
   0%,
   100% {
-    transform: translate3d(0px, 0px, 0px);
+    transform: translateY(0px) translateX(0px);
     opacity: 0.6;
   }
   30% {
-    transform: translate3d(12px, -18px, 0px);
+    transform: translateY(-18px) translateX(12px);
     opacity: 1;
   }
   70% {
-    transform: translate3d(25px, -8px, 0px);
+    transform: translateY(-8px) translateX(25px);
     opacity: 0.8;
   }
 }
@@ -803,9 +775,7 @@
   display: inline-block;
   animation: titleReveal 0.8s ease-out forwards;
   opacity: 0;
-  transform: translate3d(0, 30px, 0);
-  /* Force GPU acceleration */
-  will-change: transform, opacity;
+  transform: translateY(30px);
 }
 
 .titleCharacter:nth-child(1) {
@@ -854,7 +824,7 @@
 @keyframes titleReveal {
   to {
     opacity: 1;
-    transform: translate3d(0, 0, 0);
+    transform: translateY(0);
   }
 }
 
@@ -862,7 +832,7 @@
 @keyframes titleFadeIn {
   to {
     opacity: 1;
-    transform: scale3d(1, 1, 1);
+    transform: scale(1);
   }
 }
 
@@ -931,7 +901,7 @@
   position: relative;
   animation: subtitleFadeIn 1s ease-out 1s forwards;
   opacity: 0;
-  transform: translate3d(0, 20px, 0);
+  transform: translateY(20px);
   color: #d1d5db;
   font-weight: 300;
   width: 100%;
@@ -939,8 +909,6 @@
   word-break: break-word;
   line-height: 1.2;
   transition: font-size 0.3s ease;
-  /* Force GPU acceleration */
-  will-change: transform, opacity;
 }
 
 .titleDesktop {
@@ -971,7 +939,7 @@
 @keyframes subtitleFadeIn {
   to {
     opacity: 1;
-    transform: translate3d(0, 0, 0);
+    transform: translateY(0);
   }
 }
 
@@ -979,7 +947,7 @@
 @keyframes subtitleMobileFadeIn {
   to {
     opacity: 1;
-    transform: scale3d(1, 1, 1);
+    transform: scale(1);
   }
 }
 
@@ -1133,19 +1101,17 @@
 /* Card wrapper with staggered animations */
 .cardWrapper {
   opacity: 0;
-  transform: translate3d(0, 40px, 0) scale3d(0.95, 0.95, 1);
+  transform: translateY(40px) scale(0.95);
   animation: cardSlideUp 0.8s ease-out forwards;
   flex: 1;
   min-width: 320px; /* Increase minimum card width */
   max-width: 500px; /* Allow cards to be much wider */
-  /* Force GPU acceleration */
-  will-change: transform, opacity;
 }
 
 @keyframes cardSlideUp {
   to {
     opacity: 1;
-    transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -1153,7 +1119,7 @@
 @keyframes cardFadeIn {
   to {
     opacity: 1;
-    transform: scale3d(1, 1, 1);
+    transform: scale(1);
   }
 }
 
@@ -1668,31 +1634,27 @@
   animation: dustFloat 40s linear infinite;
   pointer-events: none;
   z-index: 1;
-  /* Force GPU acceleration and prevent layout shifts */
-  will-change: transform;
-  transform: translateZ(0);
-  contain: layout style paint;
 }
 
 @keyframes dustFloat {
   0% {
-    transform: translate3d(0, 0, 0);
+    transform: translateX(0) translateY(0);
     opacity: 0.3;
   }
   25% {
-    transform: translate3d(0, -10px, 0);
+    transform: translateX(0) translateY(-10px);
     opacity: 0.5;
   }
   50% {
-    transform: translate3d(0, 0, 0);
+    transform: translateX(0) translateY(0);
     opacity: 0.4;
   }
   75% {
-    transform: translate3d(0, 15px, 0);
+    transform: translateX(0) translateY(15px);
     opacity: 0.6;
   }
   100% {
-    transform: translate3d(0, 0, 0);
+    transform: translateX(0) translateY(0);
     opacity: 0.3;
   }
 }
