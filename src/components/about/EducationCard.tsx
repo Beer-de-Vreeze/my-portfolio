@@ -118,15 +118,23 @@ const EducationCard: React.FC = () => {
     if (modalState.isOpen) {
       document.addEventListener('keydown', handleKeyDown);
       
-      // Prevent body scroll when modal is open
-      document.body.style.overflow = 'hidden';
+      // Prevent body scroll when modal is open - but respect page-level overflow control
+      if (!document.body.classList.contains('no-scroll')) {
+        document.body.style.overflow = 'hidden';
+      }
     } else {
-      document.body.style.overflow = '';
+      // Only restore overflow if we're responsible for it
+      if (!document.body.classList.contains('no-scroll')) {
+        document.body.style.overflow = '';
+      }
     }
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
+      // Only restore overflow if we're responsible for it
+      if (!document.body.classList.contains('no-scroll')) {
+        document.body.style.overflow = '';
+      }
     };
   }, [modalState.isOpen, toggleModal]);
 
@@ -253,8 +261,8 @@ const EducationCard: React.FC = () => {
             </button>
             
             <div className="p-4 sm:p-6 lg:p-8 relative z-10" id="modal-content">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center mb-4 sm:mb-6">
-                <div className="rounded-xl mb-3 sm:mb-0 sm:mr-4 lg:mr-6 overflow-hidden border border-blue-400/20 shadow-lg mx-auto sm:mx-0" aria-hidden="true">
+              <div className="flex flex-col sm:flex-row items-center sm:items-center mb-4 sm:mb-6">
+                <div className="rounded-xl mb-3 sm:mb-0 sm:mr-4 lg:mr-6 overflow-hidden border border-blue-400/20 shadow-lg flex-shrink-0" aria-hidden="true">
                   <Image 
                     src={activeSchool.logo} 
                     alt={`${activeSchool.name} logo`} 
@@ -263,14 +271,14 @@ const EducationCard: React.FC = () => {
                     className="w-20 h-20 sm:w-24 sm:h-24 lg:w-24 lg:h-24 object-cover" 
                   />
                 </div>
-                <div className="text-center sm:text-left">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
+                <div className="text-center sm:text-left w-full sm:w-auto">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2 items-center">
                     <h2 id="modal-title" className="text-xl sm:text-2xl font-bold text-blue-100">
                       {activeSchool.name}
                     </h2>
                     {activeSchool.educationType && (
                       <span 
-                        className="px-2 sm:px-3 py-1 text-xs bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-400/30 rounded-full text-blue-200 shadow-md backdrop-blur-sm mx-auto sm:mx-0 w-fit"
+                        className="px-2 sm:px-3 py-1 text-xs bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-400/30 rounded-full text-blue-200 shadow-md backdrop-blur-sm"
                         aria-label={`Education type: ${activeSchool.educationType}`}
                       >
                         {activeSchool.educationType}
@@ -280,7 +288,7 @@ const EducationCard: React.FC = () => {
                   <p className="text-blue-200/80 font-medium text-base sm:text-lg">
                     {activeSchool.subtitle}
                     {activeSchool.finishedDate && (
-                      <span className="block sm:inline sm:ml-3 text-sm text-blue-300/70 mt-1 sm:mt-0">• {activeSchool.finishedDate}</span>
+                      <span className="block sm:inline sm:ml-3 text-sm text-blue-300/70 mt-1 sm:mt-0"><span className="hidden sm:inline">• </span>{activeSchool.finishedDate}</span>
                     )}
                   </p>
                 </div>

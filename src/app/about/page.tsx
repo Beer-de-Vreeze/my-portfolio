@@ -9,27 +9,25 @@ import { useResponsiveSize } from "@/components/utils/useScrolling";
 import styles from "@/styles/page.module.css";
 
 export default function About() {
-  const { isMobile, isDesktop, width } = useResponsiveSize();
+  const { isMobile, isDesktop } = useResponsiveSize();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
+  // One-time setup to ensure scrolling is always enabled for about page
   useEffect(() => {
     if (isMounted) {
-      // Always ensure scrolling is enabled for the about page
-      // Remove any overflow restrictions to allow proper scrolling
-      document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
+      // Always ensure scrolling is enabled for the about page - no overflow restrictions
+      document.documentElement.classList.remove('no-scroll');
+      document.body.classList.remove('no-scroll');
       
       return () => {
-        // Clean up on unmount - restore any previous state
-        document.body.style.overflow = '';
-        document.documentElement.style.overflow = '';
+        // No cleanup needed since we're only removing restrictions
       };
     }
-  }, [isMounted, width]);
+  }, [isMounted]); // Only depends on isMounted, not window size changes
 
   // Only render UI if mounted (avoids hydration mismatch)
   if (!isMounted) {

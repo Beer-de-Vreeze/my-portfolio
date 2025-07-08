@@ -41,7 +41,7 @@ const ProjectsContent = ({ onModalStateChange }: { onModalStateChange: (isOpen: 
 );
 
 export default function Projects() {
-  const { isMobile, isDesktop, width } = useResponsiveSize();
+  const { isMobile, isDesktop } = useResponsiveSize();
   const [isMounted, setIsMounted] = useState(false);
   const [isAnyModalOpen, setIsAnyModalOpen] = useState(false);
 
@@ -54,24 +54,28 @@ export default function Projects() {
     setIsAnyModalOpen(isOpen);
   };
 
+  // One-time overflow control based on screen size - only runs once after mount
   useEffect(() => {
     if (isMounted) {
-      // Only disable scrolling on very large desktops (1440px+) where content fits
-      const isVeryLargeDesktop = width && width >= 1440;
+      const width = window.innerWidth;
       
-      if (isVeryLargeDesktop) {
-        const originalOverflow = document.body.style.overflow;
-        document.body.style.overflow = 'hidden';
-        return () => {
-          document.body.style.overflow = originalOverflow;
-        };
+      // Only disable scrolling on very large desktops (1440px+) where content fits
+      if (width >= 1440) {
+        document.documentElement.classList.add('no-scroll');
+        document.body.classList.add('no-scroll');
       } else {
-        // For all other devices (mobile, tablet, laptop), ensure page-level scrolling
-        document.body.style.overflow = '';
-        document.documentElement.style.overflow = '';
+        // For all other devices, ensure scrolling is enabled
+        document.documentElement.classList.remove('no-scroll');
+        document.body.classList.remove('no-scroll');
       }
+      
+      // Cleanup function to restore scrolling when component unmounts
+      return () => {
+        document.documentElement.classList.remove('no-scroll');
+        document.body.classList.remove('no-scroll');
+      };
     }
-  }, [isMounted, width]);
+  }, [isMounted]); // Only depends on isMounted, not window size changes
 
   // Only render UI if mounted (avoids hydration mismatch)
   if (!isMounted) {

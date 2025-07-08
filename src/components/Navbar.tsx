@@ -41,15 +41,23 @@ const Navbar = () => {
     
     if (isOpen) {
       document.addEventListener('keydown', handleEscape);
-      // Prevent body scroll when menu is open
-      document.body.style.overflow = 'hidden';
+      // Prevent body scroll when mobile menu is open - but only override if not already controlled
+      if (!document.body.classList.contains('no-scroll')) {
+        document.body.style.overflow = 'hidden';
+      }
     } else {
-      document.body.style.overflow = 'unset';
+      // Only restore overflow if we set it (and it's not controlled by page-level no-scroll class)
+      if (!document.body.classList.contains('no-scroll')) {
+        document.body.style.overflow = '';
+      }
     }
     
     return () => {
       document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
+      // Only restore overflow if we're responsible for it
+      if (!document.body.classList.contains('no-scroll')) {
+        document.body.style.overflow = '';
+      }
     };
   }, [isOpen]);
 

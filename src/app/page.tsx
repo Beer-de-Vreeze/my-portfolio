@@ -15,20 +15,33 @@ export default function Home() {
     setIsMounted(true);
   }, []);
 
-  // Ensure proper scrolling behavior for all devices
+  // One-time overflow control based on screen size - only runs once after mount
   useEffect(() => {
     if (isMounted) {
-      // For laptops, completely disable scrolling
-      if (window.innerWidth >= 1024 && window.innerWidth <= 1439) {
-        document.body.style.overflow = 'hidden';
-        document.documentElement.style.overflow = 'hidden';
+      const width = window.innerWidth;
+      
+      // Apply overflow control based on screen size, but only once
+      if (width >= 1024 && width <= 1439) {
+        // Laptops: disable scrolling
+        document.documentElement.classList.add('no-scroll');
+        document.body.classList.add('no-scroll');
+      } else if (width >= 1440) {
+        // Large desktops: disable scrolling for main page
+        document.documentElement.classList.add('no-scroll');
+        document.body.classList.add('no-scroll');
       } else {
-        // For other devices, ensure page-level scrolling is enabled
-        document.body.style.overflow = '';
-        document.documentElement.style.overflow = '';
+        // Mobile/tablet: ensure scrolling is enabled
+        document.documentElement.classList.remove('no-scroll');
+        document.body.classList.remove('no-scroll');
       }
+      
+      // Cleanup function to restore scrolling when component unmounts
+      return () => {
+        document.documentElement.classList.remove('no-scroll');
+        document.body.classList.remove('no-scroll');
+      };
     }
-  }, [isMounted]);
+  }, [isMounted]); // Only depends on isMounted, not window size changes
 
   const cards = [
     <AboutCard key="about" />,

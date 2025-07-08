@@ -29,25 +29,40 @@ body {
   background-attachment: scroll;
 }
 
-/* Laptop and desktop scrolling improvements */
+/* Tablet, laptop and desktop scrolling - prevent scrolling on larger screens */
 @media screen and (min-width: 769px) {
   html {
-    height: auto;
-    overflow-y: auto;
+    height: 100vh;
+    overflow: hidden; /* Prevent scrolling on larger screens */
   }
 
   body {
-    height: auto;
+    height: 100vh;
     min-height: 100vh;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden; /* Prevent scrolling on larger screens */
+  }
+}
+
+/* Large desktop overflow control - CSS only approach */
+@media screen and (min-width: 1440px) {
+  /* Only disable scrolling on very large desktops where content fits */
+  body.no-scroll {
+    overflow: hidden;
   }
 
-  /* Ensure containers don't interfere with page scrolling */
-  .container,
-  .containerScrollable {
-    overflow: visible !important;
-    max-height: none !important;
+  html.no-scroll {
+    overflow: hidden;
+  }
+}
+
+/* Laptop range - disable scrolling where content fits exactly */
+@media screen and (min-width: 1024px) and (max-width: 1439px) {
+  body.no-scroll {
+    overflow: hidden;
+  }
+
+  html.no-scroll {
+    overflow: hidden;
   }
 }
 

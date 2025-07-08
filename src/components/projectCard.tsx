@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo, memo } from 'react';
+import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiApple, SiDocker, SiGooglecloud, SiNextdotjs, SiTailwindcss, SiBlender, SiAdobephotoshop, SiMysql, SiPhp, SiPython, SiCplusplus, SiUnrealengine, SiGodotengine, SiTensorflow, SiPytorch, SiAndroidstudio, SiVercel, SiDotnet, SiEslint, SiFramer } from 'react-icons/si';
@@ -1484,28 +1485,31 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     };
     
     if (isModalOpen && !isClosing) {
-      // Store the current overflow and scroll position to restore later
+      // Store the current overflow to restore later
       const originalOverflow = document.body.style.overflow;
-      const scrollY = window.scrollY;
       
-      // Prevent background scrolling while preserving scroll position
-      document.body.style.overflow = 'hidden';
-      document.body.style.position = 'fixed';
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.width = '100%';
+      // Only prevent background scrolling if not controlled by page-level no-scroll class
+      if (!document.body.classList.contains('no-scroll')) {
+        // Prevent background scrolling
+        document.body.style.overflow = 'hidden';
+        document.body.style.position = 'fixed';
+        document.body.style.width = '100%';
+      }
       
       document.addEventListener('keydown', handleKeyDown);
       onModalStateChange?.(true);
       
       return () => {
-        // Restore the original state
-        document.body.style.overflow = originalOverflow || '';
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.width = '';
-        
-        // Restore scroll position
-        window.scrollTo(0, scrollY);
+        // Only restore the original state if we modified it
+        if (!document.body.classList.contains('no-scroll')) {
+          // Restore the original state
+          document.body.style.overflow = originalOverflow || '';
+          document.body.style.position = '';
+          document.body.style.top = '';
+          document.body.style.width = '';
+          
+          // Don't restore scroll position - let user stay where they are
+        }
         
         document.removeEventListener('keydown', handleKeyDown);
       };
@@ -1522,11 +1526,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
    */
   useEffect(() => {
     if (isClosing) {
-      // Restore body styles immediately when closing animation starts
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
+      // Only restore body styles if we're responsible for them (not controlled by page-level no-scroll)
+      if (!document.body.classList.contains('no-scroll')) {
+        // Restore body styles immediately when closing animation starts
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+      }
     }
   }, [isClosing]);
 
@@ -2031,7 +2038,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       </div>
 
       {/* Modal with backdrop blur and enhanced animations */}
-      {isModalOpen && (
+      {isModalOpen && typeof document !== 'undefined' && createPortal(
         <div 
           className={`fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-sm transition-all duration-500 ease-out ${
             isClosing ? 'opacity-0 backdrop-blur-none' : 'opacity-100 animate-fadeIn'
@@ -2041,16 +2048,22 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           aria-modal="true"
           aria-labelledby="modal-title"
           style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
             animation: isClosing ? 'fadeOut 0.3s ease-out forwards' : 'fadeIn 0.5s ease-out forwards'
           }}
         >
           {/* Enhanced Modal Container with modern design and responsive sizing */}
           <div 
-            className={`relative w-full max-w-7xl max-h-[95vh] bg-gradient-to-br from-gray-900/95 to-black/90 backdrop-blur-md rounded-2xl shadow-2xl overflow-y-auto transition-all duration-500 ease-out border border-blue-500/30 ${
+            className={`relative w-full max-w-7xl bg-gradient-to-br from-gray-900/95 to-black/90 backdrop-blur-md rounded-2xl shadow-2xl overflow-y-auto transition-all duration-500 ease-out border border-blue-500/30 max-h-[95vh] sm:max-h-[95vh] ${
               isClosing ? 'scale-95 opacity-0 translate-y-4' : 'scale-100 opacity-100 translate-y-0 animate-slideInUp'
             }`}
             onClick={(e) => e.stopPropagation()}
             style={{
+              maxHeight: 'calc(100vh - 1rem)',
               animation: isClosing 
                 ? 'slideOutDown 0.3s ease-out forwards' 
                 : 'slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards'
@@ -2543,7 +2556,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               </div>
             </div>
           </div>
-        </div>      )}
+        </div>, document.body
+      )}
     </>
   );
 };
