@@ -18,20 +18,16 @@ export default function About() {
 
   useEffect(() => {
     if (isMounted) {
-      // Only disable scrolling on very large desktops (1440px+) where content fits
-      const isVeryLargeDesktop = width && width >= 1440;
+      // Always ensure scrolling is enabled for the about page
+      // Remove any overflow restrictions to allow proper scrolling
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
       
-      if (isVeryLargeDesktop) {
-        const originalOverflow = document.body.style.overflow;
-        document.body.style.overflow = 'hidden';
-        return () => {
-          document.body.style.overflow = originalOverflow;
-        };
-      } else {
-        // For all other devices (mobile, tablet, laptop), ensure page-level scrolling
+      return () => {
+        // Clean up on unmount - restore any previous state
         document.body.style.overflow = '';
         document.documentElement.style.overflow = '';
-      }
+      };
     }
   }, [isMounted, width]);
 
@@ -41,7 +37,7 @@ export default function About() {
   }
 
   return (
-    <div className={`min-h-screen flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground}`}>
+    <div className={`min-h-screen flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground}`} style={{ overflow: 'visible' }}>
       {/* Animated background grid */}
       <div className={styles.backgroundGrid}></div>
       
