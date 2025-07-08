@@ -1,5 +1,6 @@
 import "../app/globals.css"; 
 import LoadingBar from "@/components/loadingbar";
+import DevConsole from "@/components/DevConsole";
 import { Metadata, Viewport } from 'next';
 
 export const metadata: Metadata = {
@@ -50,6 +51,7 @@ export default function RootLayout({
       </head>
       <body className="bg-black text-white custom-scrollbar min-h-screen">
         <LoadingBar />
+        <DevConsole />
         {children}
       </body>
     </html>

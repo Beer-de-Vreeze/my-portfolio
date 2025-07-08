@@ -13,6 +13,7 @@
     "@azure/msal-node": "^3.2.3",
     "@heroicons/react": "^2.2.0",
     "@shadcn/ui": "^0.0.4",
+    "axios": "^1.10.0",
     "bootstrap": "^5.3.3",
     "devicon": "^2.16.0",
     "devicons": "^1.8.0",
