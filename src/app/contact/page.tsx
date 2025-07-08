@@ -42,13 +42,14 @@ export default function Contact() {
   useEffect(() => {
     if (isMounted) {
       const width = window.innerWidth;
+      const height = window.innerHeight;
       
-      // Only disable scrolling on very large desktops (1440px+) where content fits
-      if (width >= 1440) {
+      // Only disable scrolling on very large desktops (1600px+ width AND 1000px+ height) where content actually fits
+      if (width >= 1600 && height >= 1000) {
         document.documentElement.classList.add('no-scroll');
         document.body.classList.add('no-scroll');
       } else {
-        // For all other devices, ensure scrolling is enabled
+        // For all other devices including laptops, ensure scrolling is enabled
         document.documentElement.classList.remove('no-scroll');
         document.body.classList.remove('no-scroll');
       }
@@ -107,7 +108,7 @@ export default function Contact() {
 
       <Navbar />
       
-      <main className={`contact-page-main flex-1 flex flex-col ${isDesktop ? 'justify-center' : 'justify-start'} items-center max-w-xl mx-auto px-4 sm:px-6 md:px-8 relative z-10 pt-20 pb-40 sm:pb-32 md:pb-40 lg:pb-40`}>
+      <main className={`contact-page-main flex-1 flex flex-col justify-start items-center max-w-2xl mx-auto px-4 sm:px-6 md:px-8 relative z-10 pt-20 pb-40 sm:pb-32 md:pb-40 lg:pb-40`}>
         {/* Enhanced header section with animated title - smaller and more compact */}
         <div className={`${styles.headerContainer} ${styles.headerContainerSmall} mb-8 sm:mb-10 md:mb-12`}>
           <div className={styles.titleWrapper}>
@@ -139,9 +140,9 @@ export default function Contact() {
           </div>
         </div>
 
-        {/* Contact form card with enhanced styling - more compact */}
+        {/* Contact form card with enhanced styling - full size for better usability */}
         <motion.div 
-          className={`${styles.cardWrapper} ${styles.cardHover} select-content contact-form-container p-4 md:p-6 lg:p-8 rounded-2xl shadow-lg w-full max-w-lg`}
+          className={`${styles.cardWrapper} ${styles.cardHover} select-content contact-form-container p-4 md:p-6 lg:p-8 rounded-2xl shadow-lg w-full max-w-xl`}
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut", delay: -0.2 }}
