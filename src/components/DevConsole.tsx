@@ -84,7 +84,7 @@ const DevConsole: React.FC = () => {
             { name: 'weather', desc: 'Get real weather information for any city' }
           ],
           'Fun & Entertainment': [
-            { name: 'joke', desc: 'Get a random joke (programming, general, dad, or specific category)' },
+            { name: 'joke', desc: 'Get a random joke (programming, general, dad, chuck, geek, yomomma, or specific category)' },
             { name: 'beer', desc: 'Show information about Beer de Vreeze' }
           ]
         };
@@ -457,7 +457,7 @@ Passionate about creating interactive experiences and innovative solutions`;
     {
       name: 'weather',
       description: 'Get real weather information for any city (usage: weather <city>)',
-      execute: async (args) => {
+      execute: async (args): Promise<string> => {
         const location = args.join(' ');
         
         if (!location) {
@@ -615,87 +615,140 @@ ${weatherEmoji} ${description}
     },
     {
       name: 'joke',
-      description: 'Get a random joke (programming, general, dad, or specific category)',
+      description: 'Get a random joke (programming, general, dad, chuck, geek, yomomma, random, or specific category)',
       execute: async (args) => {
-        const category = args[0] || 'programming';
-        
+        // If no argument, treat as 'random'
+        let category = args[0] ? args[0] : 'random';
+        const blacklist = 'nsfw,religious,political,racist,sexist,explicit';
+        if (category.toLowerCase() === 'random') {
+          const randomOptions = [
+            'dad', 'developer', 'chuck', 'geek', 'yomomma', 'general', 'programming', 'misc', 'dark', 'pun', 'spooky', 'christmas'
+          ];
+          category = randomOptions[Math.floor(Math.random() * randomOptions.length)];
+        }
         try {
+          const categoriesRes = await fetch('https://v2.jokeapi.dev/categories');
+          const categoriesData = await categoriesRes.json();
+          const availableCategories: string[] = categoriesData.categories || [];
+          let selectedCategory = 'Any';
           let apiUrl = '';
-          
-          switch (category.toLowerCase()) {
-            case 'programming':
-            case 'code':
-            case 'dev':
-              // JokeAPI for programming jokes
-              apiUrl = 'https://v2.jokeapi.dev/joke/Programming?blacklistFlags=nsfw,religious,political,racist,sexist,explicit&type=single';
-              break;
-              
-            case 'dad':
-              // icanhazdadjoke API
-              apiUrl = 'https://icanhazdadjoke.com/';
-              break;
-              
-            case 'general':
-            case 'random':
-            default:
-              // Official Joke API
-              apiUrl = 'https://official-joke-api.appspot.com/random_joke';
-              break;
-          }
-          
-          const response = await fetch(apiUrl, {
-            headers: category === 'dad' ? { 'Accept': 'application/json' } : {}
-          });
-          
-          if (!response.ok) {
-            throw new Error(`API returned ${response.status}`);
-          }
-          
-          const data = await response.json();
-          
-          // Handle different API response formats
-          if (category === 'dad') {
-            return `😄 Dad Joke:\n${data.joke}\n\n🎯 From: icanhazdadjoke.com`;
-          } else if (category === 'programming' || category === 'code' || category === 'dev') {
-            if (data.type === 'single') {
-              return `💻 Programming Joke:\n${data.joke}\n\n🎯 From: JokeAPI`;
-            } else if (data.type === 'twopart') {
-              return `💻 Programming Joke:\n${data.setup}\n\n${data.delivery}\n\n🎯 From: JokeAPI`;
+          let isJokeApi = true;
+          let apiType: 'jokeapi' | 'dad' | 'developer' | 'chuck' | 'geek' | 'yomomma' | 'general' = 'jokeapi';
+
+          if (category && category.toLowerCase() !== 'any') {
+            switch (category.toLowerCase()) {
+              case 'dad':
+                apiUrl = 'https://icanhazdadjoke.com/';
+                isJokeApi = false;
+                apiType = 'dad';
+                break;
+              case 'developer':
+              case 'dev':
+                selectedCategory = 'Programming';
+                apiUrl = `https://v2.jokeapi.dev/joke/${selectedCategory}?blacklistFlags=${blacklist}`;
+                apiType = 'developer';
+                break;
+              case 'chuck':
+              case 'chucknorris':
+                apiUrl = 'https://api.chucknorris.io/jokes/random';
+                isJokeApi = false;
+                apiType = 'chuck';
+                break;
+              case 'geek':
+                apiUrl = 'https://geek-jokes.sameerkumar.website/api?format=json';
+                isJokeApi = false;
+                apiType = 'geek';
+                break;
+              case 'yomomma':
+              case 'yo-momma':
+                apiUrl = 'https://api.yomomma.info/';
+                isJokeApi = false;
+                apiType = 'yomomma';
+                break;
+              case 'general':
+                apiUrl = 'https://official-joke-api.appspot.com/jokes/random';
+                isJokeApi = false;
+                apiType = 'general';
+                break;
+              default: {
+                const match = availableCategories.find(
+                  (cat: string) => cat.toLowerCase() === category.toLowerCase()
+                );
+                if (match) {
+                  selectedCategory = match;
+                  apiUrl = `https://v2.jokeapi.dev/joke/${selectedCategory}?blacklistFlags=${blacklist}`;
+                  apiType = 'jokeapi';
+                } else {
+                  return `❌ Category "${category}" not found. Available: dad, developer, chuck, geek, yomomma, general, random, ${availableCategories.join(', ')}`;
+                }
+              }
             }
           } else {
-            // Official Joke API format
-            return `😂 Random Joke:\n${data.setup}\n\n${data.punchline}\n\n🎯 From: Official Joke API`;
+            apiUrl = `https://v2.jokeapi.dev/joke/Any?blacklistFlags=${blacklist}`;
+            apiType = 'jokeapi';
           }
-          
-          // Fallback if API response format is unexpected
+
+          const response = await fetch(apiUrl, {
+            headers: isJokeApi || apiType === 'general' ? {} : { 'Accept': 'application/json' }
+          });
+          if (!response.ok) throw new Error(`API returned ${response.status}`);
+          const data = await response.json();
+
+          switch (apiType) {
+            case 'dad':
+              return `😄 Dad Joke:\n${data.joke}`;
+            case 'chuck':
+              return `🥋 Chuck Norris Joke:\n${data.value}`;
+            case 'geek':
+              return `🤓 Geek Joke:\n${data.joke}`;
+            case 'yomomma':
+              return `👩 Yo Momma Joke:\n${data.joke}`;
+            case 'general':
+              if (data.type === 'single' || data.setup === undefined) {
+                return `😂 General Joke:\n${data.joke || data.setup || data.punchline}`;
+              } else {
+                return `😂 General Joke:\n${data.setup}\n\n${data.punchline}`;
+              }
+            case 'developer':
+              if (data.type === 'single') {
+                return `💻 Developer Joke:\n${data.joke}`;
+              } else if (data.type === 'twopart') {
+                return `💻 Developer Joke:\n${data.setup}\n\n${data.delivery}`;
+              }
+              break;
+            case 'jokeapi':
+            default:
+              if (data.type === 'single') {
+                return `😂 Joke (${selectedCategory}):\n${data.joke}`;
+              } else if (data.type === 'twopart') {
+                return `😂 Joke (${selectedCategory}):\n${data.setup}\n\n${data.delivery}`;
+              }
+              break;
+          }
           throw new Error('Unexpected API response format');
-          
         } catch (error) {
           console.error('Joke API Error:', error);
-          
-          // Fallback to local jokes
-          const fallbackJokes = category === 'programming' || category === 'code' || category === 'dev' ? [
-            'Why do programmers prefer dark mode? Because light attracts bugs!',
-            'How many programmers does it take to change a light bulb? None, that\'s a hardware problem!',
-            'Why do Java developers wear glasses? Because they can\'t C#!',
-            'What\'s a programmer\'s favorite hangout place? Foo Bar!',
-            'Why did the programmer quit his job? He didn\'t get arrays!'
-          ] : category === 'dad' ? [
-            'I invented a new word: Plagiarism!',
-            'Did you hear about the mathematician who\'s afraid of negative numbers? He\'ll stop at nothing to avoid them!',
-            'Why don\'t scientists trust atoms? Because they make up everything!',
-            'I told my wife she was drawing her eyebrows too high. She seemed surprised.',
-            'What do you call a fake noodle? An impasta!'
-          ] : [
-            'Why don\'t scientists trust atoms? Because they make up everything!',
-            'What did the ocean say to the beach? Nothing, it just waved!',
-            'Why do we tell actors to "break a leg?" Because every play has a cast!',
-            'What\'s the best thing about Switzerland? I don\'t know, but the flag is a big plus!',
-            'Why did the scarecrow win an award? He was outstanding in his field!'
-          ];
-          
-          const randomJoke = fallbackJokes[Math.floor(Math.random() * fallbackJokes.length)];
-          return `😅 ${category === 'dad' ? 'Dad' : category === 'programming' ? 'Programming' : 'Random'} Joke (Offline):\n${randomJoke}\n\n⚠️ API unavailable - using local jokes`;
+          switch (category && category.toLowerCase()) {
+            case 'dad':
+              return `😅 Dad Joke (Offline):\nI invented a new word: Plagiarism!\n\n⚠️ API unavailable.`;
+            case 'developer':
+            case 'dev':
+              return `😅 Developer Joke (Offline):\nWhy do programmers prefer dark mode? Because light attracts bugs!\n\n⚠️ API unavailable.`;
+            case 'chuck':
+            case 'chucknorris':
+              return `😅 Chuck Norris Joke (Offline):\nChuck Norris can divide by zero.\n\n⚠️ API unavailable.`;
+            case 'geek':
+              return `😅 Geek Joke (Offline):\nThere are only 10 types of people in the world: those who understand binary and those who don't.\n\n⚠️ API unavailable.`;
+            case 'yomomma':
+            case 'yo-momma':
+              return `😅 Yo Momma Joke (Offline):\nYo momma is so old, her birth certificate says 'Expired'.\n\n⚠️ API unavailable.`;
+            case 'general':
+              return `😅 General Joke (Offline):\nWhy did the scarecrow win an award? Because he was outstanding in his field!\n\n⚠️ API unavailable.`;
+            case 'random':
+              return `😅 Joke (Offline):\nWhy did the chicken join a band? Because it had the drumsticks!\n\n⚠️ API unavailable or category not found.`;
+            default:
+              return `😅 Joke (Offline):\nWhy did the chicken join a band? Because it had the drumsticks!\n\n⚠️ API unavailable or category not found.`;
+          }
         }
       }
     },
@@ -759,10 +812,15 @@ Available pages:
   about                    - Go to about page
   contact                  - Go to contact page
   projects                 - Go to projects page
+  github                   - Go to GitHub profile
+  itch                     - Go to Itch.io page
+  linkedin                 - Go to LinkedIn profile
+  portfolio                - Go to portfolio website
+  email                    - Open email to Beer de Vreeze
+  cv                       - Download Beer de Vreeze CV
 
 Error pages:
   404, not-found           - Trigger 404 error page
-  500, error               - Trigger 500 error page
 
 Custom paths:
   navigate /custom/path    - Navigate to any custom path
@@ -771,6 +829,12 @@ Custom paths:
 Examples:
   navigate about
   navigate projects
+  navigate github
+  navigate itch
+  navigate linkedin
+  navigate portfolio
+  navigate email
+  navigate cv
   navigate 404
   navigate /custom/page
   navigate https://github.com`;
@@ -779,7 +843,7 @@ Examples:
         try {
           let targetPath = '';
 
-          // Handle predefined pages
+          // Handle predefined pages and links
           switch (destination) {
             case 'home':
             case 'index':
@@ -795,17 +859,29 @@ Examples:
             case 'projects':
               targetPath = '/projects';
               break;
-            
+            case 'github':
+              window.open('https://github.com/Beer-de-Vreeze', '_blank');
+              return '🌐 Opening GitHub profile: https://github.com/Beer-de-Vreeze';
+            case 'itch':
+              window.open('https://bjeerpeer.itch.io', '_blank');
+              return '🌐 Opening Itch.io page: https://bjeerpeer.itch.io';
+            case 'linkedin':
+              window.open('https://linkedin.com/in/beer-de-vreeze-59040919a/', '_blank');
+              return '🌐 Opening LinkedIn profile: https://linkedin.com/in/beer-de-vreeze-59040919a/';
+            case 'portfolio':
+              window.open('https://beer-de-vreeze.vercel.app', '_blank');
+              return '🌐 Opening portfolio: https://beer-de-vreeze.vercel.app';
+            case 'email':
+              window.open('mailto:beer@vreeze.com', '_blank');
+              return '✉️ Opening email client for: beer@vreeze.com';
+            case 'cv':
+              window.open('/downloads/Beer de Vreeze CV.pdf', '_blank');
+              return '📄 Downloading CV: Beer de Vreeze CV.pdf';
             // Error pages
             case '404':
             case 'not-found':
               targetPath = '/404';
               break;
-            case '500':
-            case 'error':
-              targetPath = '/500';
-              break;
-            
             // Custom paths or external URLs
             default:
               if (destination.startsWith('http://') || destination.startsWith('https://')) {
@@ -951,18 +1027,19 @@ Examples:
         setHistoryIndex(-1);
       } else if (event.key === 'ArrowUp') {
         event.preventDefault();
-        if (commandHistory.length > 0 && historyIndex < commandHistory.length - 1) {
-          const newIndex = historyIndex + 1;
+        if (commandHistory.length > 0) {
+          let newIndex = historyIndex === -1 ? commandHistory.length - 1 : historyIndex - 1;
+          if (newIndex < 0) newIndex = 0;
           setHistoryIndex(newIndex);
-          setCurrentInput(commandHistory[commandHistory.length - 1 - newIndex]);
+          setCurrentInput(commandHistory[newIndex] || '');
         }
       } else if (event.key === 'ArrowDown') {
         event.preventDefault();
-        if (historyIndex > 0) {
-          const newIndex = historyIndex - 1;
+        if (historyIndex >= 0 && historyIndex < commandHistory.length - 1) {
+          const newIndex = historyIndex + 1;
           setHistoryIndex(newIndex);
-          setCurrentInput(commandHistory[commandHistory.length - 1 - newIndex]);
-        } else if (historyIndex === 0) {
+          setCurrentInput(commandHistory[newIndex] || '');
+        } else if (historyIndex === commandHistory.length - 1) {
           setHistoryIndex(-1);
           setCurrentInput('');
         }
@@ -987,6 +1064,7 @@ Examples:
     }
   }, [isOpen]);
 
+  // Add to command history (no repeats)
   const executeCommand = async (input: string) => {
     const trimmedInput = input.trim();
     if (!trimmedInput) return;
@@ -1005,8 +1083,13 @@ Examples:
       addToHistory(`Unknown command: ${commandName}. Type "help" for available commands.`, 'error', trimmedInput);
     }
 
-    // Add to command history
-    setCommandHistory(prev => [trimmedInput, ...prev].slice(0, 50)); // Keep last 50 commands
+    // Only add to history if not a repeat of the last entry
+    setCommandHistory(prev => {
+      if (prev[prev.length - 1] !== trimmedInput) {
+        return [...prev, trimmedInput].slice(-50); // Keep last 50 commands
+      }
+      return prev;
+    });
     setHistoryIndex(-1);
     setCurrentInput('');
   };
