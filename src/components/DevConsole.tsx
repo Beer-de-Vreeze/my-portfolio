@@ -84,7 +84,7 @@ const DevConsole: React.FC = () => {
             { name: 'weather', desc: 'Get real weather information for any city' }
           ],
           'Fun & Entertainment': [
-            { name: 'joke', desc: 'Get a random joke (programming, general, dad, chuck, geek, yomomma, or specific category)' },
+            { name: 'joke', desc: 'Get a random joke (programming, general, dad, chuck, geek, random, or specific category)' },
             { name: 'beer', desc: 'Show information about Beer de Vreeze' }
           ]
         };
@@ -615,14 +615,14 @@ ${weatherEmoji} ${description}
     },
     {
       name: 'joke',
-      description: 'Get a random joke (programming, general, dad, chuck, geek, yomomma, random, or specific category)',
+      description: 'Get a random joke (programming, general, dad, chuck, geek, random, or specific category)',
       execute: async (args) => {
         // If no argument, treat as 'random'
         let category = args[0] ? args[0] : 'random';
         const blacklist = 'nsfw,religious,political,racist,sexist,explicit';
         if (category.toLowerCase() === 'random') {
           const randomOptions = [
-            'dad', 'developer', 'chuck', 'geek', 'yomomma', 'general', 'programming', 'misc', 'dark', 'pun', 'spooky', 'christmas'
+            'dad', 'developer', 'chuck', 'geek', 'general', 'programming', 'misc', 'dark', 'pun', 'spooky', 'christmas'
           ];
           category = randomOptions[Math.floor(Math.random() * randomOptions.length)];
         }
@@ -633,7 +633,7 @@ ${weatherEmoji} ${description}
           let selectedCategory = 'Any';
           let apiUrl = '';
           let isJokeApi = true;
-          let apiType: 'jokeapi' | 'dad' | 'developer' | 'chuck' | 'geek' | 'yomomma' | 'general' = 'jokeapi';
+          let apiType: 'jokeapi' | 'dad' | 'developer' | 'chuck' | 'geek' | 'general' = 'jokeapi';
 
           if (category && category.toLowerCase() !== 'any') {
             switch (category.toLowerCase()) {
@@ -659,12 +659,6 @@ ${weatherEmoji} ${description}
                 isJokeApi = false;
                 apiType = 'geek';
                 break;
-              case 'yomomma':
-              case 'yo-momma':
-                apiUrl = 'https://api.yomomma.info/';
-                isJokeApi = false;
-                apiType = 'yomomma';
-                break;
               case 'general':
                 apiUrl = 'https://official-joke-api.appspot.com/jokes/random';
                 isJokeApi = false;
@@ -679,7 +673,7 @@ ${weatherEmoji} ${description}
                   apiUrl = `https://v2.jokeapi.dev/joke/${selectedCategory}?blacklistFlags=${blacklist}`;
                   apiType = 'jokeapi';
                 } else {
-                  return `❌ Category "${category}" not found. Available: dad, developer, chuck, geek, yomomma, general, random, ${availableCategories.join(', ')}`;
+                  return `❌ Category "${category}" not found. Available: dad, developer, chuck, geek, general, random, ${availableCategories.join(', ')}`;
                 }
               }
             }
@@ -701,8 +695,6 @@ ${weatherEmoji} ${description}
               return `🥋 Chuck Norris Joke:\n${data.value}`;
             case 'geek':
               return `🤓 Geek Joke:\n${data.joke}`;
-            case 'yomomma':
-              return `👩 Yo Momma Joke:\n${data.joke}`;
             case 'general':
               if (data.type === 'single' || data.setup === undefined) {
                 return `😂 General Joke:\n${data.joke || data.setup || data.punchline}`;
@@ -739,9 +731,6 @@ ${weatherEmoji} ${description}
               return `😅 Chuck Norris Joke (Offline):\nChuck Norris can divide by zero.\n\n⚠️ API unavailable.`;
             case 'geek':
               return `😅 Geek Joke (Offline):\nThere are only 10 types of people in the world: those who understand binary and those who don't.\n\n⚠️ API unavailable.`;
-            case 'yomomma':
-            case 'yo-momma':
-              return `😅 Yo Momma Joke (Offline):\nYo momma is so old, her birth certificate says 'Expired'.\n\n⚠️ API unavailable.`;
             case 'general':
               return `😅 General Joke (Offline):\nWhy did the scarecrow win an award? Because he was outstanding in his field!\n\n⚠️ API unavailable.`;
             case 'random':
