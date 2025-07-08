@@ -1,10 +1,10 @@
 'use client'
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import styles from "@/styles/page.module.css";
 
-export default function NotFound() {
+function NotFoundContent() {
   const [isMounted, setIsMounted] = useState(false);
   const searchParams = useSearchParams();
 
@@ -166,5 +166,65 @@ export default function NotFound() {
       </div>
 
     </main>
+  );
+}
+
+// Loading component for Suspense fallback
+function NotFoundFallback() {
+  return (
+    <main className={`${styles.container} ${styles.enhancedBackground} px-4 sm:px-6 md:px-8 lg:px-8 xl:px-16`}>
+      {/* Animated background grid */}
+      <div className={styles.backgroundGrid}></div>
+      
+      {/* Cosmic dust layer */}
+      <div className={styles.cosmicDust}></div>
+      
+      {/* Enhanced Space Starfield */}
+      <div className={styles.particleContainer}>
+        {Array.from({ length: 50 }, (_, i) => {
+          const weightedTypes = [
+            'starTiny', 'starTiny', 'starTiny', 'starTiny', 'starTiny',
+            'starWhite', 'starWhite', 'starWhite',
+            'starSmall', 'starSmall', 'starSmall',
+            'starCyan', 'starCyan',
+            'starMedium', 'starMedium',
+            'starLarge',
+            'starXLarge'
+          ];
+          const starType = weightedTypes[i % weightedTypes.length];
+          return (
+            <div 
+              key={i} 
+              className={`${styles.particle} ${styles[starType]} ${styles[`particle${i + 1}`]}`}
+            ></div>
+          );
+        })}
+      </div>
+
+      {/* Loading Content */}
+      <div className="flex flex-col items-center justify-center text-center max-w-2xl mx-auto space-y-8 relative z-40">
+        <div className="relative">
+          <h1 className="text-8xl md:text-9xl font-bold bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+            404
+          </h1>
+        </div>
+        <div className="space-y-4">
+          <h2 className="text-2xl md:text-3xl font-semibold text-white">
+            🚀 NAVIGATION ERROR 🚀
+          </h2>
+          <p className="text-lg md:text-xl text-gray-300">
+            Loading navigation systems...
+          </p>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+export default function NotFound() {
+  return (
+    <Suspense fallback={<NotFoundFallback />}>
+      <NotFoundContent />
+    </Suspense>
   );
 }
