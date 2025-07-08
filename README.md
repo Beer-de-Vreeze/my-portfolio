@@ -2,23 +2,27 @@
 
 A modern, responsive portfolio website showcasing my game development projects and software engineering journey. Built with Next.js, TypeScript, and Tailwind CSS.
 
-## Features
+## Key Features
 
-- **Modern Design**: Clean, dark-themed interface with smooth animations
-- **Responsive Layout**: Optimized for desktop, tablet, and mobile devices
-- **Project Showcase**: Interactive project cards with detailed information
-- **About Section**: Personal information with interactive skill bubbles
-- **Contact Form**: Integrated contact form with email functionality
-- **Game Downloads**: Direct download links for playable games
-- **Social Links**: GitHub, LinkedIn, Itch.io, and CV links
+- **Interactive Project Cards**: Detailed modals with media carousels, code snippets, and download links
+- **Touch Gesture Support**: Swipe navigation for mobile devices
+- **Video & YouTube Integration**: Embedded media with custom controls and fullscreen support
+- **Dynamic Tech Stack Display**: Visual technology badges with hover effects
+- **Contact Form**: Server-side email integration for direct communication
+- **File Downloads**: Direct access to game builds and project files
+- **SEO Optimized**: Proper meta tags and semantic HTML structure
 
 ## Tech Stack
 
-- **Framework**: [Next.js 14](https://nextjs.org/) with App Router
+- **Framework**: [Next.js 15](https://nextjs.org/) with App Router & Turbopack
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Icons**: [React Icons](https://react-icons.github.io/react-icons/)
-- **Database**: [Firebase Firestore](https://firebase.google.com/docs/firestore)
+- **UI Components**: [Shadcn/UI](https://ui.shadcn.com/) & [Lucide React](https://lucide.dev/)
+- **Icons**: [React Icons](https://react-icons.github.io/react-icons/) & [Devicons](https://devicon.dev/)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- **Code Highlighting**: [Highlight.js](https://highlightjs.org/)
+- **Email**: [Nodemailer](https://nodemailer.com/)
+- **Progress Bar**: [NProgress](https://ricostacruz.com/nprogress/)
 - **Deployment**: [Vercel](https://vercel.com/)
 
 ## Project Structure
@@ -26,32 +30,46 @@ A modern, responsive portfolio website showcasing my game development projects a
 ```text
 src/
 ├── app/                 # Next.js App Router pages
-│   ├── about/          # About page
-│   ├── contact/        # Contact page
-│   ├── projects/       # Projects showcase
-│   └── lib/            # Firebase configuration
+│   ├── about/          # About page with personal info
+│   ├── contact/        # Contact page with form
+│   ├── projects/       # Projects showcase page
+│   ├── lib/            # Utility functions and configurations
+│   ├── globals.css     # Global styles
+│   ├── layout.tsx      # Root layout component
+│   └── page.tsx        # Home page
 ├── components/         # Reusable React components
-│   ├── about/          # About page components
-│   └── ...             # Other components
-├── pages/api/          # API routes
-└── styles/             # CSS modules and styles
+│   ├── about/          # About page specific components
+│   ├── projects/       # Project related components
+│   ├── types/          # TypeScript type definitions
+│   ├── utils/          # Utility components and functions
+│   └── ...             # Other shared components
+├── pages/api/          # API routes for server-side functionality
+├── styles/             # CSS modules and component styles
+└── public/             # Static assets (images, downloads, favicon)
+    ├── images/         # Project screenshots and media
+    ├── downloads/      # Downloadable files (games, CV)
+    └── favicon/        # Favicon and app icons
 ```
 
 ## Featured Projects
 
-- **Bearly Stealth**: A stealth-based game with AI hunter mechanics
-- **AI Movement Training**: Machine learning experiments with game AI
-- **Sketching Spells**: Creative spell-casting game concept
-- **Better Tetris**: Enhanced Tetris implementation
-- **Audio Previewer**: Desktop application for audio file management
+- **Bearly Stealth**: A stealth-based game featuring intelligent AI hunters and environmental interactions
+- **AI Movement Training**: Machine learning experiments demonstrating game AI behavior and training
+- **LP Cafe**: Interactive visual novel with dialogue system and character interactions
+- **Sketching Spells**: Creative spell-casting game with drawing-based mechanics
+- **Better Tetris**: Enhanced Tetris implementation with modern features
+- **Audio Previewer**: Desktop application for efficient audio file management and preview
 
 ## Design Features
 
-- **Interactive Tooltips**: Hover effects with smooth animations
-- **Mobile-First Design**: Touch-friendly interface for mobile devices
-- **Dark Theme**: Eye-friendly dark color scheme
-- **Smooth Transitions**: CSS animations and transitions throughout
-- **Component-Based Architecture**: Modular React components
+- **Modern UI/UX**: Clean, dark-themed interface with glass morphism effects
+- **Interactive Media Carousel**: Touch-friendly slideshow with autoplay and gesture controls
+- **Responsive Design**: Mobile-first approach optimized for all device sizes
+- **Advanced Animations**: Smooth transitions powered by Framer Motion
+- **Code Syntax Highlighting**: Collapsible code snippets with copy functionality
+- **Progressive Loading**: Optimized image loading with blur placeholders
+- **Accessibility**: Keyboard navigation and screen reader support
+- **Modern Typography**: Beautiful font hierarchy with proper contrast ratios
 
 ## Responsive Design
 
@@ -65,28 +83,46 @@ The portfolio is fully responsive and tested across:
 
 ### Available Scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build production version
+- `npm run dev` - Start development server with Turbopack
+- `npm run build` - Build optimized production version
 - `npm run start` - Start production server
-- `npm run lint` - Run ESLint
+- `npm run lint` - Run ESLint for code quality checks
 
-### Code Quality
+### Code Quality & Performance
 
-- TypeScript for type safety
-- ESLint for code quality
-- Tailwind CSS for consistent styling
-- Component-based architecture
+- **TypeScript**: Full type safety across the entire codebase
+- **ESLint**: Automated code quality and consistency checks
+- **Tailwind CSS**: Utility-first CSS with purging for optimal bundle size
+- **Next.js 15**: Latest features including App Router and Turbopack for fast development
+- **Component Architecture**: Modular, reusable React components with clear separation of concerns
+- **Performance Optimizations**: Image optimization, lazy loading, and efficient bundle splitting
 
 ## Deployment
 
-This project is configured for easy deployment on Vercel:
+This project is optimized for deployment on Vercel with automatic optimizations:
 
-1. Push your code to GitHub
-2. Connect your repository to Vercel
-3. Add environment variables in Vercel dashboard
-4. Deploy!
+### Vercel Deployment
 
-The site will be automatically deployed on every push to the main branch.
+1. Fork or clone this repository
+2. Connect your repository to [Vercel](https://vercel.com/)
+3. Configure environment variables for email functionality
+4. Deploy with automatic CI/CD on every push
+
+### Environment Variables
+
+```bash
+# Email configuration (optional - for contact form)
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASS=your-app-password
+EMAIL_TO=recipient@gmail.com
+```
+
+### Performance Features
+
+- Automatic image optimization and WebP conversion
+- Edge runtime for API routes
+- Static generation for optimal loading speeds
+- Automatic code splitting and tree shaking
 
 ## Contact
 
