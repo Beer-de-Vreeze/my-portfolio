@@ -62,7 +62,8 @@ const DevConsole: React.FC = () => {
             { name: 'help', desc: 'Show all available commands' },
             { name: 'clear', desc: 'Clear console history' },
             { name: 'exit', desc: 'Close the developer console' },
-            { name: 'reload', desc: 'Reload the page and reopen console' }
+            { name: 'reload', desc: 'Reload the page and reopen console' },
+            { name: 'navigate', desc: 'Navigate to pages or custom paths (navigate <page>)' }
           ],
           'System Information': [
             { name: 'info', desc: 'Show system information' },
@@ -108,6 +109,8 @@ const DevConsole: React.FC = () => {
         output += '  joke dad\n';
         output += '  random color\n';
         output += '  encode base64 Hello World\n';
+        output += '  navigate about\n';
+        output += '  navigate 404\n';
         output += '  qrcode https://github.com';
 
         return output;
@@ -728,6 +731,112 @@ ${weatherEmoji} ${description}
         }
         
         return `Generated password (${length} chars): ${password}\n\nSecurity tips:\n- Don't reuse passwords\n- Use a password manager\n- Enable 2FA when possible`;
+      }
+    },
+    {
+      name: 'qrcode',
+      description: 'Generate a QR code URL for text',
+      execute: (args) => {
+        const text = args.join(' ');
+        if (!text) return 'Usage: qrcode <text to encode>';
+        
+        const encodedText = encodeURIComponent(text);
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodedText}`;
+        
+        console.log(`QR Code generated for: ${text}`, 'font-weight: bold; color: #00ff00;');
+        console.log(`URL: ${qrUrl}`, 'color: #0066cc;');
+        
+        return `QR Code generated for: "${text}"\nURL: ${qrUrl}\n\nCheck the browser console for clickable links!`;
+      }
+    },
+    {
+      name: 'navigate',
+      description: 'Navigate to different pages (usage: navigate <page> or navigate <path>)',
+      execute: (args) => {
+        const destination = args.join(' ').toLowerCase().trim();
+        
+        if (!destination) {
+          return `Usage: navigate <page>
+
+Available pages:
+  home, index, /           - Go to home page
+  about                    - Go to about page
+  contact                  - Go to contact page
+  projects                 - Go to projects page
+
+Error pages:
+  404, not-found           - Trigger 404 error page
+  500, error               - Trigger 500 error page
+
+Custom paths:
+  navigate /custom/path    - Navigate to any custom path
+  navigate https://...     - Navigate to external URL
+
+Examples:
+  navigate about
+  navigate projects
+  navigate 404
+  navigate /custom/page
+  navigate https://github.com`;
+        }
+
+        try {
+          let targetPath = '';
+
+          // Handle predefined pages
+          switch (destination) {
+            case 'home':
+            case 'index':
+            case '/':
+              targetPath = '/';
+              break;
+            case 'about':
+              targetPath = '/about';
+              break;
+            case 'contact':
+              targetPath = '/contact';
+              break;
+            case 'projects':
+              targetPath = '/projects';
+              break;
+            
+            // Error pages
+            case '404':
+            case 'not-found':
+              targetPath = '/404';
+              break;
+            case '500':
+            case 'error':
+              targetPath = '/500';
+              break;
+            
+            // Custom paths or external URLs
+            default:
+              if (destination.startsWith('http://') || destination.startsWith('https://')) {
+                // External URL
+                window.open(destination, '_blank');
+                return `🌐 Opening external URL: ${destination}`;
+              } else if (destination.startsWith('/')) {
+                // Custom path
+                targetPath = destination;
+              } else {
+                // Try to navigate to the path as-is
+                targetPath = `/${destination}`;
+              }
+              break;
+          }
+
+          // Navigate using Next.js router-like behavior
+          if (targetPath) {
+            window.location.href = targetPath;
+            return `🧭 Navigating to: ${targetPath}`;
+          }
+
+          return `❌ Invalid navigation target: ${destination}`;
+
+        } catch (error) {
+          return `❌ Navigation error: ${error}`;
+        }
       }
     },
     {
