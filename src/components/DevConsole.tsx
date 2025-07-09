@@ -119,13 +119,13 @@ const DevConsole: React.FC = () => {
           output += '\n';
         });
 
-        output += '💡 Tips & Usage:\n';
+        output += 'Tips & Usage:\n';
         output += '  • Use ↑↓ arrows to navigate command history\n';
         output += '  • Press ESC or type "exit" to close console\n';
         output += '  • Commands are case-insensitive\n';
         output += '  • Use quotes for multi-word arguments\n\n';
         
-        output += '🌟 Popular Commands:\n';
+        output += 'Popular Commands:\n';
         output += '  weather London          - Get weather for any city\n';
         output += '  joke programming        - Get a programming joke\n';
         output += '  calc 2 + 2 * 3         - Quick calculations\n';
@@ -138,7 +138,7 @@ const DevConsole: React.FC = () => {
         output += '  storage list            - Manage browser storage\n';
         output += '  fetch https://api.github.com/users/Beer-de-Vreeze\n';
         output += '  json-validate {"test": "data"}  - Validate JSON\n\n';
-        
+
         return output;
       }
     },
