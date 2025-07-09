@@ -6,7 +6,6 @@ import "highlight.js/styles/monokai.css";
 import "@/styles/code-highlight.css";
 import styles from "@/styles/page.module.css";
 import { useResponsiveSize } from "@/components/utils/useScrolling";
-import { useModal } from "@/context/ModalContext";
 import AudioPreviever from "@/components/projects/AudioPreviever";
 import BearlyStealthy from "@/components/projects/Bearly Stealthy";
 import MLAgent from "@/components/projects/MLAgent";
@@ -41,7 +40,6 @@ const ProjectsContent = () => (
 
 export default function Projects() {
   const { isMobile, isDesktop } = useResponsiveSize();
-  const { isModalOpen } = useModal();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -109,7 +107,7 @@ export default function Projects() {
 
       <div
         className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-out ${
-          isModalOpen ? "opacity-0 -translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
+          isAnyModalOpen ? "opacity-0 -translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
         }`}
       >
       </div>
@@ -152,7 +150,7 @@ export default function Projects() {
         <div className="w-full max-w-6xl mx-auto px-0">
           <div className="w-full">
             <Suspense fallback={<ProjectsLoading />}>
-              <ProjectsContent />
+              <ProjectsContent onModalStateChange={handleModalStateChange} />
             </Suspense>
           </div>
         </div>
@@ -160,7 +158,7 @@ export default function Projects() {
 
       <div
         className={`fixed bottom-0 left-0 w-full z-40 transition-all duration-500 ease-out ${
-          isModalOpen ? "opacity-0 translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
+          isAnyModalOpen ? "opacity-0 translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
         }`}
       >
       </div>
