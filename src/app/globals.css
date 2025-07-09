@@ -27,6 +27,18 @@ body {
   -webkit-overflow-scrolling: touch;
   /* Use scroll for better mobile performance */
   background-attachment: scroll;
+  margin: 0;
+  padding: 0;
+}
+
+/* Mobile-specific body adjustments */
+@media screen and (max-width: 768px) {
+  body {
+    min-height: 100vh !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
 }
 
 /* Only disable scrolling on very large desktops where content actually fits */
@@ -81,9 +93,12 @@ body {
     position: static !important;
     /* Remove any constraints that prevent scrolling */
     max-height: none !important;
+    /* Remove excessive padding on mobile */
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
   }
 
-  /* Ensure all main containers allow scrolling */
+  /* Ensure all main containers allow scrolling and have minimal padding */
   main,
   .container,
   .containerScrollable {
@@ -91,16 +106,28 @@ body {
     min-height: auto !important;
     max-height: none !important;
     overflow: visible !important;
+    padding-top: 0.25rem !important;
+    padding-bottom: 0.25rem !important;
   }
 }
 
-/* Support for iPhone X and newer with safe areas - only vertical padding, no horizontal */
+/* Support for iPhone X and newer with safe areas - minimal padding only when needed */
 body {
-  padding-bottom: env(safe-area-inset-bottom);
-  padding-top: env(safe-area-inset-top);
-  /* Only remove horizontal padding if it would interfere with scrollbar positioning, but allow content padding */
-  margin-left: 0 !important;
-  margin-right: 0 !important;
+  /* Only apply safe area padding on mobile devices that actually need it */
+  padding-bottom: 0;
+  padding-top: 0;
+  margin: 0 !important;
+}
+
+/* Apply safe area padding only on devices that need it and only at bottom */
+@supports (padding-bottom: env(safe-area-inset-bottom)) and (max-width: 768px) {
+  @media (max-width: 768px) {
+    body {
+      /* Only bottom padding for home indicator, no top padding */
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-top: 0;
+    }
+  }
 }
 
 /* Prevent unwanted right-side spacing on all pages */

@@ -65,7 +65,7 @@ export default function Contact() {
   }
 
   return (
-    <div className={`min-h-screen flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground}`}>
+    <div className={`flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground}`}>
       {/* Page-level notification - always visible at top right of viewport */}
       <Notification
         message={notification.message}

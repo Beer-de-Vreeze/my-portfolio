@@ -2040,7 +2040,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       {/* Modal with backdrop blur and enhanced animations */}
       {isModalOpen && typeof document !== 'undefined' && createPortal(
         <div 
-          className={`fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-sm transition-all duration-500 ease-out ${
+          className={`fixed inset-0 z-[100] flex items-start sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm transition-all duration-500 ease-out overflow-y-auto ${
             isClosing ? 'opacity-0 backdrop-blur-none' : 'opacity-100 animate-fadeIn'
           }`}
           onClick={closeModal}
@@ -2058,12 +2058,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         >
           {/* Enhanced Modal Container with modern design and responsive sizing */}
           <div 
-            className={`relative w-full max-w-7xl bg-gradient-to-br from-gray-900/95 to-black/90 backdrop-blur-md rounded-2xl shadow-2xl overflow-y-auto transition-all duration-500 ease-out border border-blue-500/30 max-h-[95vh] sm:max-h-[95vh] ${
+            className={`relative w-full max-w-7xl bg-gradient-to-br from-gray-900/95 to-black/90 backdrop-blur-md rounded-none sm:rounded-2xl shadow-2xl transition-all duration-500 ease-out border-0 sm:border border-blue-500/30 min-h-screen sm:min-h-0 sm:max-h-[95vh] my-0 sm:my-4 ${
               isClosing ? 'scale-95 opacity-0 translate-y-4' : 'scale-100 opacity-100 translate-y-0 animate-slideInUp'
             }`}
             onClick={(e) => e.stopPropagation()}
             style={{
-              maxHeight: 'calc(100vh - 1rem)',
+              maxHeight: isMobile ? '100vh' : 'calc(100vh - 2rem)',
+              overflowY: 'auto',
               animation: isClosing 
                 ? 'slideOutDown 0.3s ease-out forwards' 
                 : 'slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards'
@@ -2072,7 +2073,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             {/* Enhanced Close button with modern styling matching the design system - positioned sticky inside container */}
             <button
               onClick={closeModal}
-              className="sticky top-6 sm:top-2 left-full transform -translate-x-6 z-50 bg-gradient-to-r from-gray-900/90 to-black/90 backdrop-blur-sm hover:from-gray-800/90 hover:to-gray-900/90 text-gray-300 hover:text-white rounded-full p-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-transparent shadow-xl border border-gray-600/30 hover:border-gray-500/50 group"
+              className="sticky top-16 sm:top-6 left-full transform -translate-x-2 sm:-translate-x-6 z-50 bg-gradient-to-r from-gray-900/90 to-black/90 backdrop-blur-sm hover:from-gray-800/90 hover:to-gray-900/90 text-gray-300 hover:text-white rounded-full p-2 sm:p-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-transparent shadow-xl border border-gray-600/30 hover:border-gray-500/50 group flex items-center justify-center"
               aria-label="Close modal"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="transition-transform duration-200 group-hover:scale-110">

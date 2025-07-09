@@ -81,7 +81,7 @@ export default function Projects() {
   }
 
   return (
-    <div className={`min-h-screen flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground}`}>
+    <div className={`flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground}`}>
       {/* Animated background grid */}
       <div className={styles.backgroundGrid}></div>
       

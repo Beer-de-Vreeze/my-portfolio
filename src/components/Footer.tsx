@@ -37,8 +37,8 @@ const Footer: React.FC = () => {
               © Beer de Vreeze
             </span>
             
-            {/* Hidden Konami Code Easter Egg - Only shows on direct text hover */}
-            <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 opacity-0 group-hover/copyright:opacity-100 transition-opacity duration-500 pointer-events-none z-50">
+            {/* Hidden Konami Code Easter Egg - Only shows on direct text hover and hidden on mobile */}
+            <div className="hidden sm:block absolute -top-10 left-1/2 transform -translate-x-1/2 opacity-0 group-hover/copyright:opacity-100 transition-opacity duration-500 pointer-events-none z-50">
               <div className="bg-black/95 border border-green-500/70 rounded-lg px-3 py-2 text-xs text-green-400 font-mono whitespace-nowrap shadow-xl backdrop-blur-sm">
                 <span className="text-green-200">↑↑↓↓←→←→BA</span>
               </div>

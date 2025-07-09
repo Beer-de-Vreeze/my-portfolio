@@ -55,7 +55,7 @@ export default function Home() {
   }
 
   return (
-    <main className={`${styles.container} ${styles.enhancedBackground} px-4 sm:px-6 md:px-8 lg:px-8 xl:px-16`}>
+    <main className={`${styles.container} ${styles.enhancedBackground}`}>
       {/* Animated background grid */}
       <div className={styles.backgroundGrid}></div>
       
