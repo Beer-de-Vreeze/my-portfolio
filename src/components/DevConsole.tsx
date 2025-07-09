@@ -64,42 +64,48 @@ const DevConsole: React.FC = () => {
             { name: 'clear', desc: 'Clear console history' },
             { name: 'exit', desc: 'Close the developer console' },
             { name: 'reload', desc: 'Reload the page and reopen console' },
-            { name: 'navigate', desc: 'Navigate to pages or custom paths (navigate <page>)' }
+            { name: 'navigate', desc: 'Navigate to pages or custom paths (navigate <page>)' },
+            { name: 'beer', desc: 'Show information about Beer de Vreeze' }
           ],
-          'System Information': [
+          'System & Performance': [
             { name: 'info', desc: 'Show system information' },
-            { name: 'time', desc: 'Show current time' },
-            { name: 'date', desc: 'Show current date in various formats' },
             { name: 'uptime', desc: 'Show how long the page has been open' },
             { name: 'performance', desc: 'Show performance metrics' },
             { name: 'memory', desc: 'Display current memory usage (Chrome only)' },
             { name: 'network', desc: 'Show network information and test connectivity' }
           ],
+          'Date & Time': [
+            { name: 'time', desc: 'Show current time' },
+            { name: 'date', desc: 'Show current date in various formats' },
+            { name: 'age', desc: 'Calculate your age from birth date (YYYY-MM-DD or YYYY)' }
+          ],
           'Developer Tools': [
             { name: 'storage', desc: 'Manage local storage (list, get, set, remove, clear)' },
-            { name: 'calc', desc: 'Calculator (supports +, -, *, /, %, sqrt, pow)' },
-            { name: 'encode', desc: 'Encode/decode text (base64, url, html)' },
             { name: 'json-validate', desc: 'Validate and pretty-print JSON input' },
             { name: 'fetch', desc: 'Fetch and display data from API endpoints (GET only)' },
             { name: 'clipboard', desc: 'Read from or write to the clipboard' }
           ],
-          'Generators & Utilities': [
+          'Calculators & Converters': [
+            { name: 'calc', desc: 'Calculator (supports +, -, *, /, %, sqrt, pow)' },
+            { name: 'encode', desc: 'Encode/decode text (base64, url, html)' }
+          ],
+          'Random Generators': [
             { name: 'random', desc: 'Generate random data (number, string, color, password)' },
             { name: 'lorem', desc: 'Generate placeholder text (lorem ipsum)' },
             { name: 'password', desc: 'Generate secure passwords with custom options' },
             { name: 'qrcode', desc: 'Generate a QR code URL for text' },
-            { name: 'colors', desc: 'Fun with colors! Try: rainbow, gradient, random, palette' },
+            { name: 'colors', desc: 'Fun with colors! Try: rainbow, gradient, random, palette' }
+          ],
+          'Web & API': [
             { name: 'weather', desc: 'Get real weather information for any city' }
           ],
-          'Fun & Entertainment': [
+          'Games & Entertainment': [
             { name: 'joke', desc: 'Get a random joke (programming, general, dad, chuck, geek, random, or specific category)' },
             { name: 'flip', desc: 'Flip a coin (heads or tails)' },
             { name: 'dice', desc: 'Roll a dice (1-6 or custom sides)' },
             { name: 'palindrome', desc: 'Check if a word or phrase is a palindrome' },
-            { name: 'age', desc: 'Calculate your age from birth date (YYYY-MM-DD or YYYY)' },
             { name: 'reverse', desc: 'Reverse any text' },
-            { name: 'rickroll', desc: 'Play a Rick Astley video or show a fun message' },
-            { name: 'beer', desc: 'Show information about Beer de Vreeze' }
+            { name: 'rickroll', desc: 'Play a Rick Astley video or show a fun message' }
           ]
         };
 
@@ -108,31 +114,31 @@ const DevConsole: React.FC = () => {
         Object.entries(categories).forEach(([category, commands]) => {
           output += `${category}:\n`;
           commands.forEach(cmd => {
-            output += `  ${cmd.name.padEnd(12)} - ${cmd.desc}\n`;
+            output += `  ${cmd.name.padEnd(14)} - ${cmd.desc}\n`;
           });
           output += '\n';
         });
 
-        output += 'Tips:\n';
+        output += '💡 Tips & Usage:\n';
         output += '  • Use ↑↓ arrows to navigate command history\n';
         output += '  • Press ESC or type "exit" to close console\n';
-        output += '  • Try "joke programming" or "weather London" for examples\n';
-        output += '  • Use "calc 2 + 2" for quick calculations\n\n';
-        output += 'Example commands:\n';
-        output += '  weather New York\n';
-        output += '  joke dad\n';
-        output += '  lorem 20\n';
-        output += '  date iso\n';
+        output += '  • Commands are case-insensitive\n';
+        output += '  • Use quotes for multi-word arguments\n\n';
+        
+        output += '🌟 Popular Commands:\n';
+        output += '  weather London          - Get weather for any city\n';
+        output += '  joke programming        - Get a programming joke\n';
+        output += '  calc 2 + 2 * 3         - Quick calculations\n';
+        output += '  random color            - Generate random colors\n';
+        output += '  navigate about          - Navigate to pages\n';
+        output += '  lorem 10                - Generate text\n';
+        output += '  age 2000-08-19          - Calculate age\n';
+        output += '  qrcode Hello World      - Generate QR codes\n';
+        output += '  encode base64 Hello     - Encode/decode text\n';
+        output += '  storage list            - Manage browser storage\n';
         output += '  fetch https://api.github.com/users/Beer-de-Vreeze\n';
-        output += '  json-validate {"name": "test"}\n';
-        output += '  clipboard write Hello World\n';
-        output += '  uptime\n';
-        output += '  random color\n';
-        output += '  encode base64 Hello World\n';
-        output += '  navigate about\n';
-        output += '  age 2000-08-19\n';
-        output += '  qrcode https://github.com';
-
+        output += '  json-validate {"test": "data"}  - Validate JSON\n\n';
+        
         return output;
       }
     },
