@@ -1252,6 +1252,8 @@ Note: Chrome/Chromium only feature`;
       if (newSequence.length === KONAMI_CODE.length) {
         const matches = newSequence.every((key, index) => key === KONAMI_CODE[index]);
         if (matches) {
+          // Prevent default behavior to stop the 'A' from being typed
+          event.preventDefault();
           setIsOpen(true);
           setKonamiSequence([]);
           addToHistory('🎮 Konami Code activated! Welcome to the developer console.', 'info');
@@ -1304,10 +1306,17 @@ Note: Chrome/Chromium only feature`;
     }
   }, [history]);
 
-  // Focus input when console opens
+  // Focus input when console opens and clear any stray input
   useEffect(() => {
     if (isOpen && inputRef.current) {
-      inputRef.current.focus();
+      // Clear any stray input that might have been typed
+      setCurrentInput('');
+      // Small delay to ensure input is cleared before focusing
+      setTimeout(() => {
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
+      }, 0);
     }
   }, [isOpen]);
 

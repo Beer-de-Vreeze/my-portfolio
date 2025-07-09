@@ -945,7 +945,7 @@
   max-width: 95vw;
   word-break: break-word;
   line-height: 1; /* Reduced line height for tighter spacing */
-  margin-top: 0.5rem; /* Add small margin to prevent overlap with underline */
+  margin-top: 1.5rem; /* Increased margin to prevent overlap with underline */
   transition: font-size 0.3s ease;
   will-change: transform, opacity;
 }
@@ -1762,6 +1762,7 @@
   .subtitle {
     line-height: 1; /* Tighter line spacing */
     padding: 0 0.5rem;
+    margin-top: 1.25rem; /* Adequate spacing for mobile underlines */
   }
 
   /* Better mobile spacing for subtitleText */
@@ -1805,6 +1806,7 @@
 
   .subtitle {
     line-height: 1.4;
+    margin-top: 1.75rem; /* Adequate spacing for tablet screen sizes */
   }
 }
 
@@ -2210,4 +2212,29 @@
   margin: 0; /* Remove any margins */
   padding: 0; /* Remove any padding */
   vertical-align: baseline; /* Ensure aligned baseline */
+}
+
+/* Responsive subtitle margins to account for different underline heights */
+@media (min-width: 640px) {
+  .subtitle {
+    margin-top: 1.75rem; /* Increase margin for larger underline */
+  }
+}
+
+@media (min-width: 768px) {
+  .subtitle {
+    margin-top: 2rem; /* Further increase for medium screens */
+  }
+}
+
+@media (min-width: 1024px) {
+  .subtitle {
+    margin-top: 2.25rem; /* More space for larger underlines */
+  }
+}
+
+@media (min-width: 1280px) {
+  .subtitle {
+    margin-top: 2.5rem; /* Maximum space for largest underlines */
+  }
 }
