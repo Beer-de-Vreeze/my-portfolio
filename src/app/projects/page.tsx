@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, Suspense } from "react";
+import { useModal } from "@/context/ModalContext"; // Add this import to access the modal context
 // Add highlight.js import and style
 import "highlight.js/styles/monokai.css";
 // Import custom highlighting styles
@@ -41,30 +42,31 @@ const ProjectsContent = () => (
 export default function Projects() {
   const { isMobile, isDesktop } = useResponsiveSize();
   const [isMounted, setIsMounted] = useState(false);
-
+  const { isModalOpen } = useModal(); // Get modal state from context
+  
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // One-time overflow control based on screen size - only runs once after mount
+  // One-time overflow control based on screen size -  only runs once after mount
   useEffect(() => {
     if (isMounted) {
       const width = window.innerWidth;
-      
+
       // Only disable scrolling on very large desktops (1440px+) where content fits
       if (width >= 1440) {
-        document.documentElement.classList.add('no-scroll');
-        document.body.classList.add('no-scroll');
+        document.documentElement.classList.add("no-scroll");
+        document.body.classList.add("no-scroll");
       } else {
         // For all other devices, ensure scrolling is enabled
-        document.documentElement.classList.remove('no-scroll');
-        document.body.classList.remove('no-scroll');
+        document.documentElement.classList.remove("no-scroll");
+        document.body.classList.remove("no-scroll");
       }
-      
+
       // Cleanup function to restore scrolling when component unmounts
       return () => {
-        document.documentElement.classList.remove('no-scroll');
-        document.body.classList.remove('no-scroll');
+        document.documentElement.classList.remove("no-scroll");
+        document.body.classList.remove("no-scroll");
       };
     }
   }, [isMounted]); // Only depends on isMounted, not window size changes
@@ -78,27 +80,37 @@ export default function Projects() {
     <div className={`flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground}`}>
       {/* Animated background grid */}
       <div className={styles.backgroundGrid}></div>
-      
+
       {/* Cosmic dust layer */}
       <div className={styles.cosmicDust}></div>
-      
+
       {/* Enhanced Space Starfield - 50 stars */}
       <div className={styles.particleContainer}>
         {Array.from({ length: 50 }, (_, i) => {
           // Create a more natural distribution with more tiny/small stars
           const weightedTypes = [
-            'starTiny', 'starTiny', 'starTiny', 'starTiny', 'starTiny',
-            'starWhite', 'starWhite', 'starWhite',
-            'starSmall', 'starSmall', 'starSmall',
-            'starCyan', 'starCyan',
-            'starMedium', 'starMedium',
-            'starLarge',
-            'starXLarge'
+            "starTiny",
+            "starTiny",
+            "starTiny",
+            "starTiny",
+            "starTiny",
+            "starWhite",
+            "starWhite",
+            "starWhite",
+            "starSmall",
+            "starSmall",
+            "starSmall",
+            "starCyan",
+            "starCyan",
+            "starMedium",
+            "starMedium",
+            "starLarge",
+            "starXLarge",
           ];
           const starType = weightedTypes[i % weightedTypes.length];
           return (
-            <div 
-              key={i} 
+            <div
+              key={i}
               className={`${styles.particle} ${styles[starType]} ${styles[`particle${i + 1}`]}`}
             ></div>
           );
@@ -107,7 +119,7 @@ export default function Projects() {
 
       <div
         className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-out ${
-          isAnyModalOpen ? "opacity-0 -translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
+          isModalOpen ? "opacity-0 -translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
         }`}
       >
       </div>
@@ -150,7 +162,7 @@ export default function Projects() {
         <div className="w-full max-w-6xl mx-auto px-0">
           <div className="w-full">
             <Suspense fallback={<ProjectsLoading />}>
-              <ProjectsContent onModalStateChange={handleModalStateChange} />
+              <ProjectsContent />
             </Suspense>
           </div>
         </div>
@@ -158,7 +170,7 @@ export default function Projects() {
 
       <div
         className={`fixed bottom-0 left-0 w-full z-40 transition-all duration-500 ease-out ${
-          isAnyModalOpen ? "opacity-0 translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
+          isModalOpen ? "opacity-0 translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
         }`}
       >
       </div>

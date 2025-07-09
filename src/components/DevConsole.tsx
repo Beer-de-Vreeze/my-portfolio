@@ -23,6 +23,8 @@ const DevConsole: React.FC = () => {
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [konamiSequence, setKonamiSequence] = useState<string[]>([]);
+  const [pageLoadTime] = useState(Date.now());
+  const [userEvents, setUserEvents] = useState<Array<{type: string, timestamp: Date, target?: string}>>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const historyRef = useRef<HTMLDivElement>(null);
 
@@ -51,6 +53,34 @@ const DevConsole: React.FC = () => {
     }
   }, [addToHistory]);
 
+  // Event tracking for debugging
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const trackEvent = (event: Event) => {
+      const target = event.target as HTMLElement;
+      const targetInfo = target ? `${target.tagName}${target.id ? '#' + target.id : ''}${target.className ? '.' + target.className.split(' ')[0] : ''}` : '';
+      
+      setUserEvents(prev => [...prev.slice(-19), { // Keep last 20 events
+        type: event.type,
+        timestamp: new Date(),
+        target: targetInfo
+      }]);
+    };
+
+    const events = ['click', 'keydown', 'submit', 'change', 'focus', 'blur'];
+    events.forEach(eventType => {
+      document.addEventListener(eventType, trackEvent, true);
+    });
+
+    return () => {
+      events.forEach(eventType => {
+        document.removeEventListener(eventType, trackEvent, true);
+      });
+    };
+  }, [isOpen]);
+
+
   // Developer commands
   const commands: Command[] = [
     {
@@ -68,16 +98,24 @@ const DevConsole: React.FC = () => {
           'System Information': [
             { name: 'info', desc: 'Show system information' },
             { name: 'time', desc: 'Show current time' },
+            { name: 'date', desc: 'Show current date in various formats' },
+            { name: 'uptime', desc: 'Show how long the page has been open' },
             { name: 'performance', desc: 'Show performance metrics' },
-            { name: 'network', desc: 'Show network information and test connectivity' }
+            { name: 'memory', desc: 'Display current memory usage (Chrome only)' },
+            { name: 'network', desc: 'Show network information and test connectivity' },
+            { name: 'events', desc: 'List recent user events for debugging' }
           ],
           'Developer Tools': [
             { name: 'storage', desc: 'Manage local storage (list, get, set, remove, clear)' },
             { name: 'calc', desc: 'Calculator (supports +, -, *, /, %, sqrt, pow)' },
-            { name: 'encode', desc: 'Encode/decode text (base64, url, html)' }
+            { name: 'encode', desc: 'Encode/decode text (base64, url, html)' },
+            { name: 'json-validate', desc: 'Validate and pretty-print JSON input' },
+            { name: 'fetch', desc: 'Fetch and display data from API endpoints (GET only)' },
+            { name: 'clipboard', desc: 'Read from or write to the clipboard' }
           ],
           'Generators & Utilities': [
             { name: 'random', desc: 'Generate random data (number, string, color, password)' },
+            { name: 'lorem', desc: 'Generate placeholder text (lorem ipsum)' },
             { name: 'password', desc: 'Generate secure passwords with custom options' },
             { name: 'qrcode', desc: 'Generate a QR code URL for text' },
             { name: 'colors', desc: 'Fun with colors! Try: rainbow, gradient, random, palette' },
@@ -85,6 +123,12 @@ const DevConsole: React.FC = () => {
           ],
           'Fun & Entertainment': [
             { name: 'joke', desc: 'Get a random joke (programming, general, dad, chuck, geek, random, or specific category)' },
+            { name: 'flip', desc: 'Flip a coin (heads or tails)' },
+            { name: 'dice', desc: 'Roll a dice (1-6 or custom sides)' },
+            { name: 'palindrome', desc: 'Check if a word or phrase is a palindrome' },
+            { name: 'age', desc: 'Calculate your age from your birth year' },
+            { name: 'reverse', desc: 'Reverse any text' },
+            { name: 'rickroll', desc: 'Play a Rick Astley video or show a fun message' },
             { name: 'beer', desc: 'Show information about Beer de Vreeze' }
           ]
         };
@@ -107,10 +151,15 @@ const DevConsole: React.FC = () => {
         output += 'Example commands:\n';
         output += '  weather New York\n';
         output += '  joke dad\n';
+        output += '  lorem 20\n';
+        output += '  date iso\n';
+        output += '  fetch https://api.github.com/users/octocat\n';
+        output += '  json-validate {"name": "test"}\n';
+        output += '  clipboard write Hello World\n';
+        output += '  uptime\n';
         output += '  random color\n';
         output += '  encode base64 Hello World\n';
         output += '  navigate about\n';
-        output += '  navigate 404\n';
         output += '  qrcode https://github.com';
 
         return output;
@@ -227,16 +276,8 @@ const DevConsole: React.FC = () => {
             }
             return `Random password (${pwLength} chars): ${password}`;
           
-          case 'uuid':
-            const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-              const r = Math.random() * 16 | 0;
-              const v = c == 'x' ? r : (r & 0x3 | 0x8);
-              return v.toString(16);
-            });
-            return `Random UUID: ${uuid}`;
-          
           default:
-            return 'Usage: random <number|string|color|password|uuid> [length/min] [max]';
+            return 'Usage: random <number|string|color|password> [length/min] [max]';
         }
       }
     },
@@ -900,21 +941,238 @@ Examples:
         }
       }
     },
+
     {
-      name: 'quote',
-      description: 'Get a random inspirational quote',
-      execute: async () => {
-        const quotes = [
-          'The best way to get started is to quit talking and begin doing. – Walt Disney',
-          'Success is not in what you have, but who you are. – Bo Bennett',
-          'The harder you work for something, the greater you’ll feel when you achieve it.',
-          'Don’t watch the clock; do what it does. Keep going. – Sam Levenson',
-          'Dream bigger. Do bigger.',
-          'Don’t stop when you’re tired. Stop when you’re done.'
+      name: 'lorem',
+      description: 'Generate placeholder text (lorem ipsum) of a given length',
+      execute: (args) => {
+        const words = [
+          'lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur', 'adipiscing', 'elit',
+          'sed', 'do', 'eiusmod', 'tempor', 'incididunt', 'ut', 'labore', 'et', 'dolore',
+          'magna', 'aliqua', 'enim', 'ad', 'minim', 'veniam', 'quis', 'nostrud',
+          'exercitation', 'ullamco', 'laboris', 'nisi', 'aliquip', 'ex', 'ea', 'commodo',
+          'consequat', 'duis', 'aute', 'irure', 'in', 'reprehenderit', 'voluptate',
+          'velit', 'esse', 'cillum', 'fugiat', 'nulla', 'pariatur', 'excepteur', 'sint',
+          'occaecat', 'cupidatat', 'non', 'proident', 'sunt', 'culpa', 'qui', 'officia',
+          'deserunt', 'mollit', 'anim', 'id', 'est', 'laborum'
         ];
-        return quotes[Math.floor(Math.random() * quotes.length)];
+        
+        const count = parseInt(args[0]) || 50;
+        if (count < 1 || count > 500) {
+          return 'Word count must be between 1 and 500';
+        }
+        
+        const result = [];
+        for (let i = 0; i < count; i++) {
+          result.push(words[Math.floor(Math.random() * words.length)]);
+        }
+        
+        return `Lorem ipsum (${count} words):\n${result.join(' ')}.`;
       }
     },
+    {
+      name: 'json-validate',
+      description: 'Validate and pretty-print JSON input',
+      execute: (args) => {
+        const jsonText = args.join(' ');
+        if (!jsonText) return 'Usage: json-validate <json string>';
+        
+        try {
+          const parsed = JSON.parse(jsonText);
+          const pretty = JSON.stringify(parsed, null, 2);
+          return `✅ Valid JSON:\n${pretty}`;
+        } catch (error) {
+          return `❌ Invalid JSON: ${error}`;
+        }
+      }
+    },
+    {
+      name: 'date',
+      description: 'Show the current date in various formats or convert between time zones',
+      execute: (args) => {
+        const now = new Date();
+        const action = args[0] || 'all';
+        
+        switch (action) {
+          case 'iso':
+            return `ISO: ${now.toISOString()}`;
+          case 'utc':
+            return `UTC: ${now.toUTCString()}`;
+          case 'local':
+            return `Local: ${now.toLocaleString()}`;
+          case 'timestamp':
+            return `Timestamp: ${now.getTime()}`;
+          case 'unix':
+            return `Unix: ${Math.floor(now.getTime() / 1000)}`;
+          case 'all':
+          default:
+            return `Current Date & Time:
+Local: ${now.toLocaleString()}
+ISO: ${now.toISOString()}
+UTC: ${now.toUTCString()}
+Timestamp: ${now.getTime()}
+Unix: ${Math.floor(now.getTime() / 1000)}
+
+Usage: date <iso|utc|local|timestamp|unix|all>`;
+        }
+      }
+    },
+
+    {
+      name: 'fetch',
+      description: 'Fetch and display data from a given API endpoint (GET only, for safety)',
+      execute: async (args) => {
+        const url = args[0];
+        if (!url) return 'Usage: fetch <url>\nExample: fetch https://api.github.com/users/octocat';
+        
+        try {
+          // Basic URL validation
+          if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            return 'Error: URL must start with http:// or https://';
+          }
+          
+          const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json'
+            }
+          });
+          
+          if (!response.ok) {
+            return `❌ HTTP ${response.status}: ${response.statusText}`;
+          }
+          
+          const contentType = response.headers.get('content-type');
+          let data;
+          
+          if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+            return `✅ Fetched from ${url}:\n${JSON.stringify(data, null, 2)}`;
+          } else {
+            const text = await response.text();
+            return `✅ Fetched from ${url}:\n${text.substring(0, 1000)}${text.length > 1000 ? '...\n(truncated)' : ''}`;
+          }
+        } catch (error) {
+          return `❌ Fetch error: ${error}`;
+        }
+      }
+    },
+    {
+      name: 'uptime',
+      description: 'Show how long the page has been open',
+      execute: () => {
+        const uptime = Date.now() - pageLoadTime;
+        const seconds = Math.floor(uptime / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+        
+        let result = 'Page uptime: ';
+        if (days > 0) result += `${days}d `;
+        if (hours % 24 > 0) result += `${hours % 24}h `;
+        if (minutes % 60 > 0) result += `${minutes % 60}m `;
+        result += `${seconds % 60}s`;
+        
+        return result + `\nLoaded at: ${new Date(pageLoadTime).toLocaleString()}`;
+      }
+    },
+    {
+      name: 'memory',
+      description: 'Display current memory usage (if available via browser APIs)',
+      execute: () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const performance = (window as any).performance;
+        
+        if (performance && performance.memory) {
+          const memory = performance.memory;
+          const formatBytes = (bytes: number) => {
+            const mb = bytes / (1024 * 1024);
+            return `${mb.toFixed(2)} MB`;
+          };
+          
+          return `Memory Usage:
+Used: ${formatBytes(memory.usedJSHeapSize)}
+Total: ${formatBytes(memory.totalJSHeapSize)}
+Limit: ${formatBytes(memory.jsHeapSizeLimit)}
+
+Note: Chrome/Chromium only feature`;
+        } else {
+          return 'Memory information not available in this browser';
+        }
+      }
+    },
+    {
+      name: 'events',
+      description: 'List recent user events (e.g., clicks, keypresses) for debugging',
+      execute: () => {
+        if (userEvents.length === 0) {
+          return 'No events recorded yet. Events are tracked when the console is open.';
+        }
+        
+        const recent = userEvents.slice(-20); // Last 20 events
+        const eventList = recent.map(event => {
+          const time = event.timestamp.toLocaleTimeString();
+          const target = event.target ? ` on ${event.target}` : '';
+          return `${time} - ${event.type}${target}`;
+        }).join('\n');
+        
+        return `Recent events (last ${recent.length}/${userEvents.length}):\n${eventList}`;
+      }
+    },
+    {
+      name: 'clipboard',
+      description: 'Read from or write to the clipboard (with user permission)',
+      execute: async (args) => {
+        const action = args[0];
+        
+        if (!navigator.clipboard) {
+          return 'Clipboard API not supported in this browser';
+        }
+        
+        try {
+          switch (action) {
+            case 'read':
+              const text = await navigator.clipboard.readText();
+              return `Clipboard content:\n${text}`;
+            
+            case 'write':
+              const content = args.slice(1).join(' ');
+              if (!content) return 'Usage: clipboard write <text to copy>';
+              await navigator.clipboard.writeText(content);
+              return `✅ Copied to clipboard: "${content}"`;
+            
+            default:
+              return 'Usage: clipboard <read|write> [text]\nExamples:\n  clipboard read\n  clipboard write Hello World';
+          }
+        } catch (error) {
+          return `Clipboard error: ${error}`;
+        }
+      }
+    },
+    {
+      name: 'rickroll',
+      description: 'Play a Rick Astley video or show a fun message',
+      execute: () => {
+        const messages = [
+          '🎵 Never gonna give you up, never gonna let you down! 🎵',
+          '🕺 You just got rick rolled! 💃',
+          '📺 *Rick Astley intensifies* 🎤',
+          '🎶 We\'re no strangers to love... 🎶'
+        ];
+        
+        const rickrollUrl = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+        
+        // Open the video in a new tab
+        window.open(rickrollUrl, '_blank');
+        
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        
+        return `${randomMessage}\n\n🌐 Opening: ${rickrollUrl}\n\nYou know the rules, and so do I! 😄`;
+      }
+    },
+
+
+
     {
       name: 'flip',
       description: 'Flip a coin (heads or tails)',
