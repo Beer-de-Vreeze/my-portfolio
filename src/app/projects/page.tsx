@@ -1,7 +1,5 @@
 "use client";
 import { useState, useEffect, Suspense } from "react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 // Add highlight.js import and style
 import "highlight.js/styles/monokai.css";
 // Import custom highlighting styles
@@ -118,7 +116,6 @@ export default function Projects() {
           isAnyModalOpen ? "opacity-0 -translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
         }`}
       >
-        <Navbar />
       </div>
 
       <main className="flex-1 pt-16 pb-20 sm:pb-16 md:pb-20 px-2 sm:px-4 md:px-6 text-white relative z-10 w-full flex flex-col">
@@ -170,7 +167,6 @@ export default function Projects() {
           isAnyModalOpen ? "opacity-0 translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
         }`}
       >
-        <Footer />
       </div>
     </div>
   );

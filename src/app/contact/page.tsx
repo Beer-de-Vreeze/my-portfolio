@@ -1,7 +1,5 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 import ContactForm from '@/components/ContactForm';
 import Notification from '@/components/Notification';
 import { motion } from 'framer-motion';
@@ -105,8 +103,6 @@ export default function Contact() {
         })}
       </div>
 
-      <Navbar />
-      
       <main className="flex-1 flex flex-col items-center px-4 sm:px-6 md:px-8 lg:px-8 xl:px-16 relative z-10 pt-20 pb-32">
         {/* Enhanced header section with animated title - consistent with other pages */}
         <div className={`${styles.headerContainer} ${isDesktop ? styles.headerContainerDesktop : styles.headerContainerMobile} mb-8 sm:mb-10 md:mb-12 max-w-4xl mx-auto`}>
@@ -216,7 +212,6 @@ export default function Contact() {
           </motion.div>
         </div>
       </main>
-      <Footer />
     </div>
   );
 }

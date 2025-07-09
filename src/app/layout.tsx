@@ -62,7 +62,9 @@ export default function RootLayout({
           <ServiceWorkerInitializer />
           <LoadingBar />
           <DevConsole />
-          {children}
+          <main>
+            {children}
+          </main>
         </LoadingProvider>
       </body>
     </html>

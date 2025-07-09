@@ -1,8 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import ProfileCard from "@/components/about/ProfileCard";
 import Stack from "@/components/about/Stack";
 import { useResponsiveSize } from "@/components/utils/useScrolling";
@@ -65,8 +63,6 @@ export default function About() {
         })}
       </div>
 
-      <Navbar />
-      
       <main className="flex-1 pt-16 pb-20 sm:pb-16 md:pb-20 lg:pb-24 px-2 sm:px-4 md:px-6 text-white relative z-10 w-full flex flex-col">
         {/* Enhanced header section with animated title - smaller and more compact */}
         <div className={`${styles.headerContainer} ${styles.headerContainerSmall}`}>
@@ -112,8 +108,6 @@ export default function About() {
           </div>
         </div>
       </main>
-      
-      <Footer />
     </div>
   );
 }

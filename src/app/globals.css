@@ -1164,3 +1164,53 @@ body {
     background: rgba(0, 0, 0, 0.5) !important;
   }
 }
+
+/* Mobile-specific fixes for fixed navbar and footer */
+@media screen and (max-width: 768px) {
+  /* Ensure fixed elements stay fixed on mobile */
+  nav[role="navigation"] {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    z-index: 9999 !important;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+
+  footer[role="contentinfo"] {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    z-index: 9999 !important;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+
+  /* Prevent mobile browser from hiding fixed elements during scroll */
+  .mobile-viewport-fix {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+
+  /* Ensure content has proper spacing for fixed navbar and footer */
+  main {
+    padding-top: 4rem !important; /* Account for navbar height */
+    padding-bottom: 5rem !important; /* Account for footer height */
+  }
+}
+
+/* Tablet specific adjustments */
+@media screen and (min-width: 769px) and (max-width: 1023px) {
+  nav[role="navigation"],
+  footer[role="contentinfo"] {
+    position: fixed !important;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+}
