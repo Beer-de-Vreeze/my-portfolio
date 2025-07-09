@@ -153,7 +153,7 @@ const DevConsole: React.FC = () => {
         output += '  joke dad\n';
         output += '  lorem 20\n';
         output += '  date iso\n';
-        output += '  fetch https://api.github.com/users/octocat\n';
+        output += '  fetch https://api.github.com/users/Beer-de-Vreeze\n';
         output += '  json-validate {"name": "test"}\n';
         output += '  clipboard write Hello World\n';
         output += '  uptime\n';
@@ -1023,7 +1023,7 @@ Usage: date <iso|utc|local|timestamp|unix|all>`;
       description: 'Fetch and display data from a given API endpoint (GET only, for safety)',
       execute: async (args) => {
         const url = args[0];
-        if (!url) return 'Usage: fetch <url>\nExample: fetch https://api.github.com/users/octocat';
+        if (!url) return 'Usage: fetch <url>\nExample: fetch https://api.github.com/users/Beer-de-Vreeze';
         
         try {
           // Basic URL validation
