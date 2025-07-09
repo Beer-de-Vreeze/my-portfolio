@@ -105,7 +105,7 @@ const EducationCard: React.FC = () => {
     }
   }, []);
 
-  // Enhanced keyboard navigation
+  // Enhanced keyboard navigation and body scroll locking
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && modalState.isOpen) {
@@ -117,26 +117,28 @@ const EducationCard: React.FC = () => {
 
     if (modalState.isOpen) {
       document.addEventListener('keydown', handleKeyDown);
-      
-      // Prevent body scroll when modal is open - but respect page-level overflow control
-      if (!document.body.classList.contains('no-scroll')) {
-        document.body.style.overflow = 'hidden';
-      }
-    } else {
-      // Only restore overflow if we're responsible for it
-      if (!document.body.classList.contains('no-scroll')) {
-        document.body.style.overflow = '';
-      }
     }
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      // Only restore overflow if we're responsible for it
-      if (!document.body.classList.contains('no-scroll')) {
-        document.body.style.overflow = '';
-      }
     };
   }, [modalState.isOpen, toggleModal]);
+
+  // Body scroll locking effect
+  useEffect(() => {
+    if (modalState.isOpen) {
+      // Store the original overflow value
+      const originalOverflow = document.body.style.overflow;
+      
+      // Prevent body scroll
+      document.body.style.overflow = 'hidden';
+      
+      // Cleanup function to restore original overflow
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [modalState.isOpen]);
 
   return (
     <>

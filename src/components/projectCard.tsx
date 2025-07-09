@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNodedotjs, SiApple, SiDocker, SiGooglecloud, SiNextdotjs, SiTailwindcss, SiBlender, SiAdobephotoshop, SiMysql, SiPhp, SiPython, SiCplusplus, SiUnrealengine, SiGodotengine, SiTensorflow, SiPytorch, SiAndroidstudio, SiVercel, SiDotnet, SiEslint, SiFramer } from 'react-icons/si';
 import { FaExpand, FaCompress, FaDownload, FaFileArchive, FaFileVideo, FaFileImage, FaFilePdf, FaWindows, FaCode, FaVolumeUp, FaRobot, FaPalette, FaGamepad, FaBrain, FaMusic, FaNetworkWired, FaImage, FaPaintBrush, FaDesktop, FaLayerGroup, FaCogs, FaMicrochip, FaComments, FaPlay, FaFont, FaMicrophone, FaGitAlt, FaTachometerAlt, FaMobile } from 'react-icons/fa';
 import hljs from 'highlight.js';
+import { useModal } from '@/context/ModalContext';
 
 // Extend HTMLVideoElement interface for fullscreen API compatibility
 interface ExtendedHTMLVideoElement extends HTMLVideoElement {
@@ -104,7 +105,6 @@ interface ProjectCardProps {
   codeSnippet?: CodeSnippet;                    // Optional main code snippet
   liveLink?: string;                            // Optional demo link
   githubLink?: string;                          // Optional source code link
-  onModalStateChange?: (isOpen: boolean) => void; // Callback for modal state changes
   priority?: 'high' | 'medium' | 'low';        // Project priority for performance optimization
   lazyLoad?: boolean;                           // Enable lazy loading for media
 }
@@ -305,12 +305,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   liveLink = "#",
   githubLink: sourceLink = "#",
   codeSnippet, 
-  onModalStateChange,
   priority = 'medium',
   lazyLoad = true
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { setIsModalOpen: setGlobalModalOpen } = useModal();
   
   // Custom hooks for enhanced state management
   const { error, handleError, clearError } = useErrorHandler();
@@ -979,10 +979,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
    */
   const openModal = useCallback(() => {
     setIsModalOpen(true);
+    setGlobalModalOpen(true);
     const url = new URL(window.location.href);
     url.searchParams.set('project', projectId);
     router.replace(url.pathname + url.search);
-    onModalStateChange?.(true);
       // Initialize feature code snippets as collapsed, main snippet as open
     const initialCollapsedState: { [key: string]: boolean } = {};
     features.forEach((feature, index) => {
@@ -995,11 +995,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     }
     setCollapsedCodeSnippets(initialCollapsedState);    // Preload images for smoother carousel experience
     preloadImages();
-  }, [projectId, router, onModalStateChange, features, codeSnippet, preloadImages]);
+  }, [projectId, router, setGlobalModalOpen, features, codeSnippet, preloadImages]);
 
   /**
    * Handles closing the modal with animation and removes project from URL
-   * Pauses any playing video and calls the onModalStateChange callback
+   * Pauses any playing video and calls the global modal state setter
    */
   const closeModal = useCallback(() => {
     if (videoRef.current && !videoRef.current.paused) {
@@ -1012,8 +1012,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     // Set flag to indicate we're programmatically closing
     isProgrammaticallyClosing.current = true;
     
-    // Call onModalStateChange immediately to show navbar/footer
-    onModalStateChange?.(false);
+    // Call global modal state setter immediately to show navbar/footer
+    setGlobalModalOpen(false);
     
     // Immediately remove the URL parameter to prevent reopening
     const url = new URL(window.location.href);
@@ -1029,7 +1029,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         isProgrammaticallyClosing.current = false;
       }, 100);
     }, 300);
-  }, [onModalStateChange, router]);
+  }, [setGlobalModalOpen, router]);
 
   /**
    * Effect to check URL parameters on component mount and handle direct links
@@ -1047,7 +1047,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       // Small delay to ensure any previous close operations have completed
       const timeoutId = setTimeout(() => {
         setIsModalOpen(true);
-        onModalStateChange?.(true);
+        setGlobalModalOpen(true);
         
         // Preload images for smoother carousel experience
         preloadImages();
@@ -1067,7 +1067,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       
       return () => clearTimeout(timeoutId);
     }
-  }, [searchParams, projectId, isModalOpen, isClosing, onModalStateChange, features, codeSnippet, preloadImages]);
+  }, [searchParams, projectId, isModalOpen, isClosing, setGlobalModalOpen, features, codeSnippet, preloadImages]);
   
   /**
    * Handler for tech stack icon clicks
@@ -1456,69 +1456,65 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
    * when the modal is open - enhanced with carousel navigation
    */
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (!isModalOpen) return;
       
-      switch (event.key) {
+      switch (e.key) {
         case 'Escape':
+          e.preventDefault();
           closeModal();
           break;
         case 'ArrowLeft':
           if (media.length > 1) {
-            event.preventDefault();
+            e.preventDefault();
             goToPreviousMedia();
           }
           break;
         case 'ArrowRight':
           if (media.length > 1) {
-            event.preventDefault();
+            e.preventDefault();
             goToNextMedia();
           }
           break;
-        case ' ': // Spacebar
+        case ' ':
           if (isVideo && videoRef.current) {
-            event.preventDefault();
+            e.preventDefault();
             handleVideoToggle();
           }
           break;
       }
     };
-    
-    if (isModalOpen && !isClosing) {
-      // Store the current overflow to restore later
-      const originalOverflow = document.body.style.overflow;
-      
-      // Only prevent background scrolling if not controlled by page-level no-scroll class
-      if (!document.body.classList.contains('no-scroll')) {
-        // Prevent background scrolling
-        document.body.style.overflow = 'hidden';
-        document.body.style.position = 'fixed';
-        document.body.style.width = '100%';
-      }
-      
+
+    if (isModalOpen) {
+      // Add keyboard event listener
       document.addEventListener('keydown', handleKeyDown);
-      onModalStateChange?.(true);
       
+      // Lock body scroll when modal is open
+      const originalOverflow = document.body.style.overflow;
+      const originalPosition = document.body.style.position;
+      const originalTop = document.body.style.top;
+      const scrollY = window.scrollY;
+      
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+      
+      // Cleanup function
       return () => {
-        // Only restore the original state if we modified it
-        if (!document.body.classList.contains('no-scroll')) {
-          // Restore the original state
-          document.body.style.overflow = originalOverflow || '';
-          document.body.style.position = '';
-          document.body.style.top = '';
-          document.body.style.width = '';
-          
-          // Don't restore scroll position - let user stay where they are
-        }
-        
         document.removeEventListener('keydown', handleKeyDown);
+        
+        // Restore body scroll and position
+        document.body.style.overflow = originalOverflow;
+        document.body.style.position = originalPosition;
+        document.body.style.top = originalTop;
+        document.body.style.width = '';
+        
+        // Restore scroll position
+        window.scrollTo(0, scrollY);
       };
     }
-    
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isModalOpen, isClosing, onModalStateChange, closeModal, media.length, goToPreviousMedia, goToNextMedia, isVideo, handleVideoToggle]);
+  }, [isModalOpen, media.length, goToPreviousMedia, goToNextMedia, closeModal, isVideo, handleVideoToggle]);
 
   /**
    * Effect to restore body styles when modal starts closing
@@ -2040,7 +2036,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       {/* Modal with backdrop blur and enhanced animations */}
       {isModalOpen && typeof document !== 'undefined' && createPortal(
         <div 
-          className={`fixed inset-0 z-[100] flex items-start sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm transition-all duration-500 ease-out overflow-y-auto ${
+          className={`fixed inset-0 z-[100] flex items-start sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm transition-all duration-500 ease-out overflow-hidden ${
             isClosing ? 'opacity-0 backdrop-blur-none' : 'opacity-100 animate-fadeIn'
           }`}
           onClick={closeModal}

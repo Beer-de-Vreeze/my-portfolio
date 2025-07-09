@@ -4,11 +4,7 @@ import SuspenseProjectCard from "../projectCard";
 // Using our centralized mobile detection hook instead
 import useMobileDetection from "../utils/useMobileDetection";
 
-const MLAgent = ({
-  onModalStateChange,
-}: {
-  onModalStateChange: (isOpen: boolean) => void;
-}) => {
+const MLAgent = () => {
   // Use the shared hook for mobile detection
   const isMobile = useMobileDetection();
   
@@ -753,7 +749,6 @@ public class JerryAgentController : BaseAgentController
     }
 }`
     }}
-    onModalStateChange={onModalStateChange}
   />
   );
 };

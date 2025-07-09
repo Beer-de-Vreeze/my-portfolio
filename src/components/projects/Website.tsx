@@ -1,7 +1,7 @@
 import React from "react";
 import SuspenseProjectCard from "../projectCard";
 
-const Website = ({ onModalStateChange }: { onModalStateChange: (isOpen: boolean) => void }) => (
+const Website = () => (
   <SuspenseProjectCard
     projectId="portfolio-website"
     title="Portfolio Website"
@@ -374,7 +374,6 @@ const Navbar = () => {
   );
 };`
     }}
-    onModalStateChange={onModalStateChange}
   />
 );
 

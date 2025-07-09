@@ -2,7 +2,7 @@ import React from "react";
 import SuspenseProjectCard from "../SuspenseProjectCard";
 import useMobileDetection from "../utils/useMobileDetection";
 
-const LPCafe = ({ onModalStateChange }: { onModalStateChange: (isOpen: boolean) => void }) => {
+const LPCafe = () => {
   const isMobile = useMobileDetection();
   
   return (
@@ -439,7 +439,6 @@ public void MarkAsDated()
     Debug.Log($"[MarkAsDated] Save data serialized to disk");
 }`
     }}
-    onModalStateChange={onModalStateChange}
   />
   );
 };

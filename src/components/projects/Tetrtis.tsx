@@ -1,7 +1,7 @@
 import React from "react";
 import SuspenseProjectCard from "../projectCard";
 
-const Tetrtis = ({ onModalStateChange }: { onModalStateChange: (isOpen: boolean) => void }) => (
+const Tetrtis = () => (
   <SuspenseProjectCard
     projectId="Better-Tetris"
     title="Tetris"
@@ -512,7 +512,6 @@ public struct TetrominoData
         },
       },
     ]}
-    onModalStateChange={onModalStateChange}
   />
 );
 

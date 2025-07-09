@@ -13,6 +13,7 @@ import SketchinSpells from "@/components/projects/Sketchin Spells";
 import Tetrtis from "@/components/projects/Tetrtis";
 import Website from "@/components/projects/Website";
 import LPCafe from "@/components/projects/LPCafe";
+import { useModal } from "@/context/ModalContext";
 
 // Loading component for the projects grid
 const ProjectsLoading = () => (
@@ -26,31 +27,26 @@ const ProjectsLoading = () => (
 );
 
 // Projects content component that uses useSearchParams
-const ProjectsContent = ({ onModalStateChange }: { onModalStateChange: (isOpen: boolean) => void }) => (
+const ProjectsContent = () => (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl animate-slideInUp">
-    <AudioPreviever onModalStateChange={onModalStateChange} />
-    <LPCafe onModalStateChange={onModalStateChange} />
-    <MLAgent onModalStateChange={onModalStateChange} />
-    <Website onModalStateChange={onModalStateChange} />
-    <BearlyStealthy onModalStateChange={onModalStateChange} />
-    <SketchinSpells onModalStateChange={onModalStateChange} />
-    <Tetrtis onModalStateChange={onModalStateChange} />
+    <AudioPreviever />
+    <LPCafe />
+    <MLAgent />
+    <Website />
+    <BearlyStealthy />
+    <SketchinSpells />
+    <Tetrtis />
   </div>
 );
 
 export default function Projects() {
   const { isMobile, isDesktop } = useResponsiveSize();
   const [isMounted, setIsMounted] = useState(false);
-  const [isAnyModalOpen, setIsAnyModalOpen] = useState(false);
+  const { isModalOpen } = useModal();
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
-  // Handle modal state changes from the ProjectCard component
-  const handleModalStateChange = (isOpen: boolean) => {
-    setIsAnyModalOpen(isOpen);
-  };
 
   // One-time overflow control based on screen size - only runs once after mount
   useEffect(() => {
@@ -113,7 +109,7 @@ export default function Projects() {
 
       <div
         className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-out ${
-          isAnyModalOpen ? "opacity-0 -translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
+          isModalOpen ? "opacity-0 -translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
         }`}
       >
       </div>
@@ -156,7 +152,7 @@ export default function Projects() {
         <div className="w-full max-w-6xl mx-auto px-0">
           <div className="w-full">
             <Suspense fallback={<ProjectsLoading />}>
-              <ProjectsContent onModalStateChange={handleModalStateChange} />
+              <ProjectsContent />
             </Suspense>
           </div>
         </div>
@@ -164,7 +160,7 @@ export default function Projects() {
 
       <div
         className={`fixed bottom-0 left-0 w-full z-40 transition-all duration-500 ease-out ${
-          isAnyModalOpen ? "opacity-0 translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
+          isModalOpen ? "opacity-0 translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
         }`}
       >
       </div>

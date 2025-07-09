@@ -2,6 +2,7 @@ import "../app/globals.css";
 import LoadingBar from "@/components/loadingbar";
 import DevConsole from "@/components/DevConsole";
 import { LoadingProvider } from "@/context/LoadingContext";
+import { ModalProvider } from "@/context/ModalContext";
 import { ServiceWorkerInitializer } from "@/components/ServiceWorkerInitializer";
 import { Metadata, Viewport } from 'next';
 
@@ -59,12 +60,14 @@ export default function RootLayout({
       </head>
       <body className="bg-black text-white custom-scrollbar min-h-screen">
         <LoadingProvider>
-          <ServiceWorkerInitializer />
-          <LoadingBar />
-          <DevConsole />
-          <main>
-            {children}
-          </main>
+          <ModalProvider>
+            <ServiceWorkerInitializer />
+            <LoadingBar />
+            <DevConsole />
+            <main>
+              {children}
+            </main>
+          </ModalProvider>
         </LoadingProvider>
       </body>
     </html>
