@@ -42,11 +42,16 @@ const ProjectsContent = () => (
 export default function Projects() {
   const { isMobile, isDesktop } = useResponsiveSize();
   const [isMounted, setIsMounted] = useState(false);
-  const { isModalOpen } = useModal();
+  const [isAnyModalOpen, setIsAnyModalOpen] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // Handle modal state changes from the ProjectCard component
+  const handleModalStateChange = (isOpen: boolean) => {
+    setIsAnyModalOpen(isOpen);
+  };
 
   // One-time overflow control based on screen size - only runs once after mount
   useEffect(() => {
@@ -109,7 +114,7 @@ export default function Projects() {
 
       <div
         className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-out ${
-          isModalOpen ? "opacity-0 -translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
+          isAnyModalOpen ? "opacity-0 -translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
         }`}
       >
       </div>
@@ -152,7 +157,7 @@ export default function Projects() {
         <div className="w-full max-w-6xl mx-auto px-0">
           <div className="w-full">
             <Suspense fallback={<ProjectsLoading />}>
-              <ProjectsContent />
+              <ProjectsContent onModalStateChange={handleModalStateChange} />
             </Suspense>
           </div>
         </div>
@@ -160,7 +165,7 @@ export default function Projects() {
 
       <div
         className={`fixed bottom-0 left-0 w-full z-40 transition-all duration-500 ease-out ${
-          isModalOpen ? "opacity-0 translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
+          isAnyModalOpen ? "opacity-0 translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
         }`}
       >
       </div>

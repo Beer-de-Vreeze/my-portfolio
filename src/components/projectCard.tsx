@@ -2069,7 +2069,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             {/* Enhanced Close button with modern styling matching the design system - positioned sticky inside container */}
             <button
               onClick={closeModal}
-              className="sticky top-16 sm:top-6 left-full transform -translate-x-2 sm:-translate-x-6 z-50 bg-gradient-to-r from-gray-900/90 to-black/90 backdrop-blur-sm hover:from-gray-800/90 hover:to-gray-900/90 text-gray-300 hover:text-white rounded-full p-2 sm:p-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-transparent shadow-xl border border-gray-600/30 hover:border-gray-500/50 group flex items-center justify-center"
+              className="sticky top-6 sm:top-6 left-full transform -translate-x-2 sm:-translate-x-6 z-50 bg-gradient-to-r from-gray-900/90 to-black/90 backdrop-blur-sm hover:from-gray-800/90 hover:to-gray-900/90 text-gray-300 hover:text-white rounded-full p-2 sm:p-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-transparent shadow-xl border border-gray-600/30 hover:border-gray-500/50 group flex items-center justify-center"
               aria-label="Close modal"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="transition-transform duration-200 group-hover:scale-110">

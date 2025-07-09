@@ -1,7 +1,11 @@
 import React from "react";
 import SuspenseProjectCard from "../projectCard";
 
-const SketchinSpells = () => (
+const SketchinSpells = ({
+  onModalStateChange,
+}: {
+  onModalStateChange: (isOpen: boolean) => void;
+}) => (
   <SuspenseProjectCard
     projectId="sketchin-spells"
     coverImage="/images/SketchinSpells Images/Spell2.webp"
@@ -274,6 +278,7 @@ const SketchinSpells = () => (
         },
       },
     ]}
+    onModalStateChange={onModalStateChange}
   />
 );
 

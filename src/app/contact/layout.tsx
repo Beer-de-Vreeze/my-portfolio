@@ -1,21 +1,21 @@
-'use client';
-
+import { Metadata } from 'next';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { useModal } from "@/context/ModalContext";
+
+export const metadata: Metadata = {
+  title: 'Contact',
+};
 
 export default function ContactLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { isModalOpen } = useModal();
-
   return (
     <>
-      {!isModalOpen && <Navbar />}
+      <Navbar />
       {children}
-      {!isModalOpen && <Footer />}
+      <Footer />
     </>
   );
 }

@@ -2,7 +2,11 @@ import React from "react";
 import SuspenseProjectCard from "../projectCard";
 import useMobileDetection from "../utils/useMobileDetection";
 
-const BearlyStealthy = () => {
+const BearlyStealthy = ({
+  onModalStateChange,
+}: {
+  onModalStateChange: (isOpen: boolean) => void;
+}) => {
   const isMobile = useMobileDetection();
   
   return (
@@ -505,6 +509,7 @@ public class BaseEnemy : MonoBehaviour
     }
 }`,
     }}
+    onModalStateChange={onModalStateChange}
   />
   );
 };
