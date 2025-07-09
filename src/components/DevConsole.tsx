@@ -24,7 +24,6 @@ const DevConsole: React.FC = () => {
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [konamiSequence, setKonamiSequence] = useState<string[]>([]);
   const [pageLoadTime] = useState(Date.now());
-  const [userEvents, setUserEvents] = useState<Array<{type: string, timestamp: Date, target?: string}>>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const historyRef = useRef<HTMLDivElement>(null);
 
@@ -53,34 +52,6 @@ const DevConsole: React.FC = () => {
     }
   }, [addToHistory]);
 
-  // Event tracking for debugging
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const trackEvent = (event: Event) => {
-      const target = event.target as HTMLElement;
-      const targetInfo = target ? `${target.tagName}${target.id ? '#' + target.id : ''}${target.className ? '.' + target.className.split(' ')[0] : ''}` : '';
-      
-      setUserEvents(prev => [...prev.slice(-19), { // Keep last 20 events
-        type: event.type,
-        timestamp: new Date(),
-        target: targetInfo
-      }]);
-    };
-
-    const events = ['click', 'keydown', 'submit', 'change', 'focus', 'blur'];
-    events.forEach(eventType => {
-      document.addEventListener(eventType, trackEvent, true);
-    });
-
-    return () => {
-      events.forEach(eventType => {
-        document.removeEventListener(eventType, trackEvent, true);
-      });
-    };
-  }, [isOpen]);
-
-
   // Developer commands
   const commands: Command[] = [
     {
@@ -102,8 +73,7 @@ const DevConsole: React.FC = () => {
             { name: 'uptime', desc: 'Show how long the page has been open' },
             { name: 'performance', desc: 'Show performance metrics' },
             { name: 'memory', desc: 'Display current memory usage (Chrome only)' },
-            { name: 'network', desc: 'Show network information and test connectivity' },
-            { name: 'events', desc: 'List recent user events for debugging' }
+            { name: 'network', desc: 'Show network information and test connectivity' }
           ],
           'Developer Tools': [
             { name: 'storage', desc: 'Manage local storage (list, get, set, remove, clear)' },
@@ -126,7 +96,7 @@ const DevConsole: React.FC = () => {
             { name: 'flip', desc: 'Flip a coin (heads or tails)' },
             { name: 'dice', desc: 'Roll a dice (1-6 or custom sides)' },
             { name: 'palindrome', desc: 'Check if a word or phrase is a palindrome' },
-            { name: 'age', desc: 'Calculate your age from your birth year' },
+            { name: 'age', desc: 'Calculate your age from birth date (YYYY-MM-DD or YYYY)' },
             { name: 'reverse', desc: 'Reverse any text' },
             { name: 'rickroll', desc: 'Play a Rick Astley video or show a fun message' },
             { name: 'beer', desc: 'Show information about Beer de Vreeze' }
@@ -160,6 +130,7 @@ const DevConsole: React.FC = () => {
         output += '  random color\n';
         output += '  encode base64 Hello World\n';
         output += '  navigate about\n';
+        output += '  age 2000-08-19\n';
         output += '  qrcode https://github.com';
 
         return output;
@@ -177,7 +148,14 @@ const DevConsole: React.FC = () => {
       name: 'time',
       description: 'Show current time',
       execute: () => {
-        return new Date().toLocaleString();
+        return new Date().toLocaleString('en-GB', { 
+          day: '2-digit', 
+          month: '2-digit', 
+          year: 'numeric', 
+          hour: '2-digit', 
+          minute: '2-digit', 
+          second: '2-digit' 
+        });
       }
     },
     {
@@ -610,8 +588,14 @@ Passionate about creating interactive experiences and innovative solutions`;
           const cloudCover = current.cloud_cover;
           
           // Format sunrise/sunset times
-          const sunrise = new Date(daily.sunrise[0]).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-          const sunset = new Date(daily.sunset[0]).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          const sunrise = new Date(daily.sunrise[0]).toLocaleTimeString('en-GB', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+          });
+          const sunset = new Date(daily.sunset[0]).toLocaleTimeString('en-GB', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+          });
           
           // Build precipitation info
           let precipitation = '';
@@ -999,7 +983,14 @@ Examples:
           case 'utc':
             return `UTC: ${now.toUTCString()}`;
           case 'local':
-            return `Local: ${now.toLocaleString()}`;
+            return `Local: ${now.toLocaleString('en-GB', { 
+              day: '2-digit', 
+              month: '2-digit', 
+              year: 'numeric', 
+              hour: '2-digit', 
+              minute: '2-digit', 
+              second: '2-digit' 
+            })}`;
           case 'timestamp':
             return `Timestamp: ${now.getTime()}`;
           case 'unix':
@@ -1007,7 +998,14 @@ Examples:
           case 'all':
           default:
             return `Current Date & Time:
-Local: ${now.toLocaleString()}
+Local: ${now.toLocaleString('en-GB', { 
+  day: '2-digit', 
+  month: '2-digit', 
+  year: 'numeric', 
+  hour: '2-digit', 
+  minute: '2-digit', 
+  second: '2-digit' 
+})}
 ISO: ${now.toISOString()}
 UTC: ${now.toUTCString()}
 Timestamp: ${now.getTime()}
@@ -1073,7 +1071,14 @@ Usage: date <iso|utc|local|timestamp|unix|all>`;
         if (minutes % 60 > 0) result += `${minutes % 60}m `;
         result += `${seconds % 60}s`;
         
-        return result + `\nLoaded at: ${new Date(pageLoadTime).toLocaleString()}`;
+        return result + `\nLoaded at: ${new Date(pageLoadTime).toLocaleString('en-GB', { 
+          day: '2-digit', 
+          month: '2-digit', 
+          year: 'numeric', 
+          hour: '2-digit', 
+          minute: '2-digit', 
+          second: '2-digit' 
+        })}`;
       }
     },
     {
@@ -1099,24 +1104,6 @@ Note: Chrome/Chromium only feature`;
         } else {
           return 'Memory information not available in this browser';
         }
-      }
-    },
-    {
-      name: 'events',
-      description: 'List recent user events (e.g., clicks, keypresses) for debugging',
-      execute: () => {
-        if (userEvents.length === 0) {
-          return 'No events recorded yet. Events are tracked when the console is open.';
-        }
-        
-        const recent = userEvents.slice(-20); // Last 20 events
-        const eventList = recent.map(event => {
-          const time = event.timestamp.toLocaleTimeString();
-          const target = event.target ? ` on ${event.target}` : '';
-          return `${time} - ${event.type}${target}`;
-        }).join('\n');
-        
-        return `Recent events (last ${recent.length}/${userEvents.length}):\n${eventList}`;
       }
     },
     {
@@ -1200,11 +1187,84 @@ Note: Chrome/Chromium only feature`;
     },
     {
       name: 'age',
-      description: 'Calculate your age from your birth year (usage: age <year>)',
+      description: 'Calculate your age from birth date (usage: age <YYYY-MM-DD> or age <YYYY>)',
       execute: (args) => {
-        const year = parseInt(args[0]);
-        if (!year || year > new Date().getFullYear()) return 'Usage: age <birth year>';
-        return `You are ${new Date().getFullYear() - year} years old.`;
+        const input = args.join(' ').trim();
+        if (!input) {
+          return 'Usage: age <birth date>\nFormats:\n  age 2000-08-19    (Full date: YYYY-MM-DD)\n  age 2000          (Year only)\n  age 08/19/2000    (US format: MM/DD/YYYY)\n  age 19-08-2000    (European format: DD-MM-YYYY)';
+        }
+
+        let birthDate: Date;
+        const today = new Date();
+
+        try {
+          // Try different date formats
+          if (/^\d{4}$/.test(input)) {
+            // Year only (YYYY)
+            const year = parseInt(input);
+            if (year > today.getFullYear() || year < 1900) {
+              return `Invalid year: ${year}. Please enter a year between 1900 and ${today.getFullYear()}.`;
+            }
+            birthDate = new Date(year, 0, 1); // January 1st of that year
+          } else if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(input)) {
+            // ISO format (YYYY-MM-DD)
+            birthDate = new Date(input);
+          } else if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(input)) {
+            // US format (MM/DD/YYYY)
+            const parts = input.split('/');
+            birthDate = new Date(parseInt(parts[2]), parseInt(parts[0]) - 1, parseInt(parts[1]));
+          } else if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(input)) {
+            // European format (DD-MM-YYYY)
+            const parts = input.split('-');
+            birthDate = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+          } else {
+            return 'Invalid date format. Supported formats:\n  YYYY-MM-DD (e.g., 2000-08-19)\n  YYYY (e.g., 2000)\n  MM/DD/YYYY (e.g., 08/19/2000)\n  DD-MM-YYYY (e.g., 19-08-2000)';
+          }
+
+          // Validate the date
+          if (isNaN(birthDate.getTime())) {
+            return 'Invalid date. Please check your input.';
+          }
+
+          if (birthDate > today) {
+            return 'Birth date cannot be in the future!';
+          }
+
+          // Calculate age
+          let age = today.getFullYear() - birthDate.getFullYear();
+          const monthDiff = today.getMonth() - birthDate.getMonth();
+          
+          if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+          }
+
+          // Calculate days until next birthday
+          const nextBirthday = new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate());
+          if (nextBirthday < today) {
+            nextBirthday.setFullYear(today.getFullYear() + 1);
+          }
+          
+          const daysUntilBirthday = Math.ceil((nextBirthday.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+          
+          // Calculate total days lived
+          const totalDays = Math.floor((today.getTime() - birthDate.getTime()) / (1000 * 60 * 60 * 24));
+          
+          let result = `🎂 Age Calculation:
+Age: ${age} years old
+Birth date: ${birthDate.toLocaleDateString('en-GB')}
+Days lived: ${totalDays.toLocaleString()} days`;
+
+          if (daysUntilBirthday === 0) {
+            result += '\n🎉 Happy Birthday! 🎉';
+          } else {
+            result += `\nNext birthday: ${daysUntilBirthday} days`;
+          }
+
+          return result;
+
+        } catch (error) {
+          return `Error parsing date: ${error}. Please use a valid date format.`;
+        }
       }
     },
     {
