@@ -1,58 +1,23 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from '../styles/DevConsole.module.css';
-
-// Dynamic imports for heavy libraries to improve performance
-const loadHeavyLibraries = async () => {
-  const [
-    { default: Uwuifier },
-    { default: Fuse },
-    { evaluate },
-    dateFns,
-    { default: convert },
-    { LoremIpsum },
-    { default: generatePassword },
-    { default: he },
-    { default: chroma },
-    hljs,
-    { default: bigInt },
-    { default: stringArgv }
-  ] = await Promise.all([
-    import('uwuifier'),
-    import('fuse.js'),
-    import('mathjs'),
-    import('date-fns'),
-    import('convert-units'),
-    import('lorem-ipsum'),
-    import('generate-password'),
-    import('he'),
-    import('chroma-js'),
-    import('highlight.js'),
-    import('big-integer'),
-    import('string-argv')
-  ]);
-  
-  return {
-    Uwuifier,
-    Fuse,
-    evaluate,
-    format: dateFns.format,
-    differenceInDays: dateFns.differenceInDays,
-    addDays: dateFns.addDays,
-    isToday: dateFns.isToday,
-    isTomorrow: dateFns.isTomorrow,
-    convert,
-    LoremIpsum,
-    generatePassword,
-    he,
-    chroma,
-    hljs,
-    bigInt,
-    stringArgv
-  };
-};
+import Uwuifier from 'uwuifier';
+import Fuse from 'fuse.js';
+import { evaluate } from 'mathjs';
+import { format, differenceInDays, addDays, isToday, isTomorrow } from 'date-fns';
+// @ts-expect-error - convert-units doesn't have TypeScript declarations
+import convert from 'convert-units';
+import { LoremIpsum } from 'lorem-ipsum';
+import generatePassword from 'generate-password';
+// @ts-expect-error - he doesn't have TypeScript declarations
+import he from 'he';
+// @ts-expect-error - chroma-js doesn't have TypeScript declarations
+import chroma from 'chroma-js';
+import hljs from 'highlight.js';
+import bigInt from 'big-integer';
+import stringArgv from 'string-argv';
 
 interface Command {
   name: string;
@@ -76,22 +41,20 @@ const DevConsole: React.FC = () => {
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [konamiSequence, setKonamiSequence] = useState<string[]>([]);
   const [pageLoadTime] = useState(Date.now());
-  const [librariesLoaded, setLibrariesLoaded] = useState(false);
-  const [libs, setLibs] = useState<any>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const historyRef = useRef<HTMLDivElement>(null);
 
-  // Load heavy libraries only when console is first opened
-  useEffect(() => {
-    if (isOpen && !librariesLoaded) {
-      loadHeavyLibraries().then((loadedLibs) => {
-        setLibs(loadedLibs);
-        setLibrariesLoaded(true);
-      }).catch((error) => {
-        console.error('Failed to load DevConsole libraries:', error);
-      });
+  // Initialize Lorem Ipsum generator
+  const lorem = new LoremIpsum({
+    sentencesPerParagraph: {
+      max: 8,
+      min: 4
+    },
+    wordsPerSentence: {
+      max: 16,
+      min: 4
     }
-  }, [isOpen, librariesLoaded]);
+  });
 
   // Simple browser-compatible argument parser
   const parseArgs = (input: string) => {
