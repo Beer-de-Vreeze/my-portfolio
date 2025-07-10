@@ -89,29 +89,22 @@ export const useResponsiveSize = () => {
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
-    let rafId: number;
     
-    // Use RAF + throttled handler to prevent excessive repaints
+    // Throttled handler to call on window resize (reduced frequency to prevent constant repaints)
     function handleResize() {
       clearTimeout(timeoutId);
-      if (rafId) {
-        cancelAnimationFrame(rafId);
-      }
-      
       timeoutId = setTimeout(() => {
-        rafId = requestAnimationFrame(() => {
-          const width = window.innerWidth;
-          const height = window.innerHeight;
-          
-          setWindowSize({
-            width,
-            height,
-            isMobile: width <= 768,
-            isTablet: width > 768 && width <= 1024,
-            isDesktop: width > 1024,
-          });
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        
+        setWindowSize({
+          width,
+          height,
+          isMobile: width <= 768,
+          isTablet: width > 768 && width <= 1024,
+          isDesktop: width > 1024,
         });
-      }, 150); // Increased throttle to 150ms for better mobile performance
+      }, 100); // Throttle resize events to every 100ms to reduce repaints
     }
     
     // Add event listener with passive option for better performance
@@ -123,9 +116,6 @@ export const useResponsiveSize = () => {
     // Remove event listener on cleanup
     return () => {
       clearTimeout(timeoutId);
-      if (rafId) {
-        cancelAnimationFrame(rafId);
-      }
       window.removeEventListener('resize', handleResize);
     };
   }, []);

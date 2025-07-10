@@ -7,16 +7,25 @@
   width: 100%;
   max-width: 100vw;
   min-height: 100vh;
-  padding: 0;
+  padding: 0.5rem 0 0 0; /* Minimal top padding, no bottom padding */
   margin: 0;
-  background: linear-gradient(180deg, #111111 0%, #000000 100%);
+  background: radial-gradient(
+    ellipse at center,
+    #111111 0%,
+    #000000 70%,
+    #000000 100%
+  );
   color: white;
-  gap: 0.5rem;
+  gap: 0.5rem; /* Reduced gap */
+  /* CRITICAL: Allow scrolling on ALL devices */
   overflow: visible;
+  /* Center content for main page, but allow scrolling when needed */
   justify-content: center;
+  /* Prevent horizontal overflow */
   box-sizing: border-box;
-  /* Minimal performance optimizations for mobile */
-  contain: layout;
+  /* Performance optimizations to reduce repaints */
+  contain: layout style;
+  will-change: auto;
 }
 
 /* Tablet-specific container adjustments - allow scrolling */
@@ -43,22 +52,15 @@
   }
 }
 
-/* Desktop only: restore complex background */
+/* Desktop only: center content if it fits */
 @media (min-width: 1440px) {
   .container {
-    background: radial-gradient(
-      ellipse at center,
-      #111111 0%,
-      #000000 70%,
-      #000000 100%
-    );
-    justify-content: center;
-    padding: 0.5rem 1rem 0 1rem;
+    justify-content: center; /* Center content for main page */
+    padding: 0.5rem 1rem 0 1rem; /* Remove bottom padding */
     gap: 0.75rem;
     min-height: 100vh;
-    max-height: 100vh;
-    overflow: hidden;
-    contain: layout style;
+    max-height: 100vh; /* Lock to viewport height to prevent scrolling */
+    overflow: hidden; /* Prevent scrolling on desktop */
   }
 }
 
@@ -73,12 +75,22 @@
   max-width: 100vw;
   min-height: 100vh;
   margin: 0;
-  padding: 0;
-  background: linear-gradient(180deg, #111111 0%, #000000 100%);
+  padding: 0.5rem 0.25rem; /* Minimal padding */
+  background: radial-gradient(
+    ellipse at center,
+    #111111 0%,
+    #000000 70%,
+    #000000 100%
+  );
   color: white;
-  gap: 0.5rem;
+  gap: 0.5rem; /* Reduced gap */
+  /* CRITICAL: Remove container overflow to move scrollbar to page level */
   overflow: visible;
-  contain: layout;
+  /* Remove fixed height on mobile to allow content to expand */
+  /* Performance optimizations to reduce repaints */
+  contain: layout style;
+  will-change: auto;
+  /* Ensure no border or outline creates spacing */
   border: 0;
   outline: 0;
   box-sizing: border-box;
@@ -111,22 +123,15 @@
 
 @media (min-width: 1440px) {
   .containerScrollable {
-    background: radial-gradient(
-      ellipse at center,
-      #111111 0%,
-      #000000 70%,
-      #000000 100%
-    );
     padding: 0;
     min-height: 100vh;
-    max-height: 100vh;
-    overflow: hidden;
-    justify-content: center;
-    contain: layout style;
+    max-height: 100vh; /* Lock to viewport height */
+    overflow: hidden; /* Prevent scrolling on desktop */
+    justify-content: center; /* Center content */
   }
 }
 
-/* Enhanced background with cosmic patterns - Desktop only */
+/* Enhanced background with cosmic patterns */
 .enhancedBackground::before {
   content: "";
   position: fixed;
@@ -134,47 +139,42 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: transparent;
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* Show complex background only on desktop for performance */
-@media (min-width: 1440px) {
-  .enhancedBackground::before {
-    background: radial-gradient(
-        ellipse 800px 400px at 20% 30%,
-        rgba(59, 130, 246, 0.12) 0%,
-        rgba(59, 130, 246, 0.08) 25%,
-        transparent 50%
-      ),
-      radial-gradient(
-        ellipse 600px 300px at 80% 20%,
-        rgba(139, 92, 246, 0.15) 0%,
-        rgba(139, 92, 246, 0.1) 30%,
-        transparent 60%
-      ),
-      radial-gradient(
-        ellipse 700px 350px at 40% 80%,
-        rgba(236, 72, 153, 0.12) 0%,
-        rgba(236, 72, 153, 0.08) 35%,
-        transparent 65%
-      ),
+  background: 
+    /* Distant nebula effects */ radial-gradient(
+      ellipse 800px 400px at 20% 30%,
+      rgba(59, 130, 246, 0.12) 0%,
+      rgba(59, 130, 246, 0.08) 25%,
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse 600px 300px at 80% 20%,
+      rgba(139, 92, 246, 0.15) 0%,
+      rgba(139, 92, 246, 0.1) 30%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 700px 350px at 40% 80%,
+      rgba(236, 72, 153, 0.12) 0%,
+      rgba(236, 72, 153, 0.08) 35%,
+      transparent 65%
+    ),
+    /* Additional cosmic dust clouds */
       radial-gradient(
         ellipse 500px 200px at 70% 60%,
         rgba(6, 182, 212, 0.08) 0%,
         rgba(6, 182, 212, 0.04) 40%,
         transparent 70%
       ),
-      radial-gradient(
-        ellipse 400px 600px at 10% 70%,
-        rgba(245, 158, 11, 0.06) 0%,
-        rgba(245, 158, 11, 0.03) 45%,
-        transparent 80%
-      );
-    animation: nebulaShift 30s ease-in-out infinite;
-    will-change: transform, opacity;
-  }
+    radial-gradient(
+      ellipse 400px 600px at 10% 70%,
+      rgba(245, 158, 11, 0.06) 0%,
+      rgba(245, 158, 11, 0.03) 45%,
+      transparent 80%
+    );
+  pointer-events: none;
+  z-index: 1;
+  animation: nebulaShift 30s ease-in-out infinite;
+  will-change: transform, opacity;
 }
 
 @keyframes nebulaShift {
@@ -197,30 +197,23 @@
   }
 }
 
-/* Animated background grid - Desktop only for performance */
+/* Animated background grid */
 .backgroundGrid {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: transparent;
+  background-size: 60px 60px;
+  background-image: linear-gradient(
+      to right,
+      rgba(59, 130, 246, 0.05) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(59, 130, 246, 0.05) 1px, transparent 1px);
+  animation: gridMove 20s linear infinite;
   z-index: 1;
-}
-
-/* Show animated grid only on desktop */
-@media (min-width: 1024px) {
-  .backgroundGrid {
-    background-size: 60px 60px;
-    background-image: linear-gradient(
-        to right,
-        rgba(59, 130, 246, 0.05) 1px,
-        transparent 1px
-      ),
-      linear-gradient(to bottom, rgba(59, 130, 246, 0.05) 1px, transparent 1px);
-    animation: gridMove 20s linear infinite;
-    will-change: transform;
-  }
+  will-change: transform;
 }
 
 @keyframes gridMove {
@@ -241,42 +234,14 @@
   bottom: 0;
   pointer-events: none;
   z-index: 2;
-}
-
-/* Disable complex animations on mobile and for users who prefer reduced motion */
-@media (max-width: 1023px), (prefers-reduced-motion: reduce) {
-  .particleContainer .particle {
-    animation: none !important;
-  }
-
-  .backgroundGrid {
-    animation: none !important;
-  }
-
-  .cosmicDust {
-    animation: none !important;
-  }
-
-  .enhancedBackground::before {
-    animation: none !important;
-  }
-}
-
-/* Enable will-change only on desktop for performance */
-@media (min-width: 1024px) {
-  .particle {
-    will-change: transform, opacity;
-  }
-
-  .particleContainer {
-    will-change: transform;
-  }
+  will-change: transform;
 }
 
 .particle {
   position: absolute;
   border-radius: 50%;
   opacity: 0.8;
+  will-change: transform, opacity;
 }
 
 /* Star-like particles with varying sizes and colors - Space Theme */
@@ -330,28 +295,6 @@
   height: 2.5px;
   background: #06b6d4;
   box-shadow: 0 0 5px #06b6d4, 0 0 10px #06b6d4, 0 0 15px rgba(6, 182, 212, 0.4);
-}
-
-/* Mobile-optimized star particles - Simplified for performance */
-.starTinyMobile {
-  width: 1px;
-  height: 1px;
-  background: #ffffff;
-  opacity: 0.8;
-}
-
-.starSmallMobile {
-  width: 2px;
-  height: 2px;
-  background: #3b82f6;
-  opacity: 0.7;
-}
-
-.starMediumMobile {
-  width: 3px;
-  height: 3px;
-  background: #8b5cf6;
-  opacity: 0.6;
 }
 
 .particle1 {
@@ -847,8 +790,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 1rem 0 0.5rem 0;
-  padding: 0;
+  margin-bottom: 0.25rem; /* Minimal margin */
   width: 100%;
   z-index: 10;
 }
@@ -1179,9 +1121,8 @@
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-top: 1rem;
-  margin-bottom: 2rem;
-  padding: 0 1rem;
+  margin-top: 0.25rem; /* Minimal spacing from header */
+  padding-bottom: 0; /* Remove bottom padding */
 }
 
 .cardsContainer {
@@ -1726,7 +1667,7 @@
   }
 }
 
-/* Cosmic dust effect for background - Mobile optimized */
+/* Cosmic dust effect for background */
 .cosmicDust {
   position: absolute;
   top: 0;
@@ -1736,39 +1677,32 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: transparent;
+  background-image: radial-gradient(
+      circle at 25% 25%,
+      rgba(255, 255, 255, 0.02) 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      circle at 75% 75%,
+      rgba(59, 130, 246, 0.02) 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      circle at 50% 10%,
+      rgba(139, 92, 246, 0.02) 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      circle at 10% 60%,
+      rgba(236, 72, 153, 0.02) 1px,
+      transparent 1px
+    );
+  background-size: 40px 40px, 35px 35px, 45px 45px, 38px 38px;
+  background-position: 0 0, 20px 20px, 30px 5px, 5px 30px;
+  animation: dustFloat 40s linear infinite;
   pointer-events: none;
   z-index: 1;
-}
-
-/* Show cosmic dust only on desktop for performance */
-@media (min-width: 1024px) {
-  .cosmicDust {
-    background-image: radial-gradient(
-        circle at 25% 25%,
-        rgba(255, 255, 255, 0.02) 1px,
-        transparent 1px
-      ),
-      radial-gradient(
-        circle at 75% 75%,
-        rgba(59, 130, 246, 0.02) 1px,
-        transparent 1px
-      ),
-      radial-gradient(
-        circle at 50% 10%,
-        rgba(139, 92, 246, 0.02) 1px,
-        transparent 1px
-      ),
-      radial-gradient(
-        circle at 10% 60%,
-        rgba(236, 72, 153, 0.02) 1px,
-        transparent 1px
-      );
-    background-size: 40px 40px, 35px 35px, 45px 45px, 38px 38px;
-    background-position: 0 0, 20px 20px, 30px 5px, 5px 30px;
-    animation: dustFloat 40s linear infinite;
-    will-change: transform, opacity;
-  }
+  will-change: transform, opacity;
 }
 
 @keyframes dustFloat {

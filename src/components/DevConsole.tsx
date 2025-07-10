@@ -492,7 +492,7 @@ Location: Beusichem, Netherlands
 Role: Game Developer
 Focus: Tools and Systems in Game Development
 
-Portfolio: https://beerdevreeze.com
+Portfolio: https://beer-de-vreeze.vercel.app
 Email: beer@vreeze.com
 GitHub: https://github.com/Beer-de-Vreeze
 LinkedIn: https://linkedin.com/in/beer-de-vreeze-59040919a/

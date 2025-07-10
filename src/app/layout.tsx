@@ -45,15 +45,10 @@ export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
-}) {  
-  return (
+}) {  return (
     <html lang="en">
       <head>
-        {/* Performance optimizations for mobile */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <meta name="theme-color" content="#000000" />
-        <meta name="color-scheme" content="dark" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         {/* 
@@ -62,38 +57,6 @@ export default function RootLayout({
           (Use arrow keys and B, A keys on your keyboard)
           What could it unlock? 🤔
         */}
-        {/* Reduce mobile layout shifts */}
-        <style dangerouslySetInnerHTML={{
-          __html: `
-            /* Critical CSS for mobile performance - fix black box issues */
-            * { box-sizing: border-box; }
-            html { 
-              overflow-x: hidden; 
-              margin: 0;
-              padding: 0;
-            }
-            body { 
-              margin: 0 !important; 
-              padding: 0 !important; 
-              background: #000000; 
-              color: #ffffff; 
-              overflow-x: hidden;
-              -webkit-overflow-scrolling: touch;
-              text-rendering: optimizeSpeed;
-              min-height: 100vh;
-              min-height: -webkit-fill-available;
-            }
-            #__next {
-              margin: 0;
-              padding: 0;
-              min-height: 100vh;
-            }
-            @media (max-width: 1023px) {
-              * { will-change: auto !important; }
-              *[class*="animate-"] { animation: none !important; }
-            }
-          `
-        }} />
       </head>
       <body className="bg-black text-white custom-scrollbar min-h-screen">
         <LoadingProvider>

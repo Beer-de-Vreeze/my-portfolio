@@ -45,9 +45,9 @@ export default function AboutCard({ className, disabled = false }: AboutCardProp
         {/* Animated background gradient */}
         <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-pink-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
         
-        {/* Floating circles decoration - Desktop only */}
-        <div className="absolute top-3 right-3 w-2 h-2 bg-blue-400 rounded-full opacity-60 hidden lg:block lg:animate-pulse"></div>
-        <div className="absolute bottom-6 right-6 w-1 h-1 bg-purple-400 rounded-full opacity-40 hidden lg:block lg:animate-pulse" style={{animationDelay: '1s'}}></div>
+        {/* Floating circles decoration */}
+        <div className="absolute top-3 right-3 w-2 h-2 bg-blue-400 rounded-full opacity-60 animate-pulse"></div>
+        <div className="absolute bottom-6 right-6 w-1 h-1 bg-purple-400 rounded-full opacity-40 animate-pulse" style={{animationDelay: '1s'}}></div>
         <div className="absolute top-6 left-6 w-1.5 h-1.5 bg-pink-400 rounded-full opacity-50 animate-pulse" style={{animationDelay: '2s'}}></div>
 
         <UserIcon 

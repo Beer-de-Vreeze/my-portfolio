@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import AboutCard from "../components/AboutCard";
 import ProjectCard from "../components/ProjectCardMenu";
 import ContactCard from "@/components/ContactCardMenu";
@@ -9,44 +9,11 @@ import styles from "@/styles/page.module.css";
 export default function Home() {
   const { isDesktop } = useResponsiveSize();
   const [isMounted, setIsMounted] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   // Handle hydration
   useEffect(() => {
     setIsMounted(true);
-    
-    // Check for reduced motion preference for better performance
-    if (typeof window !== 'undefined') {
-      const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-      setReducedMotion(mediaQuery.matches);
-      
-      const handleChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
-      mediaQuery.addEventListener('change', handleChange);
-      
-      return () => mediaQuery.removeEventListener('change', handleChange);
-    }
   }, []);
-
-  // Intersection Observer for lazy loading animations
-  useEffect(() => {
-    if (!isMounted || !containerRef.current) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect(); // Stop observing once visible
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    observer.observe(containerRef.current);
-
-    return () => observer.disconnect();
-  }, [isMounted]);
 
   // One-time overflow control based on screen size - only runs once after mount
   useEffect(() => {
@@ -84,26 +51,22 @@ export default function Home() {
 
   // Only render UI if mounted (avoids hydration mismatch)
   if (!isMounted) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-white">Loading...</div>
-      </div>
-    );
+    return null; // Return null on first render to avoid hydration mismatch
   }
 
   return (
-    <main ref={containerRef} className={`${styles.container} ${isDesktop && !reducedMotion && isVisible ? styles.enhancedBackground : ''}`}>
-      {/* Animated background grid - only on desktop and when visible */}
-      {isDesktop && !reducedMotion && isVisible && <div className={styles.backgroundGrid}></div>}
+    <main className={`${styles.container} ${styles.enhancedBackground}`}>
+      {/* Animated background grid */}
+      <div className={styles.backgroundGrid}></div>
       
-      {/* Cosmic dust layer - only on desktop and when visible */}
-      {isDesktop && !reducedMotion && isVisible && <div className={styles.cosmicDust}></div>}
+      {/* Cosmic dust layer */}
+      <div className={styles.cosmicDust}></div>
       
-      {/* Optimized Space Starfield - Responsive particle count */}
+      {/* Enhanced Space Starfield - 50 stars */}
       <div className={styles.particleContainer}>
-        {Array.from({ length: isDesktop ? 50 : 15 }, (_, i) => {
+        {Array.from({ length: 50 }, (_, i) => {
           // Create a more natural distribution with more tiny/small stars
-          const weightedTypes = isDesktop ? [
+          const weightedTypes = [
             'starTiny', 'starTiny', 'starTiny', 'starTiny', 'starTiny',
             'starWhite', 'starWhite', 'starWhite',
             'starSmall', 'starSmall', 'starSmall',
@@ -111,23 +74,18 @@ export default function Home() {
             'starMedium', 'starMedium',
             'starLarge',
             'starXLarge'
-          ] : [
-            // Mobile: simpler, fewer types for better performance
-            'starTinyMobile', 'starTinyMobile', 'starTinyMobile',
-            'starSmallMobile', 'starSmallMobile',
-            'starMediumMobile'
           ];
           const starType = weightedTypes[i % weightedTypes.length];
           return (
             <div 
               key={i} 
-              className={`${styles.particle} ${styles[starType]} ${styles[`particle${(i % 25) + 1}`]}`}
+              className={`${styles.particle} ${styles[starType]} ${styles[`particle${i + 1}`]}`}
             ></div>
           );
         })}
       </div>
 
-      <div className={`${styles.headerContainer} ${isDesktop ? styles.headerContainerDesktop : styles.headerContainerMobile} max-w-4xl mx-auto px-4`}>
+      <div className={`${styles.headerContainer} ${isDesktop ? styles.headerContainerDesktop : styles.headerContainerMobile} max-w-4xl mx-auto`}>
         <div className={styles.titleWrapper}>
           <h1 className={`${styles.name} ${isDesktop ? styles.nameDesktop : styles.nameMobile} ${styles.animatedTitle}`}>
             <span className={styles.titleCharacter}>B</span>
@@ -162,7 +120,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className={`${styles.cardsSection} max-w-5xl mx-auto w-full px-4`}>
+      <div className={`${styles.cardsSection} max-w-5xl mx-auto w-full`}>
         <div className={`${styles.cardsContainer} ${isDesktop ? styles.cardsContainerDesktop : styles.cardsContainerMobile}`}>
           {cards.map((card, index) => (
             <div 

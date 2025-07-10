@@ -35,12 +35,12 @@ export default function ProjectsCard() {
               </>
             )}
             
-            {/* Decorative elements for front card - Desktop only */}
+            {/* Decorative elements for front card */}
             {index === 0 && (
               <>
-                <div className="absolute top-3 right-3 w-2 h-2 bg-purple-400 rounded-full opacity-60 hidden lg:block lg:animate-pulse"></div>
-                <div className="absolute bottom-6 right-6 w-1 h-1 bg-blue-400 rounded-full opacity-40 hidden lg:block lg:animate-pulse" style={{animationDelay: '1.5s'}}></div>
-                <div className="absolute top-6 left-6 w-1.5 h-1.5 bg-pink-400 rounded-full opacity-50 hidden lg:block lg:animate-pulse" style={{animationDelay: '0.5s'}}></div>
+                <div className="absolute top-3 right-3 w-2 h-2 bg-purple-400 rounded-full opacity-60 animate-pulse"></div>
+                <div className="absolute bottom-6 right-6 w-1 h-1 bg-blue-400 rounded-full opacity-40 animate-pulse" style={{animationDelay: '1.5s'}}></div>
+                <div className="absolute top-6 left-6 w-1.5 h-1.5 bg-pink-400 rounded-full opacity-50 animate-pulse" style={{animationDelay: '0.5s'}}></div>
               </>
             )}
 

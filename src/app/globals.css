@@ -7,42 +7,6 @@
   --background-rgb: 0, 0, 0;
 }
 
-/* Performance optimizations for mobile */
-* {
-  box-sizing: border-box;
-}
-
-/* Disable animations for users who prefer reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* Mobile performance optimizations */
-@media (max-width: 1023px) {
-  * {
-    /* Disable expensive CSS features on mobile */
-    will-change: auto !important;
-    transform-style: flat;
-  }
-
-  /* Simplify box-shadows on mobile */
-  *[class*="shadow"] {
-    box-shadow: none !important;
-  }
-
-  /* Disable complex animations on mobile */
-  *[class*="animate-"] {
-    animation: none !important;
-  }
-}
-
 /* Standardized scrolling behavior for all devices */
 html {
   height: 100%;
@@ -65,11 +29,6 @@ body {
   background-attachment: scroll;
   margin: 0;
   padding: 0;
-  /* Font optimization for better performance */
-  font-display: swap;
-  text-rendering: optimizeSpeed;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Mobile-specific body adjustments */
