@@ -2238,3 +2238,64 @@
     margin-top: 2rem; /* Reduced maximum space for largest underlines */
   }
 }
+
+/* Reduced motion styles */
+.reducedMotion .particle {
+  animation: none !important;
+  opacity: 0.2 !important;
+}
+
+.staticGradient {
+  animation: none !important;
+  background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Mobile performance optimizations */
+@media (max-width: 768px) {
+  .backgroundParticles {
+    contain: strict;
+    content-visibility: auto;
+  }
+
+  .particle {
+    will-change: auto; /* Disable will-change on mobile */
+    animation-duration: 4s; /* Slower animations for better performance */
+  }
+
+  /* Reduce animation complexity on mobile */
+  .particle:nth-child(n + 21) {
+    display: none; /* Hide excess particles on mobile */
+  }
+
+  .cardWrapper {
+    will-change: auto;
+    contain: layout style paint;
+  }
+
+  /* Simplify hover effects on mobile */
+  .cardHover {
+    transition-duration: 0.2s;
+  }
+
+  .cardHover:hover {
+    transform: translateY(-2px); /* Simpler mobile hover */
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .particle:nth-child(n + 31) {
+    display: none; /* Limit particles on tablets */
+  }
+}
+
+/* GPU acceleration for supported devices */
+@supports (transform: translateZ(0)) {
+  .gpu-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+}

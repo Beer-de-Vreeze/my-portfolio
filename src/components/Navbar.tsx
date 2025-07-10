@@ -4,17 +4,37 @@ import { useState, useEffect, useCallback, memo } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X, User, Folder, Mail } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const pathname = usePathname();
+  
+  // Check for reduced motion preference
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+    
+    const handleChange = () => setPrefersReducedMotion(mediaQuery.matches);
+    mediaQuery.addEventListener('change', handleChange);
+    
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
   
   // Handle scroll effect
   useEffect(() => {
+    let ticking = false;
+    
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 10);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
     
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -132,8 +152,8 @@ const Navbar = () => {
 
         {/* Mobile Menu Button */}
         <motion.button 
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={!prefersReducedMotion ? { scale: 1.05 } : undefined}
+          whileTap={!prefersReducedMotion ? { scale: 0.95 } : undefined}
           className="md:hidden relative text-white p-2 rounded-lg bg-gradient-to-r from-gray-800/50 to-gray-700/50 border border-gray-600/30 backdrop-blur-sm hover:from-gray-700/60 hover:to-gray-600/60 focus:outline-none focus:ring-2 focus:ring-blue-400/50 transition-all duration-300" 
           onClick={handleToggle}
           aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
@@ -145,10 +165,10 @@ const Navbar = () => {
               className="absolute inset-0 flex items-center justify-center"
               animate={{ 
                 opacity: isOpen ? 0 : 1,
-                rotate: isOpen ? 180 : 0,
-                scale: isOpen ? 0.8 : 1
+                rotate: !prefersReducedMotion ? (isOpen ? 180 : 0) : 0,
+                scale: !prefersReducedMotion ? (isOpen ? 0.8 : 1) : 1
               }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.3 }}
             >
               <Menu size={24} />
             </motion.span>
@@ -156,10 +176,10 @@ const Navbar = () => {
               className="absolute inset-0 flex items-center justify-center"
               animate={{ 
                 opacity: isOpen ? 1 : 0,
-                rotate: isOpen ? 0 : -180,
-                scale: isOpen ? 1 : 0.8
+                rotate: !prefersReducedMotion ? (isOpen ? 0 : -180) : 0,
+                scale: !prefersReducedMotion ? (isOpen ? 1 : 0.8) : 1
               }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.3 }}
             >
               <X size={24} />
             </motion.span>
@@ -172,10 +192,10 @@ const Navbar = () => {
         {isOpen && (
           <motion.div 
             id="mobile-menu"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.4, ease: "easeInOut" }}
+            initial={!prefersReducedMotion ? { height: 0, opacity: 0 } : { opacity: 1 }}
+            animate={!prefersReducedMotion ? { height: 'auto', opacity: 1 } : { opacity: 1 }}
+            exit={!prefersReducedMotion ? { height: 0, opacity: 0 } : { opacity: 0 }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.4, ease: "easeInOut" }}
             className="md:hidden bg-black/98 backdrop-blur-xl border-t border-gray-800/50 overflow-hidden"
             aria-hidden={!isOpen}
           >

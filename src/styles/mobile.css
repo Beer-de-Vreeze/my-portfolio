@@ -1,0 +1,70 @@
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  /* Disable expensive animations on mobile */
+  .animate-spin,
+  .animate-pulse,
+  .animate-ping {
+    animation-duration: 2s;
+    animation-timing-function: ease-out;
+  }
+
+  /* Reduce backdrop blur for better performance */
+  .backdrop-blur-xl {
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  .backdrop-blur-lg {
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+  }
+
+  .backdrop-blur-md {
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+
+  /* Optimize gradients for mobile */
+  .gradient-text {
+    background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    /* Reduce animation complexity */
+    animation-duration: 4s;
+  }
+
+  /* Reduce shadow complexity */
+  .shadow-lg {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .shadow-xl {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Optimize transforms */
+  .transform {
+    will-change: auto;
+  }
+
+  /* Disable GPU acceleration on problematic mobile devices */
+  @supports not (transform: translateZ(0)) {
+    .gpu-accelerated {
+      transform: none;
+      backface-visibility: visible;
+    }
+  }
+}
+
+/* Reduce animation complexity on lower-end devices */
+@media (max-width: 768px) and (max-resolution: 1.5dppx) {
+  .particle {
+    animation-duration: 6s;
+    opacity: 0.3;
+  }
+
+  .particle:nth-child(n + 16) {
+    display: none;
+  }
+}

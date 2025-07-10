@@ -14,6 +14,10 @@ html {
   scroll-behavior: smooth;
   overflow-x: hidden;
   overflow-y: auto;
+  /* Performance optimizations */
+  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
@@ -29,6 +33,8 @@ body {
   background-attachment: scroll;
   margin: 0;
   padding: 0;
+  /* Performance optimizations */
+  font-display: swap;
 }
 
 /* Mobile-specific body adjustments */
@@ -1240,4 +1246,72 @@ body {
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
   }
+}
+
+/* Performance optimizations for mobile */
+@media (max-width: 768px) {
+  /* Reduce GPU usage on mobile */
+  .will-change-transform {
+    will-change: auto;
+  }
+
+  /* Simplify animations on mobile */
+  .animate-pulse,
+  .animate-ping,
+  .animate-spin {
+    animation-duration: 2s; /* Slower animations to save battery */
+  }
+
+  /* Reduce backdrop blur on mobile for better performance */
+  .backdrop-blur-xl {
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  .backdrop-blur-sm {
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  /* Disable all animations for users who prefer reduced motion */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Static gradient fallback */
+  .gradient-text {
+    background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: none !important;
+  }
+
+  /* Remove particle animations */
+  .particle {
+    opacity: 0.3 !important;
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/* Critical rendering optimizations */
+.performance-optimized {
+  contain: layout style paint;
+  content-visibility: auto;
+}
+
+/* Reduce repaints and reflows */
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
 }

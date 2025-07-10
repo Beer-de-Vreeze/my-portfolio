@@ -1,39 +1,28 @@
 // Service Worker for offline capability and caching
-const STATIC_CACHE = "static-v1";
-const DYNAMIC_CACHE = "dynamic-v1";
-const IMAGE_CACHE = "images-v1";
+const STATIC_CACHE = "static-v2";
+const DYNAMIC_CACHE = "dynamic-v2";
+const IMAGE_CACHE = "images-v2";
 
-// Assets to cache on install
+// Critical assets to cache on install - reduced for performance
 const STATIC_ASSETS = [
   "/",
-  "/about",
-  "/projects",
-  "/contact",
   "/favicon/favicon.ico",
   "/favicon/apple-touch-icon.png",
-  "/favicon/android-chrome-192x192.png",
-  "/favicon/android-chrome-512x512.png",
-  "/_next/static/css/",
-  "/_next/static/js/",
+  "/images/Beer.webp",
 ];
 
-// Install event - cache static assets
+// Install event - cache critical static assets only
 self.addEventListener("install", (event) => {
   console.log("[SW] Installing service worker...");
 
   event.waitUntil(
-    Promise.all([
-      // Cache static assets
-      caches.open(STATIC_CACHE).then((cache) => {
-        console.log("[SW] Caching static assets");
-        return cache.addAll(
-          STATIC_ASSETS.filter((url) => typeof url === "string")
-        );
-      }),
-
-      // Skip waiting to activate immediately
-      self.skipWaiting(),
-    ])
+    caches
+      .open(STATIC_CACHE)
+      .then((cache) => {
+        console.log("[SW] Caching critical assets");
+        return cache.addAll(STATIC_ASSETS);
+      })
+      .then(() => self.skipWaiting())
   );
 });
 
