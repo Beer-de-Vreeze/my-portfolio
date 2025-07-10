@@ -18,10 +18,10 @@ export default function ContactCard() {
         <div className="bubble-2 absolute top-8 right-8 w-2 h-2 bg-purple-400 rounded-full opacity-0 group-hover:opacity-60"></div>
         <div className="bubble-3 absolute top-12 right-12 w-1.5 h-1.5 bg-blue-400 rounded-full opacity-0 group-hover:opacity-40"></div>
         
-        {/* Decorative dots similar to other cards */}
-        <div className="absolute top-3 right-3 w-2 h-2 bg-pink-400 rounded-full opacity-60 animate-pulse"></div>
-        <div className="absolute bottom-6 right-6 w-1 h-1 bg-purple-400 rounded-full opacity-40 animate-pulse" style={{animationDelay: '1s'}}></div>
-        <div className="absolute top-6 left-6 w-1.5 h-1.5 bg-blue-400 rounded-full opacity-50 animate-pulse" style={{animationDelay: '2s'}}></div>
+        {/* Decorative dots similar to other cards - Desktop only */}
+        <div className="absolute top-3 right-3 w-2 h-2 bg-pink-400 rounded-full opacity-60 hidden lg:block lg:animate-pulse"></div>
+        <div className="absolute bottom-6 right-6 w-1 h-1 bg-purple-400 rounded-full opacity-40 hidden lg:block lg:animate-pulse" style={{animationDelay: '1s'}}></div>
+        <div className="absolute top-6 left-6 w-1.5 h-1.5 bg-blue-400 rounded-full opacity-50 hidden lg:block lg:animate-pulse" style={{animationDelay: '2s'}}></div>
         
         {/* Main envelope container */}
         <div className="envelope-container relative">

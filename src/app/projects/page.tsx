@@ -42,10 +42,22 @@ const ProjectsContent = () => (
 export default function Projects() {
   const { isMobile, isDesktop } = useResponsiveSize();
   const [isMounted, setIsMounted] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
   const { isModalOpen } = useModal(); // Get modal state from context
   
   useEffect(() => {
     setIsMounted(true);
+    
+    // Check for reduced motion preference for better performance
+    if (typeof window !== 'undefined') {
+      const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+      setReducedMotion(mediaQuery.matches);
+      
+      const handleChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+      mediaQuery.addEventListener('change', handleChange);
+      
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    }
   }, []);
 
   // One-time overflow control based on screen size -  only runs once after mount
@@ -77,18 +89,18 @@ export default function Projects() {
   }
 
   return (
-    <div className={`flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground}`}>
-      {/* Animated background grid */}
-      <div className={styles.backgroundGrid}></div>
+    <div className={`flex flex-col ${styles.containerScrollable} ${isDesktop && !reducedMotion ? styles.enhancedBackground : ''}`}>
+      {/* Animated background grid - only on desktop */}
+      {isDesktop && !reducedMotion && <div className={styles.backgroundGrid}></div>}
 
-      {/* Cosmic dust layer */}
-      <div className={styles.cosmicDust}></div>
+      {/* Cosmic dust layer - only on desktop */}
+      {isDesktop && !reducedMotion && <div className={styles.cosmicDust}></div>}
 
-      {/* Enhanced Space Starfield - 50 stars */}
+      {/* Optimized Space Starfield - Responsive particle count */}
       <div className={styles.particleContainer}>
-        {Array.from({ length: 50 }, (_, i) => {
+        {Array.from({ length: isDesktop ? 50 : 15 }, (_, i) => {
           // Create a more natural distribution with more tiny/small stars
-          const weightedTypes = [
+          const weightedTypes = isDesktop ? [
             "starTiny",
             "starTiny",
             "starTiny",
@@ -106,12 +118,17 @@ export default function Projects() {
             "starMedium",
             "starLarge",
             "starXLarge",
+          ] : [
+            // Mobile: simpler, fewer types for better performance
+            'starTinyMobile', 'starTinyMobile', 'starTinyMobile',
+            'starSmallMobile', 'starSmallMobile',
+            'starMediumMobile'
           ];
           const starType = weightedTypes[i % weightedTypes.length];
           return (
             <div
               key={i}
-              className={`${styles.particle} ${styles[starType]} ${styles[`particle${i + 1}`]}`}
+              className={`${styles.particle} ${styles[starType]} ${styles[`particle${(i % 25) + 1}`]}`}
             ></div>
           );
         })}
