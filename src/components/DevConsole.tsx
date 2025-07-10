@@ -19,6 +19,35 @@ import hljs from 'highlight.js';
 import bigInt from 'big-integer';
 import stringArgv from 'string-argv';
 
+// Mobile detection hook
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    // Check if it's mobile on mount
+    const checkMobile = () => {
+      if (typeof window === 'undefined') return false;
+      
+      const userAgent = navigator.userAgent || navigator.vendor || (window as Window & { opera?: string }).opera || '';
+      const mobileRegex = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i;
+      const isSmallScreen = window.innerWidth <= 768;
+      setIsMobile(mobileRegex.test(userAgent.toLowerCase()) || isSmallScreen);
+    };
+    
+    checkMobile();
+    
+    // Also listen for resize events
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    window.addEventListener('resize', handleResize, { passive: true });
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  
+  return isMobile;
+};
+
 interface Command {
   name: string;
   description: string;
@@ -32,7 +61,7 @@ interface ConsoleHistory {
   type: 'command' | 'error' | 'info';
 }
 
-const DevConsole: React.FC = () => {
+const DevConsoleDesktop: React.FC = () => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [history, setHistory] = useState<ConsoleHistory[]>([]);
@@ -3236,4 +3265,16 @@ Readability: ${maxDepth > 3 ? 'Complex structure' : 'Simple structure'}`;
   );
 };
 
-export default DevConsole;
+// Main component wrapper with mobile detection
+const DevConsoleWrapper: React.FC = () => {
+  const isMobile = useIsMobile();
+
+  // Don't render DevConsole on mobile to save resources
+  if (isMobile) {
+    return null;
+  }
+
+  return <DevConsoleDesktop />;
+};
+
+export default DevConsoleWrapper;
