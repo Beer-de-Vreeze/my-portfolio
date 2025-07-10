@@ -5,7 +5,7 @@ import { Metric } from 'web-vitals';
 
 interface PerformanceMetrics {
   cls: number | null;
-  fid: number | null;
+  inp: number | null;
   fcp: number | null;
   lcp: number | null;
   ttfb: number | null;
@@ -17,43 +17,59 @@ interface PerformanceDashboardProps {
 }
 
 export function PerformanceDashboard({ 
-  show = false, 
   position = 'bottom-right' 
-}: PerformanceDashboardProps) {
+}: Omit<PerformanceDashboardProps, 'show'>) {
   const [metrics, setMetrics] = useState<PerformanceMetrics>({
     cls: null,
-    fid: null,
+    inp: null,
     fcp: null,
     lcp: null,
     ttfb: null,
   });
 
-  const [isVisible, setIsVisible] = useState(show);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Only show in development or when explicitly enabled
-    if (process.env.NODE_ENV !== 'development' && !show) {
+    // Only work in development environment
+    if (process.env.NODE_ENV !== 'development') {
       return;
     }
 
-    const handleMetric = (metric: Metric) => {
-      setMetrics(prev => ({
-        ...prev,
-        [metric.name.toLowerCase()]: metric.value,
-      }));
+    // Always show dashboard in development
+    setIsVisible(true);
+
+    // Import and setup Web Vitals directly
+    const setupWebVitals = async () => {
+      const { onCLS, onINP, onFCP, onLCP, onTTFB } = await import('web-vitals');
+      
+      const handleMetric = (metric: Metric) => {
+        console.log('Web Vital received:', metric.name, metric.value);
+        setMetrics(prev => ({
+          ...prev,
+          [metric.name.toLowerCase()]: metric.value,
+        }));
+      };
+
+      // Setup all Web Vitals listeners with reportAllChanges for CLS and INP
+      onCLS(handleMetric, { reportAllChanges: true });
+      onINP(handleMetric, { reportAllChanges: true });
+      onFCP(handleMetric);
+      onLCP(handleMetric);
+      onTTFB(handleMetric);
+
+      console.log('Web Vitals listeners setup complete');
     };
 
-    // Listen for Web Vitals updates
-    const handleWebVitals = (event: CustomEvent<Metric>) => {
-      handleMetric(event.detail);
-    };
+    setupWebVitals();
 
-    // Add event listener for custom Web Vitals events
-    window.addEventListener('webvital', handleWebVitals as EventListener);
-
-    // Toggle visibility with Ctrl+Shift+P
+    // Toggle visibility with Numpad 9
     const handleKeyPress = (event: KeyboardEvent) => {
-      if (event.ctrlKey && event.shiftKey && event.key === 'P') {
+      // Try multiple ways to detect numpad 9
+      if (event.code === 'Numpad9' || 
+          (event.key === '9' && event.location === 3) || 
+          event.key === 'End') {
+        console.log('Performance dashboard toggle triggered!');
+        event.preventDefault();
         setIsVisible(prev => !prev);
       }
     };
@@ -61,10 +77,9 @@ export function PerformanceDashboard({
     window.addEventListener('keydown', handleKeyPress);
 
     return () => {
-      window.removeEventListener('webvital', handleWebVitals as EventListener);
       window.removeEventListener('keydown', handleKeyPress);
     };
-  }, [show]);
+  }, []);
 
   if (!isVisible) {
     return null;
@@ -76,8 +91,8 @@ export function PerformanceDashboard({
     switch (metric) {
       case 'cls':
         return value <= 0.1 ? 'text-green-500' : value <= 0.25 ? 'text-yellow-500' : 'text-red-500';
-      case 'fid':
-        return value <= 100 ? 'text-green-500' : value <= 300 ? 'text-yellow-500' : 'text-red-500';
+      case 'inp':
+        return value <= 200 ? 'text-green-500' : value <= 500 ? 'text-yellow-500' : 'text-red-500';
       case 'fcp':
         return value <= 1800 ? 'text-green-500' : value <= 3000 ? 'text-yellow-500' : 'text-red-500';
       case 'lcp':
@@ -95,7 +110,7 @@ export function PerformanceDashboard({
     switch (metric) {
       case 'cls':
         return value.toFixed(3);
-      case 'fid':
+      case 'inp':
       case 'fcp':
       case 'lcp':
       case 'ttfb':
@@ -106,10 +121,10 @@ export function PerformanceDashboard({
   };
 
   const positionClasses = {
-    'top-left': 'top-4 left-4',
-    'top-right': 'top-4 right-4',
-    'bottom-left': 'bottom-4 left-4',
-    'bottom-right': 'bottom-4 right-4',
+    'top-left': 'top-20 left-4',
+    'top-right': 'top-20 right-4',
+    'bottom-left': 'bottom-20 left-4',
+    'bottom-right': 'bottom-20 right-4',
   };
 
   return (
@@ -135,13 +150,15 @@ export function PerformanceDashboard({
           <span className={getScoreColor(metrics.cls, 'cls')}>
             {formatValue(metrics.cls, 'cls')}
           </span>
+          {metrics.cls === null && <span className="text-xs text-gray-500">(scroll/click)</span>}
         </div>
         
         <div className="flex justify-between">
-          <span className="text-gray-300">FID:</span>
-          <span className={getScoreColor(metrics.fid, 'fid')}>
-            {formatValue(metrics.fid, 'fid')}
+          <span className="text-gray-300">INP:</span>
+          <span className={getScoreColor(metrics.inp, 'inp')}>
+            {formatValue(metrics.inp, 'inp')}
           </span>
+          {metrics.inp === null && <span className="text-xs text-gray-500">(interact)</span>}
         </div>
         
         <div className="flex justify-between">
@@ -167,7 +184,7 @@ export function PerformanceDashboard({
       </div>
       
       <div className="mt-2 pt-2 border-t border-gray-600 text-gray-400 text-[10px]">
-        Ctrl+Shift+P to toggle
+        Numpad 9 to toggle
       </div>
     </div>
   );

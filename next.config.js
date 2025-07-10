@@ -8,9 +8,12 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 const withPWA = withPWAInit({
   dest: "public",
-  disable: process.env.NODE_ENV === "development",
+  disable:
+    process.env.NODE_ENV === "development" ||
+    process.env.NODE_ENV === "production",
   register: true,
   skipWaiting: true,
+  buildExcludes: [/middleware-manifest\.json$/],
   runtimeCaching: [
     {
       urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -21,8 +24,6 @@ const withPWA = withPWAInit({
           maxEntries: 10,
           maxAgeSeconds: 60 * 60 * 24 * 365, // 365 days
         },
-        cacheKeyWillBeUsed: async ({ request }) =>
-          `${request.url}?${request.headers.get("font-display")}`,
       },
     },
     {
@@ -52,7 +53,6 @@ const withPWA = withPWAInit({
 
 const nextConfig = {
   // Make sure there are no module format transformations causing issues
-  output: "standalone", // Optimized for Vercel deployment
   poweredByHeader: false, // Remove X-Powered-By header
   reactStrictMode: true, // Enable React strict mode for improved development experience
 
@@ -67,20 +67,12 @@ const nextConfig = {
     ], // Tree-shake these packages
   },
 
-  // Turbopack configuration (stable in Next.js 15)
-  turbopack: {
-    rules: {
-      "*.svg": ["@svgr/webpack"],
-    },
-  },
-
   // External packages for server components
   serverExternalPackages: ["highlight.js"], // Keep heavy packages external
 
   // Compiler optimizations
   compiler: {
     removeConsole: process.env.NODE_ENV === "production", // Remove console logs in production
-    styledComponents: true, // Enable styled-components support if needed
   },
 
   // Headers for performance

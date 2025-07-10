@@ -39,7 +39,6 @@
     "lucide-react": "^0.525.0",
     "mathjs": "^14.5.3",
     "next": "^15.3.5",
-    "next-pwa": "^5.6.0",
     "next-seo": "^6.8.0",
     "node-gyp": "^11.2.0",
     "nodemailer": "^6.10.1",
