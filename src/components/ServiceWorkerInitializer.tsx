@@ -1,43 +1,33 @@
 "use client";
 
 import { useEffect } from 'react';
-import { useServiceWorker } from '@/lib/serviceWorker';
 
 export const ServiceWorkerInitializer: React.FC = () => {
-  // Only register service worker in production
-  const isProduction = process.env.NODE_ENV === 'production';
-  
-  const {
-    isUpdateAvailable,
-    updateServiceWorker
-  } = useServiceWorker({
-    onSuccess: () => {
-      console.log('Service Worker registered successfully');
-    },
-    onUpdate: () => {
-      console.log('Service Worker update available');
-    },
-    onOffline: () => {
-      console.log('App is offline');
-    },
-    onOnline: () => {
-      console.log('App is back online');
-    }
-  });
-
   useEffect(() => {
-    // Skip service worker registration in development to avoid conflicts with Turbopack
-    if (!isProduction) {
-      console.log('Service Worker registration skipped in development mode');
-      return;
+    // The new PWA package handles service worker registration automatically
+    // We just need to handle update notifications
+    
+    if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+      navigator.serviceWorker.ready.then((registration) => {
+        console.log('Service Worker registered successfully');
+        
+        // Listen for updates
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing;
+          if (newWorker) {
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                console.log('New service worker available! Refresh to update.');
+                // You could show a toast notification here
+              }
+            });
+          }
+        });
+      }).catch((error) => {
+        console.log('Service Worker registration failed:', error);
+      });
     }
-
-    // Auto-update service worker when update is available
-    if (isUpdateAvailable) {
-      // You might want to show a notification to the user here
-      updateServiceWorker();
-    }
-  }, [isUpdateAvailable, updateServiceWorker, isProduction]);
+  }, []);
 
   // This component doesn't render anything visible
   return null;

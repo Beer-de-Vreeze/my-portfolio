@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 import bundleAnalyzer from "@next/bundle-analyzer";
-import withPWAInit from "next-pwa";
+import withPWAInit from "@ducanh2912/next-pwa";
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
@@ -8,47 +8,71 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 const withPWA = withPWAInit({
   dest: "public",
-  disable:
-    process.env.NODE_ENV === "development" ||
-    process.env.NODE_ENV === "production",
-  register: true,
-  skipWaiting: true,
-  buildExcludes: [/middleware-manifest\.json$/],
-  runtimeCaching: [
-    {
-      urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-      handler: "CacheFirst",
-      options: {
-        cacheName: "google-fonts-cache",
-        expiration: {
-          maxEntries: 10,
-          maxAgeSeconds: 60 * 60 * 24 * 365, // 365 days
+  cacheOnFrontEndNav: true,
+  aggressiveFrontEndNavCaching: true,
+  reloadOnOnline: true,
+  swcMinify: true,
+  disable: process.env.NODE_ENV === "development",
+  workboxOptions: {
+    disableDevLogs: true,
+    runtimeCaching: [
+      {
+        urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+        handler: "CacheFirst",
+        options: {
+          cacheName: "google-fonts-cache",
+          expiration: {
+            maxEntries: 10,
+            maxAgeSeconds: 60 * 60 * 24 * 365, // 365 days
+          },
         },
       },
-    },
-    {
-      urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-      handler: "CacheFirst",
-      options: {
-        cacheName: "gstatic-fonts-cache",
-        expiration: {
-          maxEntries: 10,
-          maxAgeSeconds: 60 * 60 * 24 * 365, // 365 days
+      {
+        urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+        handler: "CacheFirst",
+        options: {
+          cacheName: "gstatic-fonts-cache",
+          expiration: {
+            maxEntries: 10,
+            maxAgeSeconds: 60 * 60 * 24 * 365, // 365 days
+          },
         },
       },
-    },
-    {
-      urlPattern: /\/_next\/image\?url=.*/i,
-      handler: "StaleWhileRevalidate",
-      options: {
-        cacheName: "next-image",
-        expiration: {
-          maxEntries: 64,
-          maxAgeSeconds: 24 * 60 * 60, // 24 hours
+      {
+        urlPattern: /\/_next\/image\?url=.*/i,
+        handler: "StaleWhileRevalidate",
+        options: {
+          cacheName: "next-image",
+          expiration: {
+            maxEntries: 64,
+            maxAgeSeconds: 24 * 60 * 60, // 24 hours
+          },
         },
       },
-    },
-  ],
+      {
+        urlPattern: /\/_next\/static.*/i,
+        handler: "CacheFirst",
+        options: {
+          cacheName: "next-static",
+          expiration: {
+            maxEntries: 100,
+            maxAgeSeconds: 60 * 60 * 24 * 365, // 365 days
+          },
+        },
+      },
+      {
+        urlPattern: /\.(?:webp|jpg|jpeg|png|svg|gif|webm|mp4)$/i,
+        handler: "StaleWhileRevalidate",
+        options: {
+          cacheName: "images",
+          expiration: {
+            maxEntries: 200,
+            maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+          },
+        },
+      },
+    ],
+  },
 });
 
 const nextConfig = {

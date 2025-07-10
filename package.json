@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@azure/msal-node": "^3.6.3",
+    "@ducanh2912/next-pwa": "^10.2.9",
     "@heroicons/react": "^2.2.0",
     "@next/third-parties": "^15.3.5",
     "@shadcn/ui": "^0.0.4",
@@ -53,6 +54,7 @@
     "use-debounce": "^10.0.5",
     "uwuifier": "^4.2.2",
     "web-vitals": "^5.0.3",
+    "workbox-webpack-plugin": "^7.3.0",
     "yargs-parser": "^22.0.0",
     "zlib-sync": "^0.1.10"
   },
