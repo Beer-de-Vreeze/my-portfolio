@@ -6,6 +6,7 @@ import { SiReact, SiUnity, SiGithub, SiJavascript, SiTypescript, SiHtml5, SiCss3
 import { FaExpand, FaCompress, FaDownload, FaFileArchive, FaFileVideo, FaFileImage, FaFilePdf, FaWindows, FaCode, FaVolumeUp, FaRobot, FaPalette, FaGamepad, FaBrain, FaMusic, FaNetworkWired, FaImage, FaPaintBrush, FaDesktop, FaLayerGroup, FaCogs, FaMicrochip, FaComments, FaPlay, FaFont, FaMicrophone, FaGitAlt, FaTachometerAlt, FaMobile } from 'react-icons/fa';
 import hljs from 'highlight.js';
 import { useModal } from '@/context/ModalContext';
+import { usePerformance } from '@/hooks/usePerformance';
 
 // Extend HTMLVideoElement interface for fullscreen API compatibility
 interface ExtendedHTMLVideoElement extends HTMLVideoElement {
@@ -312,6 +313,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const searchParams = useSearchParams();
   const { setIsModalOpen: setGlobalModalOpen } = useModal();
   
+  // Performance optimization hooks
+  const { preloadResources, preloadResource, shouldReduceMotion, isLowMemory } = usePerformance();
+  
   // Custom hooks for enhanced state management
   const { error, handleError, clearError } = useErrorHandler();
   const { loading, setLoadingState } = useLoadingState();
@@ -393,17 +397,35 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     return null;
   }, []);
 
-  // Mobile device detection effect
+  // Mobile device detection effect with performance optimization
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(typeof window !== 'undefined' && window.innerWidth <= 768);
+      const isMobileDevice = typeof window !== 'undefined' && window.innerWidth <= 768;
+      setIsMobile(isMobileDevice);
+      
+      // Preload critical media on desktop, limit on mobile to save bandwidth
+      if (!isMobileDevice && isVisible && !isLowMemory()) {
+        const imagesToPreload = media
+          .filter(item => item.type === 'image')
+          .map(item => item.src)
+          .slice(0, 3); // Limit to first 3 images
+        
+        if (imagesToPreload.length > 0) {
+          preloadResources(imagesToPreload);
+        }
+        
+        // Preload cover image if available
+        if (coverImage) {
+          preloadResource(coverImage, 'high');
+        }
+      }
     };
     
     checkMobile();
     window.addEventListener('resize', checkMobile);
     
     return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  }, [isVisible, media, coverImage, isLowMemory, preloadResources, preloadResource]);
 
   /**
    * Effect for handling YouTube iframe API messages
@@ -862,9 +884,21 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   }, [coverImage, media, generatedThumbnails, extractYouTubeVideoId]);
 
   const shouldLoadMedia = useMemo(() => {
-    // Always load media on mobile devices or when modal is open
-    return !lazyLoad || isVisible || isModalOpen || isMobile;
-  }, [lazyLoad, isVisible, isModalOpen, isMobile]);
+    // Always load media when modal is open
+    if (isModalOpen) return true;
+    
+    // Skip lazy loading if disabled
+    if (!lazyLoad) return true;
+    
+    // Always load on mobile devices for better UX
+    if (isMobile) return true;
+    
+    // On low memory devices, only load when visible
+    if (isLowMemory() && !isVisible) return false;
+    
+    // Default: load when visible
+    return isVisible;
+  }, [lazyLoad, isVisible, isModalOpen, isMobile, isLowMemory]);
 
   /**
    * Effect to automatically generate thumbnails for videos without thumbnails
@@ -1072,11 +1106,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   /**
    * Handler for tech stack icon clicks
    */
-  const handleTechIconClick = (e: React.MouseEvent, tech: string) => {
+  const handleTechIconClick = useCallback((e: React.MouseEvent, tech: string) => {
     e.stopPropagation();
     console.log(`${tech} icon clicked`);
     openModal();
-  };
+  }, [openModal]);
 
   /**
    * Toggle code snippet collapse state
@@ -1930,6 +1964,36 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     };
   };
 
+  // Memoized tech stack rendering for performance optimization
+  const memoizedTechStack = useMemo(() => {
+    return techStack.slice(0, 4).map((tech, index) => (
+      <span 
+        key={index} 
+        className="px-2 py-1.5 bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-400/30 rounded-full flex items-center justify-center text-blue-200 text-xs shadow-md hover:border-blue-300/50 transition-all duration-300 whitespace-nowrap flex-shrink-0 cursor-pointer group-hover/card:from-blue-400/30 group-hover/card:to-purple-400/30 group-hover/card:text-blue-100"
+        onClick={(e) => {
+          e.stopPropagation();
+          handleTechIconClick(e, tech);
+        }}
+        aria-label={`Technology: ${tech}`}
+      >
+        {techIcons[tech] || null} 
+        <span className="ml-1">{tech}</span>
+      </span>
+    ));
+  }, [techStack, handleTechIconClick]);
+
+  // Memoized motion settings based on user preferences
+  const motionSettings = useMemo(() => {
+    const reduceMotion = shouldReduceMotion();
+    return {
+      shouldReduceMotion: reduceMotion,
+      transitionClass: reduceMotion ? 'transition-none' : 'transition-all duration-300',
+      hoverScaleClass: reduceMotion ? '' : 'hover:scale-105',
+      groupHoverScaleClass: reduceMotion ? '' : 'group-hover/card:scale-105',
+      animationDuration: reduceMotion ? 0 : 300,
+    };
+  }, [shouldReduceMotion]);
+
   return (
     <>      
       {/* Project Card with modern gradient design matching the new design system */}
@@ -1947,9 +2011,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         tabIndex={0}
         role="button"
         aria-label={`Open ${title} project details`}
-        className={`relative flex flex-col justify-between p-4 sm:p-6 bg-gradient-to-br from-gray-900/60 to-black/80 border border-blue-500/20 rounded-2xl shadow-xl transition-all duration-300 hover:scale-105 hover:border-blue-300/40 hover:shadow-blue-500/20 hover:shadow-xl overflow-hidden cursor-pointer w-full max-w-[400px] mx-auto h-56 sm:h-64 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-transparent group/card ${isClicked ? 'scale-95' : ''}`}
+        className={`relative flex flex-col justify-between p-4 sm:p-6 bg-gradient-to-br from-gray-900/60 to-black/80 border border-blue-500/20 rounded-2xl shadow-xl ${motionSettings.transitionClass} ${motionSettings.hoverScaleClass} hover:border-blue-300/40 hover:shadow-blue-500/20 hover:shadow-xl overflow-hidden cursor-pointer w-full max-w-[400px] mx-auto h-56 sm:h-64 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-transparent group/card ${isClicked ? 'scale-95' : ''}`}
       >        {/* Enhanced background pattern */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500"></div>
+        <div className={`absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover/card:opacity-100 ${motionSettings.shouldReduceMotion ? 'transition-none' : 'transition-opacity duration-500'}`}></div>
         {/* Background thumbnail image with enhanced overlay effects */}
         <div className="absolute top-0 left-0 w-full h-full z-0 opacity-50">
           {shouldLoadMedia ? (
@@ -1975,7 +2039,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 alt={title} 
                 fill 
                 sizes="(max-width: 768px) 100vw, 400px"
-                className="object-cover transition-all duration-300 group-hover/card:scale-105" 
+                className={`object-cover ${motionSettings.transitionClass} ${motionSettings.groupHoverScaleClass}`} 
                 priority={priority === 'high' || isMobile}
                 unoptimized={isMobile} // Disable optimization on mobile to avoid loading issues
                 placeholder="blur"
@@ -2016,20 +2080,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         
         {/* Tech stack tags - modern glass morphism design */}
         <div className="relative z-10 flex flex-wrap gap-1.5 mt-auto max-w-full overflow-hidden">
-          {techStack.slice(0, 4).map((tech, index) => (
-            <span 
-              key={index} 
-              className="px-2 py-1.5 bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-400/30 rounded-full flex items-center justify-center text-blue-200 text-xs shadow-md hover:border-blue-300/50 transition-all duration-300 whitespace-nowrap flex-shrink-0 cursor-pointer group-hover/card:from-blue-400/30 group-hover/card:to-purple-400/30 group-hover/card:text-blue-100"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleTechIconClick(e, tech);
-              }}
-              aria-label={`Technology: ${tech}`}
-            >
-              {techIcons[tech] || null} 
-              <span className="ml-1">{tech}</span>
-            </span>
-          ))}
+          {memoizedTechStack}
         </div>
       </div>
 

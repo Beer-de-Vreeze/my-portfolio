@@ -1,0 +1,172 @@
+/* Critical CSS for above-the-fold performance optimization */
+
+/* Preload critical fonts */
+@font-face {
+  font-family: "System UI";
+  src: local("system-ui"), local("-apple-system"), local("BlinkMacSystemFont");
+  font-display: swap;
+}
+
+/* Critical layout optimizations */
+.critical-path {
+  /* Ensure critical content is rendered immediately */
+  contain: layout style paint;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 500px;
+}
+
+/* Optimize first paint */
+.above-fold {
+  /* Critical rendering hints */
+  will-change: auto;
+  transform: translateZ(0);
+
+  /* Prevent layout shifts */
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Optimized loading states for critical content */
+.critical-loading {
+  /* Hardware accelerated loading */
+  backface-visibility: hidden;
+  perspective: 1000px;
+
+  /* Smooth transitions */
+  transition: opacity 0.2s ease-out;
+}
+
+/* Resource hints for critical images */
+.critical-image {
+  /* Prevent layout shift */
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+
+  /* Optimize image rendering */
+  image-rendering: auto;
+}
+
+/* Critical text rendering */
+.critical-text {
+  /* Optimize text rendering */
+  text-rendering: optimizeSpeed;
+  font-feature-settings: "kern" 1;
+  font-kerning: auto;
+
+  /* Prevent invisible text during font load */
+  font-display: swap;
+}
+
+/* Optimize critical animations */
+.critical-animation {
+  /* Use GPU for critical animations */
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
+
+  /* Reduce animation complexity on low-end devices */
+  animation-duration: 0.3s;
+  animation-timing-function: ease-out;
+}
+
+/* Performance-first button styles */
+.critical-button {
+  /* Optimize interaction performance */
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+
+  /* Hardware acceleration */
+  will-change: transform;
+  transition: transform 0.1s ease-out;
+}
+
+.critical-button:hover {
+  transform: translateY(-1px);
+}
+
+.critical-button:active {
+  transform: translateY(0);
+}
+
+/* Critical navigation optimization */
+.critical-nav {
+  /* Sticky positioning optimization */
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  /* Performance hints */
+  contain: layout style paint;
+  will-change: auto;
+}
+
+/* Optimize critical grid layouts */
+.critical-grid {
+  /* Modern grid with fallbacks */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+
+  /* Performance optimization */
+  contain: layout;
+  content-visibility: auto;
+}
+
+/* Critical media queries for performance */
+@media (max-width: 768px) {
+  .critical-path {
+    /* Reduce complexity on mobile */
+    contain-intrinsic-size: auto 300px;
+  }
+
+  .critical-animation {
+    /* Simpler animations on mobile */
+    animation-duration: 0.2s;
+  }
+}
+
+/* High DPI optimization */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .critical-image {
+    /* Optimize for retina displays */
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Dark mode critical styles */
+@media (prefers-color-scheme: dark) {
+  .critical-path {
+    /* Optimize dark mode rendering */
+    color-scheme: dark;
+  }
+}
+
+/* Reduced motion critical styles */
+@media (prefers-reduced-motion: reduce) {
+  .critical-animation {
+    /* Disable animations for accessibility */
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .critical-button {
+    transition: none !important;
+  }
+}
+
+/* Print optimization for critical content */
+@media print {
+  .critical-path {
+    /* Optimize for printing */
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .critical-animation {
+    /* Remove animations in print */
+    animation: none !important;
+    will-change: auto;
+  }
+}

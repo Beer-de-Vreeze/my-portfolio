@@ -1,0 +1,192 @@
+/* Critical CSS Optimizations for better performance */
+
+/* CSS containment for better paint performance */
+.contain-layout {
+  contain: layout;
+}
+
+.contain-style {
+  contain: style;
+}
+
+.contain-paint {
+  contain: paint;
+}
+
+.contain-size {
+  contain: size;
+}
+
+.contain-strict {
+  contain: strict;
+}
+
+/* Optimized animations */
+.gpu-accelerated {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.animate-optimized {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Optimized scrolling */
+.smooth-scroll {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scroll-snap-container {
+  scroll-snap-type: y mandatory;
+  overflow-y: scroll;
+}
+
+.scroll-snap-item {
+  scroll-snap-align: start;
+}
+
+/* Performance-optimized gradients */
+.gradient-optimized {
+  background-attachment: fixed;
+  will-change: background-position;
+}
+
+/* Optimized shadows */
+.shadow-optimized {
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+/* Optimized blur effects */
+.blur-optimized {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Critical loading states */
+.loading-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Optimized focus states */
+.focus-optimized:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.focus-visible-only:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.focus-visible-only:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Performance hints for browsers */
+.performance-hint {
+  content-visibility: auto;
+  contain-intrinsic-size: 200px;
+}
+
+/* Optimized transforms */
+.transform-gpu {
+  transform: translate3d(0, 0, 0);
+}
+
+/* Critical above-the-fold optimizations */
+.above-fold {
+  contain: layout style paint;
+  will-change: auto;
+}
+
+/* Optimized image containers */
+.image-container {
+  position: relative;
+  overflow: hidden;
+  contain: layout style paint;
+}
+
+.image-container img {
+  transition: transform 0.3s ease;
+  will-change: transform;
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .animate-optimized {
+    will-change: auto;
+  }
+}
+
+/* High contrast mode optimizations */
+@media (prefers-contrast: high) {
+  .shadow-optimized {
+    filter: none;
+    box-shadow: 0 0 0 2px currentColor;
+  }
+
+  .blur-optimized {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+}
+
+/* Print optimizations */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .gpu-accelerated {
+    will-change: auto;
+    transform: none;
+  }
+
+  .animate-optimized {
+    will-change: auto;
+    animation: none;
+  }
+}

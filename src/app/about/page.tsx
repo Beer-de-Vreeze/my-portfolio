@@ -1,18 +1,78 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import ProfileCard from "@/components/about/ProfileCard";
 import Stack from "@/components/about/Stack";
 import { useResponsiveSize } from "@/components/utils/useScrolling";
+import { usePerformanceMonitor } from "@/components/WebVitals";
+import { usePerformance } from "@/hooks/usePerformance";
+import { ResourcePreloader } from "@/lib/performanceUtils";
 import styles from "@/styles/page.module.css";
 
 export default function About() {
   const { isMobile, isDesktop } = useResponsiveSize();
+  const { isLowMemory } = usePerformance();
   const [isMounted, setIsMounted] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  
+  // Enable performance monitoring
+  usePerformanceMonitor();
+
+  // Preload critical resources
+  useEffect(() => {
+    const preloader = ResourcePreloader.getInstance();
+    
+    // Preload critical images for about page
+    preloader.preloadImages([
+      '/images/Beer.webp',
+      '/favicon/favicon-32x32.png'
+    ]);
+  }, []);
+
+  // Handle reduced motion preference
+  const handleReducedMotionChange = useCallback(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+  }, []);
 
   useEffect(() => {
     setIsMounted(true);
-  }, []);
+    
+    // Check for reduced motion preference
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+    
+    mediaQuery.addEventListener('change', handleReducedMotionChange);
+    
+    return () => mediaQuery.removeEventListener('change', handleReducedMotionChange);
+  }, [handleReducedMotionChange]);
+
+  // Optimize particle count based on performance and device type
+  const particleCount = useMemo(() => {
+    if (prefersReducedMotion || !isMounted) return 0;
+    
+    // Adaptive particle count based on device capability
+    if (typeof window !== 'undefined') {
+      const width = window.innerWidth;
+      
+      // Check for performance constraints
+      const hasPerformanceConstraints = isLowMemory() || prefersReducedMotion;
+      
+      // Mobile devices (phones) - very low particle count
+      if (width < 768) {
+        return hasPerformanceConstraints ? 8 : 15;
+      }
+      
+      // Tablet devices - moderate particle count
+      if (width < 1024) {
+        return hasPerformanceConstraints ? 12 : 25;
+      }
+      
+      // Desktop devices - full particle count
+      return hasPerformanceConstraints ? 20 : 50;
+    }
+    return 50;
+  }, [prefersReducedMotion, isMounted, isLowMemory]);
 
   // One-time setup to ensure scrolling is always enabled for about page
   useEffect(() => {
@@ -40,9 +100,9 @@ export default function About() {
       {/* Cosmic dust layer */}
       <div className={styles.cosmicDust}></div>
       
-      {/* Enhanced Space Starfield - 50 stars */}
-      <div className={styles.particleContainer}>
-        {Array.from({ length: 50 }, (_, i) => {
+      {/* Enhanced Space Starfield - Performance optimized */}
+      <div className={`${styles.particleContainer} ${prefersReducedMotion ? styles.reducedMotion : ''}`} aria-hidden="true">
+        {Array.from({ length: particleCount }, (_, i) => {
           // Create a more natural distribution with more tiny/small stars
           const weightedTypes = [
             'starTiny', 'starTiny', 'starTiny', 'starTiny', 'starTiny',
@@ -58,6 +118,10 @@ export default function About() {
             <div 
               key={i} 
               className={`${styles.particle} ${styles[starType]} ${styles[`particle${i + 1}`]}`}
+              style={{ 
+                willChange: prefersReducedMotion ? 'auto' : 'transform, opacity',
+                contain: 'layout style paint'
+              }}
             ></div>
           );
         })}

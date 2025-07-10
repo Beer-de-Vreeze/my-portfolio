@@ -1,12 +1,39 @@
 'use client'
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useMemo } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { usePerformance } from '@/hooks/usePerformance';
 import styles from "@/styles/page.module.css";
+import '@/styles/performance.css';
 
 function NotFoundContent() {
   const [isMounted, setIsMounted] = useState(false);
+  const { shouldReduceMotion, isLowMemory } = usePerformance();
   const searchParams = useSearchParams();
+
+  // Memoized particle count based on device capabilities and screen size
+  const particleCount = useMemo(() => {
+    if (typeof window === 'undefined') return 50;
+    
+    // Get screen width for device detection
+    const width = window.innerWidth;
+    
+    // Check for performance constraints
+    const hasPerformanceConstraints = isLowMemory() || shouldReduceMotion();
+    
+    // Mobile devices (phones) - very low particle count
+    if (width < 768) {
+      return hasPerformanceConstraints ? 8 : 15;
+    }
+    
+    // Tablet devices - moderate particle count
+    if (width < 1024) {
+      return hasPerformanceConstraints ? 12 : 25;
+    }
+    
+    // Desktop devices - full particle count
+    return hasPerformanceConstraints ? 20 : 50;
+  }, [isLowMemory, shouldReduceMotion]);
 
   // Handle hydration
   useEffect(() => {
@@ -82,9 +109,9 @@ function NotFoundContent() {
       {/* Cosmic dust layer */}
       <div className={styles.cosmicDust}></div>
       
-      {/* Enhanced Space Starfield */}
+      {/* Enhanced Space Starfield - Adaptive particle count */}
       <div className={styles.particleContainer}>
-        {Array.from({ length: 50 }, (_, i) => {
+        {Array.from({ length: particleCount }, (_, i) => {
           const weightedTypes = [
             'starTiny', 'starTiny', 'starTiny', 'starTiny', 'starTiny',
             'starWhite', 'starWhite', 'starWhite',

@@ -1,20 +1,58 @@
 'use client'
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect, lazy, Suspense, useMemo, useCallback } from 'react';
 import AboutCard from "../components/AboutCard";
 import ContactCard from "@/components/ContactCardMenu";
 import { PerformanceLoading } from "@/components/PerformanceLoading";
 import { useResponsiveSize } from "@/components/utils/useScrolling";
+import { usePerformanceMonitor } from "@/components/WebVitals";
+import { usePerformance } from "@/hooks/usePerformance";
+import { ResourcePreloader } from "@/lib/performanceUtils";
 import styles from "@/styles/page.module.css";
 
-// Lazy load heavy components
-const ProjectCard = lazy(() => import("../components/ProjectCardMenu"));
+// Lazy load heavy components with error boundaries
+const ProjectCard = lazy(() => 
+  import("../components/ProjectCardMenu").catch(err => {
+    console.warn('Failed to load ProjectCard:', err);
+    return { default: () => <div>Failed to load project card</div> };
+  })
+);
 
 export default function Home() {
   const { isDesktop } = useResponsiveSize();
+  const { shouldReduceMotion, isLowMemory } = usePerformance();
   const [isMounted, setIsMounted] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  
+  // Enable performance monitoring
+  usePerformanceMonitor();
 
-  // Handle hydration
+  // Preload critical resources
+  useEffect(() => {
+    const preloader = ResourcePreloader.getInstance();
+    
+    // Preload critical images
+    preloader.preloadImages([
+      '/images/Beer.webp',
+      '/favicon/favicon-32x32.png'
+    ]);
+  }, []);
+
+  // Optimize card creation with memoization
+  const cards = useMemo(() => [
+    <AboutCard key="about" />,
+    <Suspense key="project" fallback={<PerformanceLoading variant="card" size="lg" />}>
+      <ProjectCard />
+    </Suspense>,
+    <ContactCard key="contact" />,
+  ], []);
+
+  // Optimize event handlers with useCallback
+  const handleReducedMotionChange = useCallback(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+  }, []);
+
+  // Handle hydration and reduced motion
   useEffect(() => {
     setIsMounted(true);
     
@@ -22,11 +60,10 @@ export default function Home() {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     setPrefersReducedMotion(mediaQuery.matches);
     
-    const handleChange = () => setPrefersReducedMotion(mediaQuery.matches);
-    mediaQuery.addEventListener('change', handleChange);
+    mediaQuery.addEventListener('change', handleReducedMotionChange);
     
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
+    return () => mediaQuery.removeEventListener('change', handleReducedMotionChange);
+  }, [handleReducedMotionChange]);
 
   // One-time overflow control based on screen size - only runs once after mount
   useEffect(() => {
@@ -56,22 +93,33 @@ export default function Home() {
     }
   }, [isMounted]); // Only depends on isMounted, not window size changes
 
-  const cards = [
-    <AboutCard key="about" />,
-    <Suspense key="project" fallback={<PerformanceLoading variant="card" size="lg" />}>
-      <ProjectCard />
-    </Suspense>,
-    <ContactCard key="contact" />,
-  ];
+  // Calculate number of particles based on device performance and screen size
+  const getParticleCount = useCallback(() => {
+    if (prefersReducedMotion || shouldReduceMotion()) return 0;
+    if (typeof window === 'undefined') return 50;
+    
+    // Get screen width for device detection
+    const width = window.innerWidth;
+    
+    // Check for performance constraints
+    const hasPerformanceConstraints = isLowMemory() || prefersReducedMotion || shouldReduceMotion();
+    
+    // Mobile devices (phones) - very low particle count
+    if (width < 768) {
+      return hasPerformanceConstraints ? 8 : 15;
+    }
+    
+    // Tablet devices - moderate particle count
+    if (width < 1024) {
+      return hasPerformanceConstraints ? 12 : 25;
+    }
+    
+    // Desktop devices - full particle count
+    return hasPerformanceConstraints ? 20 : 50;
+  }, [prefersReducedMotion, shouldReduceMotion, isLowMemory]);
 
-  // Calculate number of particles based on device performance (enhanced for consistency)
-  const getParticleCount = () => {
-    if (prefersReducedMotion) return 0;
-    // Use 50 particles for all devices to match other pages' enhanced starfield
-    return 50;
-  };
-
-  const particleCount = getParticleCount();
+  // Use the optimized particle count
+  const currentParticleCount = getParticleCount();
 
   // Only render UI if mounted (avoids hydration mismatch)
   if (!isMounted) {
@@ -88,7 +136,7 @@ export default function Home() {
       
       {/* Enhanced Space Starfield - Performance-optimized background particles */}
       <div className={`${styles.particleContainer} ${prefersReducedMotion ? styles.reducedMotion : ''}`} aria-hidden="true">
-        {Array.from({ length: particleCount }, (_, i) => {
+        {Array.from({ length: currentParticleCount }, (_, i) => {
           // Create a more natural distribution with more tiny/small stars (same as other pages)
           const weightedTypes = [
             'starTiny', 'starTiny', 'starTiny', 'starTiny', 'starTiny',

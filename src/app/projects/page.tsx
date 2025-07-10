@@ -1,21 +1,24 @@
 "use client";
-import { useState, useEffect, Suspense } from "react";
-import { useModal } from "@/context/ModalContext"; // Add this import to access the modal context
+import React, { useState, useEffect, Suspense, useMemo, useCallback } from "react";
+import { useModal } from "@/context/ModalContext";
+import { usePerformanceMonitor } from "@/components/WebVitals";
+import { usePerformance } from "@/hooks/usePerformance";
+import { ResourcePreloader, MemoryManager } from "@/lib/performanceUtils";
 // Add highlight.js import and style
 import "highlight.js/styles/monokai.css";
 // Import custom highlighting styles
 import "@/styles/code-highlight.css";
 import styles from "@/styles/page.module.css";
 import { useResponsiveSize } from "@/components/utils/useScrolling";
-import AudioPreviever from "@/components/projects/AudioPreviever";
-import BearlyStealthy from "@/components/projects/Bearly Stealthy";
-import MLAgent from "@/components/projects/MLAgent";
-import SketchinSpells from "@/components/projects/Sketchin Spells";
-import Tetrtis from "@/components/projects/Tetrtis";
-import Website from "@/components/projects/Website";
-import LPCafe from "@/components/projects/LPCafe";
 
-// Loading component for the projects grid
+// Dynamic imports for better code splitting and performance
+const AudioPreviewer = React.lazy(() => import("@/components/projects/AudioPreviever"));
+const BearlyStealthy = React.lazy(() => import("@/components/projects/Bearly Stealthy"));
+const MLAgent = React.lazy(() => import("@/components/projects/MLAgent"));
+const SketchinSpells = React.lazy(() => import("@/components/projects/Sketchin Spells"));
+const Tetrtis = React.lazy(() => import("@/components/projects/Tetrtis"));
+const Website = React.lazy(() => import("@/components/projects/Website"));
+const LPCafe = React.lazy(() => import("@/components/projects/LPCafe"));
 const ProjectsLoading = () => (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl">
     {[...Array(7)].map((_, i) => (
@@ -26,29 +29,109 @@ const ProjectsLoading = () => (
   </div>
 );
 
-// Projects content component that uses useSearchParams
-const ProjectsContent = () => (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl animate-slideInUp">
-    <AudioPreviever />
-    <LPCafe />
-    <MLAgent />
-    <Website />
-    <BearlyStealthy />
-    <SketchinSpells />
-    <Tetrtis />
-  </div>
-);
+// Projects content component that uses lazy loading
+const ProjectsContent = () => {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl animate-slideInUp">
+      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse"></div>}>
+        <AudioPreviewer />
+      </Suspense>
+      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse"></div>}>
+        <LPCafe />
+      </Suspense>
+      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse"></div>}>
+        <MLAgent />
+      </Suspense>
+      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse"></div>}>
+        <Website />
+      </Suspense>
+      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse"></div>}>
+        <BearlyStealthy />
+      </Suspense>
+      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse"></div>}>
+        <SketchinSpells />
+      </Suspense>
+      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse"></div>}>
+        <Tetrtis />
+      </Suspense>
+    </div>
+  );
+};
 
 export default function Projects() {
   const { isMobile, isDesktop } = useResponsiveSize();
+  const { isLowMemory } = usePerformance();
   const [isMounted, setIsMounted] = useState(false);
-  const { isModalOpen } = useModal(); // Get modal state from context
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const { isModalOpen } = useModal();
   
+  // Enable performance monitoring
+  usePerformanceMonitor();
+
+  // Preload critical resources for projects page
   useEffect(() => {
-    setIsMounted(true);
+    const preloader = ResourcePreloader.getInstance();
+    
+    // Preload critical project images
+    preloader.preloadImages([
+      '/images/AudioPreviewer 1.webp',
+      '/images/GLU.webp',
+      '/images/CoverImageSound.webp'
+    ]);
+
+    // Monitor memory usage for projects page (image-heavy)
+    const interval = setInterval(() => {
+      MemoryManager.checkMemoryUsage();
+    }, 30000);
+
+    return () => clearInterval(interval);
   }, []);
 
-  // One-time overflow control based on screen size -  only runs once after mount
+  // Handle reduced motion preference
+  const handleReducedMotionChange = useCallback(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+  }, []);
+
+  useEffect(() => {
+    setIsMounted(true);
+    
+    // Check for reduced motion preference
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+    
+    mediaQuery.addEventListener('change', handleReducedMotionChange);
+    
+    return () => mediaQuery.removeEventListener('change', handleReducedMotionChange);
+  }, [handleReducedMotionChange]);
+
+  // Optimize particle count for projects page with mobile/tablet considerations
+  const particleCount = useMemo(() => {
+    if (prefersReducedMotion || !isMounted) return 0;
+    
+    if (typeof window !== 'undefined') {
+      const width = window.innerWidth;
+      
+      // Check for performance constraints
+      const hasPerformanceConstraints = isLowMemory() || prefersReducedMotion;
+      
+      // Mobile devices (phones) - very low particle count due to heavy project content
+      if (width < 768) {
+        return hasPerformanceConstraints ? 5 : 12;
+      }
+      
+      // Tablet devices - moderate particle count
+      if (width < 1024) {
+        return hasPerformanceConstraints ? 8 : 18;
+      }
+      
+      // Desktop devices - reduced particle count for better performance with heavy content
+      return hasPerformanceConstraints ? 15 : 35;
+    }
+    return 35;
+  }, [prefersReducedMotion, isMounted, isLowMemory]);
+
+  // One-time overflow control based on screen size - only runs once after mount
   useEffect(() => {
     if (isMounted) {
       const width = window.innerWidth;
@@ -84,9 +167,9 @@ export default function Projects() {
       {/* Cosmic dust layer */}
       <div className={styles.cosmicDust}></div>
 
-      {/* Enhanced Space Starfield - 50 stars */}
+      {/* Enhanced Space Starfield - Adaptive particle count */}
       <div className={styles.particleContainer}>
-        {Array.from({ length: 50 }, (_, i) => {
+        {Array.from({ length: particleCount }, (_, i) => {
           // Create a more natural distribution with more tiny/small stars
           const weightedTypes = [
             "starTiny",

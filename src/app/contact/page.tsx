@@ -1,14 +1,17 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import ContactForm from '@/components/ContactForm';
 import Notification from '@/components/Notification';
 import { motion } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaFileAlt } from 'react-icons/fa';
 import styles from '@/styles/page.module.css';
 import { useResponsiveSize } from '@/components/utils/useScrolling';
+import { usePerformance } from '@/hooks/usePerformance';
+import '@/styles/performance.css';
 
 export default function Contact() {
   const { isDesktop } = useResponsiveSize();
+  const { shouldReduceMotion, isLowMemory } = usePerformance();
   const [isMounted, setIsMounted] = useState(false);
   
   // Notification state moved to page level
@@ -18,19 +21,54 @@ export default function Contact() {
     isVisible: false,
   });
 
+  // Memoized particle count based on device capabilities and screen size
+  const particleCount = useMemo(() => {
+    if (typeof window === 'undefined') return 50;
+    
+    // Get screen width for device detection
+    const width = window.innerWidth;
+    
+    // Check for performance constraints
+    const hasPerformanceConstraints = isLowMemory() || shouldReduceMotion();
+    
+    // Mobile devices (phones) - very low particle count
+    if (width < 768) {
+      return hasPerformanceConstraints ? 8 : 15;
+    }
+    
+    // Tablet devices - moderate particle count
+    if (width < 1024) {
+      return hasPerformanceConstraints ? 12 : 25;
+    }
+    
+    // Desktop devices - full particle count
+    return hasPerformanceConstraints ? 20 : (isDesktop ? 50 : 35);
+  }, [isDesktop, isLowMemory, shouldReduceMotion]);
+
   // Handler to show notifications from the contact form
-  const showNotification = (message: string, type: 'success' | 'error') => {
+  const showNotification = useCallback((message: string, type: 'success' | 'error') => {
     setNotification({
       message,
       type,
       isVisible: true,
     });
-  };
+  }, []);
 
   // Handler to close notification
-  const handleCloseNotification = () => {
+  const handleCloseNotification = useCallback(() => {
     setNotification(prev => ({ ...prev, isVisible: false }));
-  };
+  }, []);
+
+  // Preload critical resources
+  useEffect(() => {
+    if (isMounted) {
+      // Preload CV file for better UX
+      const link = document.createElement('link');
+      link.rel = 'prefetch';
+      link.href = '/downloads/Beer%20de%20Vreeze%20CV.pdf';
+      document.head.appendChild(link);
+    }
+  }, [isMounted]);
 
   useEffect(() => {
     setIsMounted(true);
@@ -80,9 +118,9 @@ export default function Contact() {
       {/* Cosmic dust layer */}
       <div className={styles.cosmicDust}></div>
       
-      {/* Enhanced Space Starfield - 50 stars */}
+      {/* Enhanced Space Starfield - Adaptive particle count */}
       <div className={styles.particleContainer}>
-        {Array.from({ length: 50 }, (_, i) => {
+        {Array.from({ length: particleCount }, (_, i) => {
           // Create a more natural distribution with more tiny/small stars
           const weightedTypes = [
             'starTiny', 'starTiny', 'starTiny', 'starTiny', 'starTiny',

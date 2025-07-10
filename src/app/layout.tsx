@@ -1,10 +1,14 @@
 import "../app/globals.css"; 
 import "../styles/mobile.css";
+import "../styles/performance.css";
+import "../styles/critical.css";
 import LoadingBar from "@/components/loadingbar";
 import DevConsole from "@/components/DevConsole";
 import { LoadingProvider } from "@/context/LoadingContext";
 import { ModalProvider } from "@/context/ModalContext";
 import { ServiceWorkerInitializer } from "@/components/ServiceWorkerInitializer";
+import { PerformanceWrapper } from "@/components/PerformanceWrapper";
+import { PerformanceDashboard } from "@/components/PerformanceDashboard";
 import { Metadata, Viewport } from 'next';
 
 export const metadata: Metadata = {
@@ -70,16 +74,19 @@ export default function RootLayout({
         */}
       </head>
       <body className="bg-black text-white custom-scrollbar min-h-screen">
-        <LoadingProvider>
-          <ModalProvider>
-            <ServiceWorkerInitializer />
-            <LoadingBar />
-            <DevConsole />
-            <main>
-              {children}
-            </main>
-          </ModalProvider>
-        </LoadingProvider>
+        <PerformanceWrapper>
+          <LoadingProvider>
+            <ModalProvider>
+              <ServiceWorkerInitializer />
+              <LoadingBar />
+              <DevConsole />
+              <PerformanceDashboard />
+              <main>
+                {children}
+              </main>
+            </ModalProvider>
+          </LoadingProvider>
+        </PerformanceWrapper>
       </body>
     </html>
   );

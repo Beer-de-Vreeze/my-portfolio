@@ -1,4 +1,55 @@
 /** @type {import('next').NextConfig} */
+import bundleAnalyzer from "@next/bundle-analyzer";
+import withPWAInit from "next-pwa";
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+});
+
+const withPWA = withPWAInit({
+  dest: "public",
+  disable: process.env.NODE_ENV === "development",
+  register: true,
+  skipWaiting: true,
+  runtimeCaching: [
+    {
+      urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+      handler: "CacheFirst",
+      options: {
+        cacheName: "google-fonts-cache",
+        expiration: {
+          maxEntries: 10,
+          maxAgeSeconds: 60 * 60 * 24 * 365, // 365 days
+        },
+        cacheKeyWillBeUsed: async ({ request }) =>
+          `${request.url}?${request.headers.get("font-display")}`,
+      },
+    },
+    {
+      urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+      handler: "CacheFirst",
+      options: {
+        cacheName: "gstatic-fonts-cache",
+        expiration: {
+          maxEntries: 10,
+          maxAgeSeconds: 60 * 60 * 24 * 365, // 365 days
+        },
+      },
+    },
+    {
+      urlPattern: /\/_next\/image\?url=.*/i,
+      handler: "StaleWhileRevalidate",
+      options: {
+        cacheName: "next-image",
+        expiration: {
+          maxEntries: 64,
+          maxAgeSeconds: 24 * 60 * 60, // 24 hours
+        },
+      },
+    },
+  ],
+});
+
 const nextConfig = {
   // Make sure there are no module format transformations causing issues
   output: "standalone", // Optimized for Vercel deployment
@@ -8,12 +59,69 @@ const nextConfig = {
   // Performance optimizations
   experimental: {
     optimizeCss: true, // Enable CSS optimization
-    optimizePackageImports: ["framer-motion", "react-icons"], // Tree-shake these packages
+    optimizePackageImports: [
+      "framer-motion",
+      "react-icons",
+      "lucide-react",
+      "@heroicons/react",
+    ], // Tree-shake these packages
   },
+
+  // Turbopack configuration (stable in Next.js 15)
+  turbopack: {
+    rules: {
+      "*.svg": ["@svgr/webpack"],
+    },
+  },
+
+  // External packages for server components
+  serverExternalPackages: ["highlight.js"], // Keep heavy packages external
 
   // Compiler optimizations
   compiler: {
     removeConsole: process.env.NODE_ENV === "production", // Remove console logs in production
+    styledComponents: true, // Enable styled-components support if needed
+  },
+
+  // Headers for performance
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+          {
+            key: "X-Frame-Options",
+            value: "DENY",
+          },
+          {
+            key: "X-XSS-Protection",
+            value: "1; mode=block",
+          },
+        ],
+      },
+      {
+        source: "/fonts/(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/_next/static/(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
   },
 
   // Image optimization
@@ -55,4 +163,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(withPWA(nextConfig));
