@@ -14,16 +14,58 @@ A modern, responsive portfolio website showcasing my game development projects a
 
 ## Tech Stack
 
+### Core Framework & Language
+
 - **Framework**: [Next.js 15](https://nextjs.org/) with App Router & Turbopack
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **UI Components**: [Shadcn/UI](https://ui.shadcn.com/) & [Lucide React](https://lucide.dev/)
-- **Icons**: [React Icons](https://react-icons.github.io/react-icons/) & [Devicons](https://devicon.dev/)
+- **Runtime**: [React 18](https://react.dev/) with modern hooks and concurrent features
+
+### Styling & UI
+
+- **CSS Framework**: [Tailwind CSS](https://tailwindcss.com/)
+- **UI Components**: [Shadcn/UI](https://ui.shadcn.com/) & [Bootstrap 5](https://getbootstrap.com/)
+- **Icons**: [React Icons](https://react-icons.github.io/react-icons/), [Lucide React](https://lucide.dev/), [Heroicons](https://heroicons.com/), & [Devicons](https://devicon.dev/)
 - **Animations**: [Framer Motion](https://www.framer.com/motion/)
+
+### Development & Performance
+
 - **Code Highlighting**: [Highlight.js](https://highlightjs.org/)
-- **Email**: [Nodemailer](https://nodemailer.com/)
+- **Bundle Analysis**: [Webpack Bundle Analyzer](https://github.com/webpack-contrib/webpack-bundle-analyzer)
+- **Linting**: [ESLint](https://eslint.org/) with Next.js configuration
+- **Performance Monitoring**: [Web Vitals](https://web.dev/vitals/)
+- **SEO**: [Next SEO](https://github.com/garmeeh/next-seo)
+
+### Progressive Web App (PWA)
+
+- **PWA**: [@ducanh2912/next-pwa](https://github.com/DuCanhGH/next-pwa) with Workbox
+- **Service Worker**: Custom service worker implementation
+- **Offline Support**: Advanced caching strategies for fonts, images, and static assets
+
+### Backend & Authentication
+
+- **Email Service**: [Nodemailer](https://nodemailer.com/) with Microsoft Graph API
+- **Authentication**: [Azure MSAL Node](https://github.com/AzureAD/microsoft-authentication-library-for-js) for Microsoft OAuth
+- **API Routes**: Next.js API routes for server-side functionality
+
+### Utilities & Tools
+
+- **HTTP Client**: [Axios](https://axios-http.com/)
+- **Date Handling**: [date-fns](https://date-fns.org/)
+- **Search**: [Fuse.js](https://fusejs.io/) for fuzzy search functionality
+- **Color Manipulation**: [Chroma.js](https://gka.github.io/chroma.js/)
+- **Math Operations**: [Math.js](https://mathjs.org/)
+- **Text Processing**: Various utilities (Lorem Ipsum, HE encoding, Password generation)
 - **Progress Bar**: [NProgress](https://ricostacruz.com/nprogress/)
-- **Deployment**: [Vercel](https://vercel.com/)
+- **Routing**: [React Router DOM](https://reactrouter.com/)
+- **Hooks**: [React Use](https://github.com/streamich/react-use) & custom performance hooks
+- **Debouncing**: [use-debounce](https://github.com/xnimorz/use-debounce)
+
+### Deployment & Infrastructure
+
+- **Hosting**: [Vercel](https://vercel.com/) with optimized configuration
+- **CDN**: Global content delivery with caching strategies
+- **Security**: CSP headers, XSS protection, and frame options
+- **Analytics**: Built-in performance tracking and monitoring
 
 ## Project Structure
 
