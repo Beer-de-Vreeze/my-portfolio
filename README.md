@@ -63,9 +63,10 @@ A modern, responsive portfolio website showcasing my game development projects a
 ### Deployment & Infrastructure
 
 - **Hosting**: [Vercel](https://vercel.com/) with optimized configuration
+- **Analytics**: [Vercel Analytics](https://vercel.com/analytics) for user behavior tracking
+- **Performance Monitoring**: [Vercel Speed Insights](https://vercel.com/docs/speed-insights) for real-world performance metrics
 - **CDN**: Global content delivery with caching strategies
 - **Security**: CSP headers, XSS protection, and frame options
-- **Analytics**: Built-in performance tracking and monitoring
 
 ## Project Structure
 

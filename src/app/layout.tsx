@@ -9,6 +9,8 @@ import { ModalProvider } from "@/context/ModalContext";
 import { ServiceWorkerInitializer } from "@/components/ServiceWorkerInitializer";
 import { PerformanceWrapper } from "@/components/PerformanceWrapper";
 import { PerformanceDashboard } from "@/components/PerformanceDashboard";
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Metadata, Viewport } from 'next';
 
 export const metadata: Metadata = {
@@ -84,6 +86,8 @@ export default function RootLayout({
               <main>
                 {children}
               </main>
+              <Analytics />
+              <SpeedInsights />
             </ModalProvider>
           </LoadingProvider>
         </PerformanceWrapper>
