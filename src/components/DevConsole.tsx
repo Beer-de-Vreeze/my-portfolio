@@ -7,17 +7,22 @@ import Uwuifier from 'uwuifier';
 import Fuse from 'fuse.js';
 import { evaluate } from 'mathjs';
 import { format, differenceInDays, addDays, isToday, isTomorrow } from 'date-fns';
-// @ts-expect-error - convert-units doesn't have TypeScript declarations
 import convert from 'convert-units';
 import { LoremIpsum } from 'lorem-ipsum';
 import generatePassword from 'generate-password';
-// @ts-expect-error - he doesn't have TypeScript declarations
 import he from 'he';
-// @ts-expect-error - chroma-js doesn't have TypeScript declarations
 import chroma from 'chroma-js';
 import hljs from 'highlight.js';
 import bigInt from 'big-integer';
 import stringArgv from 'string-argv';
+import Pokedex from 'pokedex-promise-v2';
+import CryptoJS from 'crypto-js';
+import xml2js from 'xml2js';
+import yaml from 'js-yaml';
+import { format as sqlFormatter } from 'sql-formatter';
+import beautify from 'js-beautify';
+import { v1 as uuidv1, v4 as uuidv4, v5 as uuidv5 } from 'uuid';
+import QRCode from 'qrcode';
 
 // Mobile detection hook
 const useIsMobile = () => {
@@ -69,9 +74,22 @@ const DevConsoleDesktop: React.FC = () => {
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [konamiSequence, setKonamiSequence] = useState<string[]>([]);
-  const [pageLoadTime] = useState(Date.now());
+  const [pageLoadTime, setPageLoadTime] = useState<number | null>(null);
+  const [pendingTrivia, setPendingTrivia] = useState<{
+    question: string;
+    answers: string[];
+    correctAnswer: string;
+    correctIndex: number;
+    category: string;
+    difficulty: string;
+  } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const historyRef = useRef<HTMLDivElement>(null);
+
+  // Initialize pageLoadTime on client side only
+  useEffect(() => {
+    setPageLoadTime(Date.now());
+  }, []);
 
   // Initialize Lorem Ipsum generator
   const lorem = new LoremIpsum({
@@ -84,6 +102,9 @@ const DevConsoleDesktop: React.FC = () => {
       min: 4
     }
   });
+
+  // Initialize Pokedex API
+  const pokedex = new Pokedex();
 
   // Simple browser-compatible argument parser
   const parseArgs = (input: string) => {
@@ -146,6 +167,15 @@ const DevConsoleDesktop: React.FC = () => {
       timestamp: new Date(),
       type
     }]);
+    
+    // If output contains images, scroll after a delay to ensure images load
+    if (output.includes('<img')) {
+      setTimeout(() => {
+        if (historyRef.current) {
+          historyRef.current.scrollTop = historyRef.current.scrollHeight;
+        }
+      }, 100);
+    }
   }, []);
 
   // Check if console should reopen after reload
@@ -184,39 +214,55 @@ const DevConsoleDesktop: React.FC = () => {
             { name: 'time', desc: 'Show current time' },
             { name: 'date', desc: 'Show current date in various formats' },
             { name: 'weather', desc: 'Get real weather information for any city' },
-            { name: 'age', desc: 'Calculate age from a birth date (age DD/MM/YYYY)' }
+            { name: 'age', desc: 'Calculate age from a birth date (age DD/MM/YYYY)' },
+            { name: 'currency', desc: 'Real-time currency conversion and exchange rates' }
           ],
           'Developer Tools': [
             { name: 'storage', desc: 'Manage local storage (list, get, set, remove, clear)' },
-            { name: 'json-validate', desc: 'Validate and pretty-print JSON input' },
+            { name: 'ping', desc: 'Test connectivity and response time to websites' },
             { name: 'fetch', desc: 'Fetch and display data from API endpoints (GET only)' },
             { name: 'clipboard', desc: 'Read from or write to the clipboard' },
-            { name: 'search', desc: 'Fuzzy search through available commands' },
-            { name: 'parse', desc: 'Parse command-line arguments (demo command)' },
             { name: 'highlight', desc: 'Syntax highlight code with automatic language detection' },
-            { name: 'analyze', desc: 'Analyze text, numbers, colors, passwords, dates, or JSON' }
+            { name: 'analyze', desc: 'Analyze text, numbers, colors, or data' },
+            { name: 'hash', desc: 'Generate various hashes (MD5, SHA-1, SHA-256, SHA-512)' },
+            { name: 'regex', desc: 'Test regular expressions with live matching' },
+            { name: 'uuid', desc: 'Generate UUIDs (v1, v4, v5) and UUID utilities' },
+            { name: 'parse', desc: 'Parse command-line arguments (demo command)' },
+            { name: 'search', desc: 'Fuzzy search through available commands' }
           ],
           'Calculators & Converters': [
-            { name: 'calc', desc: 'Calculator (supports +, -, *, /, %, sqrt, pow)' },
+            { name: 'calc', desc: 'Calculator (supports +, -, *, /, %, sqrt, pow, trig functions)' },
             { name: 'math', desc: 'Advanced mathematical operations and calculations' },
             { name: 'encode', desc: 'Encode/decode text (base64, url, html)' },
-            { name: 'convert', desc: 'Convert between units (temperature, length, weight, volume, data, time)' },
-            { name: 'binary', desc: 'Convert between text and binary, and perform binary operations' },
-            { name: 'base', desc: 'Convert numbers between different bases (2-36)' }
+            { name: 'convert', desc: 'Convert between units (temperature, length, weight, volume)' },
+            { name: 'binary', desc: 'Convert between text and binary, perform binary operations' },
+            { name: 'base', desc: 'Convert numbers between different bases (2-36)' },
+            { name: 'timestamp', desc: 'Unix timestamp conversions and utilities' }
           ],
-          'Random Generators': [
+          'Random Generators & Text': [
             { name: 'random', desc: 'Generate random data (number, string, color, password)' },
             { name: 'lorem', desc: 'Generate placeholder text (lorem ipsum)' },
             { name: 'password', desc: 'Generate secure passwords with custom options' },
             { name: 'qrcode', desc: 'Generate a QR code URL for text' },
-            { name: 'colors', desc: 'Generate colors (rainbow, gradient, random, palette, harmonies, scales)' }
-          ],
-          'Entertainment': [
-            { name: 'joke', desc: 'Get a random joke (programming, general, dad, chuck, geek, random, or specific category)' },
-            { name: '8ball', desc: 'Ask the magic 8-ball a yes/no question' },
-            { name: 'rickroll', desc: 'Play a Rick Astley video' },
-            { name: 'trivia', desc: 'Get trivia questions from various categories' },
+            { name: 'colors', desc: 'Generate colors (random, palette, harmonies, scales)' },
             { name: 'uwu', desc: 'Convert text to UwU speak' }
+          ],
+          'Data & Formatting': [
+            { name: 'data', desc: 'Parse and convert between data formats (CSV, XML, YAML, SQL, JSON)' },
+            { name: 'beautify', desc: 'Format and beautify CSS, JavaScript, and HTML code' },
+            { name: 'minify', desc: 'Minify CSS, JavaScript, and HTML code' },
+            { name: 'barcode', desc: 'Generate QR codes and barcodes for text' }
+          ],
+          'Entertainment & Games': [
+            { name: 'joke', desc: 'Get random jokes from various categories' },
+            { name: '8ball', desc: 'Ask the magic 8-ball a yes/no question' },
+            { name: 'pokemon', desc: 'Pokemon commands (random, info, search, forms, battle)' },
+            { name: 'trivia', desc: 'Get trivia questions from various categories' },
+            { name: 'trivia-answer', desc: 'Answer a pending trivia question (A/B/C/D)' },
+            { name: 'rps', desc: 'Play Rock Paper Scissors against the computer' },
+            { name: 'hangman', desc: 'Play hangman word guessing game' },
+            { name: 'dice', desc: 'Roll dice with various combinations (1d6, 2d20, etc.)' },
+            { name: 'rickroll', desc: 'Play a Rick Astley video' }
           ]
         };
 
@@ -234,8 +280,16 @@ const DevConsoleDesktop: React.FC = () => {
         output += '  • Use ↑↓ arrows to navigate command history\n';
         output += '  • Press ESC or type "exit" to close console\n';
         output += '  • Commands are case-insensitive\n';
-        output += '  • Use flags like --no-symbols for some commands\n';
-        output += '  • Try "search <term>" to find commands quickly\n';
+        output += '  • Use flags like --no-symbols for password generation\n';
+        output += '  • Type command names for detailed usage instructions\n';
+        output += '  • Many commands support sub-commands (e.g., colors random, network ping)\n';
+        output += '\nExamples:\n';
+        output += '  weather London          - Get weather for London\n';
+        output += '  calc 2 + 2 * 3         - Mathematical calculation\n';
+        output += '  colors palette #ff5733  - Generate color palette\n';
+        output += '  convert 100 F C         - Convert Fahrenheit to Celsius\n';
+        output += '  password 16             - Generate 16-character password\n';
+        output += '  encode base64 hello     - Base64 encode text\n';
 
         return output;
       }
@@ -612,12 +666,16 @@ Itch.io: https://bjeerpeer.itch.io`;
             const hsl = randomColor.hsl();
             const hsv = randomColor.hsv();
             
+            const colorSwatch = `<div style="width: 100px; height: 50px; background-color: ${hex}; border: 2px solid #333; margin: 10px 0; display: inline-block;"></div>`;
+            
             return `🎨 Random Color:
 Hex: ${hex}
 RGB: rgb(${Math.round(rgb[0])}, ${Math.round(rgb[1])}, ${Math.round(rgb[2])})
 HSL: hsl(${Math.round(hsl[0] || 0)}, ${Math.round(hsl[1] * 100)}%, ${Math.round(hsl[2] * 100)}%)
 HSV: hsv(${Math.round(hsv[0] || 0)}, ${Math.round(hsv[1] * 100)}%, ${Math.round(hsv[2] * 100)}%)
-Luminance: ${randomColor.luminance().toFixed(3)}`;
+Luminance: ${randomColor.luminance().toFixed(3)}
+
+${colorSwatch}`;
           
           case 'palette':
             // Generate a harmonious color palette
@@ -632,11 +690,21 @@ Luminance: ${randomColor.luminance().toFixed(3)}`;
                 base.desaturate(1).hex()
               ];
               
+              const paletteSwatches = palette.map((color, i) => {
+                const names = ['Base', 'Brighter', 'Darker', 'Saturated', 'Desaturated'];
+                return `<div style="display: inline-block; margin: 5px;">
+                  <div style="width: 80px; height: 40px; background-color: ${color}; border: 1px solid #333;"></div>
+                  <div style="text-align: center; font-size: 12px; margin-top: 2px;">${names[i]}<br>${color}</div>
+                </div>`;
+              }).join('');
+              
               return `🎨 Color Palette (based on ${baseColor}):
 ${palette.map((c, i) => {
   const names = ['Base', 'Brighter', 'Darker', 'Saturated', 'Desaturated'];
   return `${i + 1}. ${names[i]}: ${c}`;
-}).join('\n')}`;
+}).join('\n')}
+
+<div style="margin: 10px 0;">${paletteSwatches}</div>`;
             } catch {
               return `Error: Invalid base color "${baseColor}". Use a valid hex, rgb, or named color.`;
             }
@@ -662,11 +730,18 @@ ${palette.map((c, i) => {
               };
               
               let result = `🎨 Color Harmonies (based on ${harmonyBase}):\n\n`;
+              let visualHarmonies = '';
+              
               Object.entries(harmonies).forEach(([name, colors]) => {
                 result += `${name}:\n${colors.map((c, i) => `  ${i + 1}. ${c}`).join('\n')}\n\n`;
+                
+                const harmonySwatches = colors.map(color => 
+                  `<div style="width: 60px; height: 30px; background-color: ${color}; border: 1px solid #333; display: inline-block; margin: 2px;"></div>`
+                ).join('');
+                visualHarmonies += `<div style="margin: 5px 0;"><strong>${name}:</strong><br>${harmonySwatches}</div>`;
               });
               
-              return result;
+              return result + `<div style="margin: 10px 0;">${visualHarmonies}</div>`;
             } catch {
               return `Error: Invalid base color "${harmonyBase}". Use a valid hex, rgb, or named color.`;
             }
@@ -683,14 +758,24 @@ ${palette.map((c, i) => {
             try {
               const scale = chroma.scale([startColor, endColor]).mode('lch').colors(steps);
               
+              const scaleSwatches = scale.map((color: string) => 
+                `<div style="width: 40px; height: 40px; background-color: ${color}; border: 1px solid #333; display: inline-block;"></div>`
+              ).join('');
+              
               return `🎨 Color Scale (${startColor} → ${endColor}, ${steps} steps):
-${scale.map((c: string, i: number) => `${i + 1}. ${c}`).join('\n')}`;
+${scale.map((c: string, i: number) => `${i + 1}. ${c}`).join('\n')}
+
+<div style="margin: 10px 0;">${scaleSwatches}</div>`;
             } catch {
               return `Error: Invalid colors "${startColor}" or "${endColor}". Use valid hex, rgb, or named colors.`;
             }
           
           case 'rainbow':
             const rainbowColors = chroma.scale(['red', 'orange', 'yellow', 'green', 'blue', 'purple']).mode('hsl').colors(12);
+            const rainbowSwatches = rainbowColors.map((color: string) => 
+              `<div style="width: 30px; height: 30px; background-color: ${color}; display: inline-block;"></div>`
+            ).join('');
+            
             const rainbow = ['🔴', '🟠', '🟡', '🟢', '🔵', '🟣'];
             let rainbowText = '';
             for (let i = 0; i < 20; i++) {
@@ -698,7 +783,9 @@ ${scale.map((c: string, i: number) => `${i + 1}. ${c}`).join('\n')}`;
             }
             return `🌈 Rainbow:
 Visual: ${rainbowText}
-Colors: ${rainbowColors.join(', ')}`;
+Colors: ${rainbowColors.join(', ')}
+
+<div style="margin: 10px 0;">${rainbowSwatches}</div>`;
           
           case 'gradient':
             const gradientChars = ['█', '▉', '▊', '▋', '▌', '▍', '▎', '▏', ' '];
@@ -727,11 +814,22 @@ Colors: ${rainbowColors.join(', ')}`;
               else if (contrast >= 3) accessibility = 'AA Large (adequate for large text)';
               else accessibility = 'Poor (not recommended)';
               
+              const contrastDemo = `<div style="display: flex; margin: 10px 0;">
+                <div style="background-color: ${c1.hex()}; color: ${c2.hex()}; padding: 10px; margin-right: 10px; border: 1px solid #333;">
+                  Sample text on ${c1.hex()}
+                </div>
+                <div style="background-color: ${c2.hex()}; color: ${c1.hex()}; padding: 10px; border: 1px solid #333;">
+                  Sample text on ${c2.hex()}
+                </div>
+              </div>`;
+              
               return `🎨 Color Contrast Analysis:
 Color 1: ${color1} → ${c1.hex()}
 Color 2: ${color2} → ${c2.hex()}
 Contrast Ratio: ${contrast.toFixed(2)}:1
-Accessibility: ${accessibility}`;
+Accessibility: ${accessibility}
+
+${contrastDemo}`;
             } catch {
               return `Error: Invalid colors. Use valid hex, rgb, or named colors.`;
             }
@@ -749,6 +847,8 @@ Accessibility: ${accessibility}`;
               const hsv = color.hsv();
               const lab = color.lab();
               
+              const colorSwatch = `<div style="width: 120px; height: 60px; background-color: ${color.hex()}; border: 2px solid #333; margin: 10px 0; display: inline-block;"></div>`;
+              
               return `🎨 Color Information for ${infoColor}:
 Hex: ${color.hex()}
 RGB: rgb(${Math.round(rgb[0])}, ${Math.round(rgb[1])}, ${Math.round(rgb[2])})
@@ -756,7 +856,9 @@ HSL: hsl(${Math.round(hsl[0] || 0)}, ${Math.round(hsl[1] * 100)}%, ${Math.round(
 HSV: hsv(${Math.round(hsv[0] || 0)}, ${Math.round(hsv[1] * 100)}%, ${Math.round(hsv[2] * 100)}%)
 LAB: lab(${Math.round(lab[0])}, ${Math.round(lab[1])}, ${Math.round(lab[2])})
 Luminance: ${color.luminance().toFixed(3)}
-Temperature: ${color.temperature().toFixed(0)}K`;
+Temperature: ${color.temperature().toFixed(0)}K
+
+${colorSwatch}`;
             } catch {
               return `Error: Invalid color "${infoColor}". Use a valid hex, rgb, or named color.`;
             }
@@ -942,7 +1044,7 @@ Sunset: ${sunset}`;
     },
     {
       name: 'joke',
-      description: 'Get a random joke (programming, general, dad, chuck, geek, random, or specific category)',
+      description: 'Get random jokes from various categories',
       execute: async (args) => {
         // If no argument, treat as 'random'
         let category = args[0] ? args[0] : 'random';
@@ -1111,7 +1213,12 @@ Sunset: ${sunset}`;
         console.log(`QR Code generated for: ${text}`, 'font-weight: bold; color: #00ff00;');
         console.log(`URL: ${qrUrl}`, 'color: #0066cc;');
         
-        return `QR Code generated for: "${text}"\nURL: ${qrUrl}`;
+        const qrDisplay = `<img src="${qrUrl}" alt="QR Code for ${text}" style="display: block; max-width: 200px; height: auto; margin: 10px 0;" onload="this.style.border='1px solid #ccc'" onerror="this.style.display='none';">`;
+        
+        return `QR Code generated for: "${text}"
+URL: ${qrUrl}
+
+${qrDisplay}`;
       }
     },
     {
@@ -1269,94 +1376,6 @@ Examples:
           }
         } catch (error) {
           return `Lorem generation error: ${error}`;
-        }
-      }
-    },
-    {
-      name: 'json-validate',
-      description: 'Validate, pretty-print and analyze JSON input with syntax highlighting',
-      execute: (args) => {
-        const jsonText = args.join(' ');
-        if (!jsonText) {
-          return `Usage: json-validate <json string>
-
-Examples:
-  json-validate {"name":"John","age":30}
-  json-validate [1,2,3,{"nested":true}]
-  json-validate '{"complex":{"data":["item1","item2"]}}'`;
-        }
-        
-        try {
-          const parsed = JSON.parse(jsonText);
-          const pretty = JSON.stringify(parsed, null, 2);
-          
-          // Analyze the JSON structure
-          const analyze = (obj: unknown): { type: string, count: number, keys?: string[] } => {
-            if (Array.isArray(obj)) {
-              return { type: 'array', count: obj.length };
-            } else if (obj !== null && typeof obj === 'object') {
-              const keys = Object.keys(obj as Record<string, unknown>);
-              return { type: 'object', count: keys.length, keys };
-            } else {
-              return { type: typeof obj, count: 1 };
-            }
-          };
-          
-          const analysis = analyze(parsed);
-          
-          // Try to highlight the JSON (basic highlighting without full hljs setup)
-          const highlighted = pretty
-            .replace(/"([^"]+)":/g, '"$1":')  // Keys
-            .replace(/: "([^"]+)"/g, ': "$1"')  // String values
-            .replace(/: (\d+)/g, ': $1')  // Numbers
-            .replace(/: (true|false|null)/g, ': $1');  // Booleans/null
-          
-          let result = `✅ Valid JSON (${analysis.type}):\n\n${highlighted}\n\n`;
-          
-          // Add analysis
-          result += `📊 Analysis:\n`;
-          result += `Type: ${analysis.type}\n`;
-          
-          if (analysis.type === 'object' && analysis.keys) {
-            result += `Properties: ${analysis.count}\n`;
-            result += `Keys: ${analysis.keys.join(', ')}\n`;
-          } else if (analysis.type === 'array') {
-            result += `Items: ${analysis.count}\n`;
-          }
-          
-          result += `Size: ${jsonText.length} characters\n`;
-          result += `Minified size: ${JSON.stringify(parsed).length} characters\n`;
-          result += `Pretty size: ${pretty.length} characters`;
-          
-          return result;
-        } catch (error) {
-          // Enhanced error reporting
-          const errorMsg = error instanceof Error ? error.message : String(error);
-          
-          // Try to find the error position
-          const match = errorMsg.match(/position (\d+)/);
-          const position = match ? parseInt(match[1]) : -1;
-          
-          let result = `❌ Invalid JSON: ${errorMsg}\n\n`;
-          
-          if (position >= 0 && position < jsonText.length) {
-            const start = Math.max(0, position - 20);
-            const end = Math.min(jsonText.length, position + 20);
-            const snippet = jsonText.slice(start, end);
-            const pointer = ' '.repeat(position - start) + '^';
-            
-            result += `Error near position ${position}:\n`;
-            result += `${snippet}\n${pointer}\n\n`;
-          }
-          
-          result += `Common JSON errors:
-• Missing quotes around strings
-• Trailing commas (not allowed in JSON)
-• Single quotes instead of double quotes
-• Unescaped characters in strings
-• Missing closing brackets/braces`;
-          
-          return result;
         }
       }
     },
@@ -1546,6 +1565,10 @@ Current Age: ${age} years old`;
       name: 'uptime',
       description: 'Show how long the page has been open',
       execute: () => {
+        if (pageLoadTime === null) {
+          return 'Page load time not yet initialized';
+        }
+        
         const uptime = Date.now() - pageLoadTime;
         const seconds = Math.floor(uptime / 1000);
         const minutes = Math.floor(seconds / 60);
@@ -2235,8 +2258,15 @@ Examples:
             `${String.fromCharCode(65 + index)}. ${answer}`
           ).join('\n');
 
-          // Store the correct answer for potential follow-up
-          const correctLetter = String.fromCharCode(65 + correctIndex);
+          // Store the trivia question for answering
+          setPendingTrivia({
+            question: decodedQuestion,
+            answers: shuffledAnswers,
+            correctAnswer: decodedCorrect,
+            correctIndex,
+            category: formattedCategory,
+            difficulty: formattedDifficulty
+          });
 
           return `Trivia Question:
 
@@ -2247,7 +2277,7 @@ ${decodedQuestion}
 
 ${answerOptions}
 
-Answer: ${correctLetter}. ${decodedCorrect}`;
+Type your answer (A, B, C, or D) or use 'trivia-answer <letter>' to answer!`;
 
         } catch (error) {
           console.error('Trivia API Error:', error);
@@ -2286,6 +2316,21 @@ Answer: ${correctLetter}. ${decodedCorrect}`;
 
           const randomQuestion = fallbackQuestions[Math.floor(Math.random() * fallbackQuestions.length)];
 
+          // Store fallback trivia question
+          const answerLetter = randomQuestion.correct.charAt(0);
+          const answerIndex = answerLetter.charCodeAt(0) - 65; // Convert A,B,C,D to 0,1,2,3
+          const answerText = randomQuestion.correct.substring(3); // Remove "A. " prefix
+          const allAnswers = randomQuestion.answers.map(a => a.substring(3)); // Remove prefixes
+
+          setPendingTrivia({
+            question: randomQuestion.question,
+            answers: allAnswers,
+            correctAnswer: answerText,
+            correctIndex: answerIndex,
+            category: randomQuestion.category,
+            difficulty: randomQuestion.difficulty
+          });
+
           return `Trivia Question (Offline):
 
 Category: ${randomQuestion.category}
@@ -2295,9 +2340,53 @@ ${randomQuestion.question}
 
 ${randomQuestion.answers.join('\n')}
 
-Answer: ${randomQuestion.correct}
+Type your answer (A, B, C, or D) or use 'trivia-answer <letter>' to answer!
 
 Note: API unavailable - showing offline question`;
+        }
+      }
+    },
+    {
+      name: 'trivia-answer',
+      description: 'Answer a pending trivia question',
+      execute: (args) => {
+        if (!pendingTrivia) {
+          return 'No trivia question is currently active. Use "trivia" to get a new question first.';
+        }
+
+        const userAnswer = args[0]?.toUpperCase();
+        if (!userAnswer || !['A', 'B', 'C', 'D'].includes(userAnswer)) {
+          return 'Please provide a valid answer: A, B, C, or D';
+        }
+
+        const userAnswerIndex = userAnswer.charCodeAt(0) - 65; // Convert A,B,C,D to 0,1,2,3
+        const isCorrect = userAnswerIndex === pendingTrivia.correctIndex;
+        const correctLetter = String.fromCharCode(65 + pendingTrivia.correctIndex);
+
+        // Clear the pending trivia
+        const currentTrivia = pendingTrivia;
+        setPendingTrivia(null);
+
+        if (isCorrect) {
+          return `🎉 Correct! Well done!
+
+Your answer: ${userAnswer}. ${currentTrivia.answers[userAnswerIndex]}
+Correct answer: ${correctLetter}. ${currentTrivia.correctAnswer}
+
+Category: ${currentTrivia.category}
+Difficulty: ${currentTrivia.difficulty}
+
+Use "trivia" to get another question!`;
+        } else {
+          return `❌ Incorrect. Better luck next time!
+
+Your answer: ${userAnswer}. ${currentTrivia.answers[userAnswerIndex]}
+Correct answer: ${correctLetter}. ${currentTrivia.correctAnswer}
+
+Category: ${currentTrivia.category}
+Difficulty: ${currentTrivia.difficulty}
+
+Use "trivia" to get another question!`;
         }
       }
     },
@@ -2845,6 +2934,26 @@ Factorial: ${isSmall && num.toJSNumber() <= 20 ? evaluate(`factorial(${num.toStr
                 const whiteContrast = chroma.contrast(color, 'white');
                 const blackContrast = chroma.contrast(color, 'black');
 
+                // Create simple color display with related colors
+                const colorDisplay = `<div style="width: 100px; height: 100px; background: ${color.hex()}; border: 2px solid #333; margin: 10px 0;"></div>
+<div style="display: flex; gap: 10px; margin: 10px 0;">
+  <div style="text-align: center;">
+    <div style="width: 60px; height: 60px; background: ${complementary.hex()}; border: 1px solid #333;"></div>
+    <div style="font-size: 12px; margin-top: 5px;">Complementary</div>
+    <div style="font-size: 11px; font-family: monospace;">${complementary.hex()}</div>
+  </div>
+  <div style="text-align: center;">
+    <div style="width: 60px; height: 60px; background: ${lighter.hex()}; border: 1px solid #333;"></div>
+    <div style="font-size: 12px; margin-top: 5px;">Lighter</div>
+    <div style="font-size: 11px; font-family: monospace;">${lighter.hex()}</div>
+  </div>
+  <div style="text-align: center;">
+    <div style="width: 60px; height: 60px; background: ${darker.hex()}; border: 1px solid #333;"></div>
+    <div style="font-size: 12px; margin-top: 5px;">Darker</div>
+    <div style="font-size: 11px; font-family: monospace;">${darker.hex()}</div>
+  </div>
+</div>`;
+
                 return `🎨 Color Analysis:
 
 Input: ${input}
@@ -2868,7 +2977,9 @@ Darker: ${darker.hex()}
 
 Accessibility:
 Contrast with white: ${whiteContrast.toFixed(2)}:1 ${whiteContrast >= 4.5 ? '✅' : '❌'}
-Contrast with black: ${blackContrast.toFixed(2)}:1 ${blackContrast >= 4.5 ? '✅' : '❌'}`;
+Contrast with black: ${blackContrast.toFixed(2)}:1 ${blackContrast >= 4.5 ? '✅' : '❌'}
+
+${colorDisplay}`;
 
               } catch {
                 return `Error: Invalid color "${input}"`;
@@ -3044,6 +3155,2748 @@ Readability: ${maxDepth > 3 ? 'Complex structure' : 'Simple structure'}`;
           return `Analysis error: ${error}`;
         }
       }
+    },
+    {
+      name: 'pokemon',
+      description: 'Pokemon commands (random, info, search, forms, battle)',
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+      execute: async (args): Promise<string> => {
+        const action = args[0] || 'help';
+        
+        switch (action.toLowerCase()) {
+          case 'help':
+            return `🔍 Pokemon Commands:
+
+Usage: pokemon <command> [options]
+
+Commands:
+  random                    - Get a random Pokemon
+  info <name|id>           - Get detailed Pokemon information
+  search <partial_name>    - Search for Pokemon by partial name
+  forms <name|id>          - Show alternate forms of a Pokemon
+  battle <pokemon1> <pokemon2> - Compare two Pokemon for battle
+  types <type>             - List Pokemon of a specific type
+  generation <gen>         - List Pokemon from a generation (1-9)
+  abilities <ability>      - Find Pokemon with a specific ability
+
+Examples:
+  pokemon random
+  pokemon info pikachu
+  pokemon info 25
+  pokemon search char
+  pokemon forms pikachu
+  pokemon battle charizard blastoise
+  pokemon types fire
+  pokemon generation 1
+  pokemon abilities static`;
+
+          case 'random':
+            try {
+              // Get random Pokemon ID (1-1010 for all Pokemon including newer ones)
+              const randomId = Math.floor(Math.random() * 1010) + 1;
+              const pokemonData = await pokedex.getPokemonByName(randomId);
+              
+              // Create image elements if sprites exist
+              let imageDisplay = '';
+              if (pokemonData.sprites.front_default) {
+                imageDisplay += `<img src="${pokemonData.sprites.front_default}" alt="${pokemonData.name}" style="max-width: 100px; margin-right: 10px;" title="Normal sprite" />`;
+              }
+              if (pokemonData.sprites.front_shiny) {
+                imageDisplay += `<img src="${pokemonData.sprites.front_shiny}" alt="${pokemonData.name} shiny" style="max-width: 100px; margin-right: 10px;" title="Shiny sprite" />`;
+              }
+              if (pokemonData.sprites.other?.['official-artwork']?.front_default) {
+                imageDisplay += `<img src="${pokemonData.sprites.other['official-artwork'].front_default}" alt="${pokemonData.name} artwork" style="max-width: 150px;" title="Official artwork" />`;
+              }
+              
+              const result = `🎲 Random Pokemon:
+
+${pokemonData.name.charAt(0).toUpperCase() + pokemonData.name.slice(1)} (#${pokemonData.id})
+Type(s): ${pokemonData.types.map((t: { type: { name: string } }) => t.type.name).join(', ')}
+Height: ${pokemonData.height / 10}m
+Weight: ${pokemonData.weight / 10}kg
+Base Experience: ${pokemonData.base_experience}
+
+${imageDisplay ? `<div style="margin: 10px 0;">${imageDisplay}</div>` : 'No images available'}`;
+
+              return result;
+
+            } catch (error) {
+              return `Error getting random Pokemon: ${error}`;
+            }
+
+          case 'info':
+            const query = args[1];
+            if (!query) {
+              return 'Usage: pokemon info <name|id>\nExample: pokemon info pikachu or pokemon info 25';
+            }
+
+            try {
+              const pokemonData = await pokedex.getPokemonByName(query.toLowerCase());
+              const speciesData = await pokedex.getPokemonSpeciesByName(pokemonData.species.name);
+              
+              // Get English flavor text
+              const flavorText = speciesData.flavor_text_entries
+                .find((entry: { language: { name: string }; flavor_text: string }) => entry.language.name === 'en')?.flavor_text
+                .replace(/\f/g, ' ') || 'No description available';
+
+              // Get abilities
+              const abilities = pokemonData.abilities.map((a: { ability: { name: string }; is_hidden: boolean }) => 
+                `${a.ability.name}${a.is_hidden ? ' (Hidden)' : ''}`
+              ).join(', ');
+
+              // Get base stats
+              const stats = pokemonData.stats.map((s: { stat: { name: string }; base_stat: number }) => 
+                `${s.stat.name}: ${s.base_stat}`
+              ).join('\n  ');
+
+              // Get evolution chain info
+              let evolutionInfo = 'Unknown';
+              try {
+                const evolutionId = parseInt(speciesData.evolution_chain.url.split('/').slice(-2, -1)[0]);
+                const evolutionChain = await pokedex.getEvolutionChainById(evolutionId);
+                const getEvolutionNames = (chain: { species: { name: string }; evolves_to: unknown[] }): string[] => {
+                  const names = [chain.species.name];
+                  if (chain.evolves_to.length > 0) {
+                    (chain.evolves_to as { species: { name: string }; evolves_to: unknown[] }[]).forEach((evolution) => {
+                      names.push(...getEvolutionNames(evolution));
+                    });
+                  }
+                  return names;
+                };
+                evolutionInfo = getEvolutionNames(evolutionChain.chain).join(' → ');
+              } catch {
+                evolutionInfo = 'Evolution data unavailable';
+              }
+
+              // Create image elements if sprites exist
+              let imageDisplay = '';
+              if (pokemonData.sprites.front_default) {
+                imageDisplay += `<img src="${pokemonData.sprites.front_default}" alt="${pokemonData.name}" style="max-width: 100px; margin-right: 10px;" title="Normal sprite" />`;
+              }
+              if (pokemonData.sprites.front_shiny) {
+                imageDisplay += `<img src="${pokemonData.sprites.front_shiny}" alt="${pokemonData.name} shiny" style="max-width: 100px; margin-right: 10px;" title="Shiny sprite" />`;
+              }
+              if (pokemonData.sprites.other?.['official-artwork']?.front_default) {
+                imageDisplay += `<img src="${pokemonData.sprites.other['official-artwork'].front_default}" alt="${pokemonData.name} artwork" style="max-width: 150px;" title="Official artwork" />`;
+              }
+
+              return `📝 Pokemon Information:
+
+${pokemonData.name.charAt(0).toUpperCase() + pokemonData.name.slice(1)} (#${pokemonData.id})
+
+Basic Info:
+  Type(s): ${pokemonData.types.map((t: any) => t.type.name).join(', ')}
+  Height: ${pokemonData.height / 10}m
+  Weight: ${pokemonData.weight / 10}kg
+  Base Experience: ${pokemonData.base_experience}
+  Generation: ${speciesData.generation.name.replace('generation-', '')}
+
+Description:
+  ${flavorText}
+
+Abilities:
+  ${abilities}
+
+Base Stats:
+  ${stats}
+  Total: ${pokemonData.stats.reduce((sum: number, s: any) => sum + s.base_stat, 0)}
+
+Evolution Chain:
+  ${evolutionInfo}
+
+${imageDisplay ? `<div style="margin: 10px 0;">${imageDisplay}</div>` : 'No images available'}`;
+
+            } catch (error) {
+              return `Pokemon "${query}" not found or error occurred: ${error}`;
+            }
+
+          case 'search':
+            const searchTerm = args[1];
+            if (!searchTerm) {
+              return 'Usage: pokemon search <partial_name>\nExample: pokemon search char';
+            }
+
+            try {
+              // Get all Pokemon names (this is a simplified search)
+              const allPokemon = await pokedex.getPokemonsList({ limit: 1010 });
+              const matches = allPokemon.results
+                .filter((p: any) => p.name.includes(searchTerm.toLowerCase()))
+                .slice(0, 10); // Limit to first 10 matches
+
+              if (matches.length === 0) {
+                return `No Pokemon found matching "${searchTerm}"`;
+              }
+
+              const matchList = matches.map((p: any, index: number) => {
+                const id = p.url.split('/').slice(-2, -1)[0];
+                return `${index + 1}. ${p.name.charAt(0).toUpperCase() + p.name.slice(1)} (#${id})`;
+              }).join('\n');
+
+              return `🔍 Search Results for "${searchTerm}":
+
+${matchList}
+
+Use "pokemon info <name>" for detailed information.`;
+
+            } catch (error) {
+              return `Search error: ${error}`;
+            }
+
+          case 'forms':
+            const formQuery = args[1];
+            if (!formQuery) {
+              return 'Usage: pokemon forms <name|id>\nExample: pokemon forms pikachu';
+            }
+
+            try {
+              const pokemonData = await pokedex.getPokemonByName(formQuery.toLowerCase());
+              const speciesData = await pokedex.getPokemonSpeciesByName(pokemonData.species.name);
+              
+              if (speciesData.varieties.length <= 1) {
+                return `${pokemonData.name.charAt(0).toUpperCase() + pokemonData.name.slice(1)} has no alternate forms.`;
+              }
+
+              const forms = await Promise.all(
+                speciesData.varieties.map(async (variety: any) => {
+                  try {
+                    const formData = await pokedex.getPokemonByName(variety.pokemon.name);
+                    return {
+                      name: variety.pokemon.name,
+                      id: formData.id,
+                      types: formData.types.map((t: any) => t.type.name),
+                      sprite: formData.sprites.front_default,
+                      shiny: formData.sprites.front_shiny
+                    };
+                  } catch {
+                    return null;
+                  }
+                })
+              );
+
+              const validForms = forms.filter(f => f !== null);
+              const formsList = validForms.map((form: any, index: number) => {
+                let imageDisplay = '';
+                if (form.sprite) {
+                  imageDisplay += `<img src="${form.sprite}" alt="${form.name}" style="max-width: 80px; margin-right: 10px;" title="Normal sprite" />`;
+                }
+                if (form.shiny) {
+                  imageDisplay += `<img src="${form.shiny}" alt="${form.name} shiny" style="max-width: 80px;" title="Shiny sprite" />`;
+                }
+                
+                return `${index + 1}. ${form.name.charAt(0).toUpperCase() + form.name.slice(1)} (#${form.id})
+   Types: ${form.types.join(', ')}
+   ${imageDisplay ? `<div style="margin: 5px 0;">${imageDisplay}</div>` : 'No images available'}`;
+              }).join('\n\n');
+
+              return `🔄 Alternate Forms:
+
+${formsList}`;
+
+            } catch (error) {
+              return `Error getting forms for "${formQuery}": ${error}`;
+            }
+
+          case 'battle':
+            const pokemon1 = args[1];
+            const pokemon2 = args[2];
+            
+            if (!pokemon1 || !pokemon2) {
+              return 'Usage: pokemon battle <pokemon1> <pokemon2>\nExample: pokemon battle charizard blastoise';
+            }
+
+            try {
+              const [p1Data, p2Data] = await Promise.all([
+                pokedex.getPokemonByName(pokemon1.toLowerCase()),
+                pokedex.getPokemonByName(pokemon2.toLowerCase())
+              ]);
+
+              const getStatTotal = (pokemon: any) => 
+                pokemon.stats.reduce((sum: number, s: any) => sum + s.base_stat, 0);
+
+              const p1Total = getStatTotal(p1Data);
+              const p2Total = getStatTotal(p2Data);
+
+              const formatStats = (pokemon: any) => 
+                pokemon.stats.map((s: any) => 
+                  `${s.stat.name}: ${s.base_stat}`
+                ).join(', ');
+
+              let winner = '';
+              if (p1Total > p2Total) {
+                winner = `🏆 ${p1Data.name.charAt(0).toUpperCase() + p1Data.name.slice(1)} wins!`;
+              } else if (p2Total > p1Total) {
+                winner = `🏆 ${p2Data.name.charAt(0).toUpperCase() + p2Data.name.slice(1)} wins!`;
+              } else {
+                winner = '🤝 It\'s a tie!';
+              }
+
+              // Create image displays for both Pokemon
+              const p1Image = p1Data.sprites.front_default ? 
+                `<img src="${p1Data.sprites.front_default}" alt="${p1Data.name}" style="max-width: 100px;" title="${p1Data.name}" />` : 
+                'No image';
+              const p2Image = p2Data.sprites.front_default ? 
+                `<img src="${p2Data.sprites.front_default}" alt="${p2Data.name}" style="max-width: 100px;" title="${p2Data.name}" />` : 
+                'No image';
+
+              return `⚔️ Pokemon Battle Comparison:
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin: 10px 0;">
+  <div style="text-align: center;">
+    ${p1Image}
+    <div><strong>${p1Data.name.charAt(0).toUpperCase() + p1Data.name.slice(1)} (#${p1Data.id})</strong></div>
+  </div>
+  <div style="font-size: 24px; margin: 0 20px;">VS</div>
+  <div style="text-align: center;">
+    ${p2Image}
+    <div><strong>${p2Data.name.charAt(0).toUpperCase() + p2Data.name.slice(1)} (#${p2Data.id})</strong></div>
+  </div>
+</div>
+
+${p1Data.name.charAt(0).toUpperCase() + p1Data.name.slice(1)}:
+  Types: ${p1Data.types.map((t: any) => t.type.name).join(', ')}
+  Base Stats: ${formatStats(p1Data)}
+  Total: ${p1Total}
+
+${p2Data.name.charAt(0).toUpperCase() + p2Data.name.slice(1)}:
+  Types: ${p2Data.types.map((t: any) => t.type.name).join(', ')}
+  Base Stats: ${formatStats(p2Data)}
+  Total: ${p2Total}
+
+${winner}
+Difference: ${Math.abs(p1Total - p2Total)} points`;
+
+            } catch (error) {
+              return `Battle comparison error: ${error}`;
+            }
+
+          case 'types':
+            const typeName = args[1];
+            if (!typeName) {
+              return 'Usage: pokemon types <type>\nExample: pokemon types fire\nAvailable types: normal, fire, water, electric, grass, ice, fighting, poison, ground, flying, psychic, bug, rock, ghost, dragon, dark, steel, fairy';
+            }
+
+            try {
+              const typeData = await pokedex.getTypeByName(typeName.toLowerCase());
+              const pokemonList = typeData.pokemon
+                .slice(0, 15) // Limit to first 15
+                .map((p: any, index: number) => {
+                  const id = p.pokemon.url.split('/').slice(-2, -1)[0];
+                  return `${index + 1}. ${p.pokemon.name.charAt(0).toUpperCase() + p.pokemon.name.slice(1)} (#${id})`;
+                }).join('\n');
+
+              return `🔥 ${typeName.charAt(0).toUpperCase() + typeName.slice(1)} Type Pokemon (first 15):
+
+${pokemonList}
+
+Total ${typeName} Pokemon: ${typeData.pokemon.length}`;
+
+            } catch (error) {
+              return `Type "${typeName}" not found or error: ${error}`;
+            }
+
+          case 'generation':
+            const genNumber = args[1];
+            if (!genNumber) {
+              return 'Usage: pokemon generation <1-9>\nExample: pokemon generation 1';
+            }
+
+            try {
+              const generationData = await pokedex.getGenerationByName(`generation-${genNumber}`);
+              const pokemonList = generationData.pokemon_species
+                .slice(0, 20) // Limit to first 20
+                .map((p: any, index: number) => {
+                  const id = p.url.split('/').slice(-2, -1)[0];
+                  return `${index + 1}. ${p.name.charAt(0).toUpperCase() + p.name.slice(1)} (#${id})`;
+                }).join('\n');
+
+              return `🎮 Generation ${genNumber} Pokemon (first 20):
+
+${pokemonList}
+
+Total Gen ${genNumber} Pokemon: ${generationData.pokemon_species.length}
+Region: ${generationData.main_region.name.charAt(0).toUpperCase() + generationData.main_region.name.slice(1)}`;
+
+            } catch (error) {
+              return `Generation ${genNumber} not found or error: ${error}`;
+            }
+
+          case 'abilities':
+            const abilityName = args[1];
+            if (!abilityName) {
+              return 'Usage: pokemon abilities <ability_name>\nExample: pokemon abilities static';
+            }
+
+            try {
+              const abilityData = await pokedex.getAbilityByName(abilityName.toLowerCase());
+              const pokemonList = abilityData.pokemon
+                .slice(0, 10) // Limit to first 10
+                .map((p: any, index: number) => {
+                  const id = p.pokemon.url.split('/').slice(-2, -1)[0];
+                  const isHidden = p.is_hidden ? ' (Hidden)' : '';
+                  return `${index + 1}. ${p.pokemon.name.charAt(0).toUpperCase() + p.pokemon.name.slice(1)} (#${id})${isHidden}`;
+                }).join('\n');
+
+              const description = abilityData.effect_entries
+                .find((entry: any) => entry.language.name === 'en')?.effect
+                || 'No description available';
+
+              return `✨ Ability: ${abilityData.name.charAt(0).toUpperCase() + abilityData.name.slice(1)}
+
+Description:
+${description}
+
+Pokemon with this ability (first 10):
+${pokemonList}
+
+Total Pokemon: ${abilityData.pokemon.length}`;
+
+            } catch (error) {
+              return `Ability "${abilityName}" not found or error: ${error}`;
+            }
+
+          default:
+            return `Unknown Pokemon command: ${action}
+Use "pokemon help" to see all available commands.`;
+        }
+        /* eslint-enable @typescript-eslint/no-explicit-any */
+      }
+    },
+    {
+      name: 'hash',
+      description: 'Generate various hashes (MD5, SHA-1, SHA-256, SHA-512) for text',
+      execute: (args) => {
+        const action = args[0];
+        const text = args.slice(1).join(' ');
+        
+        if (!action || !text) {
+          return `Hash Command Usage:
+
+Generate various hash functions for any text!
+
+Usage: hash <algorithm> <text>
+
+Algorithms:
+  md5         - MD5 hash (128-bit)
+  sha1        - SHA-1 hash (160-bit)
+  sha256      - SHA-256 hash (256-bit)
+  sha512      - SHA-512 hash (512-bit)
+  all         - Show all hash types
+
+Examples:
+  hash md5 "Hello World"
+  hash sha256 "my secret text"
+  hash all "test string"
+
+Security Note: MD5 and SHA-1 are not cryptographically secure.
+Use SHA-256 or SHA-512 for security purposes.`;
+        }
+
+        try {
+          switch (action.toLowerCase()) {
+            case 'md5':
+              return `MD5 Hash:
+Input: "${text}"
+MD5: ${CryptoJS.MD5(text).toString()}`;
+
+            case 'sha1':
+              return `SHA-1 Hash:
+Input: "${text}"
+SHA-1: ${CryptoJS.SHA1(text).toString()}`;
+
+            case 'sha256':
+              return `SHA-256 Hash:
+Input: "${text}"
+SHA-256: ${CryptoJS.SHA256(text).toString()}`;
+
+            case 'sha512':
+              return `SHA-512 Hash:
+Input: "${text}"
+SHA-512: ${CryptoJS.SHA512(text).toString()}`;
+
+            case 'all':
+              const md5 = CryptoJS.MD5(text).toString();
+              const sha1 = CryptoJS.SHA1(text).toString();
+              const sha256 = CryptoJS.SHA256(text).toString();
+              const sha512 = CryptoJS.SHA512(text).toString();
+
+              return `All Hash Types for: "${text}"
+
+MD5:     ${md5}
+SHA-1:   ${sha1}
+SHA-256: ${sha256}
+SHA-512: ${sha512}
+
+Hash Lengths:
+MD5:     ${md5.length} characters (128 bits)
+SHA-1:   ${sha1.length} characters (160 bits)
+SHA-256: ${sha256.length} characters (256 bits)
+SHA-512: ${sha512.length} characters (512 bits)
+
+Security Note: Use SHA-256+ for cryptographic purposes.`;
+
+            default:
+              return `Unknown hash algorithm: ${action}. Use 'hash' without arguments for help.`;
+          }
+        } catch (error) {
+          return `Hash generation error: ${error}`;
+        }
+      }
+    },
+    {
+      name: 'regex',
+      description: 'Test regular expressions with live matching and explanation',
+      execute: (args) => {
+        const action = args[0];
+        
+        if (!action) {
+          return `Regex Command Usage:
+
+Test and analyze regular expressions!
+
+Usage: regex <command> [arguments]
+
+Commands:
+  test <pattern> <text>        - Test regex pattern against text
+  match <pattern> <text>       - Find all matches in text
+  replace <pattern> <replacement> <text> - Replace matches with replacement
+  explain <pattern>            - Explain what a regex pattern does
+  examples                     - Show common regex examples
+
+Examples:
+  regex test "\\d+" "Hello 123 World"
+  regex match "\\w+" "Hello World 123"
+  regex replace "\\d+" "X" "Test 123 and 456"
+  regex explain "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+
+Note: Use double backslashes (\\\\) for escape sequences in patterns.`;
+        }
+
+        try {
+          switch (action.toLowerCase()) {
+            case 'test':
+              const testPattern = args[1];
+              const testText = args.slice(2).join(' ');
+              
+              if (!testPattern || !testText) {
+                return 'Usage: regex test <pattern> <text>';
+              }
+              
+              try {
+                const regex = new RegExp(testPattern, 'g');
+                const matches = testText.match(regex);
+                const hasMatch = regex.test(testText);
+                
+                return `Regex Test Results:
+Pattern: ${testPattern}
+Text: "${testText}"
+Has Match: ${hasMatch ? 'Yes' : 'No'}
+Match Count: ${matches ? matches.length : 0}
+${matches ? `Matches: [${matches.join(', ')}]` : 'No matches found'}`;
+              } catch (error) {
+                return `Invalid regex pattern: ${error}`;
+              }
+
+            case 'match':
+              const matchPattern = args[1];
+              const matchText = args.slice(2).join(' ');
+              
+              if (!matchPattern || !matchText) {
+                return 'Usage: regex match <pattern> <text>';
+              }
+              
+              try {
+                const regex = new RegExp(matchPattern, 'g');
+                const matches = [];
+                let match;
+                
+                while ((match = regex.exec(matchText)) !== null) {
+                  matches.push({
+                    match: match[0],
+                    index: match.index,
+                    groups: match.slice(1)
+                  });
+                }
+                
+                if (matches.length === 0) {
+                  return `No matches found for pattern "${matchPattern}" in text "${matchText}"`;
+                }
+                
+                let result = `Found ${matches.length} match(es) for pattern "${matchPattern}":\n\n`;
+                matches.forEach((m, i) => {
+                  result += `Match ${i + 1}: "${m.match}" at position ${m.index}`;
+                  if (m.groups.length > 0) {
+                    result += `\n  Groups: [${m.groups.join(', ')}]`;
+                  }
+                  result += '\n';
+                });
+                
+                return result;
+              } catch (error) {
+                return `Invalid regex pattern: ${error}`;
+              }
+
+            case 'replace':
+              const replacePattern = args[1];
+              const replacement = args[2];
+              const replaceText = args.slice(3).join(' ');
+              
+              if (!replacePattern || replacement === undefined || !replaceText) {
+                return 'Usage: regex replace <pattern> <replacement> <text>';
+              }
+              
+              try {
+                const regex = new RegExp(replacePattern, 'g');
+                const result = replaceText.replace(regex, replacement);
+                const matchCount = (replaceText.match(regex) || []).length;
+                
+                return `Regex Replace Results:
+Pattern: ${replacePattern}
+Replacement: "${replacement}"
+Original: "${replaceText}"
+Result: "${result}"
+Replacements made: ${matchCount}`;
+              } catch (error) {
+                return `Invalid regex pattern: ${error}`;
+              }
+
+            case 'explain':
+              const explainPattern = args[1];
+              
+              if (!explainPattern) {
+                return 'Usage: regex explain <pattern>';
+              }
+              
+              // Basic regex explanation (simplified)
+              const explanations: { [key: string]: string } = {
+                '^': 'Start of string/line',
+                '$': 'End of string/line',
+                '.': 'Any character except newline',
+                '*': 'Zero or more of the preceding',
+                '+': 'One or more of the preceding',
+                '?': 'Zero or one of the preceding',
+                '\\d': 'Any digit (0-9)',
+                '\\w': 'Any word character (a-z, A-Z, 0-9, _)',
+                '\\s': 'Any whitespace character',
+                '\\D': 'Any non-digit',
+                '\\W': 'Any non-word character',
+                '\\S': 'Any non-whitespace',
+                '[': 'Start character class',
+                ']': 'End character class',
+                '(': 'Start capturing group',
+                ')': 'End capturing group',
+                '|': 'Alternation (OR)',
+                '\\': 'Escape character',
+                '{': 'Start quantifier',
+                '}': 'End quantifier'
+              };
+              
+              let explanation = `Regex Pattern Analysis: "${explainPattern}"\n\nBreakdown:\n`;
+              
+              for (let i = 0; i < explainPattern.length; i++) {
+                const char = explainPattern[i];
+                const twoChar = explainPattern.substring(i, i + 2);
+                
+                if (explanations[twoChar]) {
+                  explanation += `"${twoChar}": ${explanations[twoChar]}\n`;
+                  i++; // Skip next character
+                } else if (explanations[char]) {
+                  explanation += `"${char}": ${explanations[char]}\n`;
+                } else if (char.match(/[a-zA-Z0-9]/)) {
+                  explanation += `"${char}": Literal character\n`;
+                }
+              }
+              
+              return explanation;
+
+            case 'examples':
+              return `Common Regex Examples:
+
+Email validation:
+^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$
+
+Phone number (US format):
+^\\(?([0-9]{3})\\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$
+
+URL validation:
+^https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)$
+
+Credit card number:
+^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|3[47][0-9]{13})$
+
+Date (MM/DD/YYYY):
+^(0[1-9]|1[0-2])\\/(0[1-9]|[12][0-9]|3[01])\\/([0-9]{4})$
+
+Password (8+ chars, uppercase, lowercase, digit):
+^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d@$!%*?&]{8,}$
+
+Extract numbers:
+\\d+
+
+Extract words:
+\\w+
+
+Remove extra spaces:
+\\s+ (replace with single space)
+
+HTML tags:
+<[^>]*>`;
+
+            default:
+              return `Unknown regex command: ${action}. Use 'regex' without arguments for help.`;
+          }
+        } catch (error) {
+          return `Regex error: ${error}`;
+        }
+      }
+    },
+    {
+      name: 'barcode',
+      description: 'Generate QR codes and barcodes for text',
+      execute: async (args) => {
+        const action = args[0] || 'qr';
+        const text = args.slice(1).join(' ');
+        
+        if (!text) {
+          return `Barcode/QR Code Generator Usage:
+
+Generate QR codes and various barcodes for text!
+
+Usage: barcode <type> <text>
+
+Types:
+  qr         - QR Code (default)
+  dataurl    - QR Code as data URL
+  svg        - QR Code as SVG
+  url        - Simple QR code via external API
+
+Examples:
+  barcode qr "Hello World"
+  barcode dataurl "https://example.com"
+  barcode svg "Contact Info"
+  barcode url "My Portfolio"
+
+Note: For complex data, use shorter text or URLs.`;
+        }
+
+        try {
+          switch (action.toLowerCase()) {
+            case 'qr':
+            case 'dataurl':
+              try {
+                const qrDataUrl = await QRCode.toDataURL(text, {
+                  width: 256,
+                  margin: 2,
+                  color: {
+                    dark: '#000000',
+                    light: '#FFFFFF'
+                  }
+                });
+                
+                return `QR Code generated for: "${text}"
+
+<img src="${qrDataUrl}" alt="QR Code" style="display: block; max-width: 256px; height: auto; margin: 10px 0; border: 1px solid #ccc;">
+
+Data URL: ${qrDataUrl.substring(0, 100)}...
+
+Scan with your phone's camera or QR code reader!`;
+              } catch (qrError) {
+                return `QR Code generation failed: ${qrError}`;
+              }
+
+            case 'svg':
+              try {
+                const qrSvg = await QRCode.toString(text, { 
+                  type: 'svg',
+                  width: 256,
+                  margin: 2 
+                });
+                
+                return `QR Code SVG generated for: "${text}"
+
+${qrSvg}
+
+This is vector-based and scales to any size!`;
+              } catch (svgError) {
+                return `SVG QR Code generation failed: ${svgError}`;
+              }
+
+            case 'url':
+              const encodedText = encodeURIComponent(text);
+              const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=${encodedText}`;
+              
+              return `QR Code URL generated for: "${text}"
+
+<img src="${qrUrl}" alt="QR Code" style="display: block; max-width: 256px; height: auto; margin: 10px 0; border: 1px solid #ccc;" onerror="this.style.display='none';">
+
+Direct URL: ${qrUrl}
+
+This uses an external API service.`;
+
+            case 'ascii':
+              // Simple ASCII QR-like pattern (not a real QR code)
+              const size = Math.min(text.length + 4, 15);
+              let asciiCode = '';
+              
+              for (let i = 0; i < size; i++) {
+                for (let j = 0; j < size; j++) {
+                  // Create a pseudo-random pattern based on text and position
+                  const hash = (text.charCodeAt(i % text.length) + i + j) % 3;
+                  asciiCode += hash === 0 ? '██' : '  ';
+                }
+                asciiCode += '\n';
+              }
+              
+              return `ASCII QR-like Pattern for: "${text}"
+
+${asciiCode}
+
+Note: This is decorative ASCII art, not a scannable QR code.
+Use 'barcode qr' for real QR codes.`;
+
+            default:
+              return `Unknown barcode type: ${action}. Use 'barcode' without arguments for help.`;
+          }
+        } catch (error) {
+          return `Barcode generation error: ${error}`;
+        }
+      }
+    },
+    {
+      name: 'data',
+      description: 'Parse and convert between data formats (CSV, XML, YAML, SQL, JSON)',
+      execute: (args) => {
+        const action = args[0];
+        const input = args.slice(1).join(' ');
+        
+        if (!action) {
+          return `Data Format Command Usage:
+
+Parse, validate, and convert between various data formats!
+
+Usage: data <command> [data]
+
+Commands:
+  csv <csv_data>              - Parse CSV data to JSON
+  xml <xml_data>              - Parse XML data to JSON
+  yaml <yaml_data>            - Parse YAML data to JSON
+  sql <sql_query>             - Format and validate SQL
+  json <json_data>            - Validate and pretty-print JSON
+  convert <from> <to> <data>  - Convert between formats
+
+Conversion formats: json, csv, xml, yaml
+
+Examples:
+  data csv "name,age\\nJohn,25\\nJane,30"
+  data xml "<user><name>John</name><age>25</age></user>"
+  data yaml "name: John\\nage: 25"
+  data sql "SELECT * FROM users WHERE age > 18"
+  data json '{"name":"John","age":25}'
+  data convert json csv '{"users":[{"name":"John","age":25}]}'`;
+        }
+
+        if (!input && !['help'].includes(action.toLowerCase())) {
+          return `Please provide data to ${action}. Use 'data' without arguments for help.`;
+        }
+
+        try {
+          switch (action.toLowerCase()) {
+            case 'csv':
+              try {
+                // Simple CSV parser
+                const lines = input.split('\\n').map(line => line.split(','));
+                const headers = lines[0];
+                const data = lines.slice(1).map(row => {
+                  const obj: { [key: string]: string } = {};
+                  headers.forEach((header, index) => {
+                    obj[header.trim()] = row[index]?.trim() || '';
+                  });
+                  return obj;
+                });
+
+                return `CSV Parsing Results:
+
+Headers: [${headers.join(', ')}]
+Rows: ${data.length}
+
+JSON Output:
+${JSON.stringify(data, null, 2)}
+
+Summary:
+- ${headers.length} columns detected
+- ${data.length} data rows parsed`;
+              } catch (error) {
+                return `CSV parsing error: ${error}. Make sure to use proper CSV format.`;
+              }
+
+            case 'xml':
+              try {
+                xml2js.parseString(input, (err: Error | null, result: unknown) => {
+                  if (err) {
+                    throw err;
+                  }
+                  return `XML Parsing Results:
+
+Original XML:
+${input}
+
+JSON Output:
+${JSON.stringify(result, null, 2)}
+
+Structure: Successfully parsed XML to JSON object.`;
+                });
+                
+                // Fallback synchronous parsing attempt
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(input, 'text/xml');
+                
+                if (xmlDoc.getElementsByTagName('parsererror').length > 0) {
+                  throw new Error('Invalid XML syntax');
+                }
+                
+                const xmlToObj = (node: Element): unknown => {
+                  const obj: { [key: string]: unknown } = {};
+                  
+                  // Add attributes
+                  for (let i = 0; i < node.attributes.length; i++) {
+                    const attr = node.attributes[i];
+                    obj[`@${attr.name}`] = attr.value;
+                  }
+                  
+                  // Add child elements
+                  for (let i = 0; i < node.children.length; i++) {
+                    const child = node.children[i] as Element;
+                    if (!obj[child.tagName]) {
+                      obj[child.tagName] = xmlToObj(child);
+                    }
+                  }
+                  
+                  // Add text content if no children
+                  if (node.children.length === 0 && node.textContent?.trim()) {
+                    return node.textContent.trim();
+                  }
+                  
+                  return Object.keys(obj).length > 0 ? obj : node.textContent?.trim() || '';
+                };
+                
+                const result = xmlToObj(xmlDoc.documentElement);
+                
+                return `XML Parsing Results:
+
+Original XML:
+${input}
+
+JSON Output:
+${JSON.stringify({ [xmlDoc.documentElement.tagName]: result }, null, 2)}
+
+Structure: Successfully parsed XML to JSON object.`;
+              } catch (error) {
+                return `XML parsing error: ${error}. Please check your XML syntax.`;
+              }
+
+            case 'yaml':
+              try {
+                const yamlData = yaml.load(input.replace(/\\n/g, '\n'));
+                
+                return `YAML Parsing Results:
+
+Original YAML:
+${input.replace(/\\n/g, '\n')}
+
+JSON Output:
+${JSON.stringify(yamlData, null, 2)}
+
+Type: ${Array.isArray(yamlData) ? 'Array' : typeof yamlData}
+Structure: Successfully parsed YAML to JSON.`;
+              } catch (error) {
+                return `YAML parsing error: ${error}. Please check your YAML syntax.`;
+              }
+
+            case 'sql':
+              try {
+                const formatted = sqlFormatter(input, {
+                  language: 'sql'
+                });
+                
+                // Basic SQL analysis
+                const sqlType = input.trim().toUpperCase().split(' ')[0];
+                const hasWhere = /WHERE/i.test(input);
+                const hasJoin = /JOIN/i.test(input);
+                const hasGroupBy = /GROUP BY/i.test(input);
+                const hasOrderBy = /ORDER BY/i.test(input);
+                
+                return `SQL Formatting Results:
+
+Query Type: ${sqlType}
+Analysis:
+- Has WHERE clause: ${hasWhere ? 'Yes' : 'No'}
+- Has JOIN: ${hasJoin ? 'Yes' : 'No'}
+- Has GROUP BY: ${hasGroupBy ? 'Yes' : 'No'}
+- Has ORDER BY: ${hasOrderBy ? 'Yes' : 'No'}
+
+Formatted SQL:
+${formatted}
+
+Note: This is formatting only, not actual execution.`;
+              } catch (error) {
+                return `SQL formatting error: ${error}. Please check your SQL syntax.`;
+              }
+
+            case 'json':
+              try {
+                const parsed = JSON.parse(input);
+                const formatted = JSON.stringify(parsed, null, 2);
+                
+                // JSON analysis
+                const type = Array.isArray(parsed) ? 'Array' : typeof parsed;
+                const keys = typeof parsed === 'object' && parsed !== null ? Object.keys(parsed).length : 0;
+                const size = JSON.stringify(parsed).length;
+                
+                return `JSON Validation Results:
+
+Status: ✅ Valid JSON
+Type: ${type}
+${type === 'object' ? `Properties: ${keys}` : ''}
+Size: ${size} characters
+
+Formatted JSON:
+${formatted}`;
+              } catch (error) {
+                return `JSON validation error: ${error}
+Invalid JSON syntax. Please check your JSON format.`;
+              }
+
+            case 'convert':
+              const fromFormat = args[1];
+              const toFormat = args[2];
+              const convertData = args.slice(3).join(' ');
+              
+              if (!fromFormat || !toFormat || !convertData) {
+                return 'Usage: data convert <from_format> <to_format> <data>\nFormats: json, csv, xml, yaml';
+              }
+              
+              try {
+                let parsed;
+                
+                // Parse input data based on format
+                switch (fromFormat.toLowerCase()) {
+                  case 'json':
+                    parsed = JSON.parse(convertData);
+                    break;
+                  case 'yaml':
+                    parsed = yaml.load(convertData.replace(/\\n/g, '\n'));
+                    break;
+                  case 'csv':
+                    const csvLines = convertData.split('\\n').map(line => line.split(','));
+                    const csvHeaders = csvLines[0];
+                    parsed = csvLines.slice(1).map(row => {
+                      const obj: { [key: string]: string } = {};
+                      csvHeaders.forEach((header, index) => {
+                        obj[header.trim()] = row[index]?.trim() || '';
+                      });
+                      return obj;
+                    });
+                    break;
+                  default:
+                    throw new Error(`Unsupported input format: ${fromFormat}`);
+                }
+                
+                // Convert to output format
+                let result;
+                switch (toFormat.toLowerCase()) {
+                  case 'json':
+                    result = JSON.stringify(parsed, null, 2);
+                    break;
+                  case 'yaml':
+                    result = yaml.dump(parsed);
+                    break;
+                  case 'csv':
+                    if (Array.isArray(parsed) && parsed.length > 0 && typeof parsed[0] === 'object') {
+                      const headers = Object.keys(parsed[0]);
+                      const csvData = [
+                        headers.join(','),
+                        ...parsed.map(row => headers.map(h => row[h] || '').join(','))
+                      ];
+                      result = csvData.join('\n');
+                    } else {
+                      throw new Error('CSV output requires array of objects');
+                    }
+                    break;
+                  default:
+                    throw new Error(`Unsupported output format: ${toFormat}`);
+                }
+                
+                return `Data Conversion Results:
+
+From: ${fromFormat.toUpperCase()}
+To: ${toFormat.toUpperCase()}
+
+Output:
+${result}`;
+                
+              } catch (error) {
+                return `Conversion error: ${error}`;
+              }
+
+            default:
+              return `Unknown data command: ${action}. Use 'data' without arguments for help.`;
+          }
+        } catch (error) {
+          return `Data processing error: ${error}`;
+        }
+      }
+    },
+    {
+      name: 'minify',
+      description: 'Minify CSS, JavaScript, and HTML code',
+      execute: (args) => {
+        const type = args[0];
+        const code = args.slice(1).join(' ');
+        
+        if (!type || !code) {
+          return `Minify Command Usage:
+
+Minify CSS, JavaScript, and HTML code for production!
+
+Usage: minify <type> <code>
+
+Types:
+  css        - Minify CSS code
+  js         - Minify JavaScript code
+  html       - Minify HTML code
+
+Examples:
+  minify css "body { margin: 0; padding: 20px; }"
+  minify js "function hello() { console.log('Hello World'); }"
+  minify html "<div> <p>Hello World</p> </div>"
+
+Note: This provides basic minification.
+For production, use dedicated build tools.`;
+        }
+
+        try {
+          switch (type.toLowerCase()) {
+            case 'css':
+              const minifiedCss = beautify.css(code, { indent_size: 0 })
+                .replace(/\s+/g, ' ')
+                .replace(/;\s+/g, ';')
+                .replace(/\{\s+/g, '{')
+                .replace(/\s+\}/g, '}')
+                .replace(/,\s+/g, ',')
+                .replace(/:\s+/g, ':')
+                .trim();
+              
+              const cssOriginalSize = code.length;
+              const cssMinifiedSize = minifiedCss.length;
+              const cssSavings = ((cssOriginalSize - cssMinifiedSize) / cssOriginalSize * 100).toFixed(1);
+              
+              return `CSS Minification Results:
+
+Original (${cssOriginalSize} chars):
+${code}
+
+Minified (${cssMinifiedSize} chars):
+${minifiedCss}
+
+Space Saved: ${cssSavings}% (${cssOriginalSize - cssMinifiedSize} characters)`;
+
+            case 'js':
+            case 'javascript':
+              // Basic JavaScript minification (remove extra spaces, newlines)
+              const minifiedJs = code
+                .replace(/\/\*[\s\S]*?\*\//g, '') // Remove /* */ comments
+                .replace(/\/\/.*$/gm, '') // Remove // comments
+                .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+                .replace(/;\s+/g, ';')
+                .replace(/\{\s+/g, '{')
+                .replace(/\s+\}/g, '}')
+                .replace(/,\s+/g, ',')
+                .replace(/\s*=\s*/g, '=')
+                .replace(/\s*\+\s*/g, '+')
+                .replace(/\s*-\s*/g, '-')
+                .replace(/\s*\*\s*/g, '*')
+                .replace(/\s*\/\s*/g, '/')
+                .trim();
+              
+              const jsOriginalSize = code.length;
+              const jsMinifiedSize = minifiedJs.length;
+              const jsSavings = ((jsOriginalSize - jsMinifiedSize) / jsOriginalSize * 100).toFixed(1);
+              
+              return `JavaScript Minification Results:
+
+Original (${jsOriginalSize} chars):
+${code}
+
+Minified (${jsMinifiedSize} chars):
+${minifiedJs}
+
+Space Saved: ${jsSavings}% (${jsOriginalSize - jsMinifiedSize} characters)
+
+Note: For production, use proper JS minifiers like UglifyJS or Terser.`;
+
+            case 'html':
+              const minifiedHtml = code
+                .replace(/<!--[\s\S]*?-->/g, '') // Remove HTML comments
+                .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+                .replace(/>\s+</g, '><') // Remove spaces between tags
+                .replace(/\s+>/g, '>') // Remove spaces before closing >
+                .replace(/\s+\/>/g, '/>') // Remove spaces before self-closing />
+                .trim();
+              
+              const htmlOriginalSize = code.length;
+              const htmlMinifiedSize = minifiedHtml.length;
+              const htmlSavings = ((htmlOriginalSize - htmlMinifiedSize) / htmlOriginalSize * 100).toFixed(1);
+              
+              return `HTML Minification Results:
+
+Original (${htmlOriginalSize} chars):
+${code}
+
+Minified (${htmlMinifiedSize} chars):
+${minifiedHtml}
+
+Space Saved: ${htmlSavings}% (${htmlOriginalSize - htmlMinifiedSize} characters)`;
+
+            default:
+              return `Unsupported minification type: ${type}. Supported types: css, js, html`;
+          }
+        } catch (error) {
+          return `Minification error: ${error}`;
+        }
+      }
+    },
+    {
+      name: 'beautify',
+      description: 'Format and beautify CSS, JavaScript, and HTML code',
+      execute: (args) => {
+        const type = args[0];
+        const code = args.slice(1).join(' ');
+        
+        if (!type || !code) {
+          return `Beautify Command Usage:
+
+Format and beautify CSS, JavaScript, and HTML code!
+
+Usage: beautify <type> <code>
+
+Types:
+  css        - Format CSS code
+  js         - Format JavaScript code
+  html       - Format HTML code
+  json       - Format JSON data
+
+Examples:
+  beautify css "body{margin:0;padding:20px;}"
+  beautify js "function hello(){console.log('Hello');}"
+  beautify html "<div><p>Hello</p></div>"
+  beautify json '{"name":"John","age":25}'
+
+This makes code more readable with proper indentation.`;
+        }
+
+        try {
+          switch (type.toLowerCase()) {
+            case 'css':
+              const beautifiedCss = beautify.css(code, {
+                indent_size: 2,
+                indent_char: ' ',
+                max_preserve_newlines: 1,
+                preserve_newlines: true,
+                end_with_newline: false
+              });
+              
+              return `CSS Beautification Results:
+
+Original:
+${code}
+
+Beautified:
+${beautifiedCss}
+
+✨ Code is now properly formatted with 2-space indentation!`;
+
+            case 'js':
+            case 'javascript':
+              const beautifiedJs = beautify.js(code, {
+                indent_size: 2,
+                indent_char: ' ',
+                max_preserve_newlines: 2,
+                preserve_newlines: true,
+                keep_array_indentation: false,
+                break_chained_methods: false,
+                brace_style: 'collapse',
+                space_before_conditional: true,
+                unescape_strings: false,
+                jslint_happy: false,
+                end_with_newline: false
+              });
+              
+              return `JavaScript Beautification Results:
+
+Original:
+${code}
+
+Beautified:
+${beautifiedJs}
+
+✨ Code is now properly formatted with consistent style!`;
+
+            case 'html':
+              const beautifiedHtml = beautify.html(code, {
+                indent_size: 2,
+                indent_char: ' ',
+                max_preserve_newlines: 1,
+                preserve_newlines: true,
+                end_with_newline: false,
+                indent_inner_html: false,
+                wrap_line_length: 120,
+                wrap_attributes: 'auto'
+              });
+              
+              return `HTML Beautification Results:
+
+Original:
+${code}
+
+Beautified:
+${beautifiedHtml}
+
+✨ HTML is now properly indented and formatted!`;
+
+            case 'json':
+              try {
+                const parsed = JSON.parse(code);
+                const beautifiedJson = JSON.stringify(parsed, null, 2);
+                
+                return `JSON Beautification Results:
+
+Original:
+${code}
+
+Beautified:
+${beautifiedJson}
+
+✨ JSON is now properly formatted with 2-space indentation!`;
+              } catch (jsonError) {
+                return `JSON parsing error: ${jsonError}. Please provide valid JSON.`;
+              }
+
+            case 'xml':
+              // Basic XML formatting
+              const beautifiedXml = code
+                .replace(/></g, '>\n<')
+                .split('\n')
+                .map((line, index, array) => {
+                  const trimmed = line.trim();
+                  if (!trimmed) return '';
+                  
+                  let indent = 0;
+                  for (let i = 0; i < index; i++) {
+                    const prevLine = array[i].trim();
+                    if (prevLine.startsWith('<') && !prevLine.startsWith('</') && !prevLine.endsWith('/>')) {
+                      indent++;
+                    }
+                    if (prevLine.startsWith('</')) {
+                      indent--;
+                    }
+                  }
+                  
+                  if (trimmed.startsWith('</')) {
+                    indent--;
+                  }
+                  
+                  return '  '.repeat(Math.max(0, indent)) + trimmed;
+                })
+                .filter(line => line.trim())
+                .join('\n');
+              
+              return `XML Beautification Results:
+
+Original:
+${code}
+
+Beautified:
+${beautifiedXml}
+
+✨ XML is now properly indented!`;
+
+            default:
+              return `Unsupported beautification type: ${type}. Supported types: css, js, html, json, xml`;
+          }
+        } catch (error) {
+          return `Beautification error: ${error}`;
+        }
+      }
+    },
+    {
+      name: 'rps',
+      description: 'Play Rock Paper Scissors against the computer',
+      execute: (args) => {
+        const playerChoice = args[0]?.toLowerCase();
+        
+        if (!playerChoice || !['rock', 'paper', 'scissors', 'r', 'p', 's'].includes(playerChoice)) {
+          return `Rock Paper Scissors Game 🎮
+
+Play against the computer!
+
+Usage: rps <choice>
+
+Choices:
+  rock     (or r) - 🪨 Rock crushes scissors
+  paper    (or p) - 📄 Paper covers rock
+  scissors (or s) - ✂️ Scissors cuts paper
+
+Examples:
+  rps rock
+  rps paper
+  rps scissors
+  rps r
+  rps p
+  rps s
+
+Good luck! 🍀`;
+        }
+
+        // Normalize player choice
+        let player = '';
+        if (['rock', 'r'].includes(playerChoice)) player = 'rock';
+        else if (['paper', 'p'].includes(playerChoice)) player = 'paper';
+        else if (['scissors', 's'].includes(playerChoice)) player = 'scissors';
+
+        // Computer makes random choice
+        const choices = ['rock', 'paper', 'scissors'];
+        const computer = choices[Math.floor(Math.random() * choices.length)];
+
+        // Determine winner
+        let result = '';
+        let outcome = '';
+        
+        if (player === computer) {
+          result = "It's a tie!";
+          outcome = '🤝';
+        } else if (
+          (player === 'rock' && computer === 'scissors') ||
+          (player === 'paper' && computer === 'rock') ||
+          (player === 'scissors' && computer === 'paper')
+        ) {
+          result = 'You win!';
+          outcome = '🎉';
+        } else {
+          result = 'Computer wins!';
+          outcome = '🤖';
+        }
+
+        // Get emojis for choices
+        const getEmoji = (choice: string) => {
+          switch (choice) {
+            case 'rock': return '🪨';
+            case 'paper': return '📄';
+            case 'scissors': return '✂️';
+            default: return '❓';
+          }
+        };
+
+        // Create visual battle
+        const playerEmoji = getEmoji(player);
+        const computerEmoji = getEmoji(computer);
+
+        // Explanation of what happened
+        let explanation = '';
+        if (player !== computer) {
+          if (player === 'rock' && computer === 'scissors') explanation = 'Rock crushes scissors!';
+          else if (player === 'paper' && computer === 'rock') explanation = 'Paper covers rock!';
+          else if (player === 'scissors' && computer === 'paper') explanation = 'Scissors cuts paper!';
+          else if (computer === 'rock' && player === 'scissors') explanation = 'Rock crushes scissors!';
+          else if (computer === 'paper' && player === 'rock') explanation = 'Paper covers rock!';
+          else if (computer === 'scissors' && player === 'paper') explanation = 'Scissors cuts paper!';
+        }
+
+        return `Rock Paper Scissors Battle! ${outcome}
+
+${playerEmoji} YOU    vs    COMPUTER ${computerEmoji}
+${player.toUpperCase().padEnd(8)} vs ${computer.toUpperCase().padStart(8)}
+
+${result}
+${explanation ? `${explanation}` : 'Same choice - nobody wins!'}
+
+Want to play again? Try: rps <rock|paper|scissors>`;
+      }
+    },
+    {
+      name: 'hangman',
+      description: 'Play hangman word guessing game',
+      execute: (args) => {
+        const action = args[0]?.toLowerCase();
+        
+        // Get or initialize game state from localStorage
+        const getGameState = () => {
+          const saved = localStorage.getItem('hangman_game');
+          return saved ? JSON.parse(saved) : null;
+        };
+        
+        const saveGameState = (state: unknown) => {
+          localStorage.setItem('hangman_game', JSON.stringify(state));
+        };
+        
+        const clearGameState = () => {
+          localStorage.removeItem('hangman_game');
+        };
+
+        if (!action || action === 'help') {
+          return `Hangman Word Guessing Game 🎯
+
+Guess the hidden word one letter at a time!
+
+Commands:
+  hangman start [category]  - Start a new game
+  hangman guess <letter>    - Guess a letter
+  hangman word <word>       - Guess the entire word
+  hangman hint             - Get a hint
+  hangman quit             - End current game
+  hangman status           - Show current game state
+
+Categories: animals, countries, programming, movies, food
+
+Example:
+  hangman start animals
+  hangman guess a
+  hangman word elephant`;
+        }
+
+        const gameState = getGameState();
+
+        switch (action) {
+          case 'start':
+            const category = args[1]?.toLowerCase() || 'random';
+            
+            const wordLists: { [key: string]: string[] } = {
+              animals: ['elephant', 'giraffe', 'penguin', 'dolphin', 'kangaroo', 'butterfly', 'octopus', 'cheetah'],
+              countries: ['australia', 'brazil', 'canada', 'denmark', 'egypt', 'france', 'germany', 'italy'],
+              programming: ['javascript', 'python', 'algorithm', 'function', 'variable', 'array', 'object', 'method'],
+              movies: ['inception', 'avatar', 'titanic', 'matrix', 'gladiator', 'interstellar', 'marvel', 'batman'],
+              food: ['pizza', 'burger', 'sushi', 'pasta', 'tacos', 'sandwich', 'chocolate', 'strawberry']
+            };
+            
+            let selectedList = wordLists.animals;
+            if (category === 'random') {
+              const categories = Object.keys(wordLists);
+              const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+              selectedList = wordLists[randomCategory];
+            } else if (wordLists[category]) {
+              selectedList = wordLists[category];
+            }
+            
+            const word = selectedList[Math.floor(Math.random() * selectedList.length)];
+            const newGame = {
+              word: word.toLowerCase(),
+              category,
+              guessed: [] as string[],
+              wrongGuesses: 0,
+              maxWrong: 6,
+              isComplete: false,
+              isWon: false
+            };
+            
+            saveGameState(newGame);
+            
+            const display = word.split('').map(() => '_').join(' ');
+            
+            return `🎯 New Hangman Game Started!
+
+Category: ${category === 'random' ? 'Random' : category.charAt(0).toUpperCase() + category.slice(1)}
+Word: ${display} (${word.length} letters)
+Wrong guesses: 0/${newGame.maxWrong}
+
+Guess a letter with: hangman guess <letter>
+Or guess the word with: hangman word <word>
+
+Good luck! 🍀`;
+
+          case 'guess':
+            if (!gameState) {
+              return 'No active game! Start a new game with: hangman start [category]';
+            }
+            
+            if (gameState.isComplete) {
+              return 'Game is over! Start a new game with: hangman start [category]';
+            }
+            
+            const letter = args[1]?.toLowerCase();
+            if (!letter || letter.length !== 1 || !/[a-z]/.test(letter)) {
+              return 'Please provide a single letter: hangman guess <letter>';
+            }
+            
+            if (gameState.guessed.includes(letter)) {
+              return `You already guessed "${letter}"! Try a different letter.`;
+            }
+            
+            gameState.guessed.push(letter);
+            
+            let result = '';
+            if (gameState.word.includes(letter)) {
+              result = `✅ Good guess! "${letter}" is in the word.`;
+            } else {
+              gameState.wrongGuesses++;
+              result = `❌ Sorry, "${letter}" is not in the word.`;
+            }
+            
+            // Check win condition
+            const currentWordProgress = gameState.word.split('').map((char: string) => 
+              gameState.guessed.includes(char) ? char : '_'
+            ).join(' ');
+            
+            if (!currentWordProgress.includes('_')) {
+              gameState.isComplete = true;
+              gameState.isWon = true;
+              result += `\n\n🎉 Congratulations! You won!
+The word was: ${gameState.word.toUpperCase()}`;
+              clearGameState();
+            } else if (gameState.wrongGuesses >= gameState.maxWrong) {
+              gameState.isComplete = true;
+              gameState.isWon = false;
+              result += `\n\n💀 Game Over! You're out of guesses.
+The word was: ${gameState.word.toUpperCase()}`;
+              clearGameState();
+            } else {
+              saveGameState(gameState);
+            }
+            
+            // Hangman drawing
+            const hangmanStages = [
+              '  ____\n  |  |\n  |\n  |\n  |\n__|__',
+              '  ____\n  |  |\n  |  O\n  |\n  |\n__|__',
+              '  ____\n  |  |\n  |  O\n  |  |\n  |\n__|__',
+              '  ____\n  |  |\n  |  O\n  | /|\n  |\n__|__',
+              '  ____\n  |  |\n  |  O\n  | /|\\\n  |\n__|__',
+              '  ____\n  |  |\n  |  O\n  | /|\\\n  | /\n__|__',
+              '  ____\n  |  |\n  |  O\n  | /|\\\n  | / \\\n__|__'
+            ];
+            
+            const hangmanArt = hangmanStages[gameState.wrongGuesses] || hangmanStages[0];
+            
+            return `${result}
+
+${hangmanArt}
+
+Word: ${currentWordProgress}
+Guessed letters: [${gameState.guessed.join(', ')}]
+Wrong guesses: ${gameState.wrongGuesses}/${gameState.maxWrong}
+
+${!gameState.isComplete ? 'Keep guessing!' : 'Game complete!'}`;
+
+          case 'word':
+            if (!gameState) {
+              return 'No active game! Start a new game with: hangman start [category]';
+            }
+            
+            if (gameState.isComplete) {
+              return 'Game is over! Start a new game with: hangman start [category]';
+            }
+            
+            const guessedWord = args[1]?.toLowerCase();
+            if (!guessedWord) {
+              return 'Please provide a word: hangman word <word>';
+            }
+            
+            if (guessedWord === gameState.word) {
+              gameState.isComplete = true;
+              gameState.isWon = true;
+              clearGameState();
+              return `🎉 Excellent! You guessed the word correctly!
+
+The word was: ${gameState.word.toUpperCase()}
+
+You won the game! 🏆`;
+            } else {
+              gameState.wrongGuesses += 2; // Wrong word guess costs more
+              
+              if (gameState.wrongGuesses >= gameState.maxWrong) {
+                gameState.isComplete = true;
+                gameState.isWon = false;
+                clearGameState();
+                return `❌ Wrong word! Game Over!
+
+Your guess: ${guessedWord}
+Correct word: ${gameState.word.toUpperCase()}
+
+Better luck next time! 💀`;
+              } else {
+                saveGameState(gameState);
+                const wrongWordProgress = gameState.word.split('').map((char: string) => 
+                  gameState.guessed.includes(char) ? char : '_'
+                ).join(' ');
+                return `❌ Wrong word! "${guessedWord}" is not correct.
+Wrong guesses: ${gameState.wrongGuesses}/${gameState.maxWrong}
+
+Keep trying! The word is: ${wrongWordProgress}`;
+              }
+            }
+
+          case 'hint':
+            if (!gameState) {
+              return 'No active game! Start a new game with: hangman start [category]';
+            }
+            
+            if (gameState.isComplete) {
+              return 'Game is over! Start a new game with: hangman start [category]';
+            }
+            
+            // Reveal one unguessed letter
+            const unguessedLetters = gameState.word.split('').filter((char: string) => 
+              !gameState.guessed.includes(char)
+            );
+            
+            if (unguessedLetters.length === 0) {
+              return 'You\'ve already guessed all the letters!';
+            }
+            
+            const hintLetter = unguessedLetters[Math.floor(Math.random() * unguessedLetters.length)];
+            gameState.guessed.push(hintLetter);
+            saveGameState(gameState);
+            
+            const hintWordProgress = gameState.word.split('').map((char: string) => 
+              gameState.guessed.includes(char) ? char : '_'
+            ).join(' ');
+            
+            return `💡 Hint: The word contains the letter "${hintLetter}"
+
+Word: ${hintWordProgress}
+This hint cost you a guess! Use them wisely.`;
+
+          case 'status':
+            if (!gameState) {
+              return 'No active game! Start a new game with: hangman start [category]';
+            }
+            
+            const currentProgress = gameState.word.split('').map((char: string) => 
+              gameState.guessed.includes(char) ? char : '_'
+            ).join(' ');
+            
+            return `🎯 Current Hangman Game:
+
+Category: ${gameState.category}
+Word: ${currentProgress} (${gameState.word.length} letters)
+Guessed letters: [${gameState.guessed.join(', ')}]
+Wrong guesses: ${gameState.wrongGuesses}/${gameState.maxWrong}
+Status: ${gameState.isComplete ? (gameState.isWon ? 'Won!' : 'Lost') : 'In Progress'}`;
+
+          case 'quit':
+            if (!gameState) {
+              return 'No active game to quit.';
+            }
+            
+            clearGameState();
+            return `Game ended. The word was: ${gameState.word.toUpperCase()}
+Thanks for playing! 👋`;
+
+          default:
+            return `Unknown hangman command: ${action}. Use 'hangman help' for instructions.`;
+        }
+      }
+    },
+    {
+      name: 'ping',
+      description: 'Test connectivity and response time to websites',
+      execute: async (args) => {
+        const url = args[0];
+        
+        if (!url) {
+          return `Ping Command Usage:
+
+Test connectivity and response time to websites!
+
+Usage: ping <url>
+
+Examples:
+  ping google.com
+  ping github.com
+  ping stackoverflow.com
+  ping https://example.com
+
+Note: Due to browser security, this uses HTTP requests instead of ICMP.
+Results show HTTP response time, not traditional ping.`;
+        }
+
+        // Ensure URL has protocol
+        let targetUrl = url;
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+          targetUrl = `https://${url}`;
+        }
+
+        const startTime = performance.now();
+        
+        try {
+          // Try to fetch the URL (HEAD request to minimize data transfer)
+          await fetch(targetUrl, { 
+            method: 'HEAD',
+            mode: 'no-cors',
+            cache: 'no-cache'
+          });
+          
+          const endTime = performance.now();
+          const responseTime = Math.round(endTime - startTime);
+          
+          // Since mode is 'no-cors', response will be opaque
+          // We can only determine if the request completed
+          return `Ping Results for ${targetUrl}:
+
+Status: Reachable ✅
+Response Time: ${responseTime}ms
+Connection: ${navigator.onLine ? 'Online' : 'Offline'}
+User Agent: ${navigator.userAgent.split(' ')[0]}
+
+Note: This is HTTP response time, not ICMP ping.
+Browser security limits prevent traditional ping.`;
+
+        } catch (error) {
+          const endTime = performance.now();
+          const responseTime = Math.round(endTime - startTime);
+          
+          return `Ping Results for ${targetUrl}:
+
+Status: Unreachable ❌
+Response Time: ${responseTime}ms (timeout/error)
+Error: ${error}
+Connection: ${navigator.onLine ? 'Online' : 'Offline'}
+
+The host may be down, unreachable, or blocking requests.`;
+        }
+      }
+    },
+    {
+      name: 'dice',
+      description: 'Roll dice with various combinations (1d6, 2d20, 3d10, etc.)',
+      execute: (args) => {
+        const input = args[0] || '1d6';
+        
+        if (!input || input === 'help') {
+          return `Dice Rolling Command 🎲
+
+Roll dice with various combinations!
+
+Usage: dice <XdY> [options]
+  X = number of dice
+  Y = number of sides per die
+
+Common Examples:
+  dice 1d6      - Roll one 6-sided die
+  dice 2d6      - Roll two 6-sided dice
+  dice 1d20     - Roll one 20-sided die (D&D)
+  dice 4d6      - Roll four 6-sided dice
+  dice 3d10     - Roll three 10-sided dice
+  dice 1d100    - Roll percentile dice
+
+Special Options:
+  dice advantage    - Roll 2d20, take highest (D&D 5e)
+  dice disadvantage - Roll 2d20, take lowest (D&D 5e)
+  dice stats        - Roll 4d6 drop lowest, six times (D&D stats)
+
+Examples:
+  dice 2d6+3    - Roll 2d6 and add 3
+  dice 1d20-2   - Roll 1d20 and subtract 2`;
+        }
+
+        try {
+          // Handle special cases
+          if (input.toLowerCase() === 'advantage') {
+            const roll1 = Math.floor(Math.random() * 20) + 1;
+            const roll2 = Math.floor(Math.random() * 20) + 1;
+            const result = Math.max(roll1, roll2);
+            
+            return `🎲 Advantage Roll (2d20, take highest):
+
+Roll 1: ${roll1}
+Roll 2: ${roll2}
+Result: ${result} ⬆️
+
+${result >= 15 ? '🎉 Great roll!' : result >= 10 ? '👍 Decent roll!' : '😬 Could be better...'}`;
+          }
+          
+          if (input.toLowerCase() === 'disadvantage') {
+            const roll1 = Math.floor(Math.random() * 20) + 1;
+            const roll2 = Math.floor(Math.random() * 20) + 1;
+            const result = Math.min(roll1, roll2);
+            
+            return `🎲 Disadvantage Roll (2d20, take lowest):
+
+Roll 1: ${roll1}
+Roll 2: ${roll2}
+Result: ${result} ⬇️
+
+${result >= 15 ? '🍀 Lucky despite disadvantage!' : result >= 10 ? '😐 Average roll' : '💀 Ouch!'}`;
+          }
+          
+          if (input.toLowerCase() === 'stats') {
+            const stats = [];
+            for (let i = 0; i < 6; i++) {
+              const rolls = [
+                Math.floor(Math.random() * 6) + 1,
+                Math.floor(Math.random() * 6) + 1,
+                Math.floor(Math.random() * 6) + 1,
+                Math.floor(Math.random() * 6) + 1
+              ];
+              rolls.sort((a, b) => b - a); // Sort descending
+              const sum = rolls[0] + rolls[1] + rolls[2]; // Take top 3
+              stats.push({ rolls: rolls.slice(0, 3), sum });
+            }
+            
+            const total = stats.reduce((sum, stat) => sum + stat.sum, 0);
+            const average = (total / 6).toFixed(1);
+            
+            return `🎲 D&D Ability Score Generation (4d6 drop lowest):
+
+${stats.map((stat, i) => 
+              `Stat ${i + 1}: [${stat.rolls.join(', ')}] = ${stat.sum}`
+            ).join('\n')}
+
+Total: ${total}
+Average: ${average}
+${total >= 75 ? '🎉 Excellent stats!' : total >= 65 ? '👍 Good stats!' : '😅 Could be better...'}`;
+          }
+          
+          // Parse dice notation (XdY+Z or XdY-Z)
+          const diceMatch = input.match(/^(\d+)d(\d+)([+-]\d+)?$/i);
+          if (!diceMatch) {
+            return `Invalid dice notation: ${input}
+Use format like: 1d6, 2d20, 3d10+5, etc.`;
+          }
+          
+          const numDice = parseInt(diceMatch[1]);
+          const numSides = parseInt(diceMatch[2]);
+          const modifier = diceMatch[3] ? parseInt(diceMatch[3]) : 0;
+          
+          // Validation
+          if (numDice < 1 || numDice > 100) {
+            return 'Number of dice must be between 1 and 100';
+          }
+          if (numSides < 2 || numSides > 1000) {
+            return 'Number of sides must be between 2 and 1000';
+          }
+          
+          // Roll the dice
+          const rolls = [];
+          for (let i = 0; i < numDice; i++) {
+            rolls.push(Math.floor(Math.random() * numSides) + 1);
+          }
+          
+          const sum = rolls.reduce((total, roll) => total + roll, 0);
+          const finalResult = sum + modifier;
+          
+          // Generate dice emojis
+          const getDiceEmoji = (value: number, sides: number) => {
+            if (sides === 6) {
+              const diceEmojis = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+              return diceEmojis[value - 1] || '🎲';
+            }
+            return '🎲';
+          };
+          
+          const diceDisplay = rolls.map(roll => getDiceEmoji(roll, numSides)).join(' ');
+          
+          let resultMessage = '';
+          if (numSides === 20) {
+            if (rolls.includes(20)) resultMessage = '🎉 Natural 20! Critical hit!';
+            else if (rolls.includes(1)) resultMessage = '💀 Natural 1! Critical fail!';
+            else if (finalResult >= 15) resultMessage = '✨ Great roll!';
+            else if (finalResult >= 10) resultMessage = '👍 Decent roll!';
+            else resultMessage = '😬 Could be better...';
+          } else if (numSides === 6) {
+            if (rolls.every(r => r === 6)) resultMessage = '🎉 All sixes!';
+            else if (rolls.every(r => r === 1)) resultMessage = '💀 Snake eyes!';
+            else if (finalResult >= numDice * 4) resultMessage = '🔥 Hot dice!';
+          }
+          
+          return `🎲 Dice Roll: ${input}
+
+${diceDisplay}
+Individual rolls: [${rolls.join(', ')}]
+Sum: ${sum}${modifier !== 0 ? ` ${modifier >= 0 ? '+' : ''}${modifier}` : ''}
+Final Result: ${finalResult}
+
+${resultMessage}`;
+
+        } catch (error) {
+          return `Dice rolling error: ${error}`;
+        }
+      }
+    },
+    {
+      name: 'uuid',
+      description: 'Generate UUIDs (v1, v4, v5) and UUID utilities',
+      execute: (args) => {
+        const action = args[0] || 'v4';
+        
+        if (!action || action === 'help') {
+          return `UUID Generator 🔑
+
+Generate and validate Universally Unique Identifiers!
+
+Usage: uuid <version> [options]
+
+Versions:
+  v1        - Time-based UUID (includes timestamp and MAC address)
+  v4        - Random UUID (most common, cryptographically secure)
+  v5        - Name-based UUID using SHA-1 hash
+  validate  - Validate if a string is a valid UUID
+
+Examples:
+  uuid v4                           - Generate random UUID
+  uuid v1                           - Generate time-based UUID
+  uuid v5 example.com               - Generate name-based UUID
+  uuid validate 550e8400-e29b-41d4  - Validate UUID format
+  uuid info 550e8400-e29b-41d4      - Get UUID information
+
+Options for v5:
+  uuid v5 <name> [namespace]        - Custom name and namespace
+  Available namespaces: dns, url, oid, x500`;
+        }
+
+        try {
+          switch (action.toLowerCase()) {
+            case 'v1':
+              const uuid1 = uuidv1();
+              return `🔑 UUID v1 (Time-based):
+
+Generated: ${uuid1}
+
+Format: xxxxxxxx-xxxx-1xxx-xxxx-xxxxxxxxxxxx
+Type: Time-based UUID
+Timestamp: ${new Date().toISOString()}
+Note: Contains timestamp and MAC address information`;
+
+            case 'v4':
+            case 'random':
+              const uuid4 = uuidv4();
+              return `🔑 UUID v4 (Random):
+
+Generated: ${uuid4}
+
+Format: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
+Type: Random UUID (RFC 4122)
+Entropy: 122 bits
+Use case: General purpose, most common`;
+
+            case 'v5':
+              const name = args[1];
+              const namespace = args[2] || 'dns';
+              
+              if (!name) {
+                return 'Usage: uuid v5 <name> [namespace]\nExample: uuid v5 example.com dns';
+              }
+
+              // Predefined namespaces
+              const namespaces = {
+                dns: '6ba7b810-9dad-11d1-80b4-00c04fd430c8',
+                url: '6ba7b811-9dad-11d1-80b4-00c04fd430c8', 
+                oid: '6ba7b812-9dad-11d1-80b4-00c04fd430c8',
+                x500: '6ba7b814-9dad-11d1-80b4-00c04fd430c8'
+              };
+
+              const namespaceUuid = namespaces[namespace as keyof typeof namespaces] || namespace;
+              
+              try {
+                const uuid5 = uuidv5(name, namespaceUuid);
+                return `🔑 UUID v5 (Name-based):
+
+Generated: ${uuid5}
+Name: ${name}
+Namespace: ${namespace} (${namespaceUuid})
+
+Format: xxxxxxxx-xxxx-5xxx-yxxx-xxxxxxxxxxxx
+Type: Name-based UUID using SHA-1
+Deterministic: Same name + namespace = same UUID`;
+              } catch (error) {
+                return `UUID v5 generation error: ${error}\nCheck namespace format (should be valid UUID)`;
+              }
+
+            case 'validate':
+              const testUuid = args[1];
+              if (!testUuid) {
+                return 'Usage: uuid validate <uuid>\nExample: uuid validate 550e8400-e29b-41d4-bd07-34c2f1a3b3bc';
+              }
+
+              const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+              const isValid = uuidRegex.test(testUuid);
+              
+              if (isValid) {
+                const version = testUuid.charAt(14);
+                const variant = testUuid.charAt(19);
+                
+                return `✅ Valid UUID:
+
+UUID: ${testUuid}
+Version: ${version} (${
+                  version === '1' ? 'Time-based' :
+                  version === '4' ? 'Random' :
+                  version === '5' ? 'Name-based SHA-1' :
+                  'Unknown'
+                })
+Variant: ${variant} (RFC 4122)
+Format: Standard UUID format`;
+              } else {
+                return `❌ Invalid UUID:
+
+Input: ${testUuid}
+Status: Not a valid UUID format
+Expected: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+Note: UUIDs should be 36 characters with hyphens`;
+              }
+
+            case 'info':
+              const infoUuid = args[1];
+              if (!infoUuid) {
+                return 'Usage: uuid info <uuid>\nExample: uuid info 550e8400-e29b-41d4-bd07-34c2f1a3b3bc';
+              }
+
+              const infoRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+              if (!infoRegex.test(infoUuid)) {
+                return `❌ Invalid UUID format: ${infoUuid}`;
+              }
+
+              const versionChar = infoUuid.charAt(14);
+              const variantChar = infoUuid.charAt(19);
+              
+              const versionInfo = {
+                '1': 'Time-based (includes timestamp and MAC)',
+                '2': 'DCE Security',
+                '3': 'Name-based using MD5',
+                '4': 'Random or pseudo-random',
+                '5': 'Name-based using SHA-1'
+              };
+
+              return `🔍 UUID Information:
+
+UUID: ${infoUuid}
+Version: ${versionChar} - ${versionInfo[versionChar as keyof typeof versionInfo] || 'Unknown'}
+Variant: ${variantChar} (RFC 4122)
+Length: 36 characters (32 hex + 4 hyphens)
+Hex digits: 32
+Entropy: ${versionChar === '4' ? '122 bits' : 'Varies by version'}
+
+Format breakdown:
+${infoUuid.substring(0, 8)} - Time low
+${infoUuid.substring(9, 13)} - Time mid  
+${infoUuid.substring(14, 18)} - Time high + version
+${infoUuid.substring(19, 23)} - Clock sequence + variant
+${infoUuid.substring(24, 36)} - Node (MAC address for v1)`;
+
+            case 'bulk':
+              const count = parseInt(args[1]) || 5;
+              const bulkVersion = args[2] || 'v4';
+              
+              if (count < 1 || count > 50) {
+                return 'Bulk count must be between 1 and 50';
+              }
+
+              const uuids = [];
+              for (let i = 0; i < count; i++) {
+                if (bulkVersion === 'v1') {
+                  uuids.push(uuidv1());
+                } else {
+                  uuids.push(uuidv4());
+                }
+              }
+
+              return `🔑 Bulk UUID Generation:
+
+Generated ${count} UUID ${bulkVersion.toUpperCase()}s:
+
+${uuids.map((id, i) => `${i + 1}. ${id}`).join('\n')}
+
+Total: ${count} UUIDs
+Version: ${bulkVersion.toUpperCase()}
+Format: RFC 4122 compliant`;
+
+            default:
+              return `Unknown UUID command: ${action}
+Use 'uuid help' for available commands.`;
+          }
+        } catch (error) {
+          return `UUID error: ${error}`;
+        }
+      }
+    },
+    {
+      name: 'timestamp',
+      description: 'Unix timestamp conversions and utilities',
+      execute: (args) => {
+        const action = args[0] || 'now';
+        
+        if (!action || action === 'help') {
+          return `Timestamp Utilities ⏰
+
+Convert between human-readable dates and Unix timestamps!
+
+Usage: timestamp <command> [value]
+
+Commands:
+  now                    - Get current Unix timestamp
+  current               - Get current timestamp in multiple formats
+  to <timestamp>        - Convert Unix timestamp to human date
+  from <date>           - Convert date to Unix timestamp
+  diff <ts1> <ts2>      - Calculate difference between timestamps
+  add <timestamp> <time> - Add time to timestamp
+  format <timestamp> <format> - Format timestamp with custom format
+
+Date Input Formats:
+  "2024-01-15"          - ISO date
+  "2024-01-15 14:30"    - ISO datetime
+  "Jan 15, 2024"        - Human readable
+  "15/01/2024"          - DD/MM/YYYY
+  "01/15/2024"          - MM/DD/YYYY
+
+Examples:
+  timestamp now         - Current timestamp
+  timestamp to 1705327800
+  timestamp from "2024-01-15 14:30"
+  timestamp diff 1705327800 1705414200
+  timestamp add 1705327800 1h
+  timestamp format 1705327800 "YYYY-MM-DD HH:mm"`;
+        }
+
+        try {
+          const now = Date.now();
+          const currentTimestamp = Math.floor(now / 1000);
+
+          switch (action.toLowerCase()) {
+            case 'now':
+              return `⏰ Current Unix Timestamp:
+
+Timestamp: ${currentTimestamp}
+Milliseconds: ${now}
+ISO String: ${new Date(now).toISOString()}
+Local Time: ${new Date(now).toLocaleString()}
+UTC Time: ${new Date(now).toUTCString()}`;
+
+            case 'current':
+              const current = new Date(now);
+              return `⏰ Current Time in Multiple Formats:
+
+Unix Timestamp: ${currentTimestamp}
+Unix (ms): ${now}
+ISO 8601: ${current.toISOString()}
+RFC 2822: ${current.toUTCString()}
+Local: ${current.toLocaleString()}
+Date Only: ${current.toDateString()}
+Time Only: ${current.toTimeString()}
+JSON: ${current.toJSON()}
+
+Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}
+Offset: UTC${current.getTimezoneOffset() > 0 ? '-' : '+'}${Math.abs(Math.floor(current.getTimezoneOffset() / 60)).toString().padStart(2, '0')}:${Math.abs(current.getTimezoneOffset() % 60).toString().padStart(2, '0')}`;
+
+            case 'to':
+            case 'convert':
+              const timestamp = args[1];
+              if (!timestamp) {
+                return 'Usage: timestamp to <unix_timestamp>\nExample: timestamp to 1705327800';
+              }
+
+              const ts = parseInt(timestamp);
+              if (isNaN(ts)) {
+                return `Invalid timestamp: ${timestamp}`;
+              }
+
+              // Auto-detect if it's in seconds or milliseconds
+              const tsMs = ts.toString().length <= 10 ? ts * 1000 : ts;
+              const date = new Date(tsMs);
+
+              if (isNaN(date.getTime())) {
+                return `Invalid timestamp: ${timestamp}`;
+              }
+
+              return `🔄 Timestamp Conversion:
+
+Input: ${timestamp} ${ts.toString().length <= 10 ? '(seconds)' : '(milliseconds)'}
+↓
+ISO 8601: ${date.toISOString()}
+Local Time: ${date.toLocaleString()}
+UTC Time: ${date.toUTCString()}
+Date: ${date.toDateString()}
+Time: ${date.toTimeString()}
+
+Relative: ${formatRelativeTime(date)}
+Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`;
+
+            case 'from':
+              const dateInput = args.slice(1).join(' ');
+              if (!dateInput) {
+                return 'Usage: timestamp from <date>\nExample: timestamp from "2024-01-15 14:30"';
+              }
+
+              const inputDate = new Date(dateInput);
+              if (isNaN(inputDate.getTime())) {
+                return `Invalid date format: ${dateInput}
+Try formats like:
+- "2024-01-15"
+- "2024-01-15 14:30"
+- "Jan 15, 2024"
+- "15/01/2024"`;
+              }
+
+              const unixSeconds = Math.floor(inputDate.getTime() / 1000);
+              const unixMs = inputDate.getTime();
+
+              return `🔄 Date to Timestamp Conversion:
+
+Input: ${dateInput}
+↓
+Unix Timestamp: ${unixSeconds}
+Unix (ms): ${unixMs}
+ISO 8601: ${inputDate.toISOString()}
+UTC: ${inputDate.toUTCString()}
+
+Relative: ${formatRelativeTime(inputDate)}`;
+
+            case 'diff':
+            case 'difference':
+              const ts1 = parseInt(args[1]);
+              const ts2 = parseInt(args[2]);
+              
+              if (!args[1] || !args[2] || isNaN(ts1) || isNaN(ts2)) {
+                return 'Usage: timestamp diff <timestamp1> <timestamp2>\nExample: timestamp diff 1705327800 1705414200';
+              }
+
+              // Auto-detect seconds vs milliseconds
+              const ts1Ms = ts1.toString().length <= 10 ? ts1 * 1000 : ts1;
+              const ts2Ms = ts2.toString().length <= 10 ? ts2 * 1000 : ts2;
+              
+              const diffMs = Math.abs(ts2Ms - ts1Ms);
+              const diffSeconds = Math.floor(diffMs / 1000);
+              const diffMinutes = Math.floor(diffSeconds / 60);
+              const diffHours = Math.floor(diffMinutes / 60);
+              const diffDays = Math.floor(diffHours / 24);
+
+              const date1 = new Date(ts1Ms);
+              const date2 = new Date(ts2Ms);
+
+              return `📊 Timestamp Difference:
+
+Timestamp 1: ${ts1} → ${date1.toLocaleString()}
+Timestamp 2: ${ts2} → ${date2.toLocaleString()}
+
+Difference:
+- ${diffMs.toLocaleString()} milliseconds
+- ${diffSeconds.toLocaleString()} seconds
+- ${diffMinutes.toLocaleString()} minutes  
+- ${diffHours.toLocaleString()} hours
+- ${diffDays.toLocaleString()} days
+
+Human readable: ${formatDuration(diffMs)}
+Direction: ${ts2Ms > ts1Ms ? 'Forward' : 'Backward'} in time`;
+
+            case 'add':
+              const baseTs = parseInt(args[1]);
+              const timeToAdd = args[2];
+              
+              if (!args[1] || !args[2] || isNaN(baseTs)) {
+                return `Usage: timestamp add <timestamp> <time>
+Examples: 
+  timestamp add 1705327800 1h
+  timestamp add 1705327800 30m
+  timestamp add 1705327800 7d
+  timestamp add 1705327800 1w`;
+              }
+
+              const baseTsMs = baseTs.toString().length <= 10 ? baseTs * 1000 : baseTs;
+              const baseDate = new Date(baseTsMs);
+              
+              const timeMatch = timeToAdd.match(/^(\d+)([smhdw])$/);
+              if (!timeMatch) {
+                return `Invalid time format: ${timeToAdd}
+Use: <number><unit> where unit is:
+s = seconds, m = minutes, h = hours, d = days, w = weeks`;
+              }
+
+              const amount = parseInt(timeMatch[1]);
+              const unit = timeMatch[2];
+              
+              const multipliers = {
+                s: 1000,
+                m: 60 * 1000,
+                h: 60 * 60 * 1000,
+                d: 24 * 60 * 60 * 1000,
+                w: 7 * 24 * 60 * 60 * 1000
+              };
+
+              const addMs = amount * multipliers[unit as keyof typeof multipliers];
+              const newDate = new Date(baseTsMs + addMs);
+              const newTimestamp = Math.floor(newDate.getTime() / 1000);
+
+              return `➕ Timestamp Addition:
+
+Original: ${baseTs} → ${baseDate.toLocaleString()}
+Add: ${amount} ${unit === 's' ? 'seconds' : unit === 'm' ? 'minutes' : unit === 'h' ? 'hours' : unit === 'd' ? 'days' : 'weeks'}
+↓
+New: ${newTimestamp} → ${newDate.toLocaleString()}
+
+Difference: ${formatDuration(addMs)}`;
+
+            case 'format':
+              const formatTs = parseInt(args[1]);
+              const formatString = args[2];
+              
+              if (!args[1] || isNaN(formatTs)) {
+                return 'Usage: timestamp format <timestamp> [format]\nExample: timestamp format 1705327800 "YYYY-MM-DD"';
+              }
+
+              const formatTsMs = formatTs.toString().length <= 10 ? formatTs * 1000 : formatTs;
+              const formatDate = new Date(formatTsMs);
+
+              if (!formatString) {
+                return `📅 Timestamp Formatting Options:
+
+Input: ${formatTs} → ${formatDate.toLocaleString()}
+
+Common formats:
+- ISO: ${formatDate.toISOString()}
+- US: ${formatDate.toLocaleDateString('en-US')}
+- UK: ${formatDate.toLocaleDateString('en-GB')}  
+- German: ${formatDate.toLocaleDateString('de-DE')}
+- Japanese: ${formatDate.toLocaleDateString('ja-JP')}
+- Short: ${formatDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+- Long: ${formatDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+
+Use: timestamp format ${formatTs} "custom_format"`;
+              }
+
+              // Simple format replacement
+              const formatted = formatString
+                .replace(/YYYY/g, formatDate.getFullYear().toString())
+                .replace(/MM/g, (formatDate.getMonth() + 1).toString().padStart(2, '0'))
+                .replace(/DD/g, formatDate.getDate().toString().padStart(2, '0'))
+                .replace(/HH/g, formatDate.getHours().toString().padStart(2, '0'))
+                .replace(/mm/g, formatDate.getMinutes().toString().padStart(2, '0'))
+                .replace(/ss/g, formatDate.getSeconds().toString().padStart(2, '0'));
+
+              return `📅 Custom Timestamp Format:
+
+Input: ${formatTs} → ${formatDate.toLocaleString()}
+Format: ${formatString}
+Result: ${formatted}`;
+
+            default:
+              return `Unknown timestamp command: ${action}
+Use 'timestamp help' for available commands.`;
+          }
+        } catch (error) {
+          return `Timestamp error: ${error}`;
+        }
+
+        // Helper function to format relative time
+        function formatRelativeTime(date: Date): string {
+          const now = new Date();
+          const diffMs = Math.abs(now.getTime() - date.getTime());
+          const isPast = date.getTime() < now.getTime();
+          
+          const seconds = Math.floor(diffMs / 1000);
+          const minutes = Math.floor(seconds / 60);
+          const hours = Math.floor(minutes / 60);
+          const days = Math.floor(hours / 24);
+          const months = Math.floor(days / 30);
+          const years = Math.floor(days / 365);
+
+          if (years > 0) return `${years} year${years > 1 ? 's' : ''} ${isPast ? 'ago' : 'from now'}`;
+          if (months > 0) return `${months} month${months > 1 ? 's' : ''} ${isPast ? 'ago' : 'from now'}`;
+          if (days > 0) return `${days} day${days > 1 ? 's' : ''} ${isPast ? 'ago' : 'from now'}`;
+          if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ${isPast ? 'ago' : 'from now'}`;
+          if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ${isPast ? 'ago' : 'from now'}`;
+          return `${seconds} second${seconds > 1 ? 's' : ''} ${isPast ? 'ago' : 'from now'}`;
+        }
+
+        // Helper function to format duration
+        function formatDuration(ms: number): string {
+          const seconds = Math.floor(ms / 1000);
+          const minutes = Math.floor(seconds / 60);
+          const hours = Math.floor(minutes / 60);
+          const days = Math.floor(hours / 24);
+
+          if (days > 0) return `${days}d ${hours % 24}h ${minutes % 60}m`;
+          if (hours > 0) return `${hours}h ${minutes % 60}m ${seconds % 60}s`;
+          if (minutes > 0) return `${minutes}m ${seconds % 60}s`;
+          return `${seconds}s`;
+        }
+      }
+    },
+    {
+      name: 'currency',
+      description: 'Real-time currency conversion and exchange rates',
+      execute: async (args): Promise<string> => {
+        const action = args[0] || 'help';
+        
+        if (!action || action === 'help') {
+          return `Currency Converter 💱
+
+Convert between currencies with real-time exchange rates!
+
+Usage: currency <command> [options]
+
+Commands:
+  convert <amount> <from> <to>  - Convert currency
+  rate <from> <to>              - Get exchange rate
+  rates <base>                  - Get all rates for base currency
+  list                          - List supported currencies
+  symbols                       - Show currency symbols
+
+Examples:
+  currency convert 100 USD EUR  - Convert $100 to Euros
+  currency rate USD EUR         - Get USD to EUR rate
+  currency rates USD            - All rates from USD
+  currency list                 - Show currency codes
+  currency symbols              - Show currency symbols
+
+Common Currency Codes:
+  USD - US Dollar      EUR - Euro         GBP - British Pound
+  JPY - Japanese Yen   CAD - Canadian $   AUD - Australian $
+  CHF - Swiss Franc    CNY - Chinese Yuan SEK - Swedish Krona
+  NOK - Norwegian Kr   DKK - Danish Krone PLN - Polish Zloty
+
+Note: Exchange rates provided by free API, may have limitations.`;
+        }
+
+        try {
+          // Popular currency codes and symbols
+          const currencyInfo = {
+            USD: { name: 'US Dollar', symbol: '$' },
+            EUR: { name: 'Euro', symbol: '€' },
+            GBP: { name: 'British Pound', symbol: '£' },
+            JPY: { name: 'Japanese Yen', symbol: '¥' },
+            CAD: { name: 'Canadian Dollar', symbol: 'C$' },
+            AUD: { name: 'Australian Dollar', symbol: 'A$' },
+            CHF: { name: 'Swiss Franc', symbol: 'CHF' },
+            CNY: { name: 'Chinese Yuan', symbol: '¥' },
+            SEK: { name: 'Swedish Krona', symbol: 'kr' },
+            NOK: { name: 'Norwegian Krone', symbol: 'kr' },
+            DKK: { name: 'Danish Krone', symbol: 'kr' },
+            PLN: { name: 'Polish Zloty', symbol: 'zł' },
+            RUB: { name: 'Russian Ruble', symbol: '₽' },
+            INR: { name: 'Indian Rupee', symbol: '₹' },
+            BRL: { name: 'Brazilian Real', symbol: 'R$' },
+            KRW: { name: 'South Korean Won', symbol: '₩' },
+            SGD: { name: 'Singapore Dollar', symbol: 'S$' },
+            HKD: { name: 'Hong Kong Dollar', symbol: 'HK$' },
+            MXN: { name: 'Mexican Peso', symbol: '$' },
+            NZD: { name: 'New Zealand Dollar', symbol: 'NZ$' }
+          };
+
+          switch (action.toLowerCase()) {
+            case 'convert':
+              const amount = parseFloat(args[1]);
+              const fromCurrency = args[2]?.toUpperCase();
+              const toCurrency = args[3]?.toUpperCase();
+
+              if (!amount || !fromCurrency || !toCurrency || isNaN(amount)) {
+                return 'Usage: currency convert <amount> <from> <to>\nExample: currency convert 100 USD EUR';
+              }
+
+              if (amount <= 0 || amount > 1000000000) {
+                return 'Amount must be between 0 and 1,000,000,000';
+              }
+
+              try {
+                // Use a free exchange rate API (exchangerate-api.com provides free tier)
+                const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${fromCurrency}`);
+                
+                if (!response.ok) {
+                  throw new Error(`API responded with status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (!data.rates || !data.rates[toCurrency]) {
+                  return `Currency not supported: ${toCurrency}
+Supported currencies include: USD, EUR, GBP, JPY, CAD, AUD, etc.
+Use 'currency list' for all supported currencies.`;
+                }
+
+                const rate = data.rates[toCurrency];
+                const convertedAmount = amount * rate;
+                const reverseRate = 1 / rate;
+
+                const fromInfo = currencyInfo[fromCurrency as keyof typeof currencyInfo];
+                const toInfo = currencyInfo[toCurrency as keyof typeof currencyInfo];
+
+                const fromSymbol = fromInfo?.symbol || fromCurrency;
+                const toSymbol = toInfo?.symbol || toCurrency;
+
+                return `💱 Currency Conversion:
+
+${fromSymbol}${amount.toLocaleString()} ${fromCurrency}
+↓
+${toSymbol}${convertedAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 })} ${toCurrency}
+
+Exchange Rate: 1 ${fromCurrency} = ${rate.toFixed(6)} ${toCurrency}
+Reverse Rate: 1 ${toCurrency} = ${reverseRate.toFixed(6)} ${fromCurrency}
+
+Updated: ${new Date(data.date).toLocaleDateString()}
+Source: ${data.base} rates
+
+${fromInfo ? `From: ${fromInfo.name}` : ''}
+${toInfo ? `To: ${toInfo.name}` : ''}`;
+
+              } catch (error) {
+                // Fallback with mock data for demo purposes
+                const mockRates: { [key: string]: number } = {
+                  'USD-EUR': 0.85, 'EUR-USD': 1.18,
+                  'USD-GBP': 0.75, 'GBP-USD': 1.33,
+                  'USD-JPY': 110, 'JPY-USD': 0.009,
+                  'EUR-GBP': 0.88, 'GBP-EUR': 1.14,
+                  'USD-CAD': 1.25, 'CAD-USD': 0.80
+                };
+
+                const rateKey = `${fromCurrency}-${toCurrency}`;
+                const reverseKey = `${toCurrency}-${fromCurrency}`;
+                
+                let rate = mockRates[rateKey];
+                if (!rate && mockRates[reverseKey]) {
+                  rate = 1 / mockRates[reverseKey];
+                }
+                
+                if (!rate) {
+                  rate = 1; // Default to 1:1 if no mock rate available
+                }
+
+                const convertedAmount = amount * rate;
+                const fromInfo = currencyInfo[fromCurrency as keyof typeof currencyInfo];
+                const toInfo = currencyInfo[toCurrency as keyof typeof currencyInfo];
+                const fromSymbol = fromInfo?.symbol || fromCurrency;
+                const toSymbol = toInfo?.symbol || toCurrency;
+
+                return `💱 Currency Conversion (Demo Data):
+
+${fromSymbol}${amount.toLocaleString()} ${fromCurrency}
+↓
+${toSymbol}${convertedAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 })} ${toCurrency}
+
+Exchange Rate: 1 ${fromCurrency} = ${rate.toFixed(6)} ${toCurrency}
+
+⚠️ Live rates unavailable: ${error}
+Using sample exchange rates for demonstration.
+
+${fromInfo ? `From: ${fromInfo.name}` : ''}
+${toInfo ? `To: ${toInfo.name}` : ''}`;
+              }
+
+            case 'rate':
+              const rateFrom = args[1]?.toUpperCase();
+              const rateTo = args[2]?.toUpperCase();
+
+              if (!rateFrom || !rateTo) {
+                return 'Usage: currency rate <from> <to>\nExample: currency rate USD EUR';
+              }
+
+              try {
+                const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${rateFrom}`);
+                const data = await response.json();
+                
+                if (!data.rates || !data.rates[rateTo]) {
+                  return `Currency pair not supported: ${rateFrom}/${rateTo}`;
+                }
+
+                const rate = data.rates[rateTo];
+                const reverseRate = 1 / rate;
+
+                const fromInfo = currencyInfo[rateFrom as keyof typeof currencyInfo];
+                const toInfo = currencyInfo[rateTo as keyof typeof currencyInfo];
+
+                return `📊 Exchange Rate:
+
+1 ${rateFrom} = ${rate.toFixed(6)} ${rateTo}
+1 ${rateTo} = ${reverseRate.toFixed(6)} ${rateFrom}
+
+${fromInfo ? `${fromInfo.name} (${fromInfo.symbol})` : rateFrom}
+↕️
+${toInfo ? `${toInfo.name} (${toInfo.symbol})` : rateTo}
+
+Last Updated: ${new Date(data.date).toLocaleDateString()}
+Base Currency: ${data.base}`;
+
+              } catch (error) {
+                return `Exchange rate unavailable: ${error}
+Try again later or check currency codes.`;
+              }
+
+            case 'rates':
+              const baseCurrency = args[1]?.toUpperCase() || 'USD';
+
+              try {
+                const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${baseCurrency}`);
+                const data = await response.json();
+                
+                if (!data.rates) {
+                  return `No rates available for: ${baseCurrency}`;
+                }
+
+                // Get top 10 most popular currencies
+                const popularCurrencies = ['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD', 'CHF', 'CNY', 'SEK', 'NOK'];
+                const topRates = popularCurrencies
+                  .filter(curr => curr !== baseCurrency && data.rates[curr])
+                  .slice(0, 8);
+
+                const baseInfo = currencyInfo[baseCurrency as keyof typeof currencyInfo];
+
+                let output = `💱 Exchange Rates from ${baseCurrency}${baseInfo ? ` (${baseInfo.name})` : ''}:
+
+`;
+
+                topRates.forEach(currency => {
+                  const rate = data.rates[currency];
+                  const info = currencyInfo[currency as keyof typeof currencyInfo];
+                  const symbol = info?.symbol || currency;
+                  output += `1 ${baseCurrency} = ${symbol}${rate.toFixed(4)} ${currency}${info ? ` (${info.name})` : ''}\n`;
+                });
+
+                output += `
+Total currencies available: ${Object.keys(data.rates).length}
+Last updated: ${new Date(data.date).toLocaleDateString()}
+
+Use 'currency convert' for specific conversions.`;
+
+                return output;
+
+              } catch (error) {
+                return `Exchange rates unavailable: ${error}
+Try again later or check the base currency code.`;
+              }
+
+            case 'list':
+              const currencies = Object.entries(currencyInfo)
+                .map(([code, info]) => `${code} - ${info.name} (${info.symbol})`)
+                .join('\n');
+
+              return `🌍 Supported Currency Codes:
+
+${currencies}
+
+Common Usage:
+- Use 3-letter ISO codes (USD, EUR, GBP, etc.)
+- Case insensitive (usd = USD)
+- Covers major world currencies
+- Real-time exchange rates when available
+
+Examples:
+  currency convert 100 usd eur
+  currency rate gbp jpy
+  currency rates cad`;
+
+            case 'symbols':
+              const symbols = Object.entries(currencyInfo)
+                .map(([code, info]) => `${info.symbol} ${code} - ${info.name}`)
+                .join('\n');
+
+              return `💰 Currency Symbols:
+
+${symbols}
+
+Note: Some currencies share symbols (e.g., $ for USD, CAD, AUD)
+Use currency codes for unambiguous conversion.`;
+
+            default:
+              return `Unknown currency command: ${action}
+Use 'currency help' for available commands.`;
+          }
+        } catch (error) {
+          return `Currency error: ${error}`;
+        }
+      }
     }
   ];
 
@@ -3163,6 +6016,28 @@ Readability: ${maxDepth > 3 ? 'Complex structure' : 'Simple structure'}`;
       }
     });
 
+    // Check if input is a single letter answer for trivia
+    if (pendingTrivia && trimmedInput.length === 1 && ['A', 'B', 'C', 'D'].includes(trimmedInput.toUpperCase())) {
+      const triviaAnswerCommand = commands.find(cmd => cmd.name === 'trivia-answer');
+      if (triviaAnswerCommand) {
+        try {
+          const result = await triviaAnswerCommand.execute([trimmedInput.toUpperCase()]);
+          addToHistory(result, 'command', trimmedInput);
+        } catch (error) {
+          addToHistory(`Error: ${error}`, 'error', trimmedInput);
+        }
+        // Only add to history if not a repeat of the last entry
+        setCommandHistory(prev => {
+          if (prev[prev.length - 1] !== trimmedInput) {
+            return [...prev, trimmedInput];
+          }
+          return prev;
+        });
+        setHistoryIndex(-1);
+        return;
+      }
+    }
+
     const command = commands.find(cmd => cmd.name === commandName?.toLowerCase());
 
     if (command) {
@@ -3237,7 +6112,11 @@ Readability: ${maxDepth > 3 ? 'Complex structure' : 'Simple structure'}`;
                 </div>
               )}
               <div className={styles.output}>
-                <pre>{entry.output}</pre>
+                {entry.output.includes('<img') || entry.output.includes('<div') ? (
+                  <div dangerouslySetInnerHTML={{ __html: entry.output.replace(/\n/g, '<br>') }} />
+                ) : (
+                  <pre>{entry.output}</pre>
+                )}
               </div>
             </div>
           ))}
@@ -3267,7 +6146,17 @@ Readability: ${maxDepth > 3 ? 'Complex structure' : 'Simple structure'}`;
 
 // Main component wrapper with mobile detection
 const DevConsoleWrapper: React.FC = () => {
+  const [isMounted, setIsMounted] = useState(false);
   const isMobile = useIsMobile();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Don't render anything until mounted to prevent hydration mismatches
+  if (!isMounted) {
+    return null;
+  }
 
   // Don't render DevConsole on mobile to save resources
   if (isMobile) {
