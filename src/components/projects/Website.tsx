@@ -7,7 +7,7 @@ const Website = () => (
     title="Portfolio Website"
     description="A modern, full-stack portfolio website built with Next.js, TypeScript, and Tailwind CSS, showcasing advanced web development techniques and performance optimization strategies. The site implements server-side rendering, static generation, and client-side hydration for optimal loading speeds. Features include lazy loading with Intersection Observer API, memoized component architecture, and accessibility compliance with WCAG guidelines. Built with modern React patterns including custom hooks, context management, and advanced CSS Grid layouts with responsive design principles."
     coverImage="/images/Website Images/Web5.webp"
-    githubLink="https://github.com/Beer-de-Vreeze/my-gameportfolio"
+    githubLink="https://github.com/Beer-de-Vreeze/my-portfolio"
     liveLink="https://beerdevreeze.com"
     media={[
       {
