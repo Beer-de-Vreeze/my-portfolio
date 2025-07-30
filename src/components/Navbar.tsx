@@ -126,6 +126,7 @@ const Navbar = () => {
             href="/" 
             className="text-xl font-bold relative group"
             aria-label="Beer de Vreeze - Home"
+            title="Home - Beer de Vreeze (Try ↑↑↓↓←→←→BA for a surprise!)"
           >
             <span className="relative z-10 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent bg-size-200 animate-gradient">
               Beer de Vreeze

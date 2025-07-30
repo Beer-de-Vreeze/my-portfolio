@@ -1207,7 +1207,7 @@ body {
     left: 0 !important;
     right: 0 !important;
     width: 100% !important;
-    z-index: 9999 !important;
+    z-index: 1000 !important;
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
   }
@@ -1218,7 +1218,7 @@ body {
     left: 0 !important;
     right: 0 !important;
     width: 100% !important;
-    z-index: 9999 !important;
+    z-index: 1000 !important;
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
   }
@@ -1314,4 +1314,10 @@ body {
   transform: translateZ(0);
   backface-visibility: hidden;
   perspective: 1000px;
+}
+
+/* Ensure notifications always appear above everything else */
+.notification-overlay {
+  z-index: 999999 !important;
+  position: fixed !important;
 }

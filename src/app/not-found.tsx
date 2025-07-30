@@ -175,7 +175,7 @@ function NotFoundContent() {
         {/* Fun Gaming Elements */}
         <div className="mt-8 space-y-4 text-center">
           <div className="text-sm text-gray-500">
-            💡 Pro Tip: Check the URL for typos, or use the navigation above
+            💡 Pro Tip: Check the URL for typos, or try the classic ↑↑↓↓←→←→BA sequence for hidden features
           </div>
           
           {/* Achievement Badge */}

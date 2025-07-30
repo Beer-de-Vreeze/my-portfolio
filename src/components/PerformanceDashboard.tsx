@@ -184,7 +184,7 @@ export function PerformanceDashboard({
       </div>
       
       <div className="mt-2 pt-2 border-t border-gray-600 text-gray-400 text-[10px]">
-        Numpad 9 to toggle
+        Numpad 9 to toggle • Try ↑↑↓↓←→←→BA
       </div>
     </div>
   );

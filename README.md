@@ -182,3 +182,5 @@ This project is personal portfolio work. Please contact me if you'd like to use 
 ---
 
 Built with love by Beer de Vreeze
+
+> **P.S.** try the konami code: ! ↑↑↓↓←→←→BA

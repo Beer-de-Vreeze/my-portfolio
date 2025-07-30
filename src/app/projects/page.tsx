@@ -23,7 +23,7 @@ const ProjectsLoading = () => (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl">
     {[...Array(7)].map((_, i) => (
       <div key={i} className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse flex items-center justify-center backdrop-blur-sm border border-gray-700/50">
-        <div className="text-gray-400">Loading project...</div>
+        <div className="text-gray-400">{i === 3 ? 'Loading projects... (Tip: ↑↑↓↓←→←→BA)' : 'Loading project...'}</div>
       </div>
     ))}
   </div>

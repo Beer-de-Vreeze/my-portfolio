@@ -48,8 +48,11 @@ const Notification = ({ message, type, isVisible, onClose, duration = 5000 }: No
             damping: 30,
             duration: 0.3 
           }}
-          style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
-          className="fixed top-4 sm:top-6 right-4 sm:right-6 z-[9999] max-w-sm sm:max-w-md w-auto"
+          style={{ 
+            paddingTop: 'env(safe-area-inset-top, 0px)',
+            zIndex: 999999
+          }}
+          className="notification-overlay fixed top-20 sm:top-24 right-4 sm:right-6 max-w-sm sm:max-w-md w-auto"
           onClick={(e) => e.stopPropagation()}
         >
           <div className={`
