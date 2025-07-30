@@ -402,7 +402,7 @@ const ContactForm = ({ onEmailSent, onNotification }: ContactFormProps) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.6 }}
           aria-label={isSubmitting ? 'Sending message' : 'Send message'}
-          title={isSubmitting ? 'Sending message...' : 'Send Message (Psst: Try ↑↑↓↓←→←→BA)'}
+          title={isSubmitting ? 'Sending message...' : 'Send Message'}
         >
           {isSubmitting && (
             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>

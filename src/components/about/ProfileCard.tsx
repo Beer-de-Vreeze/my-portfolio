@@ -54,7 +54,7 @@ const DEFAULT_BUBBLES: Bubble[] = [
     id: 'gaming',
     icon: <FaGamepad className="w-4 h-4 text-white" />, 
     label: "Gaming",
-    additionalInfo: "Passionate about gaming (Try ↑↑↓↓←→←→BA!)" 
+    additionalInfo: "Passionate about gaming and interactive experiences" 
   },
   { 
     id: 'tech',
