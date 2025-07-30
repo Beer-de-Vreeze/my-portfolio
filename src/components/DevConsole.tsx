@@ -3230,32 +3230,48 @@ Examples:
               const randomId = Math.floor(Math.random() * 1010) + 1;
               const pokemonData = await pokedex.getPokemonByName(randomId);
               
+              if (!pokemonData) {
+                return 'Error: Could not fetch random Pokemon data';
+              }
+              
               // Create image elements if sprites exist
               let imageDisplay = '';
-              if (pokemonData.sprites.front_default) {
+              if (pokemonData.sprites?.front_default) {
                 imageDisplay += `<img src="${pokemonData.sprites.front_default}" alt="${pokemonData.name}" style="max-width: 100px; margin-right: 10px;" title="Normal sprite" />`;
               }
-              if (pokemonData.sprites.front_shiny) {
+              if (pokemonData.sprites?.front_shiny) {
                 imageDisplay += `<img src="${pokemonData.sprites.front_shiny}" alt="${pokemonData.name} shiny" style="max-width: 100px; margin-right: 10px;" title="Shiny sprite" />`;
               }
-              if (pokemonData.sprites.other?.['official-artwork']?.front_default) {
+              if (pokemonData.sprites?.other?.['official-artwork']?.front_default) {
                 imageDisplay += `<img src="${pokemonData.sprites.other['official-artwork'].front_default}" alt="${pokemonData.name} artwork" style="max-width: 150px;" title="Official artwork" />`;
               }
+              
+              const types = pokemonData.types?.map((t: { type: { name: string } }) => t.type.name).join(', ') || 'Unknown';
+              const height = pokemonData.height ? (pokemonData.height / 10) : 'Unknown';
+              const weight = pokemonData.weight ? (pokemonData.weight / 10) : 'Unknown';
               
               const result = `🎲 Random Pokemon:
 
 ${pokemonData.name.charAt(0).toUpperCase() + pokemonData.name.slice(1)} (#${pokemonData.id})
-Type(s): ${pokemonData.types.map((t: { type: { name: string } }) => t.type.name).join(', ')}
-Height: ${pokemonData.height / 10}m
-Weight: ${pokemonData.weight / 10}kg
-Base Experience: ${pokemonData.base_experience}
+Type(s): ${types}
+Height: ${height}m
+Weight: ${weight}kg
+Base Experience: ${pokemonData.base_experience || 'Unknown'}
 
-${imageDisplay ? `<div style="margin: 10px 0;">${imageDisplay}</div>` : 'No images available'}`;
+${imageDisplay ? `<div style="margin: 10px 0;">${imageDisplay}</div>` : 'No images available'}
+
+Use 'pokemon info ${pokemonData.name}' for more details!`;
 
               return result;
 
             } catch (error) {
-              return `Error getting random Pokemon: ${error}`;
+              return `Error getting random Pokemon: ${error instanceof Error ? error.message : 'Unknown error'}
+
+This could be due to:
+- Network connectivity issues
+- Pokemon API being temporarily unavailable
+
+Try again or use 'pokemon info <name>' to search for a specific Pokemon!`;
             }
 
           case 'info':
@@ -3534,24 +3550,48 @@ Total ${typeName} Pokemon: ${typeData.pokemon.length}`;
               return 'Usage: pokemon generation <1-9>\nExample: pokemon generation 1';
             }
 
+            const genNum = parseInt(genNumber);
+            if (isNaN(genNum) || genNum < 1 || genNum > 9) {
+              return 'Error: Generation must be a number between 1 and 9';
+            }
+
             try {
               const generationData = await pokedex.getGenerationByName(`generation-${genNumber}`);
+              
+              if (!generationData || !generationData.pokemon_species) {
+                return `Error: No data found for generation ${genNumber}`;
+              }
+
               const pokemonList = generationData.pokemon_species
                 .slice(0, 20) // Limit to first 20
-                .map((p: any, index: number) => {
-                  const id = p.url.split('/').slice(-2, -1)[0];
-                  return `${index + 1}. ${p.name.charAt(0).toUpperCase() + p.name.slice(1)} (#${id})`;
+                .map((p: unknown, index: number) => {
+                  const pokemon = p as { name: string; url: string };
+                  const id = pokemon.url.split('/').filter(Boolean).pop();
+                  return `${index + 1}. ${pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)} (#${id})`;
                 }).join('\n');
+
+              const regionName = generationData.main_region?.name 
+                ? generationData.main_region.name.charAt(0).toUpperCase() + generationData.main_region.name.slice(1)
+                : 'Unknown';
 
               return `🎮 Generation ${genNumber} Pokemon (first 20):
 
 ${pokemonList}
 
 Total Gen ${genNumber} Pokemon: ${generationData.pokemon_species.length}
-Region: ${generationData.main_region.name.charAt(0).toUpperCase() + generationData.main_region.name.slice(1)}`;
+Region: ${regionName}
+
+Use 'pokemon info <name>' to get details about a specific Pokemon!`;
 
             } catch (error) {
-              return `Generation ${genNumber} not found or error: ${error}`;
+              return `Error fetching Generation ${genNumber} data: ${error instanceof Error ? error.message : 'Unknown error'}
+
+This could be due to:
+- Network connectivity issues
+- Pokemon API being temporarily unavailable
+- Invalid generation number
+
+Try again or use 'pokemon random' for a random Pokemon!`;
             }
 
           case 'abilities':
@@ -3998,7 +4038,7 @@ Use 'barcode qr' for real QR codes.`;
     {
       name: 'data',
       description: 'Parse and convert between data formats (CSV, XML, YAML, SQL, JSON)',
-      execute: (args) => {
+      execute: async (args) => {
         const action = args[0];
         const input = args.slice(1).join(' ');
         
@@ -4025,7 +4065,11 @@ Examples:
   data yaml "name: John\\nage: 25"
   data sql "SELECT * FROM users WHERE age > 18"
   data json '{"name":"John","age":25}'
-  data convert json csv '{"users":[{"name":"John","age":25}]}'`;
+  data convert json csv '{"users":[{"name":"John","age":25}]}'
+  data convert csv json "name,age\\nJohn,25\\nJane,30"
+
+Note: Use \\n for line breaks in CSV and YAML data.
+For complex data, consider using actual line breaks.`;
         }
 
         if (!input && !['help'].includes(action.toLowerCase())) {
@@ -4217,18 +4261,39 @@ Invalid JSON syntax. Please check your JSON format.`;
                     parsed = JSON.parse(convertData);
                     break;
                   case 'yaml':
-                    parsed = yaml.load(convertData.replace(/\\n/g, '\n'));
+                    // Handle both literal \n and actual newlines
+                    const yamlData = convertData.replace(/\\n/g, '\n');
+                    parsed = yaml.load(yamlData);
                     break;
                   case 'csv':
-                    const csvLines = convertData.split('\\n').map(line => line.split(','));
-                    const csvHeaders = csvLines[0];
-                    parsed = csvLines.slice(1).map(row => {
+                    // Handle both literal \n and actual newlines
+                    const csvData = convertData.replace(/\\n/g, '\n');
+                    const csvLines = csvData.split('\n').map(line => line.split(','));
+                    if (csvLines.length < 2) {
+                      throw new Error('CSV data must have at least header and one data row');
+                    }
+                    const csvHeaders = csvLines[0].map(h => h.trim());
+                    parsed = csvLines.slice(1).filter(row => row.length > 1).map(row => {
                       const obj: { [key: string]: string } = {};
                       csvHeaders.forEach((header, index) => {
-                        obj[header.trim()] = row[index]?.trim() || '';
+                        obj[header] = row[index]?.trim() || '';
                       });
                       return obj;
                     });
+                    break;
+                  case 'xml':
+                    // Basic XML parsing
+                    try {
+                      const xmlParser = new xml2js.Parser({ explicitArray: false, mergeAttrs: true });
+                      parsed = await new Promise((resolve, reject) => {
+                        xmlParser.parseString(convertData, (err: Error | null, result: unknown) => {
+                          if (err) reject(err);
+                          else resolve(result);
+                        });
+                      });
+                    } catch (xmlError) {
+                      throw new Error(`XML parsing failed: ${xmlError}`);
+                    }
                     break;
                   default:
                     throw new Error(`Unsupported input format: ${fromFormat}`);
@@ -4241,19 +4306,29 @@ Invalid JSON syntax. Please check your JSON format.`;
                     result = JSON.stringify(parsed, null, 2);
                     break;
                   case 'yaml':
-                    result = yaml.dump(parsed);
+                    result = yaml.dump(parsed, { indent: 2 });
                     break;
                   case 'csv':
                     if (Array.isArray(parsed) && parsed.length > 0 && typeof parsed[0] === 'object') {
                       const headers = Object.keys(parsed[0]);
                       const csvData = [
                         headers.join(','),
-                        ...parsed.map(row => headers.map(h => row[h] || '').join(','))
+                        ...parsed.map(row => headers.map(h => {
+                          const value = row[h] || '';
+                          // Escape commas and quotes in CSV values
+                          return typeof value === 'string' && (value.includes(',') || value.includes('"')) 
+                            ? `"${value.replace(/"/g, '""')}"` 
+                            : value;
+                        }).join(','))
                       ];
                       result = csvData.join('\n');
                     } else {
                       throw new Error('CSV output requires array of objects');
                     }
+                    break;
+                  case 'xml':
+                    const xmlBuilder = new xml2js.Builder({ rootName: 'root', headless: true });
+                    result = xmlBuilder.buildObject(parsed);
                     break;
                   default:
                     throw new Error(`Unsupported output format: ${toFormat}`);
@@ -4263,6 +4338,9 @@ Invalid JSON syntax. Please check your JSON format.`;
 
 From: ${fromFormat.toUpperCase()}
 To: ${toFormat.toUpperCase()}
+
+Input Data:
+${convertData.substring(0, 200)}${convertData.length > 200 ? '...' : ''}
 
 Output:
 ${result}`;
