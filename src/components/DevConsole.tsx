@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { track } from '@vercel/analytics';
 import styles from '../styles/DevConsole.module.css';
 import Uwuifier from 'uwuifier';
 import Fuse from 'fuse.js';
@@ -69,6 +70,7 @@ interface ConsoleHistory {
 const DevConsoleDesktop: React.FC = () => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const [consoleSessionStart, setConsoleSessionStart] = useState<number | null>(null);
   const [history, setHistory] = useState<ConsoleHistory[]>([]);
   const [currentInput, setCurrentInput] = useState('');
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
@@ -184,6 +186,19 @@ const DevConsoleDesktop: React.FC = () => {
     if (shouldReopen === 'true') {
       localStorage.removeItem('devConsole_reopenAfterReload');
       setIsOpen(true);
+      
+      // Track console reopening after reload
+      track('dev_console_opened', {
+        method: 'reload_reopen',
+        timestamp: new Date().toISOString(),
+        user_agent: navigator.userAgent,
+        screen_resolution: `${window.screen.width}x${window.screen.height}`,
+        viewport_size: `${window.innerWidth}x${window.innerHeight}`
+      });
+      
+      // Start session timer
+      setConsoleSessionStart(Date.now());
+      
       addToHistory('Console reopened after page reload.', 'info');
     }
   }, [addToHistory]);
@@ -291,6 +306,12 @@ const DevConsoleDesktop: React.FC = () => {
         output += '  password 16             - Generate 16-character password\n';
         output += '  encode base64 hello     - Base64 encode text\n';
 
+        // Track help command usage to understand feature discovery
+        track('dev_console_help_viewed', {
+          timestamp: new Date().toISOString(),
+          total_commands: commands.length
+        });
+
         return output;
       }
     },
@@ -330,7 +351,20 @@ const DevConsoleDesktop: React.FC = () => {
       name: 'exit',
       description: 'Close the developer console',
       execute: () => {
+        // Track console session before closing
+        if (consoleSessionStart) {
+          const sessionDuration = Date.now() - consoleSessionStart;
+          track('dev_console_session', {
+            duration_ms: sessionDuration,
+            duration_seconds: Math.round(sessionDuration / 1000),
+            commands_executed: history.filter(h => h.type === 'command').length,
+            timestamp: new Date().toISOString(),
+            closed_method: 'exit_command'
+          });
+        }
+        
         setIsOpen(false);
+        setConsoleSessionStart(null);
         return 'Console closed';
       }
     },
@@ -5922,6 +5956,19 @@ Use 'currency help' for available commands.`;
           event.preventDefault();
           setIsOpen(true);
           setKonamiSequence([]);
+          
+          // Track console opening via Konami code
+          track('dev_console_opened', {
+            method: 'konami_code',
+            timestamp: new Date().toISOString(),
+            user_agent: navigator.userAgent,
+            screen_resolution: `${window.screen.width}x${window.screen.height}`,
+            viewport_size: `${window.innerWidth}x${window.innerHeight}`
+          });
+          
+          // Start session timer
+          setConsoleSessionStart(Date.now());
+          
           addToHistory('Konami Code activated! Welcome to the developer console.', 'info');
         }
       }
@@ -5937,9 +5984,22 @@ Use 'currency help' for available commands.`;
       if (!isOpen) return;
 
       if (event.key === 'Escape') {
+        // Track console session before closing
+        if (consoleSessionStart) {
+          const sessionDuration = Date.now() - consoleSessionStart;
+          track('dev_console_session', {
+            duration_ms: sessionDuration,
+            duration_seconds: Math.round(sessionDuration / 1000),
+            commands_executed: history.filter(h => h.type === 'command').length,
+            timestamp: new Date().toISOString(),
+            closed_method: 'escape_key'
+          });
+        }
+        
         setIsOpen(false);
         setCurrentInput('');
         setHistoryIndex(-1);
+        setConsoleSessionStart(null);
       } else if (event.key === 'ArrowUp') {
         event.preventDefault();
         if (commandHistory.length > 0) {
@@ -5963,7 +6023,23 @@ Use 'currency help' for available commands.`;
 
     window.addEventListener('keydown', handleConsoleKeyDown);
     return () => window.removeEventListener('keydown', handleConsoleKeyDown);
-  }, [isOpen, commandHistory, historyIndex]);
+  }, [isOpen, commandHistory, historyIndex, consoleSessionStart, history]);
+
+  // Cleanup: Track session if component unmounts while console is open
+  useEffect(() => {
+    return () => {
+      if (consoleSessionStart && isOpen) {
+        const sessionDuration = Date.now() - consoleSessionStart;
+        track('dev_console_session', {
+          duration_ms: sessionDuration,
+          duration_seconds: Math.round(sessionDuration / 1000),
+          commands_executed: history.filter(h => h.type === 'command').length,
+          timestamp: new Date().toISOString(),
+          closed_method: 'page_unload'
+        });
+      }
+    };
+  }, [consoleSessionStart, isOpen, history]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -6044,8 +6120,24 @@ Use 'currency help' for available commands.`;
       try {
         const result = await command.execute(args);
         addToHistory(result, 'command', trimmedInput);
+        
+        // Track successful command execution
+        track('dev_console_command', {
+          command_name: commandName?.toLowerCase(),
+          args_count: args.length,
+          timestamp: new Date().toISOString(),
+          has_args: args.length > 0
+        });
+        
       } catch (error) {
         addToHistory(`Error: ${error}`, 'error', trimmedInput);
+        
+        // Track command errors
+        track('dev_console_error', {
+          command_name: commandName?.toLowerCase(),
+          error_type: 'execution_error',
+          timestamp: new Date().toISOString()
+        });
       }
     } else if (commandName) {
       // Use Fuse.js for fuzzy command suggestions
@@ -6060,8 +6152,23 @@ Use 'currency help' for available commands.`;
       if (fuzzyResults.length > 0 && fuzzyResults[0].score! < 0.6) {
         const suggestion = fuzzyResults[0].item.name;
         addToHistory(`Unknown command: ${commandName}. Did you mean "${suggestion}"? Type "help" for available commands.`, 'error', trimmedInput);
+        
+        // Track unknown commands with suggestions
+        track('dev_console_unknown_command', {
+          attempted_command: commandName?.toLowerCase(),
+          suggested_command: suggestion,
+          timestamp: new Date().toISOString()
+        });
+        
       } else {
         addToHistory(`Unknown command: ${commandName}. Type "help" for available commands.`, 'error', trimmedInput);
+        
+        // Track completely unknown commands
+        track('dev_console_unknown_command', {
+          attempted_command: commandName?.toLowerCase(),
+          suggested_command: null,
+          timestamp: new Date().toISOString()
+        });
       }
     } else {
       addToHistory(`Unknown command. Type "help" for available commands.`, 'error', trimmedInput);
@@ -6095,7 +6202,21 @@ Use 'currency help' for available commands.`;
           </div>
           <button 
             className={styles.closeButton} 
-            onClick={() => setIsOpen(false)}
+            onClick={() => {
+              // Track console session before closing
+              if (consoleSessionStart) {
+                const sessionDuration = Date.now() - consoleSessionStart;
+                track('dev_console_session', {
+                  duration_ms: sessionDuration,
+                  duration_seconds: Math.round(sessionDuration / 1000),
+                  commands_executed: history.filter(h => h.type === 'command').length,
+                  timestamp: new Date().toISOString(),
+                  closed_method: 'close_button'
+                });
+              }
+              setIsOpen(false);
+              setConsoleSessionStart(null);
+            }}
             title="Press ESC to close"
           >
             ×
