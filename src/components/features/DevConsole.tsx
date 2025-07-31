@@ -6948,130 +6948,194 @@ Note: Uses free news aggregation APIs with rate limits.`;
             case 'headlines':
             case 'top':
               try {
-                // Using NewsAPI.org free tier with public API key (limited requests)
-                const response = await fetch(`https://newsapi.org/v2/top-headlines?country=us&pageSize=5&apiKey=demo`);
+                // Using The Guardian API (free, no API key required for basic usage)
+                const response = await fetch(`https://content.guardianapis.com/search?page-size=5&show-fields=headline,trailText,shortUrl&format=json`);
                 
                 if (!response.ok) {
-                  // Fallback to a free alternative news source
-                  const fallbackResponse = await fetch('https://rss.cnn.com/rss/edition.rss');
-                  if (!fallbackResponse.ok) {
-                    throw new Error('News services unavailable');
-                  }
-                  return 'News service temporarily unavailable. Please try again later or use specific categories.';
+                  throw new Error(`Guardian API failed: ${response.status}`);
                 }
 
                 const data = await response.json();
                 
-                if (!data.articles || data.articles.length === 0) {
-                  return 'No headlines available at the moment. Try again later.';
+                if (!data.response?.results || data.response.results.length === 0) {
+                  throw new Error('No articles found');
                 }
 
-                let output = `📰 Top Headlines:\n\n`;
+                let output = `📰 Top Headlines (The Guardian):\n\n`;
                 
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                data.articles.forEach((article: any, i: number) => {
-                  output += `${i + 1}. ${article.title}\n`;
-                  output += `   📰 Source: ${article.source?.name || 'Unknown'}\n`;
-                  output += `   📝 ${article.description || 'No description available'}\n`;
-                  output += `   🔗 <a href="${article.url}" target="_blank">${article.url}</a>\n`;
-                  output += `   📅 ${new Date(article.publishedAt).toLocaleString()}\n\n`;
+                data.response.results.forEach((article: any, i: number) => {
+                  output += `${i + 1}. ${article.webTitle}\n`;
+                  output += `   📰 Source: The Guardian\n`;
+                  output += `   📝 ${article.fields?.trailText || 'No description available'}\n`;
+                  output += `   🔗 <a href="${article.fields?.shortUrl || article.webUrl}" target="_blank">${article.fields?.shortUrl || 'Read more'}</a>\n`;
+                  output += `   📅 ${new Date(article.webPublicationDate).toLocaleString()}\n`;
+                  output += `   🏷️ Section: ${article.sectionName}\n\n`;
+                });
+
+                output += `📊 Total articles available: ${data.response.total}\n`;
+                output += `📄 Page: ${data.response.currentPage} of ${data.response.pages}`;
+
+                return output;
+                
+              } catch {
+                // Try alternative free news source - RSS feed parser
+                try {
+                  // Using RSS2JSON service for BBC News RSS
+                  const rssResponse = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=http://feeds.bbci.co.uk/news/rss.xml&count=5`);
+                  
+                  if (!rssResponse.ok) {
+                    throw new Error('RSS service failed');
+                  }
+                  
+                  const rssData = await rssResponse.json();
+                  
+                  if (!rssData.items || rssData.items.length === 0) {
+                    throw new Error('No RSS items found');
+                  }
+
+                  let output = `📰 BBC News Headlines:\n\n`;
+                  
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  rssData.items.forEach((item: any, i: number) => {
+                    output += `${i + 1}. ${item.title}\n`;
+                    output += `   📰 Source: BBC News\n`;
+                    output += `   📝 ${item.description?.replace(/<[^>]*>/g, '') || 'No description available'}\n`;
+                    output += `   🔗 <a href="${item.link}" target="_blank">Read more</a>\n`;
+                    output += `   📅 ${new Date(item.pubDate).toLocaleString()}\n\n`;
+                  });
+
+                  return output;
+                  
+                } catch {
+                  return `📰 News Service Unavailable
+
+Unable to fetch real-time news at the moment due to:
+- API rate limits or service issues
+- Network connectivity problems
+- CORS restrictions
+
+Try these alternatives:
+• news technology - Technology news
+• news business - Business news  
+• news science - Science news
+• news sports - Sports news
+
+Or visit news websites directly:
+🔗 <a href="https://www.bbc.com/news" target="_blank">BBC News</a>
+� <a href="https://www.reuters.com" target="_blank">Reuters</a>
+🔗 <a href="https://www.theguardian.com" target="_blank">The Guardian</a>`;
+                }
+              }
+
+            case 'technology':
+            case 'tech':
+              try {
+                // Try The Guardian technology section
+                const response = await fetch(`https://content.guardianapis.com/search?section=technology&page-size=5&show-fields=headline,trailText,shortUrl&format=json`);
+                
+                if (!response.ok) {
+                  throw new Error(`Guardian API failed: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (!data.response?.results || data.response.results.length === 0) {
+                  throw new Error('No technology articles found');
+                }
+
+                let output = `💻 Technology News (The Guardian):\n\n`;
+                
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                data.response.results.forEach((article: any, i: number) => {
+                  output += `${i + 1}. ${article.webTitle}\n`;
+                  output += `   📰 Source: The Guardian Technology\n`;
+                  output += `   📝 ${article.fields?.trailText || 'No description available'}\n`;
+                  output += `   🔗 <a href="${article.fields?.shortUrl || article.webUrl}" target="_blank">${article.fields?.shortUrl || 'Read more'}</a>\n`;
+                  output += `   📅 ${new Date(article.webPublicationDate).toLocaleString()}\n\n`;
                 });
 
                 return output;
                 
               } catch {
-                // Fallback with mock data for demonstration
-                return `📰 Sample News Headlines:
-
-1. Technology Giants Report Q4 Earnings
-   📰 Source: Tech News Daily
-   📝 Major technology companies announce quarterly financial results with mixed performance
-   🔗 https://example.com/tech-earnings
-   📅 ${new Date().toLocaleString()}
-
-2. Global Climate Summit Reaches New Agreement
-   📰 Source: Environmental Times
-   📝 World leaders agree on new climate action framework for 2024
-   🔗 https://example.com/climate-summit
-   📅 ${new Date().toLocaleString()}
-
-3. Space Mission Launches Successfully
-   📰 Source: Space Today
-   📝 Latest Mars exploration mission begins journey to red planet
-   🔗 https://example.com/mars-mission
-   📅 ${new Date().toLocaleString()}
-
-Note: Using sample data - news API rate limit may be reached.
-Try specific categories or search terms.`;
-              }
-
-            case 'technology':
-            case 'tech':
-              return `💻 Technology News:
+                // Fallback to static content if API fails
+                return `💻 Technology News:
 
 1. AI Breakthrough: New Language Model Achieves Human-Level Performance
    📰 Source: AI Research Journal
    📝 Latest artificial intelligence model demonstrates unprecedented capabilities in reasoning and problem-solving
-   🔗 https://example.com/ai-breakthrough
+   🔗 <a href="https://www.theguardian.com/technology" target="_blank">Read more on The Guardian</a>
    📅 ${new Date().toLocaleString()}
 
 2. Quantum Computing Milestone Reached
    📰 Source: Quantum Times
    📝 Scientists achieve new quantum computing speed record, bringing practical applications closer
-   🔗 https://example.com/quantum-milestone
+   🔗 <a href="https://www.bbc.com/news/technology" target="_blank">Read more on BBC</a>
    📅 ${new Date().toLocaleString()}
 
 3. Cybersecurity Alert: New Threat Vector Discovered
    📰 Source: Security Weekly
    📝 Researchers identify new type of cyber attack targeting cloud infrastructure
-   🔗 https://example.com/security-alert
+   🔗 <a href="https://techcrunch.com" target="_blank">Read more on TechCrunch</a>
    📅 ${new Date().toLocaleString()}
 
-4. Electric Vehicle Sales Surge Continues
-   📰 Source: Green Tech News
-   📝 EV adoption rates reach all-time high as charging infrastructure expands
-   🔗 https://example.com/ev-surge
-   📅 ${new Date().toLocaleString()}
-
-5. Blockchain Innovation in Healthcare
-   📰 Source: MedTech Today
-   📝 New blockchain-based system promises to revolutionize patient data management
-   🔗 https://example.com/blockchain-healthcare
-   📅 ${new Date().toLocaleString()}`;
+Note: Unable to fetch live technology news. Visit tech news sites directly:
+🔗 <a href="https://www.theguardian.com/technology" target="_blank">Guardian Technology</a>
+� <a href="https://techcrunch.com" target="_blank">TechCrunch</a>
+🔗 <a href="https://www.wired.com" target="_blank">Wired</a>`;
+              }
 
             case 'business':
             case 'finance':
-              return `💼 Business News:
+              try {
+                // Try The Guardian business section
+                const response = await fetch(`https://content.guardianapis.com/search?section=business&page-size=5&show-fields=headline,trailText,shortUrl&format=json`);
+                
+                if (!response.ok) {
+                  throw new Error(`Guardian API failed: ${response.status}`);
+                }
 
-1. Stock Market Reaches New Heights
-   📰 Source: Financial Tribune
-   📝 Major indices close at record levels as investor confidence remains strong
-   🔗 https://example.com/market-high
-   📅 ${new Date().toLocaleString()}
+                const data = await response.json();
+                
+                if (!data.response?.results || data.response.results.length === 0) {
+                  throw new Error('No business articles found');
+                }
 
-2. Cryptocurrency Regulation Updates
-   📰 Source: Crypto Business
-   📝 New regulatory framework announced for digital asset trading and investment
-   🔗 https://example.com/crypto-regulation
-   📅 ${new Date().toLocaleString()}
+                let output = `💼 Business News (The Guardian):\n\n`;
+                
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                data.response.results.forEach((article: any, i: number) => {
+                  output += `${i + 1}. ${article.webTitle}\n`;
+                  output += `   📰 Source: The Guardian Business\n`;
+                  output += `   📝 ${article.fields?.trailText || 'No description available'}\n`;
+                  output += `   🔗 <a href="${article.fields?.shortUrl || article.webUrl}" target="_blank">${article.fields?.shortUrl || 'Read more'}</a>\n`;
+                  output += `   📅 ${new Date(article.webPublicationDate).toLocaleString()}\n\n`;
+                });
 
-3. Merger & Acquisition Activity Increases
-   📰 Source: M&A Daily
-   📝 Corporate consolidation continues as companies seek growth through acquisitions
-   🔗 https://example.com/ma-activity
-   📅 ${new Date().toLocaleString()}
+                return output;
+                
+              } catch {
+                return `💼 Business News:
 
-4. Supply Chain Innovations Emerge
-   📰 Source: Logistics Today
-   📝 New technologies promise to solve persistent supply chain challenges
-   🔗 https://example.com/supply-chain
-   📅 ${new Date().toLocaleString()}
+Unable to fetch live business news. Try these resources:
 
-5. Sustainability Investment Trends
-   📰 Source: Green Finance
-   📝 ESG investing continues to attract significant capital from institutional investors
-   🔗 https://example.com/esg-investing
-   📅 ${new Date().toLocaleString()}`;
+📰 Business News Sources:
+🔗 <a href="https://www.theguardian.com/business" target="_blank">Guardian Business</a>
+🔗 <a href="https://www.bbc.com/news/business" target="_blank">BBC Business</a>
+🔗 <a href="https://www.reuters.com/business/" target="_blank">Reuters Business</a>
+🔗 <a href="https://www.ft.com" target="_blank">Financial Times</a>
+
+Recent Business Topics:
+• Stock market performance and trends
+• Cryptocurrency regulation updates
+• Merger & acquisition activity
+• Supply chain innovations
+• Sustainability investment trends
+• Economic policy changes
+• International trade developments
+
+Use 'news search <business topic>' to search for specific business news.`;
+              }
 
             case 'sports':
               return `⚽ Sports News:
@@ -7175,37 +7239,55 @@ Try specific categories or search terms.`;
    📅 ${new Date().toLocaleString()}`;
 
             case 'science':
-              return `🔬 Science News:
+              try {
+                // Try The Guardian science section
+                const response = await fetch(`https://content.guardianapis.com/search?section=science&page-size=5&show-fields=headline,trailText,shortUrl&format=json`);
+                
+                if (!response.ok) {
+                  throw new Error(`Guardian API failed: ${response.status}`);
+                }
 
-1. Space Telescope Discovers New Exoplanets
-   📰 Source: Space Science
-   📝 Advanced space telescope identifies potentially habitable worlds in distant star systems
-   🔗 https://example.com/exoplanet-discovery
-   📅 ${new Date().toLocaleString()}
+                const data = await response.json();
+                
+                if (!data.response?.results || data.response.results.length === 0) {
+                  throw new Error('No science articles found');
+                }
 
-2. Climate Research Reveals New Insights
-   📰 Source: Climate Science
-   📝 Long-term study provides new understanding of global warming patterns and effects
-   🔗 https://example.com/climate-research
-   📅 ${new Date().toLocaleString()}
+                let output = `🔬 Science News (The Guardian):\n\n`;
+                
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                data.response.results.forEach((article: any, i: number) => {
+                  output += `${i + 1}. ${article.webTitle}\n`;
+                  output += `   📰 Source: The Guardian Science\n`;
+                  output += `   📝 ${article.fields?.trailText || 'No description available'}\n`;
+                  output += `   🔗 <a href="${article.fields?.shortUrl || article.webUrl}" target="_blank">${article.fields?.shortUrl || 'Read more'}</a>\n`;
+                  output += `   📅 ${new Date(article.webPublicationDate).toLocaleString()}\n\n`;
+                });
 
-3. Genetic Engineering Breakthrough
-   📰 Source: Genetics Today
-   📝 Scientists develop new gene therapy technique with potential for treating genetic disorders
-   🔗 https://example.com/gene-therapy
-   📅 ${new Date().toLocaleString()}
+                return output;
+                
+              } catch {
+                return `� Science News:
 
-4. Ocean Exploration Mission Begins
-   📰 Source: Marine Science
-   📝 Deep-sea expedition aims to explore uncharted regions of Earth's oceans
-   🔗 https://example.com/ocean-exploration
-   📅 ${new Date().toLocaleString()}
+Unable to fetch live science news. Try these resources:
 
-5. Renewable Energy Efficiency Improves
-   📰 Source: Energy Science
-   📝 New solar panel technology achieves record efficiency in converting sunlight to electricity
-   🔗 https://example.com/solar-efficiency
-   📅 ${new Date().toLocaleString()}`;
+📰 Science News Sources:
+🔗 <a href="https://www.theguardian.com/science" target="_blank">Guardian Science</a>
+🔗 <a href="https://www.bbc.com/news/science_and_environment" target="_blank">BBC Science</a>
+🔗 <a href="https://www.sciencedaily.com" target="_blank">Science Daily</a>
+🔗 <a href="https://www.nature.com/news" target="_blank">Nature News</a>
+
+Recent Science Topics:
+• Space telescope discoveries and exoplanets
+• Climate research and environmental insights
+• Genetic engineering breakthroughs
+• Ocean exploration missions
+• Renewable energy innovations
+• Medical research advances
+• Artificial intelligence developments
+
+Use 'news search <science topic>' to search for specific science news.`;
+              }
 
             case 'search':
               const searchTerm = args.slice(1).join(' ');
@@ -7213,28 +7295,59 @@ Try specific categories or search terms.`;
                 return 'Please provide a search term.\nExample: news search "artificial intelligence"';
               }
 
-              return `🔍 News Search Results for "${searchTerm}":
+              try {
+                // Try The Guardian search API
+                const response = await fetch(`https://content.guardianapis.com/search?q=${encodeURIComponent(searchTerm)}&page-size=5&show-fields=headline,trailText,shortUrl&format=json`);
+                
+                if (!response.ok) {
+                  throw new Error(`Guardian search failed: ${response.status}`);
+                }
 
-1. Search Result: ${searchTerm} Technology Advances
-   📰 Source: Tech Research
-   📝 Latest developments and innovations related to ${searchTerm}
-   🔗 https://example.com/search-result-1
-   📅 ${new Date().toLocaleString()}
+                const data = await response.json();
+                
+                if (!data.response?.results || data.response.results.length === 0) {
+                  return `🔍 No news articles found for "${searchTerm}".
 
-2. ${searchTerm} Market Analysis
-   📰 Source: Market Watch
-   📝 Economic impact and market trends related to ${searchTerm}
-   🔗 https://example.com/search-result-2
-   📅 ${new Date().toLocaleString()}
+Try:
+• Different keywords or phrases
+• Broader search terms
+• Specific news categories: technology, business, science, etc.`;
+                }
 
-3. ${searchTerm} Global Impact Study
-   📰 Source: Global News
-   📝 Research shows worldwide effects and implications of ${searchTerm}
-   🔗 https://example.com/search-result-3
-   📅 ${new Date().toLocaleString()}
+                let output = `🔍 News Search Results for "${searchTerm}" (The Guardian):\n\n`;
+                
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                data.response.results.forEach((article: any, i: number) => {
+                  output += `${i + 1}. ${article.webTitle}\n`;
+                  output += `   � Source: The Guardian\n`;
+                  output += `   📝 ${article.fields?.trailText || 'No description available'}\n`;
+                  output += `   🔗 <a href="${article.fields?.shortUrl || article.webUrl}" target="_blank">${article.fields?.shortUrl || 'Read more'}</a>\n`;
+                  output += `   📅 ${new Date(article.webPublicationDate).toLocaleString()}\n`;
+                  output += `   🏷️ Section: ${article.sectionName}\n\n`;
+                });
 
-Note: These are sample search results. For real-time news search, an API key would be required.
-Try specific categories like 'technology', 'business', or 'science' for curated content.`;
+                output += `📊 Found ${data.response.total} articles matching "${searchTerm}"`;
+
+                return output;
+                
+              } catch {
+                return `� News Search for "${searchTerm}":
+
+Unable to perform live search. Try these alternatives:
+
+📰 Direct search on news websites:
+🔗 <a href="https://www.theguardian.com/search?q=${encodeURIComponent(searchTerm)}" target="_blank">Search The Guardian</a>
+🔗 <a href="https://www.bbc.co.uk/search?q=${encodeURIComponent(searchTerm)}" target="_blank">Search BBC News</a>
+🔗 <a href="https://www.reuters.com/site-search/?query=${encodeURIComponent(searchTerm)}" target="_blank">Search Reuters</a>
+
+Or try specific news categories:
+• news technology - For tech-related news
+• news business - For business news
+• news science - For science news
+• news health - For health news
+
+Search term: "${searchTerm}"`;
+              }
 
             case 'source':
               const sourceName = args[1];
