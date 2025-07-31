@@ -451,6 +451,184 @@
   box-shadow: 0 0 10px rgba(52, 211, 153, 0.3);
 }
 
+/* Portfolio/Personal website links */
+.history a[href*="vercel.app"],
+.history a[href*="netlify.app"],
+.history a[href*="beer-de-vreeze"] {
+  color: #fb7185;
+  background: linear-gradient(45deg, rgba(251, 113, 133, 0.1), rgba(244, 63, 94, 0.1));
+  border-bottom-color: rgba(251, 113, 133, 0.3);
+}
+
+.history a[href*="vercel.app"]:hover,
+.history a[href*="netlify.app"]:hover,
+.history a[href*="beer-de-vreeze"]:hover {
+  color: #fda4af;
+  border-bottom-color: rgba(253, 164, 175, 0.6);
+  background: linear-gradient(45deg, rgba(251, 113, 133, 0.2), rgba(244, 63, 94, 0.2));
+  box-shadow: 0 0 10px rgba(251, 113, 133, 0.3);
+}
+
+/* LinkedIn links */
+.history a[href*="linkedin.com"] {
+  color: #0ea5e9;
+  background: linear-gradient(45deg, rgba(14, 165, 233, 0.1), rgba(56, 189, 248, 0.1));
+  border-bottom-color: rgba(14, 165, 233, 0.3);
+}
+
+.history a[href*="linkedin.com"]:hover {
+  color: #38bdf8;
+  border-bottom-color: rgba(56, 189, 248, 0.6);
+  background: linear-gradient(45deg, rgba(14, 165, 233, 0.2), rgba(56, 189, 248, 0.2));
+  box-shadow: 0 0 10px rgba(14, 165, 233, 0.3);
+}
+
+/* Itch.io links */
+.history a[href*="itch.io"] {
+  color: #f87171;
+  background: linear-gradient(45deg, rgba(248, 113, 113, 0.1), rgba(239, 68, 68, 0.1));
+  border-bottom-color: rgba(248, 113, 113, 0.3);
+}
+
+.history a[href*="itch.io"]:hover {
+  color: #fca5a5;
+  border-bottom-color: rgba(252, 165, 165, 0.6);
+  background: linear-gradient(45deg, rgba(248, 113, 113, 0.2), rgba(239, 68, 68, 0.2));
+  box-shadow: 0 0 10px rgba(248, 113, 113, 0.3);
+}
+
+/* API and service links */
+.history a[href*="api."],
+.history a[href*="/api/"],
+.history a[href*="openweathermap"],
+.history a[href*="nasa.gov"] {
+  color: #22d3ee;
+  background: linear-gradient(45deg, rgba(34, 211, 238, 0.1), rgba(6, 182, 212, 0.1));
+  border-bottom-color: rgba(34, 211, 238, 0.3);
+}
+
+.history a[href*="api."]:hover,
+.history a[href*="/api/"]:hover,
+.history a[href*="openweathermap"]:hover,
+.history a[href*="nasa.gov"]:hover {
+  color: #67e8f9;
+  border-bottom-color: rgba(103, 232, 249, 0.6);
+  background: linear-gradient(45deg, rgba(34, 211, 238, 0.2), rgba(6, 182, 212, 0.2));
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.3);
+}
+
+/* Documentation and resource links */
+.history a[href*="docs."],
+.history a[href*="developer."],
+.history a[href*="stackoverflow.com"],
+.history a[href*="mdn."],
+.history a[href*="w3schools"] {
+  color: #a78bfa;
+  background: linear-gradient(45deg, rgba(167, 139, 250, 0.1), rgba(139, 92, 246, 0.1));
+  border-bottom-color: rgba(167, 139, 250, 0.3);
+}
+
+.history a[href*="docs."]:hover,
+.history a[href*="developer."]:hover,
+.history a[href*="stackoverflow.com"]:hover,
+.history a[href*="mdn."]:hover,
+.history a[href*="w3schools"]:hover {
+  color: #c4b5fd;
+  border-bottom-color: rgba(196, 181, 253, 0.6);
+  background: linear-gradient(45deg, rgba(167, 139, 250, 0.2), rgba(139, 92, 246, 0.2));
+  box-shadow: 0 0 10px rgba(167, 139, 250, 0.3);
+}
+
+/* Social media links */
+.history a[href*="twitter.com"],
+.history a[href*="x.com"],
+.history a[href*="instagram.com"],
+.history a[href*="facebook.com"] {
+  color: #fb923c;
+  background: linear-gradient(45deg, rgba(251, 146, 60, 0.1), rgba(249, 115, 22, 0.1));
+  border-bottom-color: rgba(251, 146, 60, 0.3);
+}
+
+.history a[href*="twitter.com"]:hover,
+.history a[href*="x.com"]:hover,
+.history a[href*="instagram.com"]:hover,
+.history a[href*="facebook.com"]:hover {
+  color: #fdba74;
+  border-bottom-color: rgba(253, 186, 116, 0.6);
+  background: linear-gradient(45deg, rgba(251, 146, 60, 0.2), rgba(249, 115, 22, 0.2));
+  box-shadow: 0 0 10px rgba(251, 146, 60, 0.3);
+}
+
+/* YouTube and video links */
+.history a[href*="youtube.com"],
+.history a[href*="youtu.be"],
+.history a[href*="vimeo.com"] {
+  color: #ef4444;
+  background: linear-gradient(45deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
+  border-bottom-color: rgba(239, 68, 68, 0.3);
+}
+
+.history a[href*="youtube.com"]:hover,
+.history a[href*="youtu.be"]:hover,
+.history a[href*="vimeo.com"]:hover {
+  color: #f87171;
+  border-bottom-color: rgba(248, 113, 113, 0.6);
+  background: linear-gradient(45deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.2));
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+}
+
+/* Discord and gaming links */
+.history a[href*="discord."],
+.history a[href*="steam"],
+.history a[href*="twitch.tv"] {
+  color: #8b5cf6;
+  background: linear-gradient(45deg, rgba(139, 92, 246, 0.1), rgba(124, 58, 237, 0.1));
+  border-bottom-color: rgba(139, 92, 246, 0.3);
+}
+
+.history a[href*="discord."]:hover,
+.history a[href*="steam"]:hover,
+.history a[href*="twitch.tv"]:hover {
+  color: #a78bfa;
+  border-bottom-color: rgba(167, 139, 250, 0.6);
+  background: linear-gradient(45deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.2));
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+}
+
+/* File download links */
+.history a[href$=".pdf"],
+.history a[href$=".zip"],
+.history a[href$=".exe"],
+.history a[href$=".dmg"],
+.history a[href*="/downloads/"] {
+  color: #10b981;
+  background: linear-gradient(45deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+  border-bottom-color: rgba(16, 185, 129, 0.3);
+}
+
+.history a[href$=".pdf"]:hover,
+.history a[href$=".zip"]:hover,
+.history a[href$=".exe"]:hover,
+.history a[href$=".dmg"]:hover,
+.history a[href*="/downloads/"]:hover {
+  color: #34d399;
+  border-bottom-color: rgba(52, 211, 153, 0.6);
+  background: linear-gradient(45deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2));
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+}
+
+/* External links indicator */
+.history a[target="_blank"]::after {
+  content: " ↗";
+  font-size: 0.8em;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.history a[target="_blank"]:hover::after {
+  opacity: 1;
+}
+
 /* High contrast mode */
 @media (prefers-contrast: high) {
   .console {

@@ -199,8 +199,10 @@ const DevConsoleDesktop: React.FC = () => {
   );
 
   const addToHistory = useCallback((output: string, type: 'command' | 'error' | 'info' = 'command', input?: string) => {
-    // Process the output to make URLs clickable
-    const processedOutput = makeLinksClickable(output);
+    // Only process the output to make URLs clickable if it doesn't already contain HTML links
+    const processedOutput = output.includes('<a') || output.includes('href=') 
+      ? output 
+      : makeLinksClickable(output);
     
     setHistory(prev => [...prev, {
       input: input || '',
@@ -8263,8 +8265,8 @@ Try a different command or check your internet connection.`;
                 </div>
               )}
               <div className={styles.output}>
-                {entry.output.includes('<img') || entry.output.includes('<div') || entry.output.includes('<a') ? (
-                  <div dangerouslySetInnerHTML={{ __html: entry.output.replace(/\n/g, '<br>') }} />
+                {entry.output.includes('<img') || entry.output.includes('<div') || entry.output.includes('<a') || entry.output.includes('href=') ? (
+                  <div dangerouslySetInnerHTML={{ __html: he.decode(entry.output).replace(/\n/g, '<br>') }} />
                 ) : (
                   <pre>{entry.output}</pre>
                 )}
