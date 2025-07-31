@@ -1,5 +1,5 @@
 import React from "react";
-import SuspenseProjectCard from "../projectCard";
+import SuspenseProjectCard from "../cards/SuspenseProjectCard";
 
 const Website = () => (
   <SuspenseProjectCard

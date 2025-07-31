@@ -1,6 +1,6 @@
 "use client";
 import { EnvelopeIcon, PaperAirplaneIcon } from "@heroicons/react/24/solid";
-import BaseCard from "./Card";
+import BaseCard from "../cards/Card";
 import styles from "@/styles/page.module.css";
 
 export default function ContactCard() {

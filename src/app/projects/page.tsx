@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, Suspense, useMemo, useCallback } from "react";
 import { useModal } from "@/context/ModalContext";
-import { usePerformanceMonitor } from "@/components/WebVitals";
+import { usePerformanceMonitor } from "@/components/performance/WebVitals";
 import { usePerformance } from "@/hooks/usePerformance";
 import { ResourcePreloader, MemoryManager } from "@/lib/performanceUtils";
 // Add highlight.js import and style

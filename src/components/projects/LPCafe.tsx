@@ -1,5 +1,5 @@
 import React from "react";
-import SuspenseProjectCard from "../SuspenseProjectCard";
+import SuspenseProjectCard from "../cards/SuspenseProjectCard";
 import useMobileDetection from "../utils/useMobileDetection";
 
 const LPCafe = () => {

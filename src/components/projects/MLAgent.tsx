@@ -1,5 +1,5 @@
 import React from "react";
-import SuspenseProjectCard from "../projectCard";
+import SuspenseProjectCard from "../cards/SuspenseProjectCard";
 
 // Using our centralized mobile detection hook instead
 import useMobileDetection from "../utils/useMobileDetection";

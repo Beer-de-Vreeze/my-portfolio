@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo, memo, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { BaseCardProps, CARD_VARIANTS } from "./types/Card.types";
+import { BaseCardProps, CARD_VARIANTS } from "../types/Card.types";
 
 const BaseCard = memo(function BaseCard({ 
   children, 

@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@azure/msal-node": "^3.6.3",
+    "@clxrity/nasa-api": "^0.4.9",
     "@ducanh2912/next-pwa": "^10.2.9",
     "@heroicons/react": "^2.2.0",
     "@next/third-parties": "^15.3.5",

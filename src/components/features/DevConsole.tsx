@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { track } from '@vercel/analytics';
-import styles from '../styles/DevConsole.module.css';
+import styles from '../../styles/DevConsole.module.css';
 import Uwuifier from 'uwuifier';
 import Fuse from 'fuse.js';
 import { evaluate } from 'mathjs';
@@ -24,6 +24,7 @@ import { format as sqlFormatter } from 'sql-formatter';
 import beautify from 'js-beautify';
 import { v1 as uuidv1, v4 as uuidv4, v5 as uuidv5 } from 'uuid';
 import QRCode from 'qrcode';
+import { NASA_API } from '@clxrity/nasa-api';
 
 // Mobile detection hook
 const useIsMobile = () => {
@@ -230,7 +231,8 @@ const DevConsoleDesktop: React.FC = () => {
             { name: 'datetime', desc: 'Date and time operations (time, date, age, uptime)' },
             { name: 'timestamp', desc: 'Unix timestamp conversions and utilities' },
             { name: 'weather', desc: 'Get real weather information for any city' },
-            { name: 'currency', desc: 'Real-time currency conversion and exchange rates' }
+            { name: 'currency', desc: 'Real-time currency conversion and exchange rates' },
+            { name: 'space', desc: 'Space and astronomy information from NASA APIs' }
           ],
           '🔧 Developer Tools': [
             { name: 'fetch', desc: 'Fetch and display data from API endpoints (GET only)' },
@@ -260,7 +262,6 @@ const DevConsoleDesktop: React.FC = () => {
             { name: 'data', desc: 'Data operations (convert, analyze, format)' }
           ],
           '� Media & Entertainment': [
-            { name: 'meme', desc: 'Generate and display random memes' },
             { name: 'spotify', desc: 'Search Spotify tracks, albums, and playlists' },
             { name: 'translate', desc: 'Translate text between different languages' },
             { name: 'github', desc: 'Search GitHub repositories, users, and get repo info' },
@@ -300,21 +301,24 @@ const DevConsoleDesktop: React.FC = () => {
         
         output += '🎯 Quick Examples:\n';
         output += '  help                    - Show this help\n';
-        output += '  weather London          - Get weather for London\n';
-        output += '  math calc "2 + 2 * 3"   - Mathematical calculation\n';
-        output += '  colors random           - Generate a random color\n';
+        output += '  weather London          - Get weather for London (with visual data)\n';
+        output += '  math stats 1 2 3 4 5    - Mathematical statistics (with charts)\n';
+        output += '  colors random           - Generate a random color (with swatches)\n';
         output += '  password 16             - Generate 16-character password\n';
         output += '  datetime age 19/08/2005 - Calculate age from birth date\n';
         output += '  encode base64 hello     - Base64 encode text\n';
-        output += '  pokemon random          - Get random Pokemon info\n';
+        output += '  pokemon random          - Get random Pokemon info (with images)\n';
         output += '  dice 2d6                - Roll two 6-sided dice\n';
         output += '  search convert          - Find conversion commands\n';
-        output += '  meme random             - Get a random meme\n';
-        output += '  spotify search "Bohemian Rhapsody" - Search Spotify\n';
+        output += '  space apod              - NASA Astronomy Picture of Day (with images)\n';
+        output += '  space neo today         - Near Earth Objects today\n';
+        output += '  spotify search "Bohemian Rhapsody" - Search Spotify (with album art)\n';
         output += '  translate en fr "Hello" - Translate English to French\n';
-        output += '  github repo javascript  - Search GitHub repositories\n';
+        output += '  github repo javascript  - Search GitHub repositories (with avatars)\n';
         output += '  news technology         - Get technology news\n';
-        output += '  reddit hot programming  - Browse Reddit programming\n\n';
+        output += '  reddit hot programming  - Browse Reddit programming\n';
+        output += '  performance             - Show performance metrics (with charts)\n';
+        output += '  analyze text "Hello!"   - Analyze text (with visual breakdown)\n\n';
         
         output += '🔗 Pro Tips:\n';
         output += '  • Use "search <term>" to find commands quickly\n';
@@ -855,11 +859,11 @@ Location: Beusichem, Netherlands
 Role: Game Developer
 Focus: Tools and Systems in Game Development
 
-Portfolio: https://beer-de-vreeze.vercel.app
-Email: beer@vreeze.com
-GitHub: https://github.com/Beer-de-Vreeze
-LinkedIn: https://linkedin.com/in/beer-de-vreeze-59040919a/
-Itch.io: https://bjeerpeer.itch.io`;
+Portfolio: <a href="https://beer-de-vreeze.vercel.app" target="_blank">https://beer-de-vreeze.vercel.app</a>
+Email: <a href="mailto:beer@vreeze.com">beer@vreeze.com</a>
+GitHub: <a href="https://github.com/Beer-de-Vreeze" target="_blank">https://github.com/Beer-de-Vreeze</a>
+LinkedIn: <a href="https://linkedin.com/in/beer-de-vreeze-59040919a/" target="_blank">https://linkedin.com/in/beer-de-vreeze-59040919a/</a>
+Itch.io: <a href="https://bjeerpeer.itch.io" target="_blank">https://bjeerpeer.itch.io</a>`;
       }
     },
     {
@@ -902,16 +906,51 @@ Itch.io: https://bjeerpeer.itch.io`;
         const perf = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
         if (!perf) return 'Performance data not available';
         
-        const metrics = [
-          `DNS Lookup: ${Math.round(perf.domainLookupEnd - perf.domainLookupStart)}ms`,
-          `Connection: ${Math.round(perf.connectEnd - perf.connectStart)}ms`,
-          `Request: ${Math.round(perf.responseStart - perf.requestStart)}ms`,
-          `Response: ${Math.round(perf.responseEnd - perf.responseStart)}ms`,
-          `DOM Load: ${Math.round(perf.domContentLoadedEventEnd - perf.domContentLoadedEventStart)}ms`,
-          `Full Load: ${Math.round(perf.loadEventEnd - perf.loadEventStart)}ms`,
-          `Total Time: ${Math.round(perf.loadEventEnd - perf.fetchStart)}ms`,
-        ];
-        return metrics.join('\n');
+        const metrics = {
+          'DNS Lookup': Math.round(perf.domainLookupEnd - perf.domainLookupStart),
+          'Connection': Math.round(perf.connectEnd - perf.connectStart),
+          'Request': Math.round(perf.responseStart - perf.requestStart),
+          'Response': Math.round(perf.responseEnd - perf.responseStart),
+          'DOM Load': Math.round(perf.domContentLoadedEventEnd - perf.domContentLoadedEventStart),
+          'Full Load': Math.round(perf.loadEventEnd - perf.loadEventStart),
+          'Total Time': Math.round(perf.loadEventEnd - perf.fetchStart)
+        };
+        
+        const maxValue = Math.max(...Object.values(metrics));
+        const barChart = Object.entries(metrics).map(([name, value]) => {
+          const barWidth = Math.max(5, (value / maxValue) * 300);
+          const color = value < 100 ? '#4CAF50' : value < 500 ? '#FF9800' : '#F44336';
+          
+          return `<div style="display: flex; align-items: center; margin: 5px 0;">
+            <span style="width: 100px; font-size: 0.9em;">${name}:</span>
+            <div style="background: ${color}; height: 20px; width: ${barWidth}px; margin: 0 10px; border-radius: 3px; display: inline-block;"></div>
+            <span style="font-weight: bold;">${value}ms</span>
+          </div>`;
+        }).join('');
+        
+        // Performance score calculation
+        const totalTime = metrics['Total Time'];
+        const score = totalTime < 1000 ? '🟢 Excellent' : 
+                     totalTime < 2500 ? '🟡 Good' : 
+                     totalTime < 4000 ? '🟠 Needs Improvement' : '🔴 Poor';
+        
+        return `📊 Performance Metrics:
+
+<div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 10px 0;">
+  <div style="font-size: 1.2em; margin-bottom: 10px;">⚡ Performance Score: ${score}</div>
+  ${barChart}
+</div>
+
+📈 Memory Usage:
+${(window as Window & { performance: Performance & { memory?: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number } } }).performance.memory ? `
+Used: ${Math.round((window as Window & { performance: Performance & { memory: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number } } }).performance.memory.usedJSHeapSize / 1048576)}MB
+Total: ${Math.round((window as Window & { performance: Performance & { memory: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number } } }).performance.memory.totalJSHeapSize / 1048576)}MB
+Limit: ${Math.round((window as Window & { performance: Performance & { memory: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number } } }).performance.memory.jsHeapSizeLimit / 1048576)}MB` : 'Memory data not available (Chrome only)'}
+
+🎯 Summary:
+• Total page load time: ${totalTime}ms
+• Critical rendering path: ${metrics['DNS Lookup'] + metrics['Connection'] + metrics['Request'] + metrics['Response']}ms
+• DOM processing: ${metrics['DOM Load']}ms`;
       }
     },
 
@@ -1120,14 +1159,83 @@ Operations:
               const std = evaluate(`std([${numbers.join(',')}])`);
               const min = Math.min(...numbers);
               const max = Math.max(...numbers);
+              const range = max - min;
               
-              return `Statistics for [${numbers.join(', ')}]:
-Mean: ${mean}
-Median: ${median}
-Standard Deviation: ${std}
-Min: ${min}
-Max: ${max}
-Count: ${numbers.length}`;
+              // Create a visual histogram
+              const bins = Math.min(10, Math.ceil(Math.sqrt(numbers.length)));
+              const binSize = range / bins;
+              const histogram = new Array(bins).fill(0);
+              
+              numbers.forEach(num => {
+                const binIndex = Math.min(bins - 1, Math.floor((num - min) / binSize));
+                histogram[binIndex]++;
+              });
+              
+              const maxFreq = Math.max(...histogram);
+              const histogramChart = histogram.map((freq, i) => {
+                const barHeight = Math.max(2, (freq / maxFreq) * 50);
+                const binStart = (min + i * binSize).toFixed(1);
+                
+                return `<div style="display: inline-block; vertical-align: bottom; margin: 0 1px; text-align: center;">
+                  <div style="background: #2196F3; width: 25px; height: ${barHeight}px; margin-bottom: 2px;"></div>
+                  <div style="font-size: 0.7em; transform: rotate(-45deg); transform-origin: center;">${binStart}</div>
+                </div>`;
+              }).join('');
+              
+              // Box plot visualization
+              const sortedNumbers = [...numbers].sort((a, b) => a - b);
+              const q1 = evaluate(`quantileSeq([${sortedNumbers.join(',')}], 0.25)`);
+              const q3 = evaluate(`quantileSeq([${sortedNumbers.join(',')}], 0.75)`);
+              const iqr = q3 - q1;
+              
+              const boxPlotWidth = 300;
+              const getPosition = (value: number) => ((value - min) / range) * boxPlotWidth;
+              
+              const boxPlot = `
+<div style="position: relative; width: ${boxPlotWidth}px; height: 60px; margin: 20px 0; border: 1px solid #ddd; background: #f9f9f9;">
+  <div style="position: absolute; left: ${getPosition(q1)}px; width: ${getPosition(q3) - getPosition(q1)}px; height: 30px; top: 15px; background: rgba(33, 150, 243, 0.3); border: 2px solid #2196F3;"></div>
+  <div style="position: absolute; left: ${getPosition(median)}px; width: 2px; height: 30px; top: 15px; background: #2196F3;"></div>
+  <div style="position: absolute; left: ${getPosition(min)}px; width: 1px; height: 40px; top: 10px; background: #666;"></div>
+  <div style="position: absolute; left: ${getPosition(max)}px; width: 1px; height: 40px; top: 10px; background: #666;"></div>
+  <div style="position: absolute; left: 0; top: -20px; font-size: 0.8em;">${min}</div>
+  <div style="position: absolute; right: 0; top: -20px; font-size: 0.8em;">${max}</div>
+  <div style="position: absolute; left: ${getPosition(median)}px; top: -20px; font-size: 0.8em; transform: translateX(-50%);">Med: ${median.toFixed(2)}</div>
+</div>`;
+              
+              return `📊 Statistics for [${numbers.join(', ')}]:
+
+<div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 10px 0;">
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px;">
+    <div>
+      <strong>Central Tendency:</strong><br>
+      Mean: ${mean.toFixed(3)}<br>
+      Median: ${median.toFixed(3)}<br>
+      <br>
+      <strong>Spread:</strong><br>
+      Standard Deviation: ${std.toFixed(3)}<br>
+      Range: ${range.toFixed(3)}
+    </div>
+    <div>
+      <strong>Extremes:</strong><br>
+      Min: ${min}<br>
+      Max: ${max}<br>
+      <br>
+      <strong>Count:</strong><br>
+      Sample Size: ${numbers.length}
+    </div>
+  </div>
+  
+  <div>
+    <strong>📈 Histogram:</strong><br>
+    <div style="margin: 10px 0;">${histogramChart}</div>
+  </div>
+  
+  <div>
+    <strong>📦 Box Plot:</strong>
+    ${boxPlot}
+    <div style="font-size: 0.8em; color: #666;">Q1: ${q1.toFixed(2)} | Q3: ${q3.toFixed(2)} | IQR: ${iqr.toFixed(2)}</div>
+  </div>
+</div>`;
             } catch (error) {
               return `Statistics error: ${error}`;
             }
@@ -1519,8 +1627,28 @@ Modes:
           
           const locationName = admin1 ? `${name}, ${admin1}, ${country}` : `${name}, ${country}`;
           
+          // Weather visualization
+          const weatherVisual = `
+<div style="margin: 10px 0; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+  <div style="text-align: center;">
+    <div style="font-size: 3em; margin-bottom: 5px;">${weatherEmoji}</div>
+    <div style="font-size: 0.9em; color: #666;">${description}</div>
+  </div>
+  <div style="display: flex; flex-direction: column; gap: 5px;">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <span style="font-size: 2em; font-weight: bold; color: ${temp > 25 ? '#ff6b35' : temp > 10 ? '#4CAF50' : '#2196F3'};">${temp}°C</span>
+      <span style="color: #666;">feels like ${feelsLike}°C</span>
+    </div>
+    <div style="background: linear-gradient(90deg, #87CEEB ${cloudCover}%, #f0f0f0 ${cloudCover}%); height: 8px; width: 200px; border-radius: 4px; position: relative;">
+      <span style="position: absolute; top: -20px; left: 0; font-size: 0.8em;">☁️ ${cloudCover}%</span>
+    </div>
+  </div>
+</div>`;
+          
           return `Weather in ${locationName}:
-${weatherEmoji} ${description}
+${weatherVisual}
+
+📊 Details:
 Temperature: ${temp}°C (feels like ${feelsLike}°C)
 Humidity: ${humidity}%
 Pressure: ${pressure} hPa
@@ -1727,7 +1855,7 @@ Error pages:
 
 Custom paths:
   navigate /custom/path    - Navigate to any custom path
-  navigate https://...     - Navigate to external URL
+  navigate <a href="https://..." target="_blank">https://...</a>     - Navigate to external URL
 
   navigate about
   navigate projects
@@ -1739,7 +1867,7 @@ Custom paths:
   navigate cv
   navigate 404
   navigate /custom/page
-  navigate https://github.com`;
+  navigate <a href="https://github.com" target="_blank">https://github.com</a>`;
         }
 
         try {
@@ -1763,19 +1891,19 @@ Custom paths:
               break;
             case 'github':
               window.open('https://github.com/Beer-de-Vreeze', '_blank');
-              return 'Opening GitHub profile: https://github.com/Beer-de-Vreeze';
+              return 'Opening GitHub profile: <a href="https://github.com/Beer-de-Vreeze" target="_blank">https://github.com/Beer-de-Vreeze</a>';
             case 'itch':
               window.open('https://bjeerpeer.itch.io', '_blank');
-              return 'Opening Itch.io page: https://bjeerpeer.itch.io';
+              return 'Opening Itch.io page: <a href="https://bjeerpeer.itch.io" target="_blank">https://bjeerpeer.itch.io</a>';
             case 'linkedin':
               window.open('https://linkedin.com/in/beer-de-vreeze-59040919a/', '_blank');
-              return 'Opening LinkedIn profile: https://linkedin.com/in/beer-de-vreeze-59040919a/';
+              return 'Opening LinkedIn profile: <a href="https://linkedin.com/in/beer-de-vreeze-59040919a/" target="_blank">https://linkedin.com/in/beer-de-vreeze-59040919a/</a>';
             case 'portfolio':
               window.open('https://beer-de-vreeze.vercel.app', '_blank');
-              return 'Opening portfolio: https://beer-de-vreeze.vercel.app';
+              return 'Opening portfolio: <a href="https://beer-de-vreeze.vercel.app" target="_blank">https://beer-de-vreeze.vercel.app</a>';
             case 'email':
               window.open('mailto:beer@vreeze.com', '_blank');
-              return 'Opening email client for: beer@vreeze.com';
+              return 'Opening email client for: <a href="mailto:beer@vreeze.com">beer@vreeze.com</a>';
             case 'cv':
               window.open('/downloads/Beer de Vreeze CV.pdf', '_blank');
               return 'Downloading CV: Beer de Vreeze CV.pdf';
@@ -1862,7 +1990,7 @@ Types:
       description: 'Fetch and display data from a given API endpoint (GET only, for safety)',
       execute: async (args) => {
         const url = args[0];
-        if (!url) return 'Usage: fetch <url>\nExample: fetch https://api.github.com/users/Beer-de-Vreeze';
+        if (!url) return 'Usage: fetch <url>\nExample: fetch <a href="https://api.github.com/users/Beer-de-Vreeze" target="_blank">https://api.github.com/users/Beer-de-Vreeze</a>';
         
         try {
           // Basic URL validation
@@ -2809,6 +2937,45 @@ Types:
               const avgWordLength = words.reduce((sum, word) => sum + word.length, 0) / words.length;
               const avgSentenceLength = words.length / sentences.length;
               
+              // Character frequency analysis
+              const charFreq: { [key: string]: number } = {};
+              input.toLowerCase().split('').forEach(char => {
+                if (char.match(/[a-z]/)) {
+                  charFreq[char] = (charFreq[char] || 0) + 1;
+                }
+              });
+              
+              const topChars = Object.entries(charFreq)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 5);
+              
+              const maxFreq = topChars[0] ? topChars[0][1] : 1;
+              const charChart = topChars.map(([char, freq]) => {
+                const barWidth = (freq / maxFreq) * 100;
+                return `<div style="display: flex; align-items: center; margin: 2px 0;">
+                  <span style="width: 20px; text-align: center; font-family: monospace;">${char}</span>
+                  <div style="background: #4CAF50; height: 16px; width: ${barWidth}px; margin: 0 5px; border-radius: 2px;"></div>
+                  <span style="font-size: 0.9em;">${freq}</span>
+                </div>`;
+              }).join('');
+              
+              // Word length distribution
+              const wordLengths: { [key: number]: number } = {};
+              words.forEach(word => {
+                const len = word.length;
+                wordLengths[len] = (wordLengths[len] || 0) + 1;
+              });
+              
+              const lengthChart = Object.entries(wordLengths)
+                .sort(([a], [b]) => parseInt(a) - parseInt(b))
+                .map(([len, count]) => {
+                  const barHeight = Math.max(5, (count / Math.max(...Object.values(wordLengths))) * 40);
+                  return `<div style="display: inline-block; vertical-align: bottom; margin: 0 2px; text-align: center;">
+                    <div style="background: #2196F3; width: 20px; height: ${barHeight}px; margin-bottom: 2px;"></div>
+                    <div style="font-size: 0.8em;">${len}</div>
+                  </div>`;
+                }).join('');
+
               // Simple readability metrics
               const syllableCount = words.reduce((total, word) => {
                 return total + Math.max(1, word.toLowerCase().match(/[aeiouy]+/g)?.length || 1);
@@ -2826,20 +2993,40 @@ Types:
 
               return `📝 Text Analysis:
 
-Basic Stats:
-Characters: ${chars} (${charsNoSpaces} without spaces)
-Words: ${words.length}
-Sentences: ${sentences.length}
-Paragraphs: ${input.split(/\n\s*\n/).length}
-
-Readability:
-Avg word length: ${avgWordLength.toFixed(1)} characters
-Avg sentence length: ${avgSentenceLength.toFixed(1)} words
-Avg syllables per word: ${avgSyllablesPerWord.toFixed(1)}
-Estimated reading time: ${Math.ceil(words.length / 200)} minutes
-
-Fun Conversion:
-UwU version: "${uwuSample}"`;
+<div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 10px 0;">
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px;">
+    <div>
+      <strong>📊 Basic Stats:</strong><br>
+      Characters: ${chars} (${charsNoSpaces} without spaces)<br>
+      Words: ${words.length}<br>
+      Sentences: ${sentences.length}<br>
+      Paragraphs: ${input.split(/\n\s*\n/).length}
+    </div>
+    <div>
+      <strong>📈 Readability:</strong><br>
+      Avg word length: ${avgWordLength.toFixed(1)} chars<br>
+      Avg sentence length: ${avgSentenceLength.toFixed(1)} words<br>
+      Avg syllables/word: ${avgSyllablesPerWord.toFixed(1)}<br>
+      Reading time: ~${Math.ceil(words.length / 200)} min
+    </div>
+  </div>
+  
+  <div style="margin-bottom: 15px;">
+    <strong>🔤 Most Frequent Characters:</strong><br>
+    <div style="margin: 10px 0;">${charChart}</div>
+  </div>
+  
+  <div style="margin-bottom: 15px;">
+    <strong>📏 Word Length Distribution:</strong><br>
+    <div style="margin: 10px 0;">${lengthChart}</div>
+    <div style="font-size: 0.8em; color: #666;">Word length (characters)</div>
+  </div>
+  
+  <div>
+    <strong>🎉 Fun Conversion:</strong><br>
+    <div style="background: #e3f2fd; padding: 8px; border-radius: 4px; font-style: italic;">"${uwuSample}"</div>
+  </div>
+</div>`;
 
             case 'number':
               // Number analysis using mathjs and big-integer
@@ -3940,7 +4127,7 @@ This is vector-based and scales to any size!`;
 
 <img src="${qrUrl}" alt="QR Code" style="display: block; max-width: 256px; height: auto; margin: 10px 0; border: 1px solid #ccc;" onerror="this.style.display='none';">
 
-Direct URL: ${qrUrl}
+Direct URL: <a href="${qrUrl}" target="_blank">${qrUrl}</a>
 
 This uses an external API service.`;
 
@@ -5748,163 +5935,6 @@ Use 'currency help' for available commands.`;
       }
     },
     {
-      name: 'meme',
-      description: 'Generate and display random memes',
-      execute: async (args) => {
-        const action = args[0] || 'random';
-        
-        if (!action || action === 'help') {
-          return `Meme Generator 🐸
-
-Get random memes and internet humor!
-
-Usage: meme <command>
-
-Commands:
-  random        - Get a random meme
-  reddit        - Get memes from Reddit
-  programming   - Get programming-related memes
-  template      - Get popular meme templates
-  categories    - List available meme categories
-
-Examples:
-  meme random
-  meme reddit
-  meme programming
-  meme template
-
-Note: Memes are fetched from public APIs and may vary in content.`;
-        }
-
-        try {
-          switch (action.toLowerCase()) {
-            case 'random':
-              try {
-                const randomMemes = await import('random-memes');
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const meme = await (randomMemes as any).random();
-                
-                return `🐸 Random Meme:
-
-Title: ${meme.caption || 'Random Meme'}
-Category: ${meme.category || 'General'}
-URL: ${meme.image}
-
-${meme.image && (meme.image.includes('.jpg') || meme.image.includes('.png') || meme.image.includes('.gif') || meme.image.includes('.webp')) ? 
-  `<img src="${meme.image}" alt="${meme.caption || 'Meme'}" style="max-width: 400px; max-height: 300px; border-radius: 8px;" />` : 
-  'Link: ' + meme.image}
-
-Source: Random Memes API`;
-              } catch (error) {
-                return `Meme API unavailable: ${error}
-
-🐸 Fallback Dad Joke:
-Why don't scientists trust atoms?
-Because they make up everything! 😂
-
-Try again later for fresh memes!`;
-              }
-            
-            case 'reddit':
-              try {
-                const randomMemes = await import('random-memes');
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const meme = await (randomMemes as any).reddit();
-                
-                return `🐸 Reddit Meme:
-
-Title: ${meme.title || 'Reddit Meme'}
-Author: u/${meme.author || 'Unknown'}
-Score: ${meme.ups || 0} upvotes
-URL: ${meme.url}
-
-${meme.url && (meme.url.includes('.jpg') || meme.url.includes('.png') || meme.url.includes('.gif') || meme.url.includes('.webp')) ? 
-  `<img src="${meme.url}" alt="${meme.title || 'Meme'}" style="max-width: 400px; max-height: 300px; border-radius: 8px;" />` : 
-  'Link: ' + meme.url}
-
-Comments: ${meme.num_comments || 0}
-Subreddit: r/${meme.subreddit || 'memes'}
-Posted: ${meme.created_utc ? new Date(meme.created_utc * 1000).toLocaleDateString() : 'Recently'}`;
-              } catch (error) {
-                return `Reddit meme API unavailable: ${error}
-
-Try 'meme random' instead!`;
-              }
-            
-            case 'programming':
-            case 'dev':
-              const progMemes = [
-                { title: 'Git Commit Messages', text: 'First commit\nFixed bug\nActually fixed bug\nReverted last commit\nThis should work\nWHY DOESN\'T THIS WORK\nFinally works' },
-                { title: 'Code Reviews', text: 'My code: "It works on my machine"\nProduction: "Allow me to introduce myself"' },
-                { title: 'Documentation', text: 'Code without documentation: 😨\nDocumentation without code: 🤔\nCode with documentation: 😍\nDocumentation that matches code: 🦄' },
-                { title: 'Debugging', text: 'Problem: exists\nMe: Adds console.log()\nProblem: still exists\nMe: Adds MORE console.log()' },
-                { title: 'CSS', text: 'CSS: "Just center this div"\nDeveloper: "Sure, how hard can it be?"\n*3 hours later*\nDeveloper: 😭' },
-                { title: 'Stack Overflow', text: 'Me: *copies code from Stack Overflow*\nCode: *works perfectly*\nMe: "I am a genius programmer"' },
-                { title: 'Production vs Development', text: 'Development: Everything works\nStaging: Everything works\nProduction: 🔥💥🔥 THIS IS FINE 🔥💥🔥' }
-              ];
-              
-              const progMeme = progMemes[Math.floor(Math.random() * progMemes.length)];
-              
-              return `👨‍💻 Programming Meme:
-
-${progMeme.title}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-${progMeme.text}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Relatable level: 💯`;
-            
-            case 'template':
-              const templates = [
-                { name: 'Drake Pointing', description: 'Drake disapproving/approving' },
-                { name: 'Distracted Boyfriend', description: 'Man looking at another woman' },
-                { name: 'Woman Yelling at Cat', description: 'Woman pointing at confused cat' },
-                { name: 'Two Buttons', description: 'Person sweating over two choices' },
-                { name: 'Change My Mind', description: 'Steven Crowder sitting at table' },
-                { name: 'Expanding Brain', description: 'Brain getting bigger with ideas' },
-                { name: 'This is Fine', description: 'Dog in burning room' },
-                { name: 'Surprised Pikachu', description: 'Pikachu with shocked expression' },
-                { name: 'Galaxy Brain', description: 'Ultimate brain expansion' },
-                { name: 'Always Has Been', description: 'Astronaut pointing gun' }
-              ];
-              
-              return `🎭 Popular Meme Templates:
-
-${templates.map((template, i) => `${i + 1}. ${template.name}\n   ${template.description}`).join('\n\n')}
-
-These are some of the most popular meme formats on the internet!
-Use 'meme random' to get memes that might use these templates.`;
-            
-            case 'categories':
-              return `📁 Meme Categories:
-
-Popular sources:
-• Random API - Mixed meme content
-• Reddit API - Fresh memes from various subreddits
-• Programming - Developer-specific humor
-• Templates - Popular meme formats
-
-Subreddits often accessed:
-• r/memes - General memes
-• r/dankmemes - Spicy memes  
-• r/ProgrammerHumor - Developer memes
-• r/wholesomememes - Feel-good memes
-• r/PrequelMemes - Star Wars prequel memes
-
-Use 'meme programming' for developer-specific content!`;
-            
-            default:
-              return `Unknown meme command: ${action}
-Use 'meme help' for available commands.`;
-          }
-        } catch (error) {
-          return `Meme error: ${error}
-
-Try 'meme programming' for offline memes!`;
-        }
-      }
-    },
-    {
       name: 'spotify',
       description: 'Search and get information about Spotify tracks, albums, and playlists',
       /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -5969,16 +5999,21 @@ Note: Uses public Spotify APIs. Some features may be limited.`;
                   const minutes = Math.floor(duration / 60);
                   const seconds = duration % 60;
                   
-                  output += `${i + 1}. ${track.trackName || 'Unknown Title'}\n`;
-                  output += `   Artist: ${track.artistName || 'Unknown Artist'}\n`;
-                  output += `   Album: ${track.collectionName || 'Unknown Album'}\n`;
-                  output += `   Duration: ${minutes}:${seconds.toString().padStart(2, '0')}\n`;
-                  output += `   Genre: ${track.primaryGenreName || 'Unknown'}\n`;
-                  output += `   Release: ${track.releaseDate ? new Date(track.releaseDate).getFullYear() : 'Unknown'}\n`;
-                  if (track.previewUrl) {
-                    output += `   Preview: ${track.previewUrl}\n`;
-                  }
-                  output += '\n';
+                  const albumArt = track.artworkUrl100 ? 
+                    `<img src="${track.artworkUrl100.replace('100x100', '300x300')}" alt="${track.collectionName}" style="width: 60px; height: 60px; border-radius: 8px; margin-right: 10px; vertical-align: top;" onerror="this.style.display='none';">` : '';
+                  
+                  output += `<div style="display: flex; align-items: flex-start; margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+  ${albumArt}
+  <div>
+    <strong>${i + 1}. ${track.trackName || 'Unknown Title'}</strong><br>
+    🎤 ${track.artistName || 'Unknown Artist'}<br>
+    💿 ${track.collectionName || 'Unknown Album'}<br>
+    ⏱️ ${minutes}:${seconds.toString().padStart(2, '0')}<br>
+    🎵 ${track.primaryGenreName || 'Unknown'}<br>
+    📅 ${track.releaseDate ? new Date(track.releaseDate).getFullYear() : 'Unknown'}
+    ${track.previewUrl ? `<br>🎧 <a href="${track.previewUrl}" target="_blank">Preview</a>` : ''}
+  </div>
+</div>\n`;
                 });
 
                 output += `Found ${data.resultCount} total results\nShowing top 5 matches`;
@@ -5993,7 +6028,7 @@ Note: Uses public Spotify APIs. Some features may be limited.`;
             case 'song':
               const trackInput = args.slice(1).join(' ');
               if (!trackInput) {
-                return 'Please provide a Spotify URL or track ID.\nExample: spotify track https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh';
+                return 'Please provide a Spotify URL or track ID.\nExample: spotify track <a href="https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh" target="_blank">https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh</a>';
               }
 
               try {
@@ -6017,14 +6052,14 @@ Track Number: ${data.track_number || 'Unknown'}
 ${data.album?.total_tracks ? `Total Tracks: ${data.album.total_tracks}` : ''}
 
 External URLs:
-Spotify: ${data.external_urls?.spotify || trackInput}
-${data.preview_url ? `Preview: ${data.preview_url}` : 'No preview available'}
+Spotify: <a href="${data.external_urls?.spotify || trackInput}" target="_blank">${data.external_urls?.spotify || trackInput}</a>
+${data.preview_url ? `Preview: <a href="${data.preview_url}" target="_blank">${data.preview_url}</a>` : 'No preview available'}
 
 ${data.album?.images && data.album.images[0] ? 
   `<img src="${data.album.images[0].url}" alt="${data.name}" style="max-width: 200px; max-height: 200px; border-radius: 8px;" />` : 
   ''}`;
                 } else {
-                  return 'Please provide a valid Spotify URL.\nExample: https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh';
+                  return 'Please provide a valid Spotify URL.\nExample: <a href="https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh" target="_blank">https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh</a>';
                 }
               } catch (error) {
                 return `Failed to get track information: ${error}\n\nMake sure you're using a valid Spotify track URL.`;
@@ -6033,7 +6068,7 @@ ${data.album?.images && data.album.images[0] ?
             case 'album':
               const albumInput = args.slice(1).join(' ');
               if (!albumInput) {
-                return 'Please provide a Spotify album URL or search for an album name.\nExample: spotify album https://open.spotify.com/album/1A2GTWGtFfWp7KSQTwWOyo';
+                return 'Please provide a Spotify album URL or search for an album name.\nExample: spotify album <a href="https://open.spotify.com/album/1A2GTWGtFfWp7KSQTwWOyo" target="_blank">https://open.spotify.com/album/1A2GTWGtFfWp7KSQTwWOyo</a>';
               }
 
               try {
@@ -6064,7 +6099,7 @@ ${data.tracks?.items ? 'Track List:\n' + data.tracks.items.slice(0, 10).map((tra
 ).join('\n') + (data.tracks.items.length > 10 ? `\n... and ${data.tracks.items.length - 10} more tracks` : '') : ''}
 
 External URLs:
-Spotify: ${data.external_urls?.spotify || albumInput}
+Spotify: <a href="${data.external_urls?.spotify || albumInput}" target="_blank">${data.external_urls?.spotify || albumInput}</a>
 
 ${data.images && data.images[0] ? 
   `<img src="${data.images[0].url}" alt="${data.name}" style="max-width: 250px; max-height: 250px; border-radius: 8px;" />` : 
@@ -6156,7 +6191,7 @@ ${data.images && data.images[0] ?
             case 'playlist':
               const playlistInput = args.slice(1).join(' ');
               if (!playlistInput) {
-                return 'Please provide a Spotify playlist URL.\nExample: spotify playlist https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M';
+                return 'Please provide a Spotify playlist URL.\nExample: spotify playlist <a href="https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M" target="_blank">https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M</a>';
               }
 
               try {
@@ -6182,13 +6217,13 @@ ${data.tracks?.items ? 'Recent Tracks:\n' + data.tracks.items.slice(0, 10).map((
 }).join('\n') + (data.tracks.items.length > 10 ? `\n... and ${data.tracks.total - 10} more tracks` : '') : ''}
 
 External URLs:
-Spotify: ${data.external_urls?.spotify || playlistInput}
+Spotify: <a href="${data.external_urls?.spotify || playlistInput}" target="_blank">${data.external_urls?.spotify || playlistInput}</a>
 
 ${data.images && data.images[0] ? 
   `<img src="${data.images[0].url}" alt="${data.name}" style="max-width: 200px; max-height: 200px; border-radius: 8px;" />` : 
   ''}`;
                 } else {
-                  return 'Please provide a valid Spotify playlist URL.\nExample: https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M';
+                  return 'Please provide a valid Spotify playlist URL.\nExample: <a href="https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M" target="_blank">https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M</a>';
                 }
               } catch (error) {
                 return `Failed to get playlist information: ${error}`;
@@ -6197,7 +6232,7 @@ ${data.images && data.images[0] ?
             case 'preview':
               const previewInput = args.slice(1).join(' ');
               if (!previewInput) {
-                return 'Please provide a Spotify track URL to get preview.\nExample: spotify preview https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh';
+                return 'Please provide a Spotify track URL to get preview.\nExample: spotify preview <a href="https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh" target="_blank">https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh</a>';
               }
 
               try {
@@ -6214,7 +6249,7 @@ ${data.images && data.images[0] ?
 Track: ${data.name || 'Unknown'}
 Artist: ${data.artists ? data.artists.map((a: any) => a.name).join(', ') : 'Unknown'}
 
-Preview URL: ${data.preview_url}
+Preview URL: <a href="${data.preview_url}" target="_blank">${data.preview_url}</a>
 
 <audio controls style="width: 100%; margin: 10px 0;">
   <source src="${data.preview_url}" type="audio/mpeg">
@@ -6233,7 +6268,7 @@ Artist: ${data.artists ? data.artists.map((a: any) => a.name).join(', ') : 'Unkn
 Some tracks don't have preview clips available due to licensing restrictions.`;
                   }
                 } else {
-                  return 'Please provide a valid Spotify track URL.\nExample: https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh';
+                  return 'Please provide a valid Spotify track URL.\nExample: <a href="https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh" target="_blank">https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh</a>';
                 }
               } catch (error) {
                 return `Failed to get preview: ${error}`;
@@ -6598,13 +6633,23 @@ Note: Uses GitHub's public API with rate limits for unauthenticated requests.`;
                     `${(repo.stargazers_count / 1000).toFixed(1)}k` : 
                     repo.stargazers_count.toString();
                   
-                  output += `${i + 1}. ${repo.full_name}\n`;
+                  const ownerAvatar = `<img src="${repo.owner.avatar_url}" alt="${repo.owner.login}" style="width: 32px; height: 32px; border-radius: 50%; margin-right: 8px; vertical-align: middle;" onerror="this.style.display='none';">`;
+                  
+                  // Language colors based on GitHub's language colors
+                  const languageColors: { [key: string]: string } = {
+                    'JavaScript': '#f1e05a', 'TypeScript': '#3178c6', 'Python': '#3572A5', 'Java': '#b07219',
+                    'C++': '#f34b7d', 'C': '#555555', 'C#': '#239120', 'PHP': '#4F5D95', 'Ruby': '#701516',
+                    'Go': '#00ADD8', 'Rust': '#dea584', 'Swift': '#fa7343', 'Kotlin': '#A97BFF', 'Dart': '#00B4AB',
+                    'HTML': '#e34c26', 'CSS': '#1572B6', 'Vue': '#4FC08D', 'React': '#61DAFB', 'Angular': '#DD0031'
+                  };
+                  const languageColor = repo.language ? (languageColors[repo.language] || '#333') : '#333';
+                  const languageBadge = repo.language ? 
+                    `<span style="background: ${languageColor}; color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.8em; margin-left: 5px;">${repo.language}</span>` : '';
+                  
+                  output += `${i + 1}. <div style="display: inline-flex; align-items: center; margin: 5px 0;">${ownerAvatar}<strong>${repo.full_name}</strong>${languageBadge}</div>\n`;
                   output += `   ⭐ ${stars} stars • 🍴 ${repo.forks_count} forks\n`;
-                  output += `   📝 ${repo.description || 'No description'}\n`;
-                  output += `   🔗 ${repo.html_url}\n`;
-                  if (repo.language) {
-                    output += `   💻 Language: ${repo.language}\n`;
-                  }
+                  output += `   � ${repo.description || 'No description'}\n`;
+                  output += `   🔗 <a href="${repo.html_url}" target="_blank">${repo.html_url}</a>\n`;
                   output += `   📅 Updated: ${new Date(repo.updated_at).toLocaleDateString()}\n\n`;
                 });
 
@@ -6639,29 +6684,35 @@ Note: Uses GitHub's public API with rate limits for unauthenticated requests.`;
                 const reposResponse = await fetch(`https://api.github.com/users/${username}/repos?sort=stars&order=desc&per_page=5`);
                 const repos = reposResponse.ok ? await reposResponse.json() : [];
 
-                return `👤 GitHub User: ${user.login}
+                const userAvatar = user.avatar_url ? 
+                  `<img src="${user.avatar_url}" alt="${user.login}" style="width: 80px; height: 80px; border-radius: 50%; margin: 10px 0; border: 3px solid #0366d6;" onerror="this.style.display='none';">` : '';
 
-Name: ${user.name || 'Not provided'}
-Bio: ${user.bio || 'No bio available'}
-Location: ${user.location || 'Not specified'}
-Company: ${user.company || 'Not specified'}
-Blog: ${user.blog || 'None'}
+                return `<div style="display: flex; align-items: flex-start; gap: 15px; margin: 10px 0;">
+  ${userAvatar}
+  <div>
+    <h3 style="margin: 0 0 5px 0;">👤 ${user.name || user.login}</h3>
+    <p style="margin: 0; color: #666;">@${user.login}</p>
+    ${user.bio ? `<p style="margin: 5px 0; font-style: italic;">"${user.bio}"</p>` : ''}
+  </div>
+</div>
 
-Stats:
+📍 ${user.location || 'Location not specified'}
+🏢 ${user.company || 'Company not specified'}
+🌐 ${user.blog ? `<a href="${user.blog}" target="_blank">${user.blog}</a>` : 'No website'}
+
+📊 Statistics:
 • 📂 Public Repos: ${user.public_repos}
 • 👥 Followers: ${user.followers.toLocaleString()}
 • 👤 Following: ${user.following.toLocaleString()}
 • 📦 Public Gists: ${user.public_gists}
 
-Account Created: ${new Date(user.created_at).toLocaleDateString()}
-Profile: ${user.html_url}
+📅 Joined GitHub: ${new Date(user.created_at).toLocaleDateString()}
+🔗 Profile: <a href="${user.html_url}" target="_blank">${user.html_url}</a>
 
 ${repos.length > 0 ? `🌟 Top Repositories:
 ${repos.slice(0, 3).map((repo: any, i: number) => // eslint-disable-line @typescript-eslint/no-explicit-any
-  `${i + 1}. ${repo.name} (⭐ ${repo.stargazers_count} stars)`
-).join('\n')}` : 'No public repositories'}
-
-${user.avatar_url ? `<img src="${user.avatar_url}" alt="${user.login}" style="width: 100px; height: 100px; border-radius: 50%; margin: 10px 0;" />` : ''}`;
+  `${i + 1}. <strong>${repo.name}</strong> (⭐ ${repo.stargazers_count} stars)${repo.description ? `\n   ${repo.description.substring(0, 80)}${repo.description.length > 80 ? '...' : ''}` : ''}`
+).join('\n\n')}` : 'No public repositories'}`;
                 
               } catch (error) {
                 return `Failed to get user information: ${error}`;
@@ -6698,7 +6749,7 @@ ${user.avatar_url ? `<img src="${user.avatar_url}" alt="${user.login}" style="wi
                   output += `   ⭐ ${stars} stars • 🍴 ${repo.forks_count} forks\n`;
                   output += `   📝 ${repo.description || 'No description'}\n`;
                   output += `   💻 ${repo.language || 'Multiple languages'}\n`;
-                  output += `   🔗 ${repo.html_url}\n`;
+                  output += `   🔗 <a href="${repo.html_url}" target="_blank">${repo.html_url}</a>\n`;
                   output += `   📅 Created: ${new Date(repo.created_at).toLocaleDateString()}\n\n`;
                 });
 
@@ -6765,7 +6816,7 @@ ${contributors.slice(0, 3).map((contributor: any, i: number) => // eslint-disabl
   `${i + 1}. ${contributor.login} (${contributor.contributions} contributions)`
 ).join('\n')}` : ''}
 
-🔗 Repository: ${repo.html_url}
+🔗 Repository: <a href="${repo.html_url}" target="_blank">${repo.html_url}</a>
 ${repo.clone_url ? `📥 Clone: ${repo.clone_url}` : ''}`;
                 
               } catch (error) {
@@ -6806,7 +6857,7 @@ ${repo.clone_url ? `📥 Clone: ${repo.clone_url}` : ''}`;
                   if (mainFile.language) {
                     output += `   💻 Language: ${mainFile.language}\n`;
                   }
-                  output += `   🔗 ${gist.html_url}\n`;
+                  output += `   🔗 <a href="${gist.html_url}" target="_blank">${gist.html_url}</a>\n`;
                   output += `   📅 Created: ${new Date(gist.created_at).toLocaleDateString()}\n`;
                   output += `   📝 ${gist.public ? 'Public' : 'Private'}\n\n`;
                 });
@@ -6891,7 +6942,7 @@ Note: Uses free news aggregation APIs with rate limits.`;
                   output += `${i + 1}. ${article.title}\n`;
                   output += `   📰 Source: ${article.source?.name || 'Unknown'}\n`;
                   output += `   📝 ${article.description || 'No description available'}\n`;
-                  output += `   🔗 ${article.url}\n`;
+                  output += `   🔗 <a href="${article.url}" target="_blank">${article.url}</a>\n`;
                   output += `   📅 ${new Date(article.publishedAt).toLocaleString()}\n\n`;
                 });
 
@@ -7289,7 +7340,7 @@ Note: Uses Reddit's public JSON API with rate limits.`;
                       postData.selftext;
                     output += `   📝 ${preview}\n`;
                   }
-                  output += `   🔗 https://reddit.com${postData.permalink}\n`;
+                  output += `   🔗 <a href="https://reddit.com${postData.permalink}" target="_blank">https://reddit.com${postData.permalink}</a>\n`;
                   output += `   📅 ${new Date(postData.created_utc * 1000).toLocaleString()}\n\n`;
                 });
 
@@ -7517,6 +7568,368 @@ This might be due to:
 - Service temporarily unavailable
 
 Try again with different parameters or check your connection.`;
+        }
+      }
+    },
+    {
+      name: 'space',
+      description: 'Space and astronomy information from NASA APIs',
+      execute: async (args): Promise<string> => {
+        const action = args[0] || 'help';
+        
+        if (!action || action === 'help') {
+          return `🚀 Space Command - NASA Data Access
+
+Explore space and astronomy with real NASA data!
+
+Usage: space <command> [arguments]
+
+Commands:
+  apod [date]              - Astronomy Picture of the Day
+  apod random              - Random APOD from last 30 days
+  neo                      - Near Earth Objects (asteroids)
+  neo today                - NEOs approaching today
+  neo <date>               - NEOs on specific date (YYYY-MM-DD)
+  earth <lat> <lon>        - Earth imagery from satellites
+  events                   - Natural disaster events from EONET
+  events <category>        - Events by category (wildfires, storms, etc.)
+  mars                     - Mars rover photos and weather
+  iss                      - International Space Station location
+
+Examples:
+  space apod               - Today's astronomy picture
+  space apod 2024-01-01    - APOD for specific date
+  space apod random        - Random recent APOD
+  space neo today          - Asteroids approaching today
+  space earth 40.7 -74.0   - Earth view of NYC coordinates
+  space events wildfires   - Current wildfire events
+  space mars               - Latest Mars rover photos
+  space iss                - Current ISS position
+
+Note: Using NASA's public APIs. Some features require internet connection.`;
+        }
+
+        // Initialize NASA API - using DEMO_KEY for public access
+        const nasa = new NASA_API('DEMO_KEY');
+
+        try {
+          switch (action.toLowerCase()) {
+            case 'apod':
+              const dateParam = args[1];
+              
+              if (dateParam === 'random') {
+                // Get random APOD from last 30 days
+                const randomDays = Math.floor(Math.random() * 30);
+                const randomDate = new Date();
+                randomDate.setDate(randomDate.getDate() - randomDays);
+                const formattedDate = randomDate.toISOString().split('T')[0];
+                
+                const randomApod = await nasa.getApod({ date: formattedDate });
+                const apod = Array.isArray(randomApod) ? randomApod[0] : randomApod;
+                
+                const mediaDisplay = apod.media_type === 'video' ? 
+                  `<video controls style="max-width: 100%; height: auto; margin: 10px 0;" poster="${apod.url}">
+                     <source src="${apod.url}" type="video/mp4">
+                     🎥 Video: <a href="${apod.url}" target="_blank">${apod.url}</a>
+                   </video>` :
+                  `<img src="${apod.url}" alt="${apod.title}" style="max-width: 100%; height: auto; margin: 10px 0; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                   <div style="display: none; padding: 10px; background: #f0f0f0; border-radius: 4px; margin: 10px 0;">
+                     📸 Image: <a href="${apod.url}" target="_blank">${apod.url}</a>
+                   </div>`;
+                
+                return `🌟 Random Astronomy Picture of the Day (${formattedDate}):
+
+Title: ${apod.title}
+Date: ${apod.date}
+${apod.explanation}
+
+${mediaDisplay}
+
+Copyright: ${apod.copyright || 'NASA'}`;
+              } else {
+                // Get APOD for specific date or today
+                const apodData = dateParam ? 
+                  await nasa.getApod({ date: dateParam }) : 
+                  await nasa.getApod();
+                
+                const apod = Array.isArray(apodData) ? apodData[0] : apodData;
+                
+                const mediaDisplay = apod.media_type === 'video' ? 
+                  `<video controls style="max-width: 100%; height: auto; margin: 10px 0;" poster="${apod.url}">
+                     <source src="${apod.url}" type="video/mp4">
+                     🎥 Video: <a href="${apod.url}" target="_blank">${apod.url}</a>
+                   </video>` :
+                  `<img src="${apod.url}" alt="${apod.title}" style="max-width: 100%; height: auto; margin: 10px 0; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                   <div style="display: none; padding: 10px; background: #f0f0f0; border-radius: 4px; margin: 10px 0;">
+                     📸 Image: <a href="${apod.url}" target="_blank">${apod.url}</a>
+                   </div>`;
+                
+                return `🌟 Astronomy Picture of the Day (${apod.date}):
+
+Title: ${apod.title}
+${apod.explanation}
+
+${mediaDisplay}
+
+Copyright: ${apod.copyright || 'NASA'}`;
+              }
+            
+            case 'neo':
+              const neoDate = args[1] || 'today';
+              let targetDate: string;
+              
+              if (neoDate === 'today') {
+                targetDate = new Date().toISOString().split('T')[0];
+              } else {
+                targetDate = neoDate;
+              }
+              
+              try {
+                // Use the NEO API through the main NASA API instance
+                const neoData = await nasa.neo.feed({ start_date: targetDate, end_date: targetDate });
+                
+                const objects = neoData.near_earth_objects[targetDate] || [];
+                
+                if (objects.length === 0) {
+                  return `🌌 No Near Earth Objects found for ${targetDate}`;
+                }
+                
+                // Use proper type for the reduce function
+                const closestObject = objects.reduce((closest, current) => {
+                  const closestDistance = parseFloat(closest.close_apporch_data[0].miss_distance.kilometers);
+                  const currentDistance = parseFloat(current.close_apporch_data[0].miss_distance.kilometers);
+                  return currentDistance < closestDistance ? current : closest;
+                });
+                
+                return `🌌 Near Earth Objects for ${targetDate}:
+
+Total Objects: ${objects.length}
+
+Closest Approach:
+Name: ${closestObject.name}
+Size: ${Math.round(closestObject.estimated_diameter.meters.estimated_diameter_min)} - ${Math.round(closestObject.estimated_diameter.meters.estimated_diameter_max)} meters
+Distance: ${Math.round(parseFloat(closestObject.close_apporch_data[0].miss_distance.kilometers)).toLocaleString()} km
+Velocity: ${Math.round(parseFloat(closestObject.close_apporch_data[0].relative_velocity.kilometers_per_hour)).toLocaleString()} km/h
+Potentially Hazardous: ${closestObject.is_potentially_hazardous_asteroid ? 'Yes ⚠️' : 'No ✅'}
+
+${objects.length > 1 ? `\nOther objects: ${objects.slice(1, 3).map((obj) => obj.name).join(', ')}${objects.length > 3 ? ' and more...' : ''}` : ''}`;
+              } catch {
+                return `🌌 Near Earth Objects info temporarily unavailable.
+                
+Showing example data for ${targetDate}:
+- Sample asteroid: 2024 AA (estimated)
+- Size: ~50-100 meters
+- Distance: ~2.5 million km
+- Status: Not hazardous ✅
+
+Note: This is simulated data due to API limitations.`;
+              }
+            
+            case 'earth':
+              const lat = parseFloat(args[1]);
+              const lon = parseFloat(args[2]);
+              
+              if (isNaN(lat) || isNaN(lon)) {
+                return `🌍 Earth Imagery Usage:
+
+space earth <latitude> <longitude>
+
+Examples:
+  space earth 40.7589 -73.9851  - New York City
+  space earth 48.8566 2.3522    - Paris, France
+  space earth -22.9068 -43.1729 - Rio de Janeiro
+  space earth 35.6762 139.6503  - Tokyo, Japan
+
+Coordinates should be in decimal degrees format.`;
+              }
+              
+              // Generate Landsat imagery URL
+              const earthImageUrl = `https://api.nasa.gov/planetary/earth/imagery?lon=${lon}&lat=${lat}&date=2024-01-01&dim=0.10&api_key=DEMO_KEY`;
+              
+              return `🌍 Earth Satellite Imagery:
+
+Location: ${lat.toFixed(4)}°, ${lon.toFixed(4)}°
+Data Source: Landsat 8 Satellite
+Resolution: High-resolution satellite imagery
+
+📸 View Image: ${earthImageUrl}
+
+Note: Image shows recent satellite data for the specified coordinates.
+The imagery is captured by NASA's Landsat program which monitors Earth's surface.`;
+            
+            case 'events':
+              const category = args[1] || 'all';
+              
+              try {
+                const events = await nasa.getEonetEvents({ 
+                  status: 'open',
+                  limit: 5,
+                  days: 30
+                });
+                
+                if (!events.events || events.events.length === 0) {
+                  return `🌪️ No current natural disaster events found.`;
+                }
+                
+                const filteredEvents = category === 'all' ? 
+                  events.events : 
+                  events.events.filter((event: any) => // eslint-disable-line @typescript-eslint/no-explicit-any
+                    event.categories.some((cat: any) => // eslint-disable-line @typescript-eslint/no-explicit-any
+                      cat.title.toLowerCase().includes(category.toLowerCase())
+                    )
+                  );
+                
+                if (filteredEvents.length === 0) {
+                  return `🌪️ No current events found for category: ${category}
+
+Available categories: wildfires, storms, floods, earthquakes, volcanoes, drought`;
+                }
+                
+                const eventsList = filteredEvents.slice(0, 3).map((event: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+                  const mainCategory = event.categories[0]?.title || 'Natural Event';
+                  const location = event.geometry[0]?.coordinates ? 
+                    `${event.geometry[0].coordinates[1].toFixed(2)}°, ${event.geometry[0].coordinates[0].toFixed(2)}°` : 
+                    'Location TBD';
+                  
+                  return `${mainCategory}: ${event.title}
+Location: ${location}
+Date: ${event.geometry[0]?.date?.split('T')[0] || 'Recent'}`;
+                }).join('\n\n');
+                
+                return `🌪️ Current Natural Disaster Events${category !== 'all' ? ` (${category})` : ''}:
+
+${eventsList}
+
+${filteredEvents.length > 3 ? `\n... and ${filteredEvents.length - 3} more events` : ''}
+
+Data source: NASA Earth Observing System Data and Information System (EOSDIS)`;
+              } catch {
+                return `🌪️ Natural Events (Example Data):
+
+🔥 Wildfire Event: California Complex Fire
+Location: 37.5°, -120.2°
+Status: Active monitoring
+
+🌀 Storm System: Atlantic Hurricane Formation
+Location: 25.8°, -65.4°
+Status: Under observation
+
+⛰️ Volcanic Activity: Mount Etna Thermal Anomaly
+Location: 37.7°, 15.0°
+Status: Elevated activity
+
+Note: Live event data temporarily unavailable. NASA EONET typically tracks wildfires, storms, floods, earthquakes, and volcanic activity worldwide.`;
+              }
+            
+            case 'mars':
+              // Mars rover photos and weather info
+              return `🔴 Mars Exploration Data:
+
+🚗 Latest Rover Activity:
+Rover: Perseverance (Mars 2020)
+Location: Jezero Crater
+Sol (Mars Day): ${Math.floor(Date.now() / 86400000 - 18628)} (estimated)
+Status: Active exploration
+
+🌡️ Mars Weather (Simulated):
+Temperature: ${Math.floor(Math.random() * 40) - 80}°C
+Pressure: ${Math.floor(Math.random() * 200 + 600)} Pa
+Wind Speed: ${Math.floor(Math.random() * 15)} m/s
+Season: ${['Spring', 'Summer', 'Autumn', 'Winter'][Math.floor(Math.random() * 4)]}
+
+📸 Recent Photos:
+- Martian rock samples and geological surveys
+- Atmospheric monitoring and dust storm tracking
+- Search for signs of ancient microbial life
+
+🔗 View Latest Images:
+https://mars.nasa.gov/mars2020/multimedia/images/
+
+Note: Mars mission data is continuously updated. Weather varies significantly by location and season on Mars.`;
+            
+            case 'iss':
+              // ISS location and info
+              try {
+                // Try to get real ISS data from a public API
+                const issResponse = await fetch('http://api.open-notify.org/iss-now.json');
+                const issData = await issResponse.json();
+                
+                if (issData && issData.iss_position) {
+                  const lat = parseFloat(issData.iss_position.latitude);
+                  const lon = parseFloat(issData.iss_position.longitude);
+                  
+                  // Determine what's below the ISS
+                  let location = 'Over the Ocean';
+                  if (lat > 0 && lon > -10 && lon < 50) location = 'Over Europe/Africa';
+                  else if (lat > 0 && lon > 50 && lon < 150) location = 'Over Asia';
+                  else if (lat > 0 && lon > -150 && lon < -50) location = 'Over North America';
+                  else if (lat < 0 && lon > 100 && lon < 180) location = 'Over Australia/Oceania';
+                  else if (lat < 0 && lon > -80 && lon < -30) location = 'Over South America';
+                  
+                  return `🛰️ International Space Station (Live Data):
+
+Current Position:
+Latitude: ${lat.toFixed(4)}°
+Longitude: ${lon.toFixed(4)}°
+${location}
+
+Orbital Details:
+Altitude: ~408 km above Earth
+Speed: ~27,600 km/h (7.66 km/s)
+Orbital Period: ~93 minutes
+Crew: Usually 6-7 astronauts
+
+Next Pass Visibility:
+The ISS appears as a bright moving star in the night sky.
+Check https://spotthestation.nasa.gov for viewing opportunities in your area.
+
+Live Tracking: https://www.nasa.gov/live`;
+                }
+              } catch {
+                // Fallback to simulated data
+                const simLat = (Math.random() - 0.5) * 100; // -50 to 50 degrees
+                const simLon = (Math.random() - 0.5) * 360; // -180 to 180 degrees
+                
+                return `🛰️ International Space Station (Simulated):
+
+Estimated Position:
+Latitude: ${simLat.toFixed(4)}°
+Longitude: ${simLon.toFixed(4)}°
+
+Orbital Details:
+Altitude: ~408 km above Earth
+Speed: ~27,600 km/h
+Orbital Period: ~93 minutes
+Current Crew: 6-7 astronauts
+
+The ISS orbits Earth every 93 minutes and is visible to the naked eye as a bright moving star.
+
+Note: Live tracking data temporarily unavailable.
+Visit https://spotthestation.nasa.gov for real-time location and viewing opportunities.`;
+              }
+              
+            default:
+              return `🚀 Unknown space command: ${action}
+
+Use 'space help' to see all available commands.
+
+Quick commands:
+  space apod      - Astronomy Picture of the Day
+  space neo       - Near Earth Objects
+  space mars      - Mars exploration data
+  space iss       - Space station location`;
+          }
+        } catch (error) {
+          console.error('NASA API Error:', error);
+          return `🚀 Space command error: ${error}
+
+This might be due to:
+- Network connectivity issues
+- NASA API rate limits (try again in a moment)
+- Invalid date format (use YYYY-MM-DD)
+- Service temporarily unavailable
+
+Try a different command or check your internet connection.`;
         }
       }
     }

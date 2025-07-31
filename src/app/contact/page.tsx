@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import ContactForm from '@/components/ContactForm';
-import Notification from '@/components/Notification';
+import ContactForm from '@/components/forms/ContactForm';
+import Notification from '@/components/features/Notification';
 import { motion } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaFileAlt } from 'react-icons/fa';
 import styles from '@/styles/page.module.css';

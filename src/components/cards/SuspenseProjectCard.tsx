@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import ProjectCard from "@/components/projectCard";
+import ProjectCard from "@/components/cards/projectCard";
 
 const ProjectCardLoading = () => (
   <div className="w-full h-96 bg-gray-800 rounded-lg animate-pulse flex items-center justify-center">

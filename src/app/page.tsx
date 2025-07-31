@@ -1,17 +1,17 @@
 'use client'
 import { useState, useEffect, lazy, Suspense, useMemo, useCallback } from 'react';
-import AboutCard from "../components/AboutCard";
-import ContactCard from "@/components/ContactCardMenu";
-import { PerformanceLoading } from "@/components/PerformanceLoading";
+import AboutCard from "../components/cards/AboutCard";
+import ContactCard from "@/components/forms/ContactCardMenu";
+import { PerformanceLoading } from "@/components/performance/PerformanceLoading";
 import { useResponsiveSize } from "@/components/utils/useScrolling";
-import { usePerformanceMonitor } from "@/components/WebVitals";
+import { usePerformanceMonitor } from "@/components/performance/WebVitals";
 import { usePerformance } from "@/hooks/usePerformance";
 import { ResourcePreloader } from "@/lib/performanceUtils";
 import styles from "@/styles/page.module.css";
 
 // Lazy load heavy components with error boundaries
 const ProjectCard = lazy(() => 
-  import("../components/ProjectCardMenu").catch(err => {
+  import("../components/features/ProjectCardMenu").catch(err => {
     console.warn('Failed to load ProjectCard:', err);
     return { default: () => <div>Failed to load project card</div> };
   })

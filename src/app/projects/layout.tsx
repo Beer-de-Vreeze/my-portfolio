@@ -1,8 +1,8 @@
 'use client';
 
 import { memo } from 'react';
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 import { useModal } from "@/context/ModalContext";
 
 // Note: We can't export metadata from a client component, so we'll handle it differently

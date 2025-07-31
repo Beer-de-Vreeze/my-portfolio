@@ -1,127 +1,206 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import Image, { ImageProps } from 'next/image';
+import Image from 'next/image';
+import { useState, useRef, useEffect } from 'react';
 
-interface OptimizedImageProps extends Omit<ImageProps, 'onLoad' | 'onError'> {
+interface OptimizedImageProps {
   src: string;
   alt: string;
-  blurDataURL?: string;
-  fallbackSrc?: string;
-  onLoadComplete?: () => void;
-  onError?: (error: Error) => void;
+  width?: number;
+  height?: number;
   className?: string;
   priority?: boolean;
-  loading?: 'lazy' | 'eager';
+  placeholder?: 'blur' | 'empty';
+  blurDataURL?: string;
   quality?: number;
   sizes?: string;
+  fill?: boolean;
+  objectFit?: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
+  loading?: 'lazy' | 'eager';
+  onLoad?: () => void;
+  onError?: () => void;
 }
 
-export const OptimizedImage: React.FC<OptimizedImageProps> = ({
-  src,
-  alt,
-  blurDataURL,
-  fallbackSrc = '/images/placeholder.webp',
-  onLoadComplete,
-  onError,
-  className = '',
-  priority = false,
-  loading = 'lazy',
-  quality = 85,
-  sizes = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw',
-  ...props
-}) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
-  const [imageSrc, setImageSrc] = useState(src);
-  const [isVisible, setIsVisible] = useState(priority);
-  const imgRef = useRef<HTMLDivElement>(null);
+// Simple intersection observer hook
+function useIntersectionObserver(options: {
+  threshold?: number;
+  rootMargin?: string;
+  triggerOnce?: boolean;
+}) {
+  const [inView, setInView] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
 
-  // Generate a simple blur placeholder if none provided
-  const defaultBlurDataURL = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8A0XqFViMilmcGEIIIP3HYH9Kq64ZLhfJd4z2P6UGCPl4U4g7GQEVBBBBBKsOQQMFG3WNt3/1x4F6hVMcGmTcB55eDPUQEkFHnWNf2oP/Z';
-
-  // Intersection Observer for lazy loading
   useEffect(() => {
-    if (priority || !imgRef.current) return;
+    const element = ref.current;
+    if (!element || typeof window === 'undefined' || !('IntersectionObserver' in window)) {
+      setInView(true); // Fallback to always visible
+      return;
+    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
+          setInView(true);
+          if (options.triggerOnce) {
+            observer.unobserve(element);
+          }
+        } else if (!options.triggerOnce) {
+          setInView(false);
         }
       },
       {
-        threshold: 0.1,
-        rootMargin: '50px'
+        threshold: options.threshold || 0.1,
+        rootMargin: options.rootMargin || '0px',
       }
     );
 
-    observer.observe(imgRef.current);
+    observer.observe(element);
 
-    return () => observer.disconnect();
-  }, [priority]);
+    return () => {
+      observer.unobserve(element);
+    };
+  }, [options.threshold, options.rootMargin, options.triggerOnce]);
 
-  const handleLoad = useCallback(() => {
+  return { ref, inView };
+}
+
+export function OptimizedImage({
+  src,
+  alt,
+  width,
+  height,
+  className = '',
+  priority = false,
+  placeholder = 'empty',
+  blurDataURL,
+  quality = 75,
+  sizes,
+  fill = false,
+  objectFit = 'cover',
+  loading = 'lazy',
+  onLoad,
+  onError,
+}: OptimizedImageProps) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  
+  // Use intersection observer for better lazy loading control
+  const { ref: inViewRef, inView } = useIntersectionObserver({
+    threshold: 0.1,
+    triggerOnce: true,
+    rootMargin: '50px',
+  });
+
+  const handleLoad = () => {
     setIsLoading(false);
-    onLoadComplete?.();
-  }, [onLoadComplete]);
+    onLoad?.();
+  };
 
-  const handleError = useCallback(() => {
+  const handleError = () => {
+    setIsLoading(false);
     setHasError(true);
-    setIsLoading(false);
-    if (imageSrc !== fallbackSrc) {
-      setImageSrc(fallbackSrc);
-    } else {
-      onError?.(new Error('Failed to load image and fallback'));
+    onError?.();
+  };
+
+  // Generate blur placeholder for better UX
+  const generateBlurDataURL = (w: number, h: number) => {
+    if (blurDataURL) return blurDataURL;
+    
+    // Create a simple blur placeholder
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    
+    if (ctx) {
+      // Create a simple gradient placeholder
+      const gradient = ctx.createLinearGradient(0, 0, w, h);
+      gradient.addColorStop(0, '#f3f4f6');
+      gradient.addColorStop(1, '#e5e7eb');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, w, h);
     }
-  }, [imageSrc, fallbackSrc, onError]);
+    
+    return canvas.toDataURL();
+  };
+
+  // Responsive sizes for better performance
+  const responsiveSizes = sizes || `
+    (max-width: 640px) 100vw,
+    (max-width: 768px) 50vw,
+    (max-width: 1024px) 33vw,
+    25vw
+  `;
+
+  const shouldLoad = priority || inView;
 
   return (
-    <div
-      ref={imgRef}
+    <div 
+      ref={inViewRef}
       className={`relative overflow-hidden ${className}`}
-      style={{ backgroundColor: '#f3f4f6' }}
+      style={{ width: fill ? '100%' : width, height: fill ? '100%' : height }}
     >
-      {/* Loading skeleton */}
-      {isLoading && (
-        <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse">
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-shimmer"></div>
-        </div>
-      )}
-
-      {/* Main image */}
-      {(isVisible || priority) && (
+      {shouldLoad && !hasError && (
         <Image
-          src={imageSrc}
+          src={src}
           alt={alt}
+          width={fill ? undefined : width}
+          height={fill ? undefined : height}
+          fill={fill}
+          className={`transition-opacity duration-300 ${
+            isLoading ? 'opacity-0' : 'opacity-100'
+          } ${objectFit === 'cover' ? 'object-cover' : `object-${objectFit}`}`}
+          priority={priority}
+          quality={quality}
+          sizes={responsiveSizes}
+          placeholder={placeholder}
+          blurDataURL={
+            placeholder === 'blur' && width && height
+              ? generateBlurDataURL(width, height)
+              : undefined
+          }
+          loading={priority ? 'eager' : loading}
           onLoad={handleLoad}
           onError={handleError}
-          className={`transition-opacity duration-500 ${
-            isLoading ? 'opacity-0' : 'opacity-100'
-          } ${hasError ? 'opacity-50' : ''}`}
-          placeholder={blurDataURL || defaultBlurDataURL ? 'blur' : 'empty'}
-          blurDataURL={blurDataURL || defaultBlurDataURL}
-          quality={quality}
-          sizes={sizes}
-          loading={loading}
-          {...props}
+          style={{
+            willChange: 'opacity',
+          }}
         />
       )}
-
-      {/* Error state */}
+      
+      {/* Loading skeleton */}
+      {isLoading && shouldLoad && (
+        <div className="absolute inset-0 bg-gray-200 animate-pulse">
+          <div className="w-full h-full bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-shimmer"></div>
+        </div>
+      )}
+      
+      {/* Error fallback */}
       {hasError && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-          <div className="text-gray-500 text-center">
-            <svg className="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
+          <div className="text-gray-400 text-center">
+            <svg className="w-8 h-8 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
             </svg>
-            <span className="text-sm">Image failed to load</span>
+            <p className="text-xs">Failed to load</p>
           </div>
         </div>
       )}
     </div>
   );
-};
+}
 
-export default OptimizedImage;
+// Hook for preloading critical images
+export function useImagePreloader(imageSources: string[]) {
+  useState(() => {
+    if (typeof window !== 'undefined') {
+      imageSources.forEach((src) => {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'image';
+        link.href = src;
+        document.head.appendChild(link);
+      });
+    }
+  });
+}

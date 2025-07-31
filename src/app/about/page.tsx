@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import ProfileCard from "@/components/about/ProfileCard";
 import Stack from "@/components/about/Stack";
 import { useResponsiveSize } from "@/components/utils/useScrolling";
-import { usePerformanceMonitor } from "@/components/WebVitals";
+import { usePerformanceMonitor } from "@/components/performance/WebVitals";
 import { usePerformance } from "@/hooks/usePerformance";
 import { ResourcePreloader } from "@/lib/performanceUtils";
 import styles from "@/styles/page.module.css";
