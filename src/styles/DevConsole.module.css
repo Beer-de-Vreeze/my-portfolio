@@ -380,6 +380,77 @@
   }
 }
 
+/* Link Styles for DevConsole */
+.history a {
+  color: #60a5fa;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(96, 165, 250, 0.3);
+  transition: all 0.3s ease;
+  background: linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+  padding: 2px 4px;
+  border-radius: 4px;
+  display: inline-block;
+  margin: 1px;
+  font-weight: 500;
+}
+
+.history a:hover {
+  color: #93c5fd;
+  border-bottom-color: rgba(147, 197, 253, 0.6);
+  background: linear-gradient(45deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+  box-shadow: 0 0 10px rgba(96, 165, 250, 0.3);
+  transform: translateY(-1px);
+  text-shadow: 0 0 5px rgba(96, 165, 250, 0.5);
+}
+
+.history a:active {
+  transform: translateY(0);
+  box-shadow: 0 0 5px rgba(96, 165, 250, 0.2);
+}
+
+/* Special styling for different link types */
+.history a[href^="mailto:"] {
+  color: #f59e0b;
+  background: linear-gradient(45deg, rgba(245, 158, 11, 0.1), rgba(251, 191, 36, 0.1));
+  border-bottom-color: rgba(245, 158, 11, 0.3);
+}
+
+.history a[href^="mailto:"]:hover {
+  color: #fbbf24;
+  border-bottom-color: rgba(251, 191, 36, 0.6);
+  background: linear-gradient(45deg, rgba(245, 158, 11, 0.2), rgba(251, 191, 36, 0.2));
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+}
+
+.history a[href^="https://github.com"] {
+  color: #a78bfa;
+  background: linear-gradient(45deg, rgba(167, 139, 250, 0.1), rgba(196, 181, 253, 0.1));
+  border-bottom-color: rgba(167, 139, 250, 0.3);
+}
+
+.history a[href^="https://github.com"]:hover {
+  color: #c4b5fd;
+  border-bottom-color: rgba(196, 181, 253, 0.6);
+  background: linear-gradient(45deg, rgba(167, 139, 250, 0.2), rgba(196, 181, 253, 0.2));
+  box-shadow: 0 0 10px rgba(167, 139, 250, 0.3);
+}
+
+/* QR Code and image link styling */
+.history a[href*="qrserver.com"],
+.history a[href*="data:image"] {
+  color: #34d399;
+  background: linear-gradient(45deg, rgba(52, 211, 153, 0.1), rgba(110, 231, 183, 0.1));
+  border-bottom-color: rgba(52, 211, 153, 0.3);
+}
+
+.history a[href*="qrserver.com"]:hover,
+.history a[href*="data:image"]:hover {
+  color: #6ee7b7;
+  border-bottom-color: rgba(110, 231, 183, 0.6);
+  background: linear-gradient(45deg, rgba(52, 211, 153, 0.2), rgba(110, 231, 183, 0.2));
+  box-shadow: 0 0 10px rgba(52, 211, 153, 0.3);
+}
+
 /* High contrast mode */
 @media (prefers-contrast: high) {
   .console {
@@ -401,5 +472,17 @@
 
   .inputForm .input {
     border-color: #ffffff;
+  }
+
+  .history a {
+    color: #ffffff;
+    border-bottom-color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .history a:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.2);
+    border-bottom-color: #ffffff;
   }
 }

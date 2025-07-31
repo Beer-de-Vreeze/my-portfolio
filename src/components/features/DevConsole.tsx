@@ -26,6 +26,41 @@ import { v1 as uuidv1, v4 as uuidv4, v5 as uuidv5 } from 'uuid';
 import QRCode from 'qrcode';
 import { NASA_API } from '@clxrity/nasa-api';
 
+// Utility function to convert URLs to clickable links
+const makeLinksClickable = (text: string): string => {
+  // Patterns for different types of URLs
+  const urlPatterns = [
+    // HTTP/HTTPS URLs
+    /(https?:\/\/[^\s<>"{}|\\^`[\]]+)/gi,
+    // Email addresses
+    /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/gi,
+    // Basic domain names (www.example.com)
+    /(www\.[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/gi
+  ];
+
+  let processedText = text;
+
+  // Process HTTP/HTTPS URLs
+  processedText = processedText.replace(urlPatterns[0], (match) => {
+    return `<a href="${match}" target="_blank" rel="noopener noreferrer">${match}</a>`;
+  });
+
+  // Process email addresses
+  processedText = processedText.replace(urlPatterns[1], (match) => {
+    return `<a href="mailto:${match}">${match}</a>`;
+  });
+
+  // Process www domains (add https:// prefix)
+  processedText = processedText.replace(urlPatterns[2], (match) => {
+    if (!processedText.includes(`href="${match}"`)) { // Avoid double-processing
+      return `<a href="https://${match}" target="_blank" rel="noopener noreferrer">${match}</a>`;
+    }
+    return match;
+  });
+
+  return processedText;
+};
+
 // Mobile detection hook
 const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -164,15 +199,18 @@ const DevConsoleDesktop: React.FC = () => {
   );
 
   const addToHistory = useCallback((output: string, type: 'command' | 'error' | 'info' = 'command', input?: string) => {
+    // Process the output to make URLs clickable
+    const processedOutput = makeLinksClickable(output);
+    
     setHistory(prev => [...prev, {
       input: input || '',
-      output,
+      output: processedOutput,
       timestamp: new Date(),
       type
     }]);
     
     // If output contains images, scroll after a delay to ensure images load
-    if (output.includes('<img')) {
+    if (processedOutput.includes('<img')) {
       setTimeout(() => {
         if (historyRef.current) {
           historyRef.current.scrollTop = historyRef.current.scrollHeight;
