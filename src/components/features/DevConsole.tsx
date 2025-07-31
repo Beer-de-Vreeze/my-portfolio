@@ -936,7 +936,7 @@ Itch.io: <a href="https://bjeerpeer.itch.io" target="_blank">https://bjeerpeer.i
         
         return `📊 Performance Metrics:
 
-<div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 10px 0;">
+<div style="padding: 15px; border-radius: 8px; margin: 10px 0;">
   <div style="font-size: 1.2em; margin-bottom: 10px;">⚡ Performance Score: ${score}</div>
   ${barChart}
 </div>
@@ -1204,7 +1204,7 @@ Operations:
               
               return `📊 Statistics for [${numbers.join(', ')}]:
 
-<div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 10px 0;">
+<div style="padding: 15px; border-radius: 8px; margin: 10px 0;">
   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px;">
     <div>
       <strong>Central Tendency:</strong><br>
@@ -2993,7 +2993,7 @@ Types:
 
               return `📝 Text Analysis:
 
-<div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 10px 0;">
+<div style="padding: 15px; border-radius: 8px; margin: 10px 0;">
   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px;">
     <div>
       <strong>📊 Basic Stats:</strong><br>
@@ -6002,7 +6002,7 @@ Note: Uses public Spotify APIs. Some features may be limited.`;
                   const albumArt = track.artworkUrl100 ? 
                     `<img src="${track.artworkUrl100.replace('100x100', '300x300')}" alt="${track.collectionName}" style="width: 60px; height: 60px; border-radius: 8px; margin-right: 10px; vertical-align: top;" onerror="this.style.display='none';">` : '';
                   
-                  output += `<div style="display: flex; align-items: flex-start; margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+                  output += `<div style="display: flex; align-items: flex-start; margin: 10px 0; padding: 10px; border-radius: 8px;">
   ${albumArt}
   <div>
     <strong>${i + 1}. ${track.trackName || 'Unknown Title'}</strong><br>
@@ -8234,7 +8234,7 @@ Try a different command or check your internet connection.`;
                 </div>
               )}
               <div className={styles.output}>
-                {entry.output.includes('<img') || entry.output.includes('<div') ? (
+                {entry.output.includes('<img') || entry.output.includes('<div') || entry.output.includes('<a') ? (
                   <div dangerouslySetInnerHTML={{ __html: entry.output.replace(/\n/g, '<br>') }} />
                 ) : (
                   <pre>{entry.output}</pre>
