@@ -235,6 +235,63 @@
   font-family: inherit;
 }
 
+/* HTML output styling for better link support */
+.htmlOutput {
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: inherit;
+}
+
+.htmlOutput a {
+  color: #60a5fa !important;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.htmlOutput a:hover {
+  color: #93c5fd !important;
+  text-shadow: 0 0 5px rgba(147, 197, 253, 0.5);
+}
+
+.htmlOutput a:visited {
+  color: #a78bfa !important;
+}
+
+.htmlOutput img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin: 5px 0;
+}
+
+.htmlOutput audio {
+  width: 100%;
+  margin: 10px 0;
+  border-radius: 6px;
+  background: rgba(59, 130, 246, 0.1);
+  outline: none;
+}
+
+.htmlOutput audio::-webkit-media-controls-panel {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.htmlOutput audio::-webkit-media-controls-play-button,
+.htmlOutput audio::-webkit-media-controls-pause-button {
+  background-color: rgba(59, 130, 246, 0.8);
+  border-radius: 50%;
+}
+
+.htmlOutput audio::-webkit-media-controls-volume-slider {
+  background-color: rgba(139, 92, 246, 0.6);
+}
+
+.htmlOutput audio::-webkit-media-controls-timeline {
+  background-color: rgba(236, 72, 153, 0.4);
+}
+
 .prompt {
   background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
   background-size: 200% 200%;

@@ -310,15 +310,6 @@ const DevConsoleDesktop: React.FC = () => {
         output += '  pokemon random          - Get random Pokemon info (with images)\n';
         output += '  dice 2d6                - Roll two 6-sided dice\n';
         output += '  search convert          - Find conversion commands\n';
-        output += '  space apod              - NASA Astronomy Picture of Day (with images)\n';
-        output += '  space neo today         - Near Earth Objects today\n';
-        output += '  spotify search "Bohemian Rhapsody" - Search Spotify (with album art)\n';
-        output += '  translate en fr "Hello" - Translate English to French\n';
-        output += '  github repo javascript  - Search GitHub repositories (with avatars)\n';
-        output += '  news technology         - Get technology news\n';
-        output += '  reddit hot programming  - Browse Reddit programming\n';
-        output += '  performance             - Show performance metrics (with charts)\n';
-        output += '  analyze text "Hello!"   - Analyze text (with visual breakdown)\n\n';
         
         output += '🔗 Pro Tips:\n';
         output += '  • Use "search <term>" to find commands quickly\n';
@@ -5965,6 +5956,8 @@ Examples:
   spotify track https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh
   spotify artist "The Beatles"
   spotify album "Abbey Road"
+  spotify preview https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh
+  spotify play https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh
 
 Note: Uses public Spotify APIs. Some features may be limited.`;
         }
@@ -6011,7 +6004,10 @@ Note: Uses public Spotify APIs. Some features may be limited.`;
     ⏱️ ${minutes}:${seconds.toString().padStart(2, '0')}<br>
     🎵 ${track.primaryGenreName || 'Unknown'}<br>
     📅 ${track.releaseDate ? new Date(track.releaseDate).getFullYear() : 'Unknown'}
-    ${track.previewUrl ? `<br>🎧 <a href="${track.previewUrl}" target="_blank">Preview</a>` : ''}
+    ${track.previewUrl ? `<br>🎧 <a href="${track.previewUrl}" target="_blank">Preview Audio</a>
+    <audio controls preload="none" style="width: 100%; max-width: 300px; margin: 5px 0; height: 30px;">
+      <source src="${track.previewUrl}" type="audio/mpeg">
+    </audio>` : '<br>🚫 No preview available'}
   </div>
 </div>\n`;
                 });
@@ -6248,15 +6244,23 @@ ${data.images && data.images[0] ?
 
 Track: ${data.name || 'Unknown'}
 Artist: ${data.artists ? data.artists.map((a: any) => a.name).join(', ') : 'Unknown'}
+Album: ${data.album?.name || 'Unknown'}
 
-Preview URL: <a href="${data.preview_url}" target="_blank">${data.preview_url}</a>
+🎧 Audio Preview (30 seconds):
+<div style="background: rgba(59, 130, 246, 0.1); padding: 15px; border-radius: 8px; margin: 10px 0;">
+  <audio controls preload="metadata" style="width: 100%; margin: 5px 0;">
+    <source src="${data.preview_url}" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+  <div style="margin-top: 10px; font-size: 12px; opacity: 0.8;">
+    🔗 Direct link: <a href="${data.preview_url}" target="_blank">Open in new tab</a> | 
+    📱 Spotify: <a href="${data.external_urls?.spotify || previewInput}" target="_blank">Open in Spotify</a>
+  </div>
+</div>
 
-<audio controls style="width: 100%; margin: 10px 0;">
-  <source src="${data.preview_url}" type="audio/mpeg">
-  Your browser does not support the audio element.
-</audio>
+💡 Tip: Use 'spotify play ${data.external_urls?.spotify || previewInput}' to get a custom music player!
 
-Note: Preview is 30 seconds long and provided by Spotify.`;
+Note: Preview provided by Spotify. Some tracks may not have previews due to licensing.`;
                   } else {
                     return `🎵 Track Information:
 
@@ -6272,6 +6276,85 @@ Some tracks don't have preview clips available due to licensing restrictions.`;
                 }
               } catch (error) {
                 return `Failed to get preview: ${error}`;
+              }
+
+            case 'play':
+              const playInput = args.slice(1).join(' ');
+              if (!playInput) {
+                return 'Please provide a Spotify track URL to play.\nExample: spotify play <a href="https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh" target="_blank">https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh</a>';
+              }
+
+              try {
+                if (playInput.includes('spotify.com') || playInput.includes('spotify:')) {
+                  // @ts-expect-error - spotify-url-info has no TypeScript declarations
+                  const spotifyUrlInfo = await import('spotify-url-info') as any;
+                  const getData = spotifyUrlInfo.getData;
+                  
+                  const data = await getData(playInput);
+                  
+                  if (data.preview_url) {
+                    const duration = data.duration_ms ? Math.floor(data.duration_ms / 1000) : 0;
+                    const minutes = Math.floor(duration / 60);
+                    const seconds = duration % 60;
+                    
+                    const albumArt = data.album?.images?.[0]?.url ? 
+                      `<img src="${data.album.images[0].url}" alt="${data.name}" style="width: 120px; height: 120px; border-radius: 8px; margin-right: 15px; vertical-align: top;" />` : 
+                      '<div style="width: 120px; height: 120px; background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899); border-radius: 8px; margin-right: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">🎵</div>';
+                    
+                    return `🎵 Now Playing:
+
+<div style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.15)); padding: 20px; border-radius: 12px; margin: 15px 0; border: 1px solid rgba(139, 92, 246, 0.3);">
+  <div style="display: flex; align-items: flex-start; margin-bottom: 15px;">
+    ${albumArt}
+    <div style="flex: 1;">
+      <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #ffffff;">${data.name}</h3>
+      <p style="margin: 0 0 5px 0; font-size: 14px; color: #93c5fd;">by ${data.artists ? data.artists.map((a: any) => a.name).join(', ') : 'Unknown Artist'}</p>
+      <p style="margin: 0 0 5px 0; font-size: 12px; color: #a78bfa;">from "${data.album?.name || 'Unknown Album'}"</p>
+      <p style="margin: 0; font-size: 12px; color: #fbbf24;">⏱️ ${minutes}:${seconds.toString().padStart(2, '0')} • 🎵 ${data.popularity || 'Unknown'}/100 popularity</p>
+    </div>
+  </div>
+  
+  <div style="background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 8px;">
+    <div style="margin-bottom: 10px; font-size: 14px; color: #ffffff;">🎧 Preview Player (30 seconds):</div>
+    <audio controls preload="metadata" style="width: 100%; margin-bottom: 10px;">
+      <source src="${data.preview_url}" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+    
+    <div style="display: flex; gap: 15px; font-size: 12px; margin-top: 10px;">
+      <a href="${data.preview_url}" target="_blank" style="color: #60a5fa; text-decoration: none;">⬇️ Download Preview</a>
+      <a href="${data.external_urls?.spotify || playInput}" target="_blank" style="color: #34d399; text-decoration: none;">🟢 Open in Spotify</a>
+      ${data.external_urls?.spotify ? `<a href="spotify:track:${data.external_urls.spotify.split('/').pop()}" style="color: #fbbf24; text-decoration: none;">📱 Open in App</a>` : ''}
+    </div>
+  </div>
+</div>
+
+💡 Music Controls:
+• Use the audio player above to play/pause
+• Right-click the audio player for additional options
+• Click the Spotify link to play the full track
+• Use 'spotify preview ${data.external_urls?.spotify || playInput}' for basic preview
+
+Note: This is a 30-second preview. Full track requires Spotify Premium.`;
+                  } else {
+                    return `🎵 Track Information:
+
+Track: ${data.name || 'Unknown'}
+Artist: ${data.artists ? data.artists.map((a: any) => a.name).join(', ') : 'Unknown'}
+Album: ${data.album?.name || 'Unknown'}
+
+❌ No preview available for this track.
+
+🟢 Open in Spotify: <a href="${data.external_urls?.spotify || playInput}" target="_blank">${data.external_urls?.spotify || playInput}</a>
+
+Some tracks don't have preview clips available due to licensing restrictions.
+You can still listen to the full track on Spotify!`;
+                  }
+                } else {
+                  return 'Please provide a valid Spotify track URL.\nExample: <a href="https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh" target="_blank">https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh</a>';
+                }
+              } catch (error) {
+                return `Failed to load track: ${error}`;
               }
 
             default:
@@ -8234,8 +8317,11 @@ Try a different command or check your internet connection.`;
                 </div>
               )}
               <div className={styles.output}>
-                {entry.output.includes('<img') || entry.output.includes('<div') || entry.output.includes('<a') ? (
-                  <div dangerouslySetInnerHTML={{ __html: entry.output.replace(/\n/g, '<br>') }} />
+                {entry.output.includes('<img') || entry.output.includes('<div') || entry.output.includes('<a') || entry.output.includes('<audio') ? (
+                  <div 
+                    className={styles.htmlOutput}
+                    dangerouslySetInnerHTML={{ __html: entry.output.replace(/\n/g, '<br>') }} 
+                  />
                 ) : (
                   <pre>{entry.output}</pre>
                 )}
