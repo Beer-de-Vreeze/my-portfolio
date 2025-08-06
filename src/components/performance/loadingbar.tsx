@@ -136,45 +136,10 @@ const LoadingBar: React.FC<LoadingBarProps> = ({
           }
         }
         
-        /* Gaming-themed enhancement - controller pulse effect */
-        #nprogress .bar::before {
-          content: '';
-          position: absolute;
-          top: ${height}px;
-          left: 20px;
-          width: 6px;
-          height: 6px;
-          background: #fff;
-          border-radius: 50%;
-          animation: controllerPulse 1.5s ease-in-out infinite;
-          box-shadow: 
-            15px 0 0 #fff,
-            30px 0 0 #fff;
-        }
-        
-        @keyframes controllerPulse {
-          0%, 100% {
-            opacity: 0.3;
-            transform: scale(1);
-          }
-          50% {
-            opacity: 1;
-            transform: scale(1.2);
-          }
-        }
-        
         /* Responsive adjustments */
         @media (max-width: 768px) {
           #nprogress .bar {
             height: ${Math.max(2, height - 1)}px;
-          }
-          
-          #nprogress .bar::before {
-            width: 4px;
-            height: 4px;
-            box-shadow: 
-              10px 0 0 #fff,
-              20px 0 0 #fff;
           }
         }
         
