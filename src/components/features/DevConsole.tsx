@@ -7717,7 +7717,7 @@ Try again with different parameters or check your connection.`;
     },
     {
       name: 'space',
-      description: 'Space and astronomy information from NASA APIs',
+      description: 'Space and astronomy information from NASA',
       execute: async (args): Promise<string> => {
         const action = args[0] || 'help';
         
