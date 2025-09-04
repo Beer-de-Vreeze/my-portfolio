@@ -121,6 +121,8 @@ const DevConsoleDesktop: React.FC = () => {
     category: string;
     difficulty: string;
   } | null>(null);
+  const [suggestions, setSuggestions] = useState<{name: string, description: string}[]>([]);
+  const [selectedSuggestion, setSelectedSuggestion] = useState<number>(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const historyRef = useRef<HTMLDivElement>(null);
 
@@ -8079,6 +8081,25 @@ Try a different command or check your internet connection.`;
     }
   ];
 
+  // Autocomplete logic
+  useEffect(() => {
+    if (!currentInput) {
+      setSuggestions([]);
+      setSelectedSuggestion(-1);
+      return;
+    }
+    const input = currentInput.trim().toLowerCase();
+    if (!input) {
+      setSuggestions([]);
+      setSelectedSuggestion(-1);
+      return;
+    }
+    // Only suggest for first word (command)
+    const matches = commands.filter(cmd => cmd.name.startsWith(input)).map(cmd => ({ name: cmd.name, description: cmd.description }));
+    setSuggestions(matches);
+    setSelectedSuggestion(matches.length ? 0 : -1);
+  }, [currentInput]);
+
   // Handle Konami code detection
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -8147,7 +8168,9 @@ Try a different command or check your internet connection.`;
         setConsoleSessionStart(null);
       } else if (event.key === 'ArrowUp') {
         event.preventDefault();
-        if (commandHistory.length > 0) {
+        if (suggestions.length > 0) {
+          setSelectedSuggestion(prev => Math.max(prev - 1, 0));
+        } else if (commandHistory.length > 0) {
           let newIndex = historyIndex === -1 ? commandHistory.length - 1 : historyIndex - 1;
           if (newIndex < 0) newIndex = 0;
           setHistoryIndex(newIndex);
@@ -8155,13 +8178,22 @@ Try a different command or check your internet connection.`;
         }
       } else if (event.key === 'ArrowDown') {
         event.preventDefault();
-        if (historyIndex >= 0 && historyIndex < commandHistory.length - 1) {
+        if (suggestions.length > 0) {
+          setSelectedSuggestion(prev => Math.min(prev + 1, suggestions.length - 1));
+        } else if (historyIndex >= 0 && historyIndex < commandHistory.length - 1) {
           const newIndex = historyIndex + 1;
           setHistoryIndex(newIndex);
           setCurrentInput(commandHistory[newIndex] || '');
         } else if (historyIndex === commandHistory.length - 1) {
           setHistoryIndex(-1);
           setCurrentInput('');
+        }
+      } else if (event.key === 'Tab' || event.key === 'Enter') {
+        if (suggestions.length > 0 && selectedSuggestion >= 0 && suggestions[selectedSuggestion]) {
+          event.preventDefault();
+          setCurrentInput(suggestions[selectedSuggestion].name + ' ');
+          setSuggestions([]);
+          setSelectedSuggestion(-1);
         }
       }
     };
@@ -8388,19 +8420,58 @@ Try a different command or check your internet connection.`;
           ))}
         </div>
 
-        <form onSubmit={handleSubmit} className={styles.inputForm}>
-          <span className={styles.prompt}>{'>'}</span>
-          <input
-            ref={inputRef}
-            type="text"
-            value={currentInput}
-            onChange={(e) => setCurrentInput(e.target.value)}
-            className={styles.input}
-            placeholder="Type 'help' for commands..."
-            autoComplete="off"
-            spellCheck={false}
-          />
-        </form>
+        <div style={{ position: 'relative' }}>
+          <form onSubmit={handleSubmit} className={styles.inputForm}>
+            <span className={styles.prompt}>{'>'}</span>
+            <input
+              ref={inputRef}
+              type="text"
+              value={currentInput}
+              onChange={(e) => setCurrentInput(e.target.value)}
+              className={styles.input}
+              placeholder="Type 'help' for commands..."
+              autoComplete="off"
+              spellCheck={false}
+            />
+          </form>
+          {suggestions.length > 0 && (
+            <ul style={{
+              position: 'absolute',
+              top: '100%',
+              left: 0,
+              right: 0,
+              background: '#222',
+              color: '#fff',
+              border: '1px solid #444',
+              borderRadius: 4,
+              zIndex: 1000,
+              margin: 0,
+              padding: 0,
+              listStyle: 'none',
+              maxHeight: 180,
+              overflowY: 'auto',
+            }}>
+              {suggestions.map((s, i) => (
+                <li
+                  key={s.name}
+                  style={{
+                    padding: '8px 12px',
+                    background: i === selectedSuggestion ? '#333' : 'transparent',
+                    cursor: 'pointer',
+                  }}
+                  onMouseDown={() => {
+                    setCurrentInput(s.name + ' ');
+                    setSuggestions([]);
+                    setSelectedSuggestion(-1);
+                  }}
+                >
+                  <span style={{ fontWeight: 'bold' }}>{s.name}</span>
+                  <span style={{ marginLeft: 8, opacity: 0.7 }}>{s.description}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
 
         <div className={styles.footer}>
           <span>Press ESC to close • ↑↓ for command history • Type &quot;help&quot; for commands</span>
