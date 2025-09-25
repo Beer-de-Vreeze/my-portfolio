@@ -8123,7 +8123,38 @@ Try a different command or check your internet connection.`;
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [konamiSequence, isOpen, KONAMI_CODE, addToHistory]);
 
-  // Handle console key events
+  // Handle input key events (including Tab completion)
+  const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Tab') {
+      event.preventDefault();
+      
+      const trimmedInput = currentInput.trim();
+      if (trimmedInput === '') return;
+      
+      // Only attempt completion if cursor is at the end and there are no spaces
+      // This ensures we only complete command names, not arguments
+      const words = trimmedInput.split(/\s+/);
+      if (words.length === 1) {
+        // Find matching commands using fuzzy search
+        const fuse = new Fuse(commands, {
+          keys: ['name'],
+          threshold: 0.3, // More strict matching for completion
+          includeScore: true
+        });
+        
+        const results = fuse.search(trimmedInput);
+        
+        if (results.length > 0) {
+          const bestMatch = results[0].item.name;
+          // Only complete if the match starts with the input (for predictable behavior)
+          if (bestMatch.toLowerCase().startsWith(trimmedInput.toLowerCase())) {
+            setCurrentInput(bestMatch);
+            setHistoryIndex(-1); // Reset history navigation
+          }
+        }
+      }
+    }
+  };
   useEffect(() => {
     const handleConsoleKeyDown = (event: KeyboardEvent) => {
       if (!isOpen) return;
@@ -8395,6 +8426,7 @@ Try a different command or check your internet connection.`;
             type="text"
             value={currentInput}
             onChange={(e) => setCurrentInput(e.target.value)}
+            onKeyDown={handleInputKeyDown}
             className={styles.input}
             placeholder="Type 'help' for commands..."
             autoComplete="off"
