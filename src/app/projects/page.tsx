@@ -34,10 +34,10 @@ const ProjectsContent = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl animate-slideInUp">
       <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse"></div>}>
-        <AudioPreviewer />
+        <LPCafe />
       </Suspense>
       <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse"></div>}>
-        <LPCafe />
+        <AudioPreviewer />
       </Suspense>
       <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse"></div>}>
         <MLAgent />
