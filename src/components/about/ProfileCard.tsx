@@ -259,7 +259,7 @@ const ProfileCard: React.FC<ProfileCardProps> = React.memo(({
   return (
     <div className={`w-full max-w-none sm:max-w-[500px] h-auto bg-gradient-to-br from-gray-900/80 to-black/90 border border-blue-500/20 rounded-2xl shadow-xl backdrop-blur-sm p-3 sm:p-4 md:p-6 ${className} 
                     transition-all duration-500 hover:border-blue-400/30 hover:shadow-2xl hover:shadow-blue-500/10 
-                    relative overflow-hidden group mx-auto`}>
+                    relative overflow-visible group mx-auto`}>
       {/* Enhanced background pattern */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
       
@@ -303,8 +303,8 @@ const ProfileCard: React.FC<ProfileCardProps> = React.memo(({
         </div>
         
         {/* Bubbles section - Enhanced with accessibility */}
-        <div className="border-t border-blue-500/20 mt-3 sm:mt-2 py-3 sm:py-4 bubble-container">
-          <div className="flex flex-wrap gap-2 sm:gap-2.5 w-full justify-center sm:justify-start" role="list" aria-label="Skills and interests">
+        <div className="border-t border-blue-500/20 mt-3 sm:mt-2 py-3 sm:py-4 bubble-container overflow-visible">
+          <div className="flex flex-wrap gap-2 sm:gap-2.5 w-full justify-center sm:justify-start px-2 sm:px-0 overflow-visible" role="list" aria-label="Skills and interests">
             {bubbles.map((bubble) => (
               <div 
                 key={bubble.id}
@@ -332,7 +332,7 @@ const ProfileCard: React.FC<ProfileCardProps> = React.memo(({
                 {bubble.additionalInfo && hoveredBubble === bubble.id && (
                   <div 
                     className={`
-                      absolute transform -translate-x-1/2 
+                      absolute
                       bg-gradient-to-br from-gray-800/95 to-gray-900/95 border border-blue-400/30 rounded-xl 
                       text-blue-100 text-xs w-max max-w-[200px] shadow-2xl shadow-blue-500/20 z-50 
                       transition-all duration-300 p-3 backdrop-blur-sm text-center
@@ -341,6 +341,7 @@ const ProfileCard: React.FC<ProfileCardProps> = React.memo(({
                     style={{
                       bottom: 'calc(100% + 10px)',
                       left: '50%',
+                      transform: 'translateX(-50%)',
                       pointerEvents: 'none'
                     }}
                     role="tooltip"
@@ -397,16 +398,16 @@ const TOOLTIP_STYLES = `
   @keyframes tooltipPopup {
     0% {
       opacity: 0;
-      transform: translate(-50%, 15px) scale(0.8);
+      transform: translateX(-50%) translateY(15px) scale(0.8);
       filter: blur(4px);
     }
     50% {
-      transform: translate(-50%, -5px) scale(1.05);
+      transform: translateX(-50%) translateY(-5px) scale(1.05);
       filter: blur(1px);
     }
     100% {
       opacity: 1;
-      transform: translate(-50%, 0) scale(1);
+      transform: translateX(-50%) translateY(0) scale(1);
       filter: blur(0);
     }
   }
@@ -414,16 +415,16 @@ const TOOLTIP_STYLES = `
   @keyframes tooltipClose {
     0% {
       opacity: 1;
-      transform: translate(-50%, 0) scale(1);
+      transform: translateX(-50%) translateY(0) scale(1);
       filter: blur(0);
     }
     50% {
-      transform: translate(-50%, -3px) scale(0.95);
+      transform: translateX(-50%) translateY(-3px) scale(0.95);
       filter: blur(1px);
     }
     100% {
       opacity: 0;
-      transform: translate(-50%, 12px) scale(0.8);
+      transform: translateX(-50%) translateY(12px) scale(0.8);
       filter: blur(4px);
     }
   }
