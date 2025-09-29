@@ -3,7 +3,7 @@ import "../styles/mobile.css";
 import "../styles/performance.css";
 import "../styles/critical.css";
 import LoadingBar from "@/components/performance/loadingbar";
-import LazyDevConsole from "@/components/features/LazyDevConsole";
+import DevConsole from "@/components/features/DevConsole";
 import NotificationContainer from "@/components/ui/NotificationContainer";
 import WebsiteStructuredData from "@/components/seo/WebsiteStructuredData";
 import { LoadingProvider } from "@/context/LoadingContext";
@@ -144,7 +144,7 @@ export default function RootLayout({
                         <LoadingBar />
                         <NotificationContainer />
                         <WebsiteStructuredData />
-                        <LazyDevConsole />
+                        <DevConsole />
                         <PerformanceDashboard />
                         <main>
                           {children}
