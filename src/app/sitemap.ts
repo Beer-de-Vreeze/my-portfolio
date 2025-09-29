@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://beerdevreeze.vercel.app';
+  const baseUrl = 'https://beerdevreeze.com';
   const currentDate = new Date();
 
   return [

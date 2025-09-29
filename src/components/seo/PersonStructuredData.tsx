@@ -21,8 +21,8 @@ export default function PersonStructuredData({
     "name": name,
     "jobTitle": jobTitle,
     "description": description,
-    "url": "https://beerdevreeze.vercel.app",
-    "image": "https://beerdevreeze.vercel.app/images/Beer.webp",
+    "url": "https://beerdevreeze.com",
+    "image": "https://beerdevreeze.com/images/Beer.webp",
     "address": {
       "@type": "PostalAddress",
       "addressCountry": "NL",

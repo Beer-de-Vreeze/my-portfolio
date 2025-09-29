@@ -8098,7 +8098,7 @@ Try a different command or check your internet connection.`;
     const matches = commands.filter(cmd => cmd.name.startsWith(input)).map(cmd => ({ name: cmd.name, description: cmd.description }));
     setSuggestions(matches);
     setSelectedSuggestion(matches.length ? 0 : -1);
-  }, [currentInput]);
+  }, [currentInput, commands]);
 
   // Handle Konami code detection
   useEffect(() => {
@@ -8200,7 +8200,7 @@ Try a different command or check your internet connection.`;
 
     window.addEventListener('keydown', handleConsoleKeyDown);
     return () => window.removeEventListener('keydown', handleConsoleKeyDown);
-  }, [isOpen, commandHistory, historyIndex, consoleSessionStart, history]);
+  }, [isOpen, commandHistory, historyIndex, consoleSessionStart, history, selectedSuggestion, suggestions]);
 
   // Cleanup: Track session if component unmounts while console is open
   useEffect(() => {

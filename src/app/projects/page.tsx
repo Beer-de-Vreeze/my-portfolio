@@ -116,7 +116,7 @@ export default function Projects() {
       name: "Portfolio Website",
       description: "Modern, responsive portfolio website built with Next.js, featuring advanced performance optimizations and accessibility.",
       image: "/images/Website Images/Web1.webp",
-      url: "https://beerdevreeze.vercel.app",
+      url: "https://beerdevreeze.com",
       dateCreated: "2024-01-10",
       programmingLanguage: ["TypeScript", "React", "Next.js"],
       applicationCategory: "WebApplication"

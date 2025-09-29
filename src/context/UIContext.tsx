@@ -208,7 +208,8 @@ export const UIProvider: React.FC<UIProviderProps> = ({ children }) => {
 
   const clearFilter = useCallback((key: string) => {
     setUIState(prev => {
-      const { [key]: _removed, ...remainingFilters } = prev.activeFilters;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { [key]: _, ...remainingFilters } = prev.activeFilters;
       return { ...prev, activeFilters: remainingFilters };
     });
   }, []);
@@ -279,7 +280,8 @@ export const UIProvider: React.FC<UIProviderProps> = ({ children }) => {
 
   const clearPageState = useCallback((pageId: string) => {
     setUIState(prev => {
-      const { [pageId]: _removed, ...remainingPageStates } = prev.pageStates;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { [pageId]: _, ...remainingPageStates } = prev.pageStates;
       return { ...prev, pageStates: remainingPageStates };
     });
   }, []);

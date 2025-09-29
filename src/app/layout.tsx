@@ -40,14 +40,14 @@ export const metadata: Metadata = {
     address: false,
     email: false,
   },
-  metadataBase: new URL('https://beerdevreeze.vercel.app'),
+  metadataBase: new URL('https://beerdevreeze.com'),
   alternates: {
     canonical: '/',
   },
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://beerdevreeze.vercel.app',
+    url: 'https://beerdevreeze.com',
     siteName: 'Beer de Vreeze - Game Developer Portfolio',
     title: 'Beer de Vreeze - Game Developer Portfolio',
     description: 'Systems & Tools Game Developer specializing in Unity, C#, and AI. Explore my interactive projects and game development journey.',
@@ -118,7 +118,6 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta name="theme-color" content="#000000" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

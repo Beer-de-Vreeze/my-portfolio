@@ -126,7 +126,7 @@ export const TechStack: React.FC<TechStackProps> = ({
     );
   };
 
-  const renderBadge = (tech: string, data: typeof techIcons[string], index: number) => {
+  const renderBadge = (tech: string, data: typeof techIcons[string]) => {
     const IconComponent = data.icon;
     
     return (
@@ -163,7 +163,7 @@ export const TechStack: React.FC<TechStackProps> = ({
   const renderTech = (tech: string, data: typeof techIcons[string], index: number) => {
     switch (variant) {
       case 'badges':
-        return renderBadge(tech, data, index);
+        return renderBadge(tech, data);
       case 'minimal':
         return renderMinimal(tech, data, index);
       case 'icons':

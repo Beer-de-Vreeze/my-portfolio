@@ -22,8 +22,8 @@ export default function ProjectStructuredData({ projects }: ProjectStructuredDat
     "name": "Beer de Vreeze",
     "jobTitle": "Game Developer",
     "description": "Systems & Tools Game Developer specializing in Unity, C#, and AI",
-    "url": "https://beerdevreeze.vercel.app",
-    "image": "https://beerdevreeze.vercel.app/images/Beer.webp",
+    "url": "https://beerdevreeze.com",
+    "image": "https://beerdevreeze.com/images/Beer.webp",
     "sameAs": [
       "https://github.com/Beer-de-Vreeze",
       "https://www.linkedin.com/in/beer-de-vreeze-59040919a/",
@@ -52,7 +52,7 @@ export default function ProjectStructuredData({ projects }: ProjectStructuredDat
       "@type": "SoftwareApplication",
       "name": project.name,
       "description": project.description,
-      "image": `https://beerdevreeze.vercel.app${project.image}`,
+      "image": `https://beerdevreeze.com${project.image}`,
       "url": project.url,
       "dateCreated": project.dateCreated,
       "creator": {

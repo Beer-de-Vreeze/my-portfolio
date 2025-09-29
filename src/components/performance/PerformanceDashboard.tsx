@@ -35,7 +35,7 @@ export function PerformanceDashboard({
       return;
     }
 
-    // Always show dashboard in development
+    // Set initial visibility based on environment
     setIsVisible(true);
 
     // Import and setup Web Vitals directly
@@ -81,10 +81,6 @@ export function PerformanceDashboard({
     };
   }, []);
 
-  if (!isVisible) {
-    return null;
-  }
-
   const getScoreColor = (value: number | null, metric: string): string => {
     if (value === null) return 'text-gray-400';
     
@@ -126,6 +122,11 @@ export function PerformanceDashboard({
     'bottom-left': 'bottom-20 left-4',
     'bottom-right': 'bottom-20 right-4',
   };
+
+  // Only show in development mode and when visible
+  if (process.env.NODE_ENV !== 'development' || !isVisible) {
+    return null;
+  }
 
   return (
     <div 

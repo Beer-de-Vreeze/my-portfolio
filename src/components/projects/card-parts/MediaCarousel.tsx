@@ -3,7 +3,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { FaExpand, FaCompress, FaPlay, FaVolumeUp } from 'react-icons/fa';
-import { usePerformance } from '@/hooks/usePerformance';
 
 // Extend HTMLVideoElement interface for fullscreen API compatibility
 interface ExtendedHTMLVideoElement extends HTMLVideoElement {
