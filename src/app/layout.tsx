@@ -141,11 +141,11 @@ export default function RootLayout({
                     <LoadingProvider>
                       <ModalProvider>
                         <ServiceWorkerInitializer />
-                        <LoadingBar />
+                        {/* <LoadingBar /> */}
                         <NotificationContainer />
                         <WebsiteStructuredData />
                         <DevConsole />
-                        <PerformanceDashboard />
+                        {/* <PerformanceDashboard /> */}
                         <main>
                           {children}
                         </main>

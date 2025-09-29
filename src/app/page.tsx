@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, lazy, Suspense, useMemo, useCallback } from 'react';
+import { useState, useEffect, lazy, Suspense, useMemo } from 'react';
 import AboutCard from "../components/cards/AboutCard";
 import ContactCard from "@/components/forms/ContactCardMenu";
 import { PerformanceLoading } from "@/components/performance/PerformanceLoading";
@@ -24,7 +24,7 @@ export default function Home() {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   
   // Enable performance monitoring
-  usePerformanceMonitor();
+  // usePerformanceMonitor();
 
   // Preload critical resources
   useEffect(() => {
@@ -46,12 +46,6 @@ export default function Home() {
     <ContactCard key="contact" />,
   ], []);
 
-  // Optimize event handlers with useCallback
-  const handleReducedMotionChange = useCallback(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setPrefersReducedMotion(mediaQuery.matches);
-  }, []);
-
   // Handle hydration and reduced motion
   useEffect(() => {
     setIsMounted(true);
@@ -60,10 +54,14 @@ export default function Home() {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     setPrefersReducedMotion(mediaQuery.matches);
     
+    const handleReducedMotionChange = () => {
+      setPrefersReducedMotion(mediaQuery.matches);
+    };
+    
     mediaQuery.addEventListener('change', handleReducedMotionChange);
     
     return () => mediaQuery.removeEventListener('change', handleReducedMotionChange);
-  }, [handleReducedMotionChange]);
+  }, []); // Empty dependency array to prevent infinite re-renders
 
   // One-time overflow control based on screen size - only runs once after mount
   useEffect(() => {
@@ -94,7 +92,8 @@ export default function Home() {
   }, [isMounted]); // Only depends on isMounted, not window size changes
 
   // Calculate number of particles based on device performance and screen size
-  const getParticleCount = useCallback(() => {
+  // Memoize the particle count to avoid recalculating on every render
+  const currentParticleCount = useMemo(() => {
     if (prefersReducedMotion || shouldReduceMotion()) return 0;
     if (typeof window === 'undefined') return 50;
     
@@ -116,10 +115,7 @@ export default function Home() {
     
     // Desktop devices - full particle count
     return hasPerformanceConstraints ? 20 : 50;
-  }, [prefersReducedMotion, shouldReduceMotion, isLowMemory]);
-
-  // Use the optimized particle count
-  const currentParticleCount = getParticleCount();
+  }, [prefersReducedMotion, shouldReduceMotion, isLowMemory, isMounted]);
 
   // Only render UI if mounted (avoids hydration mismatch)
   if (!isMounted) {

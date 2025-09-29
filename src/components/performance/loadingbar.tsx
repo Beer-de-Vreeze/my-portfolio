@@ -52,6 +52,8 @@ const LoadingBar: React.FC<LoadingBarProps> = ({
   }, [progressOptions]);
 
   useEffect(() => {
+    let timeoutRef: NodeJS.Timeout | null = null;
+    
     const handleStart = () => {
       setIsRouting(true);
       NProgress.start();
@@ -174,29 +176,12 @@ const LoadingBar: React.FC<LoadingBarProps> = ({
       document.head.appendChild(newStyleElement);
     };
 
-    // Handle route changes
-    const handleRouteChange = () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-      
-      handleStart();
-      
-      // Add realistic loading delay with progressive completion
-      const baseDelay = 200;
-      const randomDelay = Math.random() * 300;
-      
-      timeoutRef.current = setTimeout(() => {
-        handleComplete();
-      }, baseDelay + randomDelay);
-    };
-
+    // Only create styles on initial render - don't trigger route changes automatically
     createCustomStyles();
-    handleRouteChange();
 
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+      if (timeoutRef) {
+        clearTimeout(timeoutRef);
       }
       // Clean up any loadingbar styles
       const existingStyles = document.querySelectorAll('style[data-nprogress-loadingbar="true"]');
@@ -212,7 +197,7 @@ const LoadingBar: React.FC<LoadingBarProps> = ({
       styleRef.current = null;
       handleComplete();
     };
-  }, [pathname, color, height]);
+  }, [color, height]); // Removed pathname from dependencies to prevent infinite loops
 
   // Handle browser navigation events
   useEffect(() => {
