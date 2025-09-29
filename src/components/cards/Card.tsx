@@ -38,35 +38,53 @@ const BaseCard = memo(function BaseCard({
   const handleMouseEnter = useCallback(() => {
     if (disabled) return;
     
-    setIsHovered(true);
+    setIsHovered(prev => {
+      if (prev === true) return prev; // Prevent unnecessary state updates
+      return true;
+    });
     
     // Prefetch with a small delay to avoid excessive prefetching
     if (!prefetchedRef.current) {
       timeoutRef.current = setTimeout(() => {
-        router.prefetch(href);
-        prefetchedRef.current = true;
+        if (!prefetchedRef.current) { // Double check to prevent race conditions
+          router.prefetch(href);
+          prefetchedRef.current = true;
+        }
       }, 100);
     }
   }, [disabled, href, router]);
 
   const handleMouseLeave = useCallback(() => {
-    setIsHovered(false);
-    setIsPressed(false);
+    setIsHovered(prev => {
+      if (prev === false) return prev; // Prevent unnecessary state updates
+      return false;
+    });
+    setIsPressed(prev => {
+      if (prev === false) return prev; // Prevent unnecessary state updates
+      return false;
+    });
     
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
     }
   }, []);
 
   const handleMouseDown = useCallback(() => {
     if (!disabled) {
-      setIsPressed(true);
+      setIsPressed(prev => {
+        if (prev === true) return prev; // Prevent unnecessary state updates
+        return true;
+      });
     }
   }, [disabled]);
 
   const handleMouseUp = useCallback(() => {
     if (!disabled) {
-      setIsPressed(false);
+      setIsPressed(prev => {
+        if (prev === false) return prev; // Prevent unnecessary state updates
+        return false;
+      });
     }
   }, [disabled]);
 
@@ -83,7 +101,10 @@ const BaseCard = memo(function BaseCard({
     // Handle Enter and Space keys for accessibility
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      setIsPressed(true);
+      setIsPressed(prev => {
+        if (prev === true) return prev; // Prevent unnecessary state updates
+        return true;
+      });
     }
   }, [disabled]);
 
@@ -91,7 +112,10 @@ const BaseCard = memo(function BaseCard({
     if (disabled) return;
     
     if (e.key === 'Enter' || e.key === ' ') {
-      setIsPressed(false);
+      setIsPressed(prev => {
+        if (prev === false) return prev; // Prevent unnecessary state updates
+        return false;
+      });
       // Trigger navigation
       router.push(href);
     }

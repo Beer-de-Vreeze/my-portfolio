@@ -60,9 +60,11 @@ export function WebVitals({ reportWebVitals }: WebVitalsProps) {
 // Custom hook for performance monitoring
 export function usePerformanceMonitor() {
   useEffect(() => {
+    let observer: PerformanceObserver | null = null;
+    
     // Monitor long tasks
     if ('PerformanceObserver' in window) {
-      const observer = new PerformanceObserver((list) => {
+      observer = new PerformanceObserver((list) => {
         for (const entry of list.getEntries()) {
           if (entry.duration > 50) { // Tasks longer than 50ms
             console.warn('Long task detected:', {
@@ -78,12 +80,18 @@ export function usePerformanceMonitor() {
       } catch {
         // Longtask observer not supported
       }
-
-      return () => observer.disconnect();
     }
-  }, []);
+
+    return () => {
+      if (observer) {
+        observer.disconnect();
+      }
+    };
+  }, []); // Empty dependency array to ensure this only runs once
 
   useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    
     // Monitor memory usage (Chrome only)
     if (performance.memory) {
       const logMemoryUsage = () => {
@@ -96,8 +104,13 @@ export function usePerformanceMonitor() {
         }
       };
 
-      const interval = setInterval(logMemoryUsage, 30000); // Check every 30 seconds
-      return () => clearInterval(interval);
+      interval = setInterval(logMemoryUsage, 30000); // Check every 30 seconds
     }
-  }, []);
+    
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, []); // Empty dependency array to ensure this only runs once
 }
