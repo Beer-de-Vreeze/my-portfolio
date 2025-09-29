@@ -15,6 +15,7 @@ const withPWA = withPWAInit({
   disable: process.env.NODE_ENV === "development",
   workboxOptions: {
     disableDevLogs: true,
+    maximumFileSizeToCacheInBytes: 5000000, // 5MB instead of default 2MB
     runtimeCaching: [
       {
         urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
