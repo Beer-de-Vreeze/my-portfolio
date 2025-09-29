@@ -34,7 +34,6 @@ const LoadingBar: React.FC<LoadingBarProps> = ({
   const pathname = usePathname();
   const [isRouting, setIsRouting] = useState(false);
   const styleRef = useRef<HTMLStyleElement | null>(null);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Memoize progress options to prevent re-renders
   const progressOptions = useMemo(() => ({
@@ -52,13 +51,6 @@ const LoadingBar: React.FC<LoadingBarProps> = ({
   }, [progressOptions]);
 
   useEffect(() => {
-    let timeoutRef: NodeJS.Timeout | null = null;
-    
-    const handleStart = () => {
-      setIsRouting(true);
-      NProgress.start();
-    };
-
     const handleComplete = () => {
       setIsRouting(false);
       NProgress.done();
@@ -180,9 +172,6 @@ const LoadingBar: React.FC<LoadingBarProps> = ({
     createCustomStyles();
 
     return () => {
-      if (timeoutRef) {
-        clearTimeout(timeoutRef);
-      }
       // Clean up any loadingbar styles
       const existingStyles = document.querySelectorAll('style[data-nprogress-loadingbar="true"]');
       existingStyles.forEach(style => {
