@@ -5,6 +5,7 @@ import "../styles/critical.css";
 import LoadingBar from "@/components/performance/loadingbar";
 import DevConsole from "@/components/features/DevConsole";
 import NotificationContainer from "@/components/ui/NotificationContainer";
+import WebsiteStructuredData from "@/components/seo/WebsiteStructuredData";
 import { LoadingProvider } from "@/context/LoadingContext";
 import { ModalProvider } from "@/context/ModalContext";
 import { ThemeProvider } from "@/context/ThemeContext";
@@ -143,6 +144,7 @@ export default function RootLayout({
                         <ServiceWorkerInitializer />
                         <LoadingBar />
                         <NotificationContainer />
+                        <WebsiteStructuredData />
                         <DevConsole />
                         <PerformanceDashboard />
                         <main>

@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import ProfileCard from "@/components/about/ProfileCard";
 import Stack from "@/components/about/Stack";
+import PersonStructuredData from "@/components/seo/PersonStructuredData";
 import { useResponsiveSize } from "@/components/utils/useScrolling";
 import { usePerformanceMonitor } from "@/components/performance/WebVitals";
 import { usePerformance } from "@/hooks/usePerformance";
@@ -94,6 +95,11 @@ export default function About() {
 
   return (
     <div className={`min-h-screen flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground}`} style={{ overflow: 'visible' }}>
+      {/* Structured Data for SEO */}
+      <PersonStructuredData 
+        location="Beusichem, Netherlands"
+      />
+      
       {/* Animated background grid */}
       <div className={styles.backgroundGrid}></div>
       
@@ -127,11 +133,11 @@ export default function About() {
         })}
       </div>
 
-      <main className="flex-1 pt-16 pb-20 sm:pb-16 md:pb-20 lg:pb-24 px-2 sm:px-4 md:px-6 text-white relative z-10 w-full flex flex-col">
+      <main className="flex-1 pt-16 pb-20 sm:pb-16 md:pb-20 lg:pb-24 px-2 sm:px-4 md:px-6 text-white relative z-10 w-full flex flex-col" id="main-content">
         {/* Enhanced header section with animated title - smaller and more compact */}
-        <div className={`${styles.headerContainer} ${styles.headerContainerSmall}`}>
+        <header className={`${styles.headerContainer} ${styles.headerContainerSmall}`}>
           <div className={styles.titleWrapper}>
-            <h1 className={`${styles.name} ${isDesktop ? styles.nameDesktopSmall : styles.nameMobileSmall} ${styles.animatedTitle}`}>
+            <h1 className={`${styles.name} ${isDesktop ? styles.nameDesktopSmall : styles.nameMobileSmall} ${styles.animatedTitle}`} id="page-title">
               <span className={styles.titleCharacter}>A</span>
               <span className={styles.titleCharacter}>b</span>
               <span className={styles.titleCharacter}>o</span>
@@ -141,7 +147,7 @@ export default function About() {
               <span className={styles.titleCharacter}>M</span>
               <span className={styles.titleCharacter}>e</span>
             </h1>
-            <div className={`${styles.titleUnderline} ${isDesktop ? styles.titleUnderlineDesktop : ''}`}></div>
+            <div className={`${styles.titleUnderline} ${isDesktop ? styles.titleUnderlineDesktop : ''}`} aria-hidden="true"></div>
           </div>
           
           <h2 className={`${styles.subtitle} ${isDesktop ? styles.titleDesktopSmall : styles.titleMobileSmall}`}>
@@ -151,15 +157,15 @@ export default function About() {
             </span>
           </h2>
           
-          {/* Floating accent elements */}
-          <div className={styles.accentDots}>
+          {/* Floating accent elements - decorative only */}
+          <div className={styles.accentDots} aria-hidden="true">
             <div className={`${styles.accentDot} ${styles.accentDot1}`}></div>
             <div className={`${styles.accentDot} ${styles.accentDot2}`}></div>
             <div className={`${styles.accentDot} ${styles.accentDot3}`}></div>
           </div>
-        </div>
+        </header>
 
-        <div className="w-full max-w-6xl mx-auto px-0 flex-1 flex items-center">
+        <section className="w-full max-w-6xl mx-auto px-0 flex-1 flex items-center" aria-label="About me content">
           <div className="flex flex-col lg:grid lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-12 relative w-full mb-8 sm:mb-0">
             <div className="lg:col-span-2 lg:h-full order-1 lg:order-1 w-full">
               <div className="h-full flex flex-col justify-between animate-profileSlideIn w-full">
@@ -170,7 +176,7 @@ export default function About() {
               <Stack />
             </div>
           </div>
-        </div>
+        </section>
       </main>
     </div>
   );

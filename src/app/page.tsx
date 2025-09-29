@@ -161,10 +161,10 @@ export default function Home() {
         })}
       </div>
 
-      <main className="relative z-10 w-full flex flex-col">
-        <div className={`${styles.headerContainer} ${isDesktop ? styles.headerContainerDesktop : styles.headerContainerMobile} max-w-4xl mx-auto`}>
+      <main className="relative z-10 w-full flex flex-col" id="main-content">
+        <header className={`${styles.headerContainer} ${isDesktop ? styles.headerContainerDesktop : styles.headerContainerMobile} max-w-4xl mx-auto`}>
           <div className={styles.titleWrapper}>
-            <h1 className={`${styles.name} ${isDesktop ? styles.nameDesktop : styles.nameMobile} ${styles.animatedTitle}`}>
+            <h1 className={`${styles.name} ${isDesktop ? styles.nameDesktop : styles.nameMobile} ${styles.animatedTitle}`} id="page-title">
               <span className={styles.titleCharacter}>B</span>
               <span className={styles.titleCharacter}>e</span>
               <span className={styles.titleCharacter}>e</span>
@@ -180,27 +180,32 @@ export default function Home() {
               <span className={styles.titleCharacter}>z</span>
               <span className={styles.titleCharacter}>e</span>
             </h1>
-            <div className={`${styles.titleUnderline} ${isDesktop ? styles.titleUnderlineDesktop : ''}`}></div>
+            <div className={`${styles.titleUnderline} ${isDesktop ? styles.titleUnderlineDesktop : ''}`} aria-hidden="true"></div>
           </div>
           
           <h2 className={`${styles.subtitle} ${isDesktop ? styles.titleDesktop : styles.titleMobile}`}>
-            <span className={styles.subtitleText}>Systems & Tools </span>
+            <span className={styles.subtitleText}>
+              <span className="sr-only">Welcome to the portfolio of </span>
+              Systems & Tools 
+            </span>
             {!isDesktop && <br />}
             <span className={`gradient-text ${styles.subtitleGradient} ${prefersReducedMotion ? styles.staticGradient : ''}`}>Game Developer</span>
+            <span className="sr-only"> specializing in Unity, C#, and AI technologies</span>
           </h2>
           
-          {/* Floating accent elements - only on desktop and if motion is allowed */}
+          {/* Floating accent elements - only on desktop and if motion is allowed - decorative only */}
           {isDesktop && !prefersReducedMotion && (
-            <div className={styles.accentDots}>
+            <div className={styles.accentDots} aria-hidden="true">
               <div className={`${styles.accentDot} ${styles.accentDot1}`}></div>
               <div className={`${styles.accentDot} ${styles.accentDot2}`}></div>
               <div className={`${styles.accentDot} ${styles.accentDot3}`}></div>
             </div>
           )}
-        </div>
+        </header>
 
-        <div className={`${styles.cardsSection} max-w-5xl mx-auto w-full`}>
-          <div className={`${styles.cardsContainer} ${isDesktop ? styles.cardsContainerDesktop : styles.cardsContainerMobile}`}>
+        <section className={`${styles.cardsSection} max-w-5xl mx-auto w-full`} aria-label="Portfolio sections">
+          <h2 className="sr-only">Explore my work</h2>
+          <div className={`${styles.cardsContainer} ${isDesktop ? styles.cardsContainerDesktop : styles.cardsContainerMobile}`} role="group" aria-label="Portfolio navigation cards">
             {cards.map((card, index) => (
               <div 
                 key={index} 
@@ -209,19 +214,20 @@ export default function Home() {
                   animationDelay: !prefersReducedMotion ? `${index * 150}ms` : '0ms',
                   contain: 'layout style paint'
                 }}
+                role="listitem"
               >
                 {card}
               </div>
             ))}
           </div>
           
-          {/* Hidden Konami Code Easter Egg Hint - only show on desktop */}
+          {/* Hidden Konami Code Easter Egg Hint - only show on desktop - decorative */}
           {isDesktop && (
-            <div className={styles.konamiHint}>
-              Secret Code: ↑↑↓↓←→←→BA
+            <div className={styles.konamiHint} aria-hidden="true">
+              <span className="sr-only">Developer easter egg: </span>Secret Code: ↑↑↓↓←→←→BA
             </div>
           )}
-        </div>
+        </section>
       </main>
     </div>
   );

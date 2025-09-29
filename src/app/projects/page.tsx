@@ -4,6 +4,7 @@ import { useModal } from "@/context/ModalContext";
 import { usePerformanceMonitor } from "@/components/performance/WebVitals";
 import { usePerformance } from "@/hooks/usePerformance";
 import { ResourcePreloader, MemoryManager } from "@/lib/performanceUtils";
+import ProjectStructuredData from "@/components/seo/ProjectStructuredData";
 // Add highlight.js import and style
 import "highlight.js/styles/monokai.css";
 // Import custom highlighting styles
@@ -20,10 +21,12 @@ const Tetrtis = React.lazy(() => import("@/components/projects/Tetrtis"));
 const Website = React.lazy(() => import("@/components/projects/Website"));
 const LPCafe = React.lazy(() => import("@/components/projects/LPCafe"));
 const ProjectsLoading = () => (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl">
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl" role="status" aria-label="Loading projects">
     {[...Array(7)].map((_, i) => (
-      <div key={i} className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse flex items-center justify-center backdrop-blur-sm border border-gray-700/50">
-        <div className="text-gray-400">{i === 3 ? 'Loading projects... (Tip: ↑↑↓↓←→←→BA)' : 'Loading project...'}</div>
+      <div key={i} className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse flex items-center justify-center backdrop-blur-sm border border-gray-700/50" role="progressbar" aria-label={`Loading project ${i + 1}`}>
+        <div className="text-gray-400" aria-live="polite">
+          {i === 3 ? 'Loading projects... (Tip: ↑↑↓↓←→←→BA)' : 'Loading project...'}
+        </div>
       </div>
     ))}
   </div>
@@ -32,27 +35,41 @@ const ProjectsLoading = () => (
 // Projects content component that uses lazy loading
 const ProjectsContent = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl animate-slideInUp">
-      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse"></div>}>
-        <AudioPreviewer />
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl animate-slideInUp" role="list" aria-label="My projects">
+      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse" role="status" aria-label="Loading project"></div>}>
+        <div role="listitem">
+          <AudioPreviewer />
+        </div>
       </Suspense>
-      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse"></div>}>
-        <LPCafe />
+      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse" role="status" aria-label="Loading project"></div>}>
+        <div role="listitem">
+          <LPCafe />
+        </div>
       </Suspense>
-      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse"></div>}>
-        <MLAgent />
+      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse" role="status" aria-label="Loading project"></div>}>
+        <div role="listitem">
+          <MLAgent />
+        </div>
       </Suspense>
-      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse"></div>}>
-        <Website />
+      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse" role="status" aria-label="Loading project"></div>}>
+        <div role="listitem">
+          <Website />
+        </div>
       </Suspense>
-      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse"></div>}>
-        <BearlyStealthy />
+      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse" role="status" aria-label="Loading project"></div>}>
+        <div role="listitem">
+          <BearlyStealthy />
+        </div>
       </Suspense>
-      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse"></div>}>
-        <SketchinSpells />
+      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse" role="status" aria-label="Loading project"></div>}>
+        <div role="listitem">
+          <SketchinSpells />
+        </div>
       </Suspense>
-      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse"></div>}>
-        <Tetrtis />
+      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse" role="status" aria-label="Loading project"></div>}>
+        <div role="listitem">
+          <Tetrtis />
+        </div>
       </Suspense>
     </div>
   );
@@ -67,6 +84,68 @@ export default function Projects() {
   
   // Enable performance monitoring
   usePerformanceMonitor();
+
+  // Project data for structured data
+  const projectsData = useMemo(() => [
+    {
+      name: "Audio Previewer",
+      description: "Unity tool for real-time audio preview and processing with advanced sound manipulation capabilities.",
+      image: "/images/AudioPreviewer 1.webp",
+      dateCreated: "2023-06-01",
+      programmingLanguage: ["C#", "Unity"],
+      applicationCategory: "DeveloperApplication",
+      operatingSystem: "Windows, Mac, Linux"
+    },
+    {
+      name: "LP Cafe",
+      description: "Interactive dialogue system and character AI for narrative-driven gaming experiences.",
+      image: "/images/LPCafe Images/Cafe.webp", 
+      dateCreated: "2023-08-15",
+      programmingLanguage: ["C#", "Unity"],
+      applicationCategory: "GameApplication"
+    },
+    {
+      name: "ML Agent",
+      description: "Machine learning-powered AI agent system for intelligent game character behavior and decision making.",
+      image: "/images/AI Images/Title.webp",
+      dateCreated: "2023-10-20",
+      programmingLanguage: ["C#", "Python"],
+      applicationCategory: "GameApplication"
+    },
+    {
+      name: "Portfolio Website",
+      description: "Modern, responsive portfolio website built with Next.js, featuring advanced performance optimizations and accessibility.",
+      image: "/images/Website Images/Web1.webp",
+      url: "https://beerdevreeze.vercel.app",
+      dateCreated: "2024-01-10",
+      programmingLanguage: ["TypeScript", "React", "Next.js"],
+      applicationCategory: "WebApplication"
+    },
+    {
+      name: "Bearly Stealthy",
+      description: "Stealth-based puzzle game featuring dynamic AI behavior and environmental interaction systems.",
+      image: "/images/Bearly Stealth Images/Bear.webp",
+      dateCreated: "2023-04-12",
+      programmingLanguage: ["C#", "Unity"],
+      applicationCategory: "GameApplication"
+    },
+    {
+      name: "Sketchin Spells",
+      description: "Creative spell-crafting game with intuitive drawing mechanics and magical particle systems.", 
+      image: "/images/Sketchin Spells Images/SketchinSpellsImage.webp",
+      dateCreated: "2023-07-08",
+      programmingLanguage: ["C#", "Unity"],
+      applicationCategory: "GameApplication"
+    },
+    {
+      name: "Tetrtis",
+      description: "Modern take on the classic puzzle game with enhanced visuals and smooth gameplay mechanics.",
+      image: "/images/Tetris Images/Tetris.webp",
+      dateCreated: "2023-02-28",
+      programmingLanguage: ["C#", "Unity"],
+      applicationCategory: "GameApplication"
+    }
+  ], []);
 
   // Preload critical resources for projects page
   useEffect(() => {
@@ -161,6 +240,9 @@ export default function Projects() {
 
   return (
     <div className={`flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground}`}>
+      {/* Structured Data for SEO */}
+      <ProjectStructuredData projects={projectsData} />
+      
       {/* Animated background grid */}
       <div className={styles.backgroundGrid}></div>
 
@@ -207,11 +289,11 @@ export default function Projects() {
       >
       </div>
 
-      <main className="flex-1 pt-16 pb-20 sm:pb-16 md:pb-20 px-2 sm:px-4 md:px-6 text-white relative z-10 w-full flex flex-col">
+      <main className="flex-1 pt-16 pb-20 sm:pb-16 md:pb-20 px-2 sm:px-4 md:px-6 text-white relative z-10 w-full flex flex-col" id="main-content">
         {/* Enhanced header section with animated title */}
-        <div className={`${styles.headerContainer} ${styles.headerContainerSmall}`}>
+        <header className={`${styles.headerContainer} ${styles.headerContainerSmall}`}>
           <div className={styles.titleWrapper}>
-            <h1 className={`${styles.name} ${isDesktop ? styles.nameDesktopSmall : styles.nameMobileSmall} ${styles.animatedTitle}`}>
+            <h1 className={`${styles.name} ${isDesktop ? styles.nameDesktopSmall : styles.nameMobileSmall} ${styles.animatedTitle}`} id="page-title">
               <span className={styles.titleCharacter}>M</span>
               <span className={styles.titleCharacter}>y</span>
               <span className={styles.titleCharacter}>&nbsp;</span>
@@ -224,7 +306,7 @@ export default function Projects() {
               <span className={styles.titleCharacter}>t</span>
               <span className={styles.titleCharacter}>s</span>
             </h1>
-            <div className={`${styles.titleUnderline} ${isDesktop ? styles.titleUnderlineDesktop : ''}`}></div>
+            <div className={`${styles.titleUnderline} ${isDesktop ? styles.titleUnderlineDesktop : ''}`} aria-hidden="true"></div>
           </div>
           
           <h2 className={`${styles.subtitle} ${isDesktop ? styles.titleDesktopSmall : styles.titleMobileSmall}`}>
@@ -234,21 +316,21 @@ export default function Projects() {
             </span>
           </h2>
           
-          {/* Floating accent elements */}
-          <div className={styles.accentDots}>
+          {/* Floating accent elements - decorative only */}
+          <div className={styles.accentDots} aria-hidden="true">
             <div className={`${styles.accentDot} ${styles.accentDot1}`}></div>
             <div className={`${styles.accentDot} ${styles.accentDot2}`}></div>
             <div className={`${styles.accentDot} ${styles.accentDot3}`}></div>
           </div>
-        </div>
+        </header>
 
-        <div className="w-full max-w-6xl mx-auto px-0">
+        <section className="w-full max-w-6xl mx-auto px-0" aria-label="Project gallery">
           <div className="w-full">
             <Suspense fallback={<ProjectsLoading />}>
               <ProjectsContent />
             </Suspense>
           </div>
-        </div>
+        </section>
       </main>
 
       <div

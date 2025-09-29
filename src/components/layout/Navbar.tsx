@@ -97,6 +97,14 @@ const Navbar = () => {
       role="navigation"
       aria-label="Main navigation"
     >
+      {/* Skip Navigation Link for Accessibility */}
+      <a 
+        href="#main-content" 
+        className="skip-nav"
+        onFocus={(e) => e.currentTarget.focus()}
+      >
+        Skip to main content
+      </a>
       {/* Animated background pattern */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className={`absolute inset-0 transition-opacity duration-500 ${
