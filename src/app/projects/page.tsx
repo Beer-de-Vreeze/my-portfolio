@@ -166,12 +166,6 @@ export default function Projects() {
     return () => clearInterval(interval);
   }, []);
 
-  // Handle reduced motion preference
-  const handleReducedMotionChange = useCallback(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setPrefersReducedMotion(mediaQuery.matches);
-  }, []);
-
   useEffect(() => {
     setIsMounted(true);
     
@@ -179,36 +173,21 @@ export default function Projects() {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     setPrefersReducedMotion(mediaQuery.matches);
     
+    // Event handler for media query changes
+    const handleReducedMotionChange = () => {
+      setPrefersReducedMotion(mediaQuery.matches);
+    };
+    
     mediaQuery.addEventListener('change', handleReducedMotionChange);
     
     return () => mediaQuery.removeEventListener('change', handleReducedMotionChange);
-  }, [handleReducedMotionChange]);
+  }, []); // Empty dependency array - only run once
 
-  // Optimize particle count for projects page with mobile/tablet considerations
+  // Use a simple static particle count for projects page to avoid re-render issues
   const particleCount = useMemo(() => {
-    if (prefersReducedMotion || !isMounted) return 0;
-    
-    if (typeof window !== 'undefined') {
-      const width = window.innerWidth;
-      
-      // Check for performance constraints
-      const hasPerformanceConstraints = isLowMemory() || prefersReducedMotion;
-      
-      // Mobile devices (phones) - very low particle count due to heavy project content
-      if (width < 768) {
-        return hasPerformanceConstraints ? 5 : 12;
-      }
-      
-      // Tablet devices - moderate particle count
-      if (width < 1024) {
-        return hasPerformanceConstraints ? 8 : 18;
-      }
-      
-      // Desktop devices - reduced particle count for better performance with heavy content
-      return hasPerformanceConstraints ? 15 : 35;
-    }
-    return 35;
-  }, [prefersReducedMotion, isMounted, isLowMemory]);
+    if (prefersReducedMotion || !isMounted || typeof window === 'undefined') return 0;
+    return 25; // Fixed count for now to prevent infinite re-renders
+  }, [prefersReducedMotion, isMounted]);
 
   // One-time overflow control based on screen size - only runs once after mount
   useEffect(() => {

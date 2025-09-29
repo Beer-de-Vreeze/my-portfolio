@@ -9,12 +9,23 @@ import { usePerformance } from "@/hooks/usePerformance";
 import { ResourcePreloader } from "@/lib/performanceUtils";
 import styles from "@/styles/page.module.css";
 
-// Lazy load heavy components with error boundaries
-const ProjectCard = lazy(() => 
-  import("../components/features/ProjectCardMenu").catch(err => {
-    console.warn('Failed to load ProjectCard:', err);
-    return { default: () => <div>Failed to load project card</div> };
-  })
+// Temporarily replace with a simple component to debug infinite loop
+// import ProjectCard from "../components/features/ProjectCardMenu";
+
+const ProjectCard = () => (
+  <div style={{ 
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    minHeight: '200px', 
+    border: '1px solid purple', 
+    borderRadius: '8px',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    color: 'white',
+    fontSize: '24px'
+  }}>
+    Projects (Temp)
+  </div>
 );
 
 export default function Home() {
@@ -39,11 +50,9 @@ export default function Home() {
 
   // Optimize card creation with memoization
   const cards = useMemo(() => [
-    <AboutCard key="about" />,
-    <Suspense key="project" fallback={<PerformanceLoading variant="card" size="lg" />}>
-      <ProjectCard />
-    </Suspense>,
-    <ContactCard key="contact" />,
+    // <AboutCard key="about" />,
+    // <ProjectCard key="project" />,
+    // <ContactCard key="contact" />,
   ], []);
 
   // Optimize event handlers with useCallback
@@ -63,7 +72,7 @@ export default function Home() {
     mediaQuery.addEventListener('change', handleReducedMotionChange);
     
     return () => mediaQuery.removeEventListener('change', handleReducedMotionChange);
-  }, [handleReducedMotionChange]);
+  }, []); // Remove handleReducedMotionChange from deps - it's stable
 
   // One-time overflow control based on screen size - only runs once after mount
   useEffect(() => {
@@ -116,10 +125,30 @@ export default function Home() {
     
     // Desktop devices - full particle count
     return hasPerformanceConstraints ? 20 : 50;
-  }, [prefersReducedMotion, shouldReduceMotion, isLowMemory]);
+  }, [prefersReducedMotion]); // Remove function dependencies as they are stable from usePerformance
 
-  // Use the optimized particle count
-  const currentParticleCount = getParticleCount();
+  // Keep particle count stable to prevent infinite re-renders
+  const currentParticleCount = useMemo(() => {
+    // Calculate directly in useMemo to avoid function dependency issues
+    if (prefersReducedMotion || shouldReduceMotion()) return 0;
+    if (typeof window === 'undefined') return 50;
+    
+    const hasPerformanceConstraints = isLowMemory() || prefersReducedMotion || shouldReduceMotion();
+    const width = window.innerWidth;
+    
+    // Mobile devices (phones) - very low particle count
+    if (width < 768) {
+      return hasPerformanceConstraints ? 5 : 15;
+    }
+    
+    // Tablet devices - moderate particle count
+    if (width < 1024) {
+      return hasPerformanceConstraints ? 12 : 25;
+    }
+    
+    // Desktop devices - full particle count
+    return hasPerformanceConstraints ? 20 : 50;
+  }, [prefersReducedMotion]); // Only depend on state, not functions
 
   // Only render UI if mounted (avoids hydration mismatch)
   if (!isMounted) {

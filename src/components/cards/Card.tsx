@@ -33,7 +33,7 @@ const BaseCard = memo(function BaseCard({
       router.prefetch(href);
       prefetchedRef.current = true;
     }
-  }, [priority, disabled, href, router]);
+  }, [priority, disabled, href]); // router is stable, no need in deps
 
   const handleMouseEnter = useCallback(() => {
     if (disabled) return;
@@ -47,7 +47,7 @@ const BaseCard = memo(function BaseCard({
         prefetchedRef.current = true;
       }, 100);
     }
-  }, [disabled, href, router]);
+  }, [disabled, href]); // router is stable, no need in deps
 
   const handleMouseLeave = useCallback(() => {
     setIsHovered(false);
@@ -95,7 +95,7 @@ const BaseCard = memo(function BaseCard({
       // Trigger navigation
       router.push(href);
     }
-  }, [disabled, router, href]);
+  }, [disabled, href]); // router is stable, no need in deps
 
   // Memoize variant-specific styles
   const cardDimensions = useMemo(() => CARD_VARIANTS[variant], [variant]);
