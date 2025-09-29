@@ -4,7 +4,6 @@ import AboutCard from "../components/cards/AboutCard";
 import ContactCard from "@/components/forms/ContactCardMenu";
 import { PerformanceLoading } from "@/components/performance/PerformanceLoading";
 import { useResponsiveSize } from "@/components/utils/useScrolling";
-import { usePerformanceMonitor } from "@/components/performance/WebVitals";
 import { usePerformance } from "@/hooks/usePerformance";
 import { ResourcePreloader } from "@/lib/performanceUtils";
 import styles from "@/styles/page.module.css";
@@ -115,7 +114,7 @@ export default function Home() {
     
     // Desktop devices - full particle count
     return hasPerformanceConstraints ? 20 : 50;
-  }, [prefersReducedMotion, shouldReduceMotion, isLowMemory, isMounted]);
+  }, [prefersReducedMotion, shouldReduceMotion, isLowMemory]);
 
   // Only render UI if mounted (avoids hydration mismatch)
   if (!isMounted) {

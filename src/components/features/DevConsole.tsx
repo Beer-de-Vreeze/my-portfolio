@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { track } from '@vercel/analytics';
 import styles from '../../styles/DevConsole.module.css';
@@ -246,8 +246,8 @@ const DevConsoleDesktop: React.FC = () => {
     }
   }, [addToHistory]);
 
-  // Developer commands
-  const commands: Command[] = [
+  // Developer commands (memoized to prevent useEffect dependency changes)
+  const commands: Command[] = useMemo(() => [
     {
       name: 'help',
       description: 'Show all available commands',
@@ -379,7 +379,7 @@ const DevConsoleDesktop: React.FC = () => {
     {
       name: 'datetime',
       description: 'Date and time operations (time, date, age, timestamp, uptime)',
-      execute: (args) => {
+      execute: (args: string[]) => {
         const action = args[0] || 'all';
         const now = new Date();
         
@@ -8079,7 +8079,7 @@ Try a different command or check your internet connection.`;
         }
       }
     }
-  ];
+  ], [addToHistory, setHistory, router]);
 
   // Autocomplete logic
   useEffect(() => {
