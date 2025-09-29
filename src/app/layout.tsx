@@ -4,8 +4,14 @@ import "../styles/performance.css";
 import "../styles/critical.css";
 import LoadingBar from "@/components/performance/loadingbar";
 import DevConsole from "@/components/features/DevConsole";
+import NotificationContainer from "@/components/ui/NotificationContainer";
 import { LoadingProvider } from "@/context/LoadingContext";
 import { ModalProvider } from "@/context/ModalContext";
+import { ThemeProvider } from "@/context/ThemeContext";
+import { NotificationProvider } from "@/context/NotificationContext";
+import { PreferenceProvider } from "@/context/PreferenceContext";
+import { ErrorProvider } from "@/context/ErrorContext";
+import { UIProvider } from "@/context/UIContext";
 import { ServiceWorkerInitializer } from "@/components/features/ServiceWorkerInitializer";
 import { PerformanceWrapper } from "@/components/performance/PerformanceWrapper";
 import { PerformanceDashboard } from "@/components/performance/PerformanceDashboard";
@@ -19,10 +25,57 @@ export const metadata: Metadata = {
     default: "Beer de Vreeze - Portfolio"
   },
   description: "Game Developer Portfolio - Systems & Tools Game Developer specializing in Unity, C#, and AI",
-  keywords: ["game developer", "unity", "c#", "portfolio", "beer de vreeze", "indie games"],
-  authors: [{ name: "Beer de Vreeze" }],
-  creator: "Beer de Vreeze",
-  publisher: "Beer de Vreeze",
+  keywords: [
+    'game developer', 'Unity developer', 'C# programming', 'AI machine learning', 
+    'game development', 'interactive experiences', 'systems programming', 'tools development',
+    'Beer de Vreeze', 'portfolio', 'indie games', 'game design'
+  ],
+  authors: [{ name: 'Beer de Vreeze' }],
+  creator: 'Beer de Vreeze',
+  publisher: 'Beer de Vreeze',
+  formatDetection: {
+    telephone: false,
+    date: false,
+    address: false,
+    email: false,
+  },
+  metadataBase: new URL('https://beerdevreeze.vercel.app'),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://beerdevreeze.vercel.app',
+    siteName: 'Beer de Vreeze - Game Developer Portfolio',
+    title: 'Beer de Vreeze - Game Developer Portfolio',
+    description: 'Systems & Tools Game Developer specializing in Unity, C#, and AI. Explore my interactive projects and game development journey.',
+    images: [
+      {
+        url: '/images/Beer.webp',
+        width: 1200,
+        height: 630,
+        alt: 'Beer de Vreeze - Game Developer',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Beer de Vreeze - Game Developer Portfolio',
+    description: 'Systems & Tools Game Developer specializing in Unity, C#, and AI',
+    images: ['/images/Beer.webp'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   icons: {
     icon: [
       { url: '/favicon/favicon.ico', sizes: 'any' },
@@ -38,18 +91,21 @@ export const metadata: Metadata = {
     ]
   },
   manifest: '/favicon/site.webmanifest',
-  other: {
-    'apple-mobile-web-app-capable': 'yes',
-    'apple-mobile-web-app-status-bar-style': 'black-translucent',
-    'format-detection': 'telephone=no',
+  verification: {
+    google: 'your-google-verification-code', // Replace with actual verification code
   },
+  category: 'portfolio',
 };
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
-  themeColor: '#000000',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#000000' }
+  ],
+  colorScheme: 'dark light',
 }
 
 export default function RootLayout({
@@ -76,21 +132,32 @@ export default function RootLayout({
         */}
       </head>
       <body className="bg-black text-white custom-scrollbar min-h-screen">
-        <PerformanceWrapper>
-          <LoadingProvider>
-            <ModalProvider>
-              <ServiceWorkerInitializer />
-              <LoadingBar />
-              <DevConsole />
-              <PerformanceDashboard />
-              <main>
-                {children}
-              </main>
-              <Analytics />
-              <SpeedInsights />
-            </ModalProvider>
-          </LoadingProvider>
-        </PerformanceWrapper>
+        <ErrorProvider>
+          <PreferenceProvider>
+            <ThemeProvider>
+              <NotificationProvider>
+                <UIProvider>
+                  <PerformanceWrapper>
+                    <LoadingProvider>
+                      <ModalProvider>
+                        <ServiceWorkerInitializer />
+                        <LoadingBar />
+                        <NotificationContainer />
+                        <DevConsole />
+                        <PerformanceDashboard />
+                        <main>
+                          {children}
+                        </main>
+                        <Analytics />
+                        <SpeedInsights />
+                      </ModalProvider>
+                    </LoadingProvider>
+                  </PerformanceWrapper>
+                </UIProvider>
+              </NotificationProvider>
+            </ThemeProvider>
+          </PreferenceProvider>
+        </ErrorProvider>
       </body>
     </html>
   );

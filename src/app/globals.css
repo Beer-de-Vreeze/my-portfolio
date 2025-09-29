@@ -5,6 +5,76 @@
 :root {
   --foreground-rgb: 255, 255, 255;
   --background-rgb: 0, 0, 0;
+  /* Theme color variables for dynamic theming */
+  --color-primary: 59, 130, 246; /* blue-500 */
+  --color-primary-dark: 29, 78, 216; /* blue-700 */
+  --color-secondary: 139, 92, 246; /* violet-500 */
+  --color-accent: 236, 72, 153; /* pink-500 */
+}
+
+/* Accessibility improvements */
+.high-contrast {
+  --foreground-rgb: 255, 255, 255;
+  --background-rgb: 0, 0, 0;
+  filter: contrast(1.5);
+}
+
+.large-text {
+  font-size: 1.125rem; /* 18px base instead of 16px */
+}
+
+.focus-visible:focus {
+  outline: 2px solid rgb(var(--color-primary));
+  outline-offset: 2px;
+}
+
+.compact-mode {
+  --spacing-unit: 0.75rem;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Notification animations */
+@keyframes notification-progress {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+.notification-progress {
+  animation: notification-progress var(--duration, 5000ms) linear forwards;
+}
+
+/* Skip navigation link for accessibility */
+.skip-nav {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: rgb(var(--color-primary));
+  color: white;
+  padding: 8px;
+  margin: 0;
+  text-decoration: none;
+  border-radius: 0 0 6px 6px;
+  opacity: 0;
+  transform: translateY(-100%);
+  transition: all 0.3s;
+}
+
+.skip-nav:focus {
+  top: 0;
+  opacity: 1;
+  transform: translateY(0);
+  z-index: 10000;
 }
 
 /* Standardized scrolling behavior for all devices */
