@@ -3,17 +3,17 @@ import "../styles/mobile.css";
 import "../styles/performance.css";
 import "../styles/critical.css";
 import LoadingBar from "@/components/performance/loadingbar";
-import DevConsole from "@/components/features/DevConsole";
+import { ClientOnlyFeatures } from "@/components/features/ClientOnlyFeatures";
 import { LoadingProvider } from "@/context/LoadingContext";
 import { ModalProvider } from "@/context/ModalContext";
 import { ServiceWorkerInitializer } from "@/components/features/ServiceWorkerInitializer";
 import { PerformanceWrapper } from "@/components/performance/PerformanceWrapper";
-import { PerformanceDashboard } from "@/components/performance/PerformanceDashboard";
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Metadata, Viewport } from 'next';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://beerdvreeze.nl'),
   title: {
     template: "Beer de Vreeze - %s",
     default: "Beer de Vreeze - Portfolio"
@@ -38,6 +38,27 @@ export const metadata: Metadata = {
     ]
   },
   manifest: '/favicon/site.webmanifest',
+  openGraph: {
+    type: 'website',
+    url: 'https://beerdvreeze.nl',
+    title: 'Beer de Vreeze - Portfolio',
+    description: 'Game Developer Portfolio - Systems & Tools Game Developer specializing in Unity, C#, and AI',
+    siteName: 'Beer de Vreeze Portfolio',
+    images: [
+      {
+        url: '/images/Beer.webp',
+        width: 1200,
+        height: 630,
+        alt: 'Beer de Vreeze - Game Developer Portfolio',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Beer de Vreeze - Portfolio',
+    description: 'Game Developer Portfolio - Systems & Tools Game Developer specializing in Unity, C#, and AI',
+    images: ['/images/Beer.webp'],
+  },
   other: {
     'apple-mobile-web-app-capable': 'yes',
     'apple-mobile-web-app-status-bar-style': 'black-translucent',
@@ -75,14 +96,13 @@ export default function RootLayout({
           What could it unlock? 🤔
         */}
       </head>
-      <body className="bg-black text-white custom-scrollbar min-h-screen">
+      <body className="bg-black text-white custom-scrollbar min-h-screen" suppressHydrationWarning>
         <PerformanceWrapper>
           <LoadingProvider>
             <ModalProvider>
               <ServiceWorkerInitializer />
               <LoadingBar />
-              <DevConsole />
-              <PerformanceDashboard />
+              <ClientOnlyFeatures />
               <main>
                 {children}
               </main>

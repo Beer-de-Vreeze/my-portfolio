@@ -1,43 +1,19 @@
 'use client'
-import { useState, useEffect, Suspense, useMemo } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { usePerformance } from '@/hooks/usePerformance';
 import styles from "@/styles/page.module.css";
 import '@/styles/performance.css';
 
+const StarfieldBackground = dynamic(() => import('@/components/features/StarfieldBackground'), { ssr: false });
+
 function NotFoundContent() {
-  const [isMounted, setIsMounted] = useState(false);
-  const { shouldReduceMotion, isLowMemory } = usePerformance();
+  const [time, setTime] = useState('--:--:--');
   const searchParams = useSearchParams();
 
-  // Memoized particle count based on device capabilities and screen size
-  const particleCount = useMemo(() => {
-    if (typeof window === 'undefined') return 50;
-    
-    // Get screen width for device detection
-    const width = window.innerWidth;
-    
-    // Check for performance constraints
-    const hasPerformanceConstraints = isLowMemory() || shouldReduceMotion();
-    
-    // Mobile devices (phones) - very low particle count
-    if (width < 768) {
-      return hasPerformanceConstraints ? 8 : 15;
-    }
-    
-    // Tablet devices - moderate particle count
-    if (width < 1024) {
-      return hasPerformanceConstraints ? 12 : 25;
-    }
-    
-    // Desktop devices - full particle count
-    return hasPerformanceConstraints ? 20 : 50;
-  }, [isLowMemory, shouldReduceMotion]);
-
-  // Handle hydration
   useEffect(() => {
-    setIsMounted(true);
+    setTime(new Date().toLocaleTimeString());
   }, []);
 
   // Get error type from URL params or default to 404
@@ -96,40 +72,9 @@ function NotFoundContent() {
 
   const currentError = errorConfigs[errorType] || errorConfigs['404'];
 
-  // Only render UI if mounted (avoids hydration mismatch)
-  if (!isMounted) {
-    return null;
-  }
-
   return (
     <main className={`${styles.container} ${styles.enhancedBackground} px-4 sm:px-6 md:px-8 lg:px-8 xl:px-16`}>
-      {/* Animated background grid */}
-      <div className={styles.backgroundGrid}></div>
-      
-      {/* Cosmic dust layer */}
-      <div className={styles.cosmicDust}></div>
-      
-      {/* Enhanced Space Starfield - Adaptive particle count */}
-      <div className={styles.particleContainer}>
-        {Array.from({ length: particleCount }, (_, i) => {
-          const weightedTypes = [
-            'starTiny', 'starTiny', 'starTiny', 'starTiny', 'starTiny',
-            'starWhite', 'starWhite', 'starWhite',
-            'starSmall', 'starSmall', 'starSmall',
-            'starCyan', 'starCyan',
-            'starMedium', 'starMedium',
-            'starLarge',
-            'starXLarge'
-          ];
-          const starType = weightedTypes[i % weightedTypes.length];
-          return (
-            <div 
-              key={i} 
-              className={`${styles.particle} ${styles[starType]} ${styles[`particle${i + 1}`]}`}
-            ></div>
-          );
-        })}
-      </div>
+      <StarfieldBackground />
 
       {/* 404 Content */}
       <div className="flex flex-col items-center justify-center text-center max-w-2xl mx-auto space-y-8 relative z-40">
@@ -186,7 +131,7 @@ function NotFoundContent() {
           {/* Easter Egg Message */}
           <div className="text-xs text-gray-600 mt-4">
             <span className="opacity-50">
-              Error Code: {currentError.errorCode} | Time: {new Date().toLocaleTimeString()}
+              Error Code: {currentError.errorCode} | Time: {time}
             </span>
           </div>
         </div>
@@ -200,34 +145,7 @@ function NotFoundContent() {
 function NotFoundFallback() {
   return (
     <main className={`${styles.container} ${styles.enhancedBackground} px-4 sm:px-6 md:px-8 lg:px-8 xl:px-16`}>
-      {/* Animated background grid */}
-      <div className={styles.backgroundGrid}></div>
-      
-      {/* Cosmic dust layer */}
-      <div className={styles.cosmicDust}></div>
-      
-      {/* Enhanced Space Starfield */}
-      <div className={styles.particleContainer}>
-        {Array.from({ length: 50 }, (_, i) => {
-          const weightedTypes = [
-            'starTiny', 'starTiny', 'starTiny', 'starTiny', 'starTiny',
-            'starWhite', 'starWhite', 'starWhite',
-            'starSmall', 'starSmall', 'starSmall',
-            'starCyan', 'starCyan',
-            'starMedium', 'starMedium',
-            'starLarge',
-            'starXLarge'
-          ];
-          const starType = weightedTypes[i % weightedTypes.length];
-          return (
-            <div 
-              key={i} 
-              className={`${styles.particle} ${styles[starType]} ${styles[`particle${i + 1}`]}`}
-            ></div>
-          );
-        })}
-      </div>
-
+      <StarfieldBackground />
       {/* Loading Content */}
       <div className="flex flex-col items-center justify-center text-center max-w-2xl mx-auto space-y-8 relative z-40">
         <div className="relative">

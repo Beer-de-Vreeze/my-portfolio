@@ -1,19 +1,21 @@
 'use client';
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import ContactForm from '@/components/forms/ContactForm';
 import Notification from '@/components/features/Notification';
 import { motion } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaFileAlt } from 'react-icons/fa';
 import styles from '@/styles/page.module.css';
-import { useResponsiveSize } from '@/components/utils/useScrolling';
-import { usePerformance } from '@/hooks/usePerformance';
+import { useResponsiveSize } from '@/hooks/useScrolling';
+import { usePageSetup } from '@/hooks/usePageSetup';
 import '@/styles/performance.css';
+
+const StarfieldBackground = dynamic(() => import('@/components/features/StarfieldBackground'), { ssr: false });
 
 export default function Contact() {
   const { isDesktop } = useResponsiveSize();
-  const { shouldReduceMotion, isLowMemory } = usePerformance();
-  const [isMounted, setIsMounted] = useState(false);
-  
+  usePageSetup({ scrollMode: 'subpage' });
+
   // Notification state moved to page level
   const [notification, setNotification] = useState({
     message: '',
@@ -21,31 +23,7 @@ export default function Contact() {
     isVisible: false,
   });
 
-  // Memoized particle count based on device capabilities and screen size
-  const particleCount = useMemo(() => {
-    if (typeof window === 'undefined') return 50;
-    
-    // Get screen width for device detection
-    const width = window.innerWidth;
-    
-    // Check for performance constraints
-    const hasPerformanceConstraints = isLowMemory() || shouldReduceMotion();
-    
-    // Mobile devices (phones) - very low particle count
-    if (width < 768) {
-      return hasPerformanceConstraints ? 8 : 15;
-    }
-    
-    // Tablet devices - moderate particle count
-    if (width < 1024) {
-      return hasPerformanceConstraints ? 12 : 25;
-    }
-    
-    // Desktop devices - full particle count
-    return hasPerformanceConstraints ? 20 : (isDesktop ? 50 : 35);
-  }, [isDesktop, isLowMemory, shouldReduceMotion]);
-
-  // Handler to show notifications from the contact form
+// Handler to show notifications from the contact form
   const showNotification = useCallback((message: string, type: 'success' | 'error') => {
     setNotification({
       message,
@@ -59,48 +37,13 @@ export default function Contact() {
     setNotification(prev => ({ ...prev, isVisible: false }));
   }, []);
 
-  // Preload critical resources
+  // Prefetch CV for better UX
   useEffect(() => {
-    if (isMounted) {
-      // Preload CV file for better UX
-      const link = document.createElement('link');
-      link.rel = 'prefetch';
-      link.href = '/downloads/Beer%20de%20Vreeze%20CV.pdf';
-      document.head.appendChild(link);
-    }
-  }, [isMounted]);
-
-  useEffect(() => {
-    setIsMounted(true);
+    const link = document.createElement('link');
+    link.rel = 'prefetch';
+    link.href = '/downloads/Beer%20de%20Vreeze%20CV.pdf';
+    document.head.appendChild(link);
   }, []);
-
-  // One-time overflow control based on screen size - only runs once after mount
-  useEffect(() => {
-    if (isMounted) {
-      const width = window.innerWidth;
-      
-      // Only disable scrolling on very large desktops (1440px+) where content fits
-      if (width >= 1440) {
-        document.documentElement.classList.add('no-scroll');
-        document.body.classList.add('no-scroll');
-      } else {
-        // For all other devices, ensure scrolling is enabled
-        document.documentElement.classList.remove('no-scroll');
-        document.body.classList.remove('no-scroll');
-      }
-      
-      // Cleanup function to restore scrolling when component unmounts
-      return () => {
-        document.documentElement.classList.remove('no-scroll');
-        document.body.classList.remove('no-scroll');
-      };
-    }
-  }, [isMounted]); // Only depends on isMounted, not window size changes
-
-  // Only render UI if mounted (avoids hydration mismatch)
-  if (!isMounted) {
-    return null;
-  }
 
   return (
     <div className={`flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground}`}>
@@ -112,51 +55,14 @@ export default function Contact() {
         onClose={handleCloseNotification}
       />
       
-      {/* Animated background grid */}
-      <div className={styles.backgroundGrid}></div>
-      
-      {/* Cosmic dust layer */}
-      <div className={styles.cosmicDust}></div>
-      
-      {/* Enhanced Space Starfield - Adaptive particle count */}
-      <div className={styles.particleContainer}>
-        {Array.from({ length: particleCount }, (_, i) => {
-          // Create a more natural distribution with more tiny/small stars
-          const weightedTypes = [
-            'starTiny', 'starTiny', 'starTiny', 'starTiny', 'starTiny',
-            'starWhite', 'starWhite', 'starWhite',
-            'starSmall', 'starSmall', 'starSmall',
-            'starCyan', 'starCyan',
-            'starMedium', 'starMedium',
-            'starLarge',
-            'starXLarge'
-          ];
-          const starType = weightedTypes[i % weightedTypes.length];
-          return (
-            <div 
-              key={i} 
-              className={`${styles.particle} ${styles[starType]} ${styles[`particle${i + 1}`]}`}
-            ></div>
-          );
-        })}
-      </div>
+      <StarfieldBackground />
 
       <main className="flex-1 flex flex-col items-center px-4 sm:px-6 md:px-8 lg:px-8 xl:px-16 relative z-10 pt-20 pb-32">
         {/* Enhanced header section with animated title - consistent with other pages */}
         <div className={`${styles.headerContainer} ${isDesktop ? styles.headerContainerDesktop : styles.headerContainerMobile} mb-8 sm:mb-10 md:mb-12 max-w-4xl mx-auto`}>
           <div className={styles.titleWrapper}>
             <h1 className={`${styles.name} ${isDesktop ? styles.nameDesktopSmall : styles.nameMobileSmall} ${styles.animatedTitle}`}>
-              <span className={styles.titleCharacter}>L</span>
-              <span className={styles.titleCharacter}>e</span>
-              <span className={styles.titleCharacter}>t</span>
-              <span className={styles.titleCharacter}>&apos;</span>
-              <span className={styles.titleCharacter}>s</span>
-              <span className={styles.titleCharacter}>&nbsp;</span>
-              <span className={styles.titleCharacter}>c</span>
-              <span className={styles.titleCharacter}>h</span>
-              <span className={styles.titleCharacter}>a</span>
-              <span className={styles.titleCharacter}>t</span>
-              <span className={styles.titleCharacter}>.</span>
+              Let&apos;s chat.
             </h1>
             <div className={`${styles.titleUnderline} ${isDesktop ? styles.titleUnderlineDesktop : ''}`}></div>
           </div>

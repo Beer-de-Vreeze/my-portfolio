@@ -1,22 +1,22 @@
 "use client";
-import React, { useState, useEffect, Suspense, useMemo, useCallback } from "react";
-import { useModal } from "@/context/ModalContext";
-import { usePerformanceMonitor } from "@/components/performance/WebVitals";
-import { usePerformance } from "@/hooks/usePerformance";
-import { ResourcePreloader, MemoryManager } from "@/lib/performanceUtils";
+import React, { Suspense } from "react";
+import dynamic from "next/dynamic";
+import { usePageSetup } from "@/hooks/usePageSetup";
 // Add highlight.js import and style
 import "highlight.js/styles/monokai.css";
 // Import custom highlighting styles
 import "@/styles/code-highlight.css";
 import styles from "@/styles/page.module.css";
-import { useResponsiveSize } from "@/components/utils/useScrolling";
+import { useResponsiveSize } from "@/hooks/useScrolling";
+
+const StarfieldBackground = dynamic(() => import('@/components/features/StarfieldBackground'), { ssr: false });
 
 // Dynamic imports for better code splitting and performance
-const AudioPreviewer = React.lazy(() => import("@/components/projects/AudioPreviever"));
-const BearlyStealthy = React.lazy(() => import("@/components/projects/Bearly Stealthy"));
+const AudioPreviewer = React.lazy(() => import("@/components/projects/audio-previewer"));
+const BearlyStealthy = React.lazy(() => import("@/components/projects/bearly-stealthy"));
 const MLAgent = React.lazy(() => import("@/components/projects/MLAgent"));
-const SketchinSpells = React.lazy(() => import("@/components/projects/Sketchin Spells"));
-const Tetrtis = React.lazy(() => import("@/components/projects/Tetrtis"));
+const SketchinSpells = React.lazy(() => import("@/components/projects/sketchin-spells"));
+const Tetris = React.lazy(() => import("@/components/projects/tetris"));
 const Website = React.lazy(() => import("@/components/projects/Website"));
 const LPCafe = React.lazy(() => import("@/components/projects/LPCafe"));
 const ProjectsLoading = () => (
@@ -52,7 +52,7 @@ const ProjectsContent = () => {
         <SketchinSpells />
       </Suspense>
       <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse"></div>}>
-        <Tetrtis />
+        <Tetris />
       </Suspense>
     </div>
   );
@@ -60,169 +60,19 @@ const ProjectsContent = () => {
 
 export default function Projects() {
   const { isMobile, isDesktop } = useResponsiveSize();
-  const { isLowMemory } = usePerformance();
-  const [isMounted, setIsMounted] = useState(false);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-  const { isModalOpen } = useModal();
-  
-  // Enable performance monitoring
-  usePerformanceMonitor();
-
-  // Preload critical resources for projects page
-  useEffect(() => {
-    const preloader = ResourcePreloader.getInstance();
-    
-    // Preload critical project images
-    preloader.preloadImages([
-      '/images/AudioPreviewer 1.webp',
-      '/images/GLU.webp',
-      '/images/CoverImageSound.webp'
-    ]);
-
-    // Monitor memory usage for projects page (image-heavy)
-    const interval = setInterval(() => {
-      MemoryManager.checkMemoryUsage();
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  // Handle reduced motion preference
-  const handleReducedMotionChange = useCallback(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setPrefersReducedMotion(mediaQuery.matches);
-  }, []);
-
-  useEffect(() => {
-    setIsMounted(true);
-    
-    // Check for reduced motion preference
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setPrefersReducedMotion(mediaQuery.matches);
-    
-    mediaQuery.addEventListener('change', handleReducedMotionChange);
-    
-    return () => mediaQuery.removeEventListener('change', handleReducedMotionChange);
-  }, [handleReducedMotionChange]);
-
-  // Optimize particle count for projects page with mobile/tablet considerations
-  const particleCount = useMemo(() => {
-    if (prefersReducedMotion || !isMounted) return 0;
-    
-    if (typeof window !== 'undefined') {
-      const width = window.innerWidth;
-      
-      // Check for performance constraints
-      const hasPerformanceConstraints = isLowMemory() || prefersReducedMotion;
-      
-      // Mobile devices (phones) - very low particle count due to heavy project content
-      if (width < 768) {
-        return hasPerformanceConstraints ? 5 : 12;
-      }
-      
-      // Tablet devices - moderate particle count
-      if (width < 1024) {
-        return hasPerformanceConstraints ? 8 : 18;
-      }
-      
-      // Desktop devices - reduced particle count for better performance with heavy content
-      return hasPerformanceConstraints ? 15 : 35;
-    }
-    return 35;
-  }, [prefersReducedMotion, isMounted, isLowMemory]);
-
-  // One-time overflow control based on screen size - only runs once after mount
-  useEffect(() => {
-    if (isMounted) {
-      const width = window.innerWidth;
-
-      // Only disable scrolling on very large desktops (1440px+) where content fits
-      if (width >= 1440) {
-        document.documentElement.classList.add("no-scroll");
-        document.body.classList.add("no-scroll");
-      } else {
-        // For all other devices, ensure scrolling is enabled
-        document.documentElement.classList.remove("no-scroll");
-        document.body.classList.remove("no-scroll");
-      }
-
-      // Cleanup function to restore scrolling when component unmounts
-      return () => {
-        document.documentElement.classList.remove("no-scroll");
-        document.body.classList.remove("no-scroll");
-      };
-    }
-  }, [isMounted]); // Only depends on isMounted, not window size changes
-
-  // Only render UI if mounted (avoids hydration mismatch)
-  if (!isMounted) {
-    return null;
-  }
+  usePageSetup({ scrollMode: 'subpage' });
 
   return (
     <div className={`flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground}`}>
-      {/* Animated background grid */}
-      <div className={styles.backgroundGrid}></div>
+      <StarfieldBackground density={0.7} />
 
-      {/* Cosmic dust layer */}
-      <div className={styles.cosmicDust}></div>
-
-      {/* Enhanced Space Starfield - Adaptive particle count */}
-      <div className={styles.particleContainer}>
-        {Array.from({ length: particleCount }, (_, i) => {
-          // Create a more natural distribution with more tiny/small stars
-          const weightedTypes = [
-            "starTiny",
-            "starTiny",
-            "starTiny",
-            "starTiny",
-            "starTiny",
-            "starWhite",
-            "starWhite",
-            "starWhite",
-            "starSmall",
-            "starSmall",
-            "starSmall",
-            "starCyan",
-            "starCyan",
-            "starMedium",
-            "starMedium",
-            "starLarge",
-            "starXLarge",
-          ];
-          const starType = weightedTypes[i % weightedTypes.length];
-          return (
-            <div
-              key={i}
-              className={`${styles.particle} ${styles[starType]} ${styles[`particle${i + 1}`]}`}
-            ></div>
-          );
-        })}
-      </div>
-
-      <div
-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-out ${
-          isModalOpen ? "opacity-0 -translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
-        }`}
-      >
-      </div>
 
       <main className="flex-1 pt-16 pb-20 sm:pb-16 md:pb-20 px-2 sm:px-4 md:px-6 text-white relative z-10 w-full flex flex-col">
         {/* Enhanced header section with animated title */}
         <div className={`${styles.headerContainer} ${styles.headerContainerSmall}`}>
           <div className={styles.titleWrapper}>
             <h1 className={`${styles.name} ${isDesktop ? styles.nameDesktopSmall : styles.nameMobileSmall} ${styles.animatedTitle}`}>
-              <span className={styles.titleCharacter}>M</span>
-              <span className={styles.titleCharacter}>y</span>
-              <span className={styles.titleCharacter}>&nbsp;</span>
-              <span className={styles.titleCharacter}>P</span>
-              <span className={styles.titleCharacter}>r</span>
-              <span className={styles.titleCharacter}>o</span>
-              <span className={styles.titleCharacter}>j</span>
-              <span className={styles.titleCharacter}>e</span>
-              <span className={styles.titleCharacter}>c</span>
-              <span className={styles.titleCharacter}>t</span>
-              <span className={styles.titleCharacter}>s</span>
+              My Projects
             </h1>
             <div className={`${styles.titleUnderline} ${isDesktop ? styles.titleUnderlineDesktop : ''}`}></div>
           </div>
@@ -250,13 +100,6 @@ export default function Projects() {
           </div>
         </div>
       </main>
-
-      <div
-        className={`fixed bottom-0 left-0 w-full z-40 transition-all duration-500 ease-out ${
-          isModalOpen ? "opacity-0 translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
-        }`}
-      >
-      </div>
     </div>
   );
 }

@@ -40,10 +40,10 @@ export function usePerformance() {
   }, []);
 
   // Memory pressure detection
-  const isLowMemory = useCallback(() => {
+  const isLowMemory = useCallback((): boolean => {
     if (typeof navigator === 'undefined') return false;
     const extendedNavigator = navigator as ExtendedNavigator;
-    return extendedNavigator.deviceMemory && extendedNavigator.deviceMemory < 4;
+    return (extendedNavigator.deviceMemory ?? 4) < 4;
   }, []);
 
   return {

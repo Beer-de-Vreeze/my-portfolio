@@ -1,6 +1,10 @@
 /** @type {import('next').NextConfig} */
 import bundleAnalyzer from "@next/bundle-analyzer";
 import withPWAInit from "@ducanh2912/next-pwa";
+import { fileURLToPath } from "url";
+import path from "path";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
@@ -80,6 +84,8 @@ const nextConfig = {
   poweredByHeader: false, // Remove X-Powered-By header
   reactStrictMode: true, // Enable React strict mode for improved development experience
 
+  // Pin workspace root so Next.js doesn't get confused by parent lockfiles
+  outputFileTracingRoot: __dirname,
   // Performance optimizations
   experimental: {
     optimizeCss: true, // Enable CSS optimization
@@ -96,7 +102,10 @@ const nextConfig = {
 
   // Compiler optimizations
   compiler: {
-    removeConsole: process.env.NODE_ENV === "production", // Remove console logs in production
+    // Only strip non-critical console calls in production; keep error/warn for observability
+    removeConsole: process.env.NODE_ENV === "production"
+      ? { exclude: ["error", "warn"] }
+      : false,
   },
 
   // Headers for performance
@@ -142,39 +151,20 @@ const nextConfig = {
 
   // Image optimization
   images: {
-    domains: ["img.itch.zone"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "img.itch.zone",
+        pathname: "/**",
+      },
+    ],
     formats: ["image/webp", "image/avif"], // Use modern image formats
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048], // Optimize for common screen sizes
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384], // Icon and thumbnail sizes
   },
 
-  // Enable bundle analyzer in development
-  webpack: (config, { isServer }) => {
-    // Optimize bundle splitting
-    if (!isServer) {
-      config.optimization.splitChunks = {
-        chunks: "all",
-        cacheGroups: {
-          default: false,
-          vendors: false,
-          vendor: {
-            name: "vendor",
-            chunks: "all",
-            test: /node_modules/,
-            priority: 20,
-          },
-          common: {
-            name: "common",
-            minChunks: 2,
-            chunks: "all",
-            priority: 10,
-            reuseExistingChunk: true,
-            enforce: true,
-          },
-        },
-      };
-    }
-
+  // Webpack config reserved for future custom loaders if needed
+  webpack: (config) => {
     return config;
   },
 };

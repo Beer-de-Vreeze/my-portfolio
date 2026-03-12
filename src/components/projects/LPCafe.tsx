@@ -1,6 +1,6 @@
 import React from "react";
 import SuspenseProjectCard from "../cards/SuspenseProjectCard";
-import useMobileDetection from "../utils/useMobileDetection";
+import useMobileDetection from "@/hooks/useMobileDetection";
 
 const LPCafe = () => {
   const isMobile = useMobileDetection();

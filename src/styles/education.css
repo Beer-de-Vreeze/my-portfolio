@@ -1,0 +1,19 @@
+.education-container {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.education-card {
+  margin-bottom: 30px;
+  position: relative;
+  clear: both;
+  width: 100%;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .education-card {
+    margin-bottom: 20px;
+  }
+}

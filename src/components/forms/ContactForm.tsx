@@ -1,5 +1,6 @@
 import { FormEvent, useState, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
+import { isValidPhoneNumber } from 'libphonenumber-js';
 
 interface ContactFormProps {
   onEmailSent?: () => void;
@@ -22,62 +23,6 @@ interface FormErrors {
   message: string;
 }
 
-// Phone validation patterns - moved outside component for better performance
-const PHONE_PATTERNS = [
-  // International format: +1234567890 (7-15 digits after country code)
-  /^\+[1-9]\d{6,14}$/,
-  
-  // DUTCH NUMBERS
-  /^\+316\d{8}$/, // Dutch mobile: +31612345678
-  /^\+31[1-9]\d{7,8}$/, // Dutch landline: +31201234567
-  /^06\d{8}$/, // Dutch mobile without country code: 06xxxxxxxx
-  /^0[1-9]\d{7,8}$/, // Dutch landline without country code
-  
-  // GERMAN NUMBERS
-  /^\+49(15\d|16\d|17\d)\d{7,8}$/, // German mobile
-  /^\+49[1-9]\d{1,4}\d{4,8}$/, // German landline
-  /^0(15\d|16\d|17\d)\d{7,8}$/, // German mobile without country code
-  /^0[1-9]\d{1,4}\d{4,8}$/, // German landline without country code
-  
-  // FRENCH NUMBERS  
-  /^\+33[67]\d{8}$/, // French mobile
-  /^\+33[1-58-9]\d{8}$/, // French landline
-  /^0[1-9]\d{8}$/, // French without country code
-  
-  // ITALIAN NUMBERS
-  /^\+393\d{8,9}$/, // Italian mobile
-  /^\+39[0-9]\d{6,10}$/, // Italian landline
-  /^3\d{8,9}$/, // Italian mobile without country code
-  /^0[1-9]\d{6,9}$/, // Italian landline without country code
-  
-  // SPANISH NUMBERS
-  /^\+34[6-9]\d{8}$/, // Spanish mobile
-  /^\+34[89]\d{8}$/, // Spanish landline
-  /^[6-9]\d{8}$/, // Spanish without country code
-  
-  // UK NUMBERS
-  /^\+447\d{9}$/, // UK mobile
-  /^\+44[1-9]\d{8,9}$/, // UK landline
-  /^07\d{9}$/, // UK mobile without country code
-  /^0[1-9]\d{8,9}$/, // UK landline without country code
-  
-  // BELGIAN NUMBERS
-  /^\+32[4]\d{8}$/, // Belgian mobile
-  /^\+32[1-9]\d{7,8}$/, // Belgian landline
-  /^0[1-9]\d{7,8}$/, // Belgian without country code
-  
-  // SWISS NUMBERS
-  /^\+41[78]\d{8}$/, // Swiss mobile
-  /^\+41[1-6]\d{7,8}$/, // Swiss landline
-  /^0[1-9]\d{8}$/, // Swiss without country code
-  
-  // US NUMBERS
-  /^[2-9]\d{2}[2-9]\d{2}\d{4}$/, // US format: 1234567890
-  /^1[2-9]\d{2}[2-9]\d{2}\d{4}$/, // US with country code
-  
-  // General international format
-  /^\d{7,15}$/
-];
 
 const ContactForm = ({ onEmailSent, onNotification }: ContactFormProps) => {
   const [formData, setFormData] = useState<FormData>({ 
@@ -105,15 +50,11 @@ const ContactForm = ({ onEmailSent, onNotification }: ContactFormProps) => {
   );  // Optimized phone validation with better error handling
   const validatePhone = useCallback((phone: string): boolean => {
     if (!phone.trim()) return true; // Empty phone is valid since it's optional
-    
-    // Remove all non-digit characters except + at the beginning
-    const cleanPhone = phone.replace(/[\s\-\(\)\.]/g, '');
-    
-    // Must have at least 7 digits and not exceed 15 (international standard)
-    if (cleanPhone.length < 7 || cleanPhone.length > 15) return false;
-    
-    // Test against valid patterns
-    return PHONE_PATTERNS.some(pattern => pattern.test(cleanPhone));
+    try {
+      return isValidPhoneNumber(phone);
+    } catch {
+      return false;
+    }
   }, []);
 
   // Improved validation with more specific error messages

@@ -33,8 +33,6 @@ body {
   background-attachment: scroll;
   margin: 0;
   padding: 0;
-  /* Performance optimizations */
-  font-display: swap;
 }
 
 /* Mobile-specific body adjustments */
@@ -1320,4 +1318,21 @@ body {
 .notification-overlay {
   z-index: 999999 !important;
   position: fixed !important;
+}
+
+/* About card icon – spin-flip animation on card hover (centralised from inline <style jsx>) */
+.about-card-icon {
+  transform: rotate(0deg) scale(1) rotateY(0deg);
+  transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  filter: drop-shadow(0 0 0px rgba(59, 130, 246, 0));
+}
+
+.group:hover .about-card-icon {
+  transform: rotate(720deg) scale(1.15) rotateY(180deg);
+  filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.8));
+}
+
+/* Mobile navigation menu – single source of scroll-lock truth */
+body.mobile-menu-open {
+  overflow: hidden !important;
 }

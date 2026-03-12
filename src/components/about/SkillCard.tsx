@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import {
-  SiReact, SiUnity, SiGit, SiJavascript, SiTypescript, SiHtml5, SiCss3, SiNextdotjs, SiTailwindcss,
+  SiReact, SiUnity, SiGit, SiJavascript, SiTypescript, SiHtml5, SiCss, SiNextdotjs, SiTailwindcss,
   SiDotnet, SiPython, SiGooglecloud, SiPhp, SiMysql, SiFirebase, SiLua, SiRoblox, SiVercel, SiAudacity
 } from 'react-icons/si';
 import { FiRefreshCw } from 'react-icons/fi';
@@ -71,7 +71,7 @@ const SkillCard: React.FC<TechStackProps> = ({ title = "Tech Stack" }) => {
     { icon: <SiRoblox />, name: 'Roblox Studio', category: 'Game Dev' },
     // Frontend
     { icon: <SiHtml5 />, name: 'HTML', category: 'Frontend' },
-    { icon: <SiCss3 />, name: 'CSS', category: 'Frontend' },
+    { icon: <SiCss />, name: 'CSS', category: 'Frontend' },
     { icon: <SiTailwindcss />, name: 'Tailwind CSS', category: 'Frontend' },
     { icon: <SiReact />, name: 'React', category: 'Frontend' },
     { icon: <SiReact />, name: 'React Native', category: 'Frontend' },

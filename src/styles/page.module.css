@@ -225,6 +225,22 @@
   }
 }
 
+/* Disable decorative animations for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .enhancedBackground::before {
+    animation: none;
+    will-change: auto;
+  }
+  .backgroundGrid {
+    animation: none;
+    will-change: auto;
+  }
+  .cosmicDust {
+    animation: none;
+    will-change: auto;
+  }
+}
+
 /* Floating particles - Star-like effect */
 .particleContainer {
   position: fixed;
@@ -241,7 +257,6 @@
   position: absolute;
   border-radius: 50%;
   opacity: 0.8;
-  will-change: transform, opacity;
 }
 
 /* Star-like particles with varying sizes and colors - Space Theme */
@@ -801,17 +816,20 @@
   margin-bottom: 0.25rem; /* Minimal margin */
 }
 
-/* Animated title characters */
+/* Animated title — now applies directly to the h1 (no per-character spans) */
 .animatedTitle {
   position: relative;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: titleReveal 0.6s ease-out 0.1s both;
 }
 
+/* Legacy per-character class — kept for any external references, but no longer generated */
 .titleCharacter {
   display: inline-block;
   animation: titleReveal 0.8s ease-out forwards;
   opacity: 0;
   transform: translateY(30px);
-  will-change: transform, opacity;
 }
 
 .titleCharacter:nth-child(1) {
@@ -861,6 +879,19 @@
   to {
     opacity: 1;
     transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animatedTitle {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .titleCharacter {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 }
 
