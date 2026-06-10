@@ -15,6 +15,7 @@ import MediaCarousel from './MediaCarousel';
 import ActionButtons from './ActionButtons';
 import FeaturesList from './FeaturesList';
 import CodeBlock from './CodeBlock';
+import HoverDemo from './HoverDemo';
 
 /**
  * ProjectCard — card + modal for a single project.
@@ -57,6 +58,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   // ── Carousel state ──────────────────────────────────────────────────────────
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
@@ -467,6 +469,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         onClick={openModal}
         onMouseDown={() => setIsClicked(true)}
         onMouseUp={() => setIsClicked(false)}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => { setIsHovered(false); setIsClicked(false); }}
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(); } }}
         tabIndex={0}
         role="button"
@@ -530,6 +534,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         <div className="relative z-10 flex flex-wrap gap-1.5 mt-auto max-w-full overflow-hidden">
           {memoizedTechStack}
         </div>
+
+        {/* Interactive hover demo overlay */}
+        <HoverDemo projectId={projectId} isHovered={isHovered} />
       </div>
 
       {/* ── Modal ────────────────────────────────────────────────────────── */}

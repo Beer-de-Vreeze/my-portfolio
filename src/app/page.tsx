@@ -3,9 +3,12 @@ import { lazy, Suspense, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import AboutCard from "../components/cards/AboutCard";
 import ContactCard from "@/components/forms/ContactCardMenu";
+import InfoStrip from "@/components/home/InfoStrip";
+import CurrentlyWorking from "@/components/home/CurrentlyWorking";
 import { PerformanceLoading } from "@/components/performance/PerformanceLoading";
 import { useResponsiveSize } from "@/hooks/useScrolling";
 import { usePageSetup } from "@/hooks/usePageSetup";
+import { useTypewriter } from "@/hooks/useTypewriter";
 import styles from "@/styles/page.module.css";
 
 const StarfieldBackground = dynamic(() => import('@/components/features/StarfieldBackground'), { ssr: false });
@@ -25,9 +28,18 @@ const CARD_GLOW_CLASSES = [
   "hover:drop-shadow-[0_12px_32px_rgba(236,72,153,0.35)]",
 ] as const;
 
+// Role line typed out on load; the part after ROLE_SPLIT_INDEX gets the gradient.
+const ROLE_TEXT = "Software developer specializing in game tools & AI systems";
+const ROLE_SPLIT_INDEX = "Software developer specializing in ".length;
+
 export default function Home() {
   const { isDesktop } = useResponsiveSize();
   const { prefersReducedMotion } = usePageSetup({ scrollMode: 'home' });
+
+  // Typing effect for the role line — types once, never repeats.
+  const typedRole = useTypewriter(ROLE_TEXT);
+  const visibleRole = prefersReducedMotion ? ROLE_TEXT : typedRole;
+  const typingComplete = visibleRole.length >= ROLE_TEXT.length;
 
   // Optimize card creation with memoization
   const cards = useMemo(() => [
@@ -52,8 +64,17 @@ export default function Home() {
           </div>
 
           <h2 className={`${styles.subtitle} ${isDesktop ? styles.titleDesktop : styles.titleMobile}`}>
-            <span className={styles.subtitleText}>Software developer specializing in </span>
-            <span className={`gradient-text ${styles.subtitleGradient} ${prefersReducedMotion ? styles.staticGradient : ''}`}>game tools &amp; AI systems</span>
+            <span className={styles.subtitleText}>{visibleRole.slice(0, ROLE_SPLIT_INDEX)}</span>
+            <span className={`gradient-text ${styles.subtitleGradient} ${prefersReducedMotion ? styles.staticGradient : ''}`}>{visibleRole.slice(ROLE_SPLIT_INDEX)}</span>
+            {/* Blinking cursor while typing; fades out over 500ms once complete */}
+            {!prefersReducedMotion && (
+              <span
+                className={`gradient-text-static inline-block transition-opacity duration-500 ${typingComplete ? 'opacity-0' : 'animate-pulse'}`}
+                aria-hidden="true"
+              >
+                |
+              </span>
+            )}
           </h2>
 
           {/* Floating accent elements - only on desktop and if motion is allowed */}
@@ -65,6 +86,10 @@ export default function Home() {
             </div>
           )}
         </div>
+
+        {/* Recruiter info strip + current work, between hero and cards */}
+        <InfoStrip />
+        <CurrentlyWorking />
 
         <div className={`${styles.cardsSection} max-w-5xl mx-auto w-full`}>
           <div className={`${styles.cardsContainer} ${isDesktop ? styles.cardsContainerDesktop : styles.cardsContainerMobile}`}>
