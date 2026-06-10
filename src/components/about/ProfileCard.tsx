@@ -275,7 +275,7 @@ const ProfileCard: React.FC<ProfileCardProps> = React.memo(({
               alt={`${name} profile picture`}
               width={96}
               height={96}
-              className="w-full h-full object-cover object-center relative z-10 grayscale"
+              className="w-full h-full object-cover object-center relative z-10 grayscale scale-90"
               priority
             />
           </div>
