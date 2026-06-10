@@ -46,7 +46,19 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const { preloadResources, preloadResource, shouldReduceMotion, isLowMemory } = usePerformance();
 
   // ── Shared state hooks ──────────────────────────────────────────────────────
-  const { error, handleError, clearError } = useErrorHandler();
+  const { handleError, clearError } = useErrorHandler();
+
+  // Track media failures per-source so one broken item (e.g. a video) never
+  // blanks out the other media or the card thumbnail.
+  const [failedMedia, setFailedMedia] = useState<Set<string>>(new Set());
+  const markMediaFailed = useCallback((src: string) => {
+    setFailedMedia((prev) => {
+      if (prev.has(src)) return prev;
+      const next = new Set(prev);
+      next.add(src);
+      return next;
+    });
+  }, []);
   const { loading, setLoadingState } = useLoadingState();
   const { generatedThumbnails, setGeneratedThumbnails, enhancedThumbnailResolution } = useVideoThumbnail();
 
@@ -484,7 +496,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         {/* Thumbnail */}
         <div className="absolute top-0 left-0 w-full h-full z-0 opacity-50">
           {shouldLoadMedia ? (
-            error.hasError && error.type === 'media' ? (
+            failedMedia.has(thumbnailImage) ? (
               <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
                 <div className="text-gray-400 text-center text-sm">⚠️ Image failed to load</div>
               </div>
@@ -506,7 +518,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     const sep = thumbnailImage.includes('?') ? '&' : '?';
                     img.src = `${thumbnailImage}${sep}retry=${Date.now()}`;
                   } else {
-                    handleError('Failed to load thumbnail image', 'media');
+                    markMediaFailed(thumbnailImage);
                   }
                 }}
               />
@@ -599,7 +611,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                   isFullscreen={isFullscreen}
                   isMediaLoading={loading.media}
                   isMobile={isMobile}
-                  error={error}
+                  failedMedia={failedMedia}
+                  onMediaFailed={markMediaFailed}
                   shouldLoadMedia={shouldLoadMedia}
                   mediaObjectFit={mediaObjectFit}
                   videoRef={videoRef}

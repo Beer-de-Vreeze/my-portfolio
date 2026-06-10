@@ -16,7 +16,8 @@ interface MediaCarouselProps {
   isFullscreen: boolean;
   isMediaLoading: boolean;
   isMobile: boolean;
-  error: ErrorState;
+  failedMedia: Set<string>;
+  onMediaFailed: (src: string) => void;
   shouldLoadMedia: boolean;
   mediaObjectFit: 'cover' | 'contain';
   videoRef: React.RefObject<HTMLVideoElement | null>;
@@ -34,7 +35,7 @@ interface MediaCarouselProps {
 const MediaCarousel: React.FC<MediaCarouselProps> = ({
   media, title,
   currentMediaIndex, isPlaying, isYouTubePlaying, autoplay, progressBarKey,
-  isFullscreen, isMediaLoading, isMobile, error, shouldLoadMedia, mediaObjectFit,
+  isFullscreen, isMediaLoading, isMobile, failedMedia, onMediaFailed, shouldLoadMedia, mediaObjectFit,
   videoRef, mediaContainerRef,
   onVideoToggle, onVideoEnd, onError, onSetMediaLoading,
   onNavigateNext, onNavigatePrev, onNavigateTo, onSetAutoplay,
@@ -193,7 +194,7 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
                 className={`w-full h-full object-${mediaObjectFit} transition-all duration-500 animate-fadeIn cursor-pointer`}
                 controls={false}
                 onEnded={onVideoEnd}
-                onError={() => onError(`Failed to load video: ${currentMedia.src}`, 'media')}
+                onError={() => onMediaFailed(currentMedia.src)}
                 onClick={onVideoToggle}
                 preload={shouldLoadMedia ? 'metadata' : 'none'}
                 key={currentMediaIndex}
@@ -220,7 +221,7 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
             </>
           ) : (
             <>
-              {error.hasError && error.type === 'media' ? (
+              {failedMedia.has(currentMedia.src) ? (
                 <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
                   <div className="text-gray-400 text-center text-sm">
                     <div>⚠️</div>
@@ -236,7 +237,7 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
                   sizes="(max-width: 768px) 100vw, 800px"
                   className={`object-${mediaObjectFit} transition-all duration-500 animate-fadeIn`}
                   onLoad={() => onSetMediaLoading(false)}
-                  onError={() => onError(`Failed to load image: ${currentMedia.src}`, 'media')}
+                  onError={() => onMediaFailed(currentMedia.src)}
                   key={currentMediaIndex}
                 />
               )}
@@ -353,7 +354,7 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
       )}
 
       {/* Error state for video */}
-      {error.hasError && error.type === 'media' && isVideo && (
+      {currentMedia && failedMedia.has(currentMedia.src) && isVideo && (
         <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-900 to-black">
           <div className="text-gray-400 text-center text-sm">
             <FaFileVideo className="mx-auto mb-2 text-2xl" />

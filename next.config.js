@@ -65,7 +65,7 @@ const withPWA = withPWAInit({
         },
       },
       {
-        urlPattern: /\.(?:webp|jpg|jpeg|png|svg|gif|webm|mp4)$/i,
+        urlPattern: /\.(?:webp|jpg|jpeg|png|svg|gif)$/i,
         handler: "StaleWhileRevalidate",
         options: {
           cacheName: "images",
@@ -74,6 +74,13 @@ const withPWA = withPWAInit({
             maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
           },
         },
+      },
+      {
+        // Stream video straight from the network. Caching it via the service
+        // worker breaks the HTTP byte-range requests that <video> relies on,
+        // which makes the element fire `error` and fail to load.
+        urlPattern: /\.(?:mp4|webm)$/i,
+        handler: "NetworkOnly",
       },
     ],
   },
