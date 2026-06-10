@@ -4,13 +4,14 @@ import {
   SiNodedotjs, SiApple, SiDocker, SiGooglecloud, SiNextdotjs, SiTailwindcss,
   SiBlender, SiMysql, SiPhp, SiPython, SiCplusplus, SiUnrealengine,
   SiGodotengine, SiTensorflow, SiPytorch, SiAndroidstudio, SiVercel,
-  SiDotnet, SiEslint, SiFramer,
+  SiDotnet, SiEslint, SiFramer, SiFastapi, SiPydantic, SiClaude,
+  SiModelcontextprotocol, SiX,
 } from 'react-icons/si';
 import {
   FaWindows, FaCode, FaVolumeUp, FaRobot, FaPalette, FaGamepad, FaBrain,
   FaMusic, FaNetworkWired, FaImage, FaPaintBrush, FaDesktop, FaLayerGroup,
   FaCogs, FaMicrochip, FaComments, FaPlay, FaFont, FaMicrophone, FaGitAlt,
-  FaTachometerAlt, FaMobile,
+  FaTachometerAlt, FaMobile, FaServer, FaUniversity,
 } from 'react-icons/fa';
 
 export const techIcons: { [key: string]: React.JSX.Element } = {
@@ -91,4 +92,11 @@ export const techIcons: { [key: string]: React.JSX.Element } = {
   "DOTween": <FaPlay className="text-purple-500 text-lg mr-2" />,
   "Text Animator": <FaFont className="text-green-500 text-lg mr-2" />,
   "Voice Acting": <FaMicrophone className="text-pink-500 text-lg mr-2" />,
+  "MCP": <SiModelcontextprotocol className="text-white text-lg mr-2" />,
+  "Claude": <SiClaude className="text-orange-400 text-lg mr-2" />,
+  "FastAPI": <SiFastapi className="text-teal-400 text-lg mr-2" />,
+  "FastMCP": <FaServer className="text-teal-300 text-lg mr-2" />,
+  "bunq API": <FaUniversity className="text-blue-400 text-lg mr-2" />,
+  "xAI Grok": <SiX className="text-white text-lg mr-2" />,
+  "Pydantic": <SiPydantic className="text-rose-500 text-lg mr-2" />,
 };
