@@ -544,8 +544,79 @@ const TetrisDemo = ({ active }: DemoProps) => {
   );
 };
 
+// ── Demo 8: Bunq Voice — listening voice-assistant pulse + waveform ──────────
+const BunqVoiceDemo = ({ active }: DemoProps) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    if (!active) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const cx = 80;
+    const cy = 50;
+    let frame: number;
+    let t = 0;
+
+    const animate = () => {
+      t += 0.02;
+      ctx.clearRect(0, 0, 160, 120);
+
+      // Expanding sonar rings — the "listening" pulse
+      for (let i = 0; i < 3; i++) {
+        const phase = ((t + i * 0.6) % 1.8) / 1.8; // 0..1
+        const r = 10 + phase * 44;
+        const alpha = (1 - phase) * 0.45;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(59,130,246,${alpha})`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+
+      // Mic core — gentle blue→green pulse
+      const pulse = 1 + Math.sin(t * 4) * 0.08;
+      const grad = ctx.createLinearGradient(cx - 10, cy - 10, cx + 10, cy + 10);
+      grad.addColorStop(0, '#3b82f6');
+      grad.addColorStop(1, '#22c55e');
+      ctx.beginPath();
+      ctx.arc(cx, cy, 9 * pulse, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // Reactive voice waveform along the bottom
+      const baseY = 100;
+      ctx.beginPath();
+      for (let x = 0; x <= 160; x += 3) {
+        const amp = 7 * Math.sin(x * 0.18 + t * 6) * Math.sin(t * 2 + x * 0.02);
+        const y = baseY + amp;
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = 'rgba(34,197,94,0.7)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      frame = requestAnimationFrame(animate);
+    };
+
+    frame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frame);
+  }, [active]);
+
+  return (
+    <div className="flex flex-col items-center">
+      <canvas ref={canvasRef} width={160} height={120} className="rounded-lg" />
+      <p className="text-xs text-gray-400 mt-2">Voice Banking</p>
+    </div>
+  );
+};
+
 // ── Demo registry ─────────────────────────────────────────────────────────────
 const DEMOS: Record<string, { Component: React.ComponentType<DemoProps>; staticLabel: string }> = {
+  'Bunq-Voice': { Component: BunqVoiceDemo, staticLabel: 'Voice Banking' },
   'Unity Audio Previewer': { Component: AudioDemo, staticLabel: 'Audio Previewer' },
   'LP-Cafe': { Component: DialogueDemo, staticLabel: 'Visual Novel Dialogue' },
   'ML-Agents': { Component: MLDemo, staticLabel: 'Reinforcement Learning' },

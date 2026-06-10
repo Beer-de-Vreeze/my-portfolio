@@ -13,6 +13,7 @@ import { useResponsiveSize } from "@/hooks/useScrolling";
 const StarfieldBackground = dynamic(() => import('@/components/features/StarfieldBackground'), { ssr: false });
 
 // Dynamic imports for better code splitting and performance
+const BunqVoice = React.lazy(() => import("@/components/projects/bunq-voice"));
 const AudioPreviewer = React.lazy(() => import("@/components/projects/audio-previewer"));
 const BearlyStealthy = React.lazy(() => import("@/components/projects/bearly-stealthy"));
 const MLAgent = React.lazy(() => import("@/components/projects/MLAgent"));
@@ -32,13 +33,14 @@ const ProjectSkeleton = () => (
 
 const ProjectsLoading = () => (
   <div className={GRID_CLASSES}>
-    {[...Array(7)].map((_, i) => (
+    {[...Array(8)].map((_, i) => (
       <ProjectSkeleton key={i} />
     ))}
   </div>
 );
 
 const PROJECT_COMPONENTS = [
+  { key: 'bunq-voice', Component: BunqVoice },
   { key: 'audio-previewer', Component: AudioPreviewer },
   { key: 'lp-cafe', Component: LPCafe },
   { key: 'ml-agent', Component: MLAgent },
