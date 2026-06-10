@@ -11,7 +11,7 @@ const BunqVoice = () => {
       projectId="Bunq-Voice"
       title="Bunq Voice"
       description="Bunq Voice is a secure, voice-first banking interface built in 24 hours at the bunq Hackathon 7.0. Our team set out to make banking usable for blind, sight-impaired, and motor-disabled people — users that bunq's screen-reader-blocking security had effectively locked out of 'the bank of the free.' You simply talk to your account: check balances, review transactions, and set up payments by speaking naturally, and the app speaks the results back. Crucially, every outgoing payment is created as a pending draft that still requires biometric approval in the bunq app, so accessibility never comes at the cost of security. Under the hood it's a Python + TypeScript monorepo wiring xAI Grok speech-to-text and text-to-speech to Claude Sonnet 4.6 for reasoning, with a FastMCP server exposing bunq's API to the model through the Model Context Protocol. Built together with Giuseppe Dotto, Mink Quispel, and Joshua Ross."
-      coverImage="https://img.youtube.com/vi/GSzQdi8VywA/hqdefault.jpg"
+      coverImage="/images/Bunq Voice Images/Bunq Voice Cover.png"
       githubLink="https://github.com/GiuseppeDotto/bunq-voice"
       liveLink="https://devpost.com/software/bunq-voice"
       media={[
@@ -19,9 +19,21 @@ const BunqVoice = () => {
           type: isMobile ? "youtube" : "video",
           src: isMobile
             ? "https://youtu.be/GSzQdi8VywA"
-            : "/images/Bunq Voice/Bunq Voice.mp4",
+            : "/images/Bunq Voice Images/Bunq Voice.mp4",
           alt: "Bunq Voice — speaking to your bank account to check balances and draft payments",
           thumbnail: "https://img.youtube.com/vi/GSzQdi8VywA/hqdefault.jpg",
+        },
+        {
+          type: "image",
+          src: "/images/Bunq Voice Images/Bunq Voice 1.jpg",
+          alt: "Bunq Voice reading out your accounts and balances after you ask which accounts are in your name",
+          caption: "Asking Bunq Voice which accounts you have — it looks them up and speaks the balances back.",
+        },
+        {
+          type: "image",
+          src: "/images/Bunq Voice Images/Bunq Voice 2.jpg",
+          alt: "Bunq Voice creating a pending draft payment that still needs biometric approval in the bunq app",
+          caption: "Creating a draft payment by voice — it stays pending until you confirm it with biometrics in the bunq app.",
         },
       ]}
       techStack={[
