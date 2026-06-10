@@ -1,10 +1,7 @@
 import React from "react";
 import SuspenseProjectCard from "../cards/SuspenseProjectCard";
-import useMobileDetection from "@/hooks/useMobileDetection";
 
 const LPCafe = () => {
-  const isMobile = useMobileDetection();
-  
   return (
   <SuspenseProjectCard
     projectId="LP-Cafe"
@@ -15,10 +12,8 @@ const LPCafe = () => {
     githubLink="https://github.com/Beer-de-Vreeze/LP-Cafe"
     media={[
       {
-        type: isMobile ? "youtube" : "video",
-        src: isMobile 
-          ? "https://youtu.be/UuNebYF0hbE" // YouTube link for LP Cafe Trailer
-          : "/images/LPCafe Images/LP Cafe Trailer.webm",
+        type: "youtube",
+        src: "https://youtu.be/UuNebYF0hbE", // LP Cafe Trailer
         alt: "LP Cafe Trailer",
         thumbnail: "/images/LPCafe Images/Cafe.webp",
       },
@@ -33,18 +28,14 @@ const LPCafe = () => {
         alt: "James character dialogue scene",
       },
       {
-        type: isMobile ? "youtube" : "video",
-        src: isMobile 
-          ? "https://youtu.be/eIh6guJ7X0g" // YouTube link for DialogueTool
-          : "/images/LPCafe Images/DialogueTool.webm",
+        type: "youtube",
+        src: "https://youtu.be/eIh6guJ7X0g", // DialogueTool
         alt: "Custom dialogue tool in action",
         thumbnail: "/images/LPCafe Images/Catboy.webp",
       },
       {
-        type: isMobile ? "youtube" : "video",
-        src: isMobile 
-          ? "https://youtu.be/vUvCR3kR_lw" // YouTube link for Recording Session
-          : "/images/LPCafe Images/Recording Session.webm",
+        type: "youtube",
+        src: "https://youtu.be/vUvCR3kR_lw", // Recording Session
         alt: "Voice acting recording session",
         thumbnail: "/images/LPCafe Images/James Talking.webp",
       },

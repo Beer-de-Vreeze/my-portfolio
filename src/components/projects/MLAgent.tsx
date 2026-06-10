@@ -1,13 +1,7 @@
 import React from "react";
 import SuspenseProjectCard from "../cards/SuspenseProjectCard";
 
-// Using our centralized mobile detection hook instead
-import useMobileDetection from "@/hooks/useMobileDetection";
-
 const MLAgent = () => {
-  // Use the shared hook for mobile detection
-  const isMobile = useMobileDetection();
-  
   return (
   <SuspenseProjectCard
     projectId="ML-Agents"
@@ -16,44 +10,33 @@ const MLAgent = () => {
     githubLink="https://github.com/Beer-de-Vreeze/ML-Agents-Training"
     coverImage="/images/AI Images/Title.webp"
     media={[
-      // For the rest, conditionally use YouTube on mobile or webm on desktop
       {
-        type: isMobile ? "youtube" : "video",
-        src: isMobile 
-          ? "https://youtu.be/FPXM00lVQjI" // YouTube link for Jerry Move
-          : "/images/AI Images/Jerry Move.webm",
+        type: "youtube",
+        src: "https://youtu.be/FPXM00lVQjI", // Jerry Move
         alt: "Move 1 first iteration",
         thumbnail: "/images/AI Images/Title.webp",
       },
       {
-        type: isMobile ? "youtube" : "video",
-        src: isMobile 
-          ? "https://youtu.be/4xG31EWKt8k" // YouTube link for Jerry MoveWithVision
-          : "/images/AI Images/Jerry MoveWithVision.webm",
+        type: "youtube",
+        src: "https://youtu.be/4xG31EWKt8k", // Jerry MoveWithVision
         alt: "Move with raycast training",
         thumbnail: "/images/AI Images/Title.webp",
       },
       {
-        type: isMobile ? "youtube" : "video",
-        src: isMobile 
-          ? "https://youtu.be/4_am39e5vU0" // YouTube link for Jerry MoveWithFEEDBACKV2
-          : "/images/AI Images/Jerry MoveWithFEEDBACKV2.webm",
+        type: "youtube",
+        src: "https://youtu.be/4_am39e5vU0", // Jerry MoveWithFEEDBACKV2
         alt: "Training with feedback",
         thumbnail: "/images/AI Images/Title.webp",
       },
       {
-        type: isMobile ? "youtube" : "video",
-        src: isMobile 
-          ? "https://youtu.be/ntM6Rpd6G5Q" // YouTube link for Jerry MoveWithFEEDBACKTRAINING2
-          : "/images/AI Images/Jerry MoveWithFEEDBACKTRAINING2.webm",
+        type: "youtube",
+        src: "https://youtu.be/ntM6Rpd6G5Q", // Jerry MoveWithFEEDBACKTRAINING2
         alt: "Training with Timer",
         thumbnail: "/images/AI Images/Title.webp",
       },
       {
-        type: isMobile ? "youtube" : "video",
-        src: isMobile 
-          ? "https://youtu.be/V1-059V_a2w" // YouTube link for HUNTERVSPREY
-          : "/images/AI Images/HUNTERVSPREY.webm",
+        type: "youtube",
+        src: "https://youtu.be/V1-059V_a2w", // HUNTERVSPREY
         alt: "Hunter VS Prey simulation",
         thumbnail: "/images/AI Images/Zombie Arena.webp",
       },

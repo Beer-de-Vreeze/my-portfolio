@@ -41,8 +41,8 @@ const ProjectsLoading = () => (
 
 const PROJECT_COMPONENTS = [
   { key: 'bunq-voice', Component: BunqVoice },
-  { key: 'audio-previewer', Component: AudioPreviewer },
   { key: 'lp-cafe', Component: LPCafe },
+  { key: 'audio-previewer', Component: AudioPreviewer },
   { key: 'ml-agent', Component: MLAgent },
   { key: 'website', Component: Website },
   { key: 'bearly-stealthy', Component: BearlyStealthy },

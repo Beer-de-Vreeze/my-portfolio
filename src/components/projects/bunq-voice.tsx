@@ -1,11 +1,7 @@
 import React from "react";
 import SuspenseProjectCard from "../cards/SuspenseProjectCard";
-import useMobileDetection from "@/hooks/useMobileDetection";
 
 const BunqVoice = () => {
-  // Desktop streams the self-hosted MP4; mobile falls back to the YouTube embed.
-  const isMobile = useMobileDetection();
-
   return (
     <SuspenseProjectCard
       projectId="Bunq-Voice"
@@ -16,10 +12,8 @@ const BunqVoice = () => {
       liveLink="https://devpost.com/software/bunq-voice"
       media={[
         {
-          type: isMobile ? "youtube" : "video",
-          src: isMobile
-            ? "https://youtu.be/GSzQdi8VywA"
-            : "/images/Bunq Voice Images/Bunq Voice.mp4",
+          type: "youtube",
+          src: "https://youtu.be/GSzQdi8VywA",
           alt: "Bunq Voice — speaking to your bank account to check balances and draft payments",
           thumbnail: "https://img.youtube.com/vi/GSzQdi8VywA/hqdefault.jpg",
         },

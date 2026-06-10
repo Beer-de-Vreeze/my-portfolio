@@ -1,13 +1,7 @@
 import React from "react";
 import SuspenseProjectCard from "../cards/SuspenseProjectCard";
-import useMobileDetection from "@/hooks/useMobileDetection";
 
 const AudioPreviever = () => {
-  // Mobile detection hook is included for consistency across components
-  // but not currently used since this component doesn't have video content
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const isMobile = useMobileDetection();
-  
   return (
   <SuspenseProjectCard
     projectId="Unity Audio Previewer"
