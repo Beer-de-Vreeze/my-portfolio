@@ -1,0 +1,97 @@
+/* Stacked folder-fan cards for the Projects menu card */
+
+.stackCard {
+  transition:
+    transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 0.6s ease,
+    border-color 0.4s ease,
+    box-shadow 0.4s ease,
+    filter 0.6s ease;
+  will-change: transform;
+}
+
+/* Back cards share a dark glass-like gradient */
+.backCard {
+  background: linear-gradient(135deg, #1f1f23 0%, #000000 70%, #1f1f23 100%);
+  border-color: #374151;
+}
+
+/* Resting stack offsets */
+.card0 { transform: translate(0px, 0px); }
+.card1 { transform: translate(10px, 4px); }
+.card2 { transform: translate(20px, 8px); }
+.card3 { transform: translate(30px, 12px); }
+.card4 { transform: translate(40px, 16px); }
+
+/* Fan out on hover */
+:global(.group):hover .card0 {
+  transform: translate(-16px, -12px) rotate(-2deg);
+  border-color: rgba(168, 85, 247, 0.6);
+  box-shadow: 0 15px 35px rgba(168, 85, 247, 0.3), 0 5px 15px rgba(168, 85, 247, 0.2);
+  filter: brightness(1.1);
+}
+
+:global(.group):hover .card1 {
+  transform: translate(28px, 12px) rotate(3deg);
+  border-color: rgba(147, 51, 234, 0.4);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  filter: blur(0.5px) brightness(0.9);
+}
+
+:global(.group):hover .card2 {
+  transform: translate(52px, 20px) rotate(-1deg);
+  border-color: rgba(139, 69, 19, 0.3);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+  filter: blur(1px) brightness(0.8);
+}
+
+:global(.group):hover .card3 {
+  transform: translate(76px, 28px) rotate(2deg);
+  border-color: #374151;
+  filter: blur(1.5px) brightness(0.7);
+}
+
+:global(.group):hover .card4 {
+  transform: translate(100px, 36px) rotate(-1deg);
+  border-color: #374151;
+  filter: blur(2px) brightness(0.6);
+}
+
+/* Folder icon — tilt, grow, purple glow */
+.folderIcon {
+  transform: rotate(0deg) scale(1);
+  transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  filter: drop-shadow(0 0 0px rgba(139, 92, 246, 0));
+  will-change: transform;
+}
+
+:global(.group):hover .folderIcon {
+  transform: rotate(-15deg) scale(1.2);
+  filter: drop-shadow(0 0 25px rgba(139, 92, 246, 0.9));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stackCard,
+  .folderIcon {
+    transition: border-color 0.4s ease, box-shadow 0.4s ease;
+    will-change: auto;
+  }
+
+  :global(.group):hover .card0,
+  :global(.group):hover .card1,
+  :global(.group):hover .card2,
+  :global(.group):hover .card3,
+  :global(.group):hover .card4 {
+    filter: none;
+  }
+
+  :global(.group):hover .card0 { transform: translate(0px, 0px); }
+  :global(.group):hover .card1 { transform: translate(10px, 4px); }
+  :global(.group):hover .card2 { transform: translate(20px, 8px); }
+  :global(.group):hover .card3 { transform: translate(30px, 12px); }
+  :global(.group):hover .card4 { transform: translate(40px, 16px); }
+
+  :global(.group):hover .folderIcon {
+    transform: rotate(0deg) scale(1);
+  }
+}

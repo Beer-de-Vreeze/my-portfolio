@@ -11,12 +11,19 @@ import styles from "@/styles/page.module.css";
 const StarfieldBackground = dynamic(() => import('@/components/features/StarfieldBackground'), { ssr: false });
 
 // Lazy load heavy components with error boundaries
-const ProjectCard = lazy(() => 
+const ProjectCard = lazy(() =>
   import("../components/features/ProjectCardMenu").catch(err => {
     console.warn('Failed to load ProjectCard:', err);
     return { default: () => <div>Failed to load project card</div> };
   })
 );
+
+// Per-card accent drop shadows, hover only — about: blue, projects: purple, contact: pink
+const CARD_GLOW_CLASSES = [
+  "hover:drop-shadow-[0_12px_32px_rgba(59,130,246,0.35)]",
+  "hover:drop-shadow-[0_12px_32px_rgba(139,92,246,0.35)]",
+  "hover:drop-shadow-[0_12px_32px_rgba(236,72,153,0.35)]",
+] as const;
 
 export default function Home() {
   const { isDesktop } = useResponsiveSize();
@@ -43,13 +50,12 @@ export default function Home() {
             </h1>
             <div className={`${styles.titleUnderline} ${isDesktop ? styles.titleUnderlineDesktop : ''}`}></div>
           </div>
-          
+
           <h2 className={`${styles.subtitle} ${isDesktop ? styles.titleDesktop : styles.titleMobile}`}>
-            <span className={styles.subtitleText}>Systems & Tools </span>
-            {!isDesktop && <br />}
-            <span className={`gradient-text ${styles.subtitleGradient} ${prefersReducedMotion ? styles.staticGradient : ''}`}>Game Developer</span>
+            <span className={styles.subtitleText}>Software developer specializing in </span>
+            <span className={`gradient-text ${styles.subtitleGradient} ${prefersReducedMotion ? styles.staticGradient : ''}`}>game tools &amp; AI systems</span>
           </h2>
-          
+
           {/* Floating accent elements - only on desktop and if motion is allowed */}
           {isDesktop && !prefersReducedMotion && (
             <div className={styles.accentDots}>
@@ -63,10 +69,10 @@ export default function Home() {
         <div className={`${styles.cardsSection} max-w-5xl mx-auto w-full`}>
           <div className={`${styles.cardsContainer} ${isDesktop ? styles.cardsContainerDesktop : styles.cardsContainerMobile}`}>
             {cards.map((card, index) => (
-              <div 
-                key={index} 
-                className={`${styles.cardWrapper} ${!prefersReducedMotion ? styles.cardHover : ''} ${!prefersReducedMotion ? styles[`cardDelay${index}`] : ''}`}
-                style={{ 
+              <div
+                key={index}
+                className={`${styles.cardWrapper} ${!prefersReducedMotion ? styles.cardHover : ''} ${!prefersReducedMotion ? styles[`cardDelay${index}`] : ''} transition-[filter] duration-300 ${CARD_GLOW_CLASSES[index]}`}
+                style={{
                   animationDelay: !prefersReducedMotion ? `${index * 150}ms` : '0ms',
                   contain: 'layout style paint'
                 }}
@@ -75,13 +81,6 @@ export default function Home() {
               </div>
             ))}
           </div>
-          
-          {/* Hidden Konami Code Easter Egg Hint - only show on desktop */}
-          {isDesktop && (
-            <div className={styles.konamiHint}>
-              Secret Code: ↑↑↓↓←→←→BA
-            </div>
-          )}
         </div>
       </main>
     </div>

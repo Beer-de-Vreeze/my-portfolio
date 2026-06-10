@@ -1,6 +1,7 @@
 "use client";
 import React, { Suspense } from "react";
 import dynamic from "next/dynamic";
+import { motion } from "framer-motion";
 import { usePageSetup } from "@/hooks/usePageSetup";
 // Add highlight.js import and style
 import "highlight.js/styles/monokai.css";
@@ -19,83 +20,102 @@ const SketchinSpells = React.lazy(() => import("@/components/projects/sketchin-s
 const Tetris = React.lazy(() => import("@/components/projects/tetris"));
 const Website = React.lazy(() => import("@/components/projects/Website"));
 const LPCafe = React.lazy(() => import("@/components/projects/LPCafe"));
+
+const GRID_CLASSES = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 lg:gap-7 px-1 md:px-0 max-w-6xl";
+
+// Glassmorphism skeleton matching the card surface style
+const ProjectSkeleton = () => (
+  <div className="w-full h-64 rounded-2xl border border-white/[0.08] backdrop-blur-sm animate-pulse"
+    style={{
+      background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)'
+    }}
+  />
+);
+
 const ProjectsLoading = () => (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl">
+  <div className={GRID_CLASSES}>
     {[...Array(7)].map((_, i) => (
-      <div key={i} className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse flex items-center justify-center backdrop-blur-sm border border-gray-700/50">
-        <div className="text-gray-400">{i === 3 ? 'Loading projects... (Tip: ↑↑↓↓←→←→BA)' : 'Loading project...'}</div>
-      </div>
+      <ProjectSkeleton key={i} />
     ))}
   </div>
 );
 
+const PROJECT_COMPONENTS = [
+  { key: 'audio-previewer', Component: AudioPreviewer },
+  { key: 'lp-cafe', Component: LPCafe },
+  { key: 'ml-agent', Component: MLAgent },
+  { key: 'website', Component: Website },
+  { key: 'bearly-stealthy', Component: BearlyStealthy },
+  { key: 'sketchin-spells', Component: SketchinSpells },
+  { key: 'tetris', Component: Tetris },
+] as const;
+
 // Projects content component that uses lazy loading
-const ProjectsContent = () => {
+const ProjectsContent = ({ prefersReducedMotion }: { prefersReducedMotion: boolean }) => {
+  if (prefersReducedMotion) {
+    return (
+      <div className={GRID_CLASSES}>
+        {PROJECT_COMPONENTS.map(({ key, Component }) => (
+          <Suspense key={key} fallback={<ProjectSkeleton />}>
+            <Component />
+          </Suspense>
+        ))}
+      </div>
+    );
+  }
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl animate-slideInUp">
-      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse"></div>}>
-        <AudioPreviewer />
-      </Suspense>
-      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse"></div>}>
-        <LPCafe />
-      </Suspense>
-      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse"></div>}>
-        <MLAgent />
-      </Suspense>
-      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse"></div>}>
-        <Website />
-      </Suspense>
-      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse"></div>}>
-        <BearlyStealthy />
-      </Suspense>
-      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse"></div>}>
-        <SketchinSpells />
-      </Suspense>
-      <Suspense fallback={<div className="w-full h-96 bg-gray-800/50 rounded-lg animate-pulse"></div>}>
-        <Tetris />
-      </Suspense>
-    </div>
+    <motion.div
+      className={GRID_CLASSES}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
+    >
+      {PROJECT_COMPONENTS.map(({ key, Component }, index) => (
+        <motion.div
+          key={key}
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: index * 0.07 }}
+        >
+          <Suspense fallback={<ProjectSkeleton />}>
+            <Component />
+          </Suspense>
+        </motion.div>
+      ))}
+    </motion.div>
   );
 };
 
 export default function Projects() {
-  const { isMobile, isDesktop } = useResponsiveSize();
-  usePageSetup({ scrollMode: 'subpage' });
+  const { isDesktop } = useResponsiveSize();
+  const { prefersReducedMotion } = usePageSetup({ scrollMode: 'subpage' });
 
   return (
     <div className={`flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground}`}>
       <StarfieldBackground density={0.7} />
 
-
       <main className="flex-1 pt-16 pb-20 sm:pb-16 md:pb-20 px-2 sm:px-4 md:px-6 text-white relative z-10 w-full flex flex-col">
-        {/* Enhanced header section with animated title */}
+        {/* Compact page header */}
         <div className={`${styles.headerContainer} ${styles.headerContainerSmall}`}>
           <div className={styles.titleWrapper}>
             <h1 className={`${styles.name} ${isDesktop ? styles.nameDesktopSmall : styles.nameMobileSmall} ${styles.animatedTitle}`}>
-              My Projects
+              Projects
             </h1>
             <div className={`${styles.titleUnderline} ${isDesktop ? styles.titleUnderlineDesktop : ''}`}></div>
           </div>
-          
+
           <h2 className={`${styles.subtitle} ${isDesktop ? styles.titleDesktopSmall : styles.titleMobileSmall}`}>
             <span className={styles.subtitleText}>
-              Explore my collection of {isMobile && <br />}
-              <span>games, tools, and creative works</span>
+              A selection of games, tools, and experiments — click any card to go deeper.
             </span>
           </h2>
-          
-          {/* Floating accent elements */}
-          <div className={styles.accentDots}>
-            <div className={`${styles.accentDot} ${styles.accentDot1}`}></div>
-            <div className={`${styles.accentDot} ${styles.accentDot2}`}></div>
-            <div className={`${styles.accentDot} ${styles.accentDot3}`}></div>
-          </div>
         </div>
 
         <div className="w-full max-w-6xl mx-auto px-0">
           <div className="w-full">
             <Suspense fallback={<ProjectsLoading />}>
-              <ProjectsContent />
+              <ProjectsContent prefersReducedMotion={prefersReducedMotion} />
             </Suspense>
           </div>
         </div>
