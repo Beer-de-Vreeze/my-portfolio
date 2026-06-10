@@ -290,7 +290,7 @@ const ContactForm = ({ onEmailSent, onNotification }: ContactFormProps) => {
             onChange={handleChange}
             placeholder="Message *"
             className="select-content rounded-2xl resize-none w-full h-28 sm:h-32 md:h-36 text-sm sm:text-base px-3 sm:px-4 py-2
-                       backdrop-blur-sm bg-gradient-to-br from-gray-950/95 to-black/95 text-white border border-blue-500/20
+                       backdrop-blur-sm bg-gradient-to-br from-blue-950/90 to-gray-950/95 text-white border border-blue-500/30
                        hover:border-blue-300/40 focus:border-blue-300/40 focus:ring-2 focus:ring-blue-500/20
                        transition-all duration-300 placeholder-blue-100/60"
             maxLength={maxCharLimit}
