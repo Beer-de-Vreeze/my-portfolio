@@ -61,9 +61,11 @@ const AudioDemo = ({ active }: DemoProps) => {
 
 // ── Demo 2: LP-Cafe — looping dialogue typewriter ────────────────────────────
 const LINES = [
-  { speaker: 'Beer', text: 'Hey, welcome to LP-Cafe!' },
-  { speaker: 'James', text: 'What can I get for you today?' },
-  { speaker: 'Beer', text: 'Our specialty blend is... complicated.' },
+  { speaker: 'Beer-chan', text: "HIIIIIIIIIIIII, I'm Beer..." },
+  { speaker: 'Beer-chan', text: 'You can call me Beer-chan ♡' },
+  { speaker: 'Beer-chan', text: "Don't you absolutely LOVE these plants? purr~" },
+  { speaker: 'Beer-chan', text: 'You look like an absolute DOLL' },
+  { speaker: 'Beer-chan', text: 'Now tell me how much you love cats~' },
 ];
 
 const DialogueDemo = ({ active }: DemoProps) => {

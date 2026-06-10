@@ -29,6 +29,12 @@ const Stack = () => {
           date: '08.2023',
           description: 'Enrolled in the Creative Software Development – Game Development profile at Grafisch Lyceum Utrecht, focusing on programming languages like C# and mastering tools such as Unity and Git.',
         },
+        {
+          title: 'Internship at ASAPCLOUD — Data & AI Team',
+          category: 'Experience' as const,
+          date: '2025–Present',
+          description: 'Joined the Data & AI team at ASAPCLOUD as a software development intern, building tools and systems in TypeScript — including MCP server development — while finishing my degree at GLU.',
+        },
       ];
 
 

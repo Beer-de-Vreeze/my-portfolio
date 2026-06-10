@@ -14,7 +14,13 @@ export default function About() {
   usePageSetup({ scrollMode: 'always-on' });
 
   return (
-    <div className={`min-h-screen flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground}`} style={{ overflow: 'visible' }}>
+    // The About page has more content than fits in one viewport, so override the
+    // desktop height-lock (max-height:100vh / overflow:hidden) that
+    // containerScrollable applies for the single-screen home page.
+    <div
+      className={`min-h-screen flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground}`}
+      style={{ overflow: 'visible', maxHeight: 'none', justifyContent: 'flex-start' }}
+    >
       <StarfieldBackground />
 
       <main className="flex-1 pt-16 pb-20 sm:pb-16 md:pb-20 lg:pb-24 px-2 sm:px-4 md:px-6 text-white relative z-10 w-full flex flex-col">

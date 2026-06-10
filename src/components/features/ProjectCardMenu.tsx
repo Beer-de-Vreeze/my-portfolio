@@ -8,6 +8,14 @@ const CARD_STYLE: React.CSSProperties = {
   height: 'clamp(160px, 20vw, 220px)',
 };
 
+// Dark frosted-glass surface for the front card — matches the About and
+// Contact cards so all three home cards share the same look.
+const FRONT_SURFACE_STYLE: React.CSSProperties = {
+  background: 'linear-gradient(135deg, rgba(31,31,35,0.9) 0%, rgba(0,0,0,0.95) 70%, rgba(31,31,35,0.9) 100%)',
+  backdropFilter: 'blur(12px)',
+  WebkitBackdropFilter: 'blur(12px)',
+};
+
 const TINT_STYLE: React.CSSProperties = {
   background: 'radial-gradient(circle at 70% 30%, rgba(139,92,246,0.14) 0%, transparent 60%)',
 };
@@ -22,14 +30,15 @@ export default function ProjectsCard() {
           <div
             key={index}
             className={`
-              absolute flex items-center justify-center p-5 rounded-2xl
-              border-2 ${index === 0
-                ? 'bg-gradient-to-br from-purple-600 via-violet-600 to-indigo-600 group-hover:from-purple-500 group-hover:via-violet-500 group-hover:to-indigo-500 border-white/[0.08] group-hover:border-white/[0.15]'
+              absolute flex items-center justify-center p-5 rounded-2xl border-2
+              ${index === 0
+                ? 'border-white/[0.08] group-hover:border-white/[0.15]'
                 : `${styles.backCard} border-purple-600/20`}
               ${styles.stackCard} ${STACK_CLASSES[index]}
             `}
             style={{
               ...CARD_STYLE,
+              ...(index === 0 ? FRONT_SURFACE_STYLE : {}),
               zIndex: 10 - index,
               opacity: index === 0 ? 1 : 0.8 - (index * 0.1),
             }}
@@ -45,7 +54,7 @@ export default function ProjectsCard() {
 
             {index === 0 && (
               <HiFolder
-                className={`w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 text-white relative z-10 ${styles.folderIcon}`}
+                className={`w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 text-white/70 group-hover:text-white relative z-10 ${styles.folderIcon}`}
                 aria-hidden="true"
               />
             )}

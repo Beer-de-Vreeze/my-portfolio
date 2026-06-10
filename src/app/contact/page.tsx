@@ -5,7 +5,6 @@ import ContactForm from '@/components/forms/ContactForm';
 import Notification from '@/components/features/Notification';
 import { motion } from 'framer-motion';
 import { Mail, Github, Linkedin, FileDown, ArrowUpRight } from 'lucide-react';
-import { AvailabilityBadge } from '@/components/home/InfoStrip';
 import styles from '@/styles/page.module.css';
 import { useResponsiveSize } from '@/hooks/useScrolling';
 import { usePageSetup } from '@/hooks/usePageSetup';
@@ -147,11 +146,8 @@ export default function Contact() {
             <div>
               <p className="text-xl font-light text-white">Beer de Vreeze</p>
               <p className="text-sm text-gray-400">Software Developer · Game Tools · AI Systems</p>
-              <div className="mt-3">
-                <AvailabilityBadge />
-              </div>
               <p className="text-sm text-gray-500 leading-relaxed mt-3">
-                Based in Beusichem, Netherlands. Open to interesting work after graduating in 2025.
+                Based in Beusichem, Netherlands. Currently interning at ASAPCLOUD on the Data &amp; AI team.
               </p>
             </div>
 

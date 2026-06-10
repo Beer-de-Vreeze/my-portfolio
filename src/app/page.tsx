@@ -3,8 +3,6 @@ import { lazy, Suspense, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import AboutCard from "../components/cards/AboutCard";
 import ContactCard from "@/components/forms/ContactCardMenu";
-import InfoStrip from "@/components/home/InfoStrip";
-import CurrentlyWorking from "@/components/home/CurrentlyWorking";
 import { PerformanceLoading } from "@/components/performance/PerformanceLoading";
 import { useResponsiveSize } from "@/hooks/useScrolling";
 import { usePageSetup } from "@/hooks/usePageSetup";
@@ -86,10 +84,6 @@ export default function Home() {
             </div>
           )}
         </div>
-
-        {/* Recruiter info strip + current work, between hero and cards */}
-        <InfoStrip />
-        <CurrentlyWorking />
 
         <div className={`${styles.cardsSection} max-w-5xl mx-auto w-full`}>
           <div className={`${styles.cardsContainer} ${isDesktop ? styles.cardsContainerDesktop : styles.cardsContainerMobile}`}>
