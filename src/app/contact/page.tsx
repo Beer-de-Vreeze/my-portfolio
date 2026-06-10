@@ -147,7 +147,7 @@ export default function Contact() {
               <p className="text-xl font-light text-white">Beer de Vreeze</p>
               <p className="text-sm text-gray-400">Software Developer · Game Tools · AI Systems</p>
               <p className="text-sm text-gray-500 leading-relaxed mt-3">
-                Based in Beusichem, Netherlands. Currently interning at ASAPCLOUD on the Data &amp; AI team.
+                Based in Beusichem, Netherlands.
               </p>
             </div>
 

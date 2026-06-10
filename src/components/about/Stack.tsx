@@ -32,7 +32,7 @@ const Stack = () => {
         {
           title: 'Internship at ASAPCLOUD — Data & AI Team',
           category: 'Experience' as const,
-          date: '2025–Present',
+          date: '11.2025-04.2026',
           description: 'Joined the Data & AI team at ASAPCLOUD as a software development intern, building tools and systems in TypeScript — including MCP server development — while finishing my degree at GLU.',
         },
       ];
