@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 /**
  * Per-project interactive hover demos. Each demo only runs its animation
@@ -14,20 +15,25 @@ interface DemoProps {
 }
 
 // ── Demo 1: Unity Audio Previewer — animated waveform ───────────────────────
+const BAR_COUNT = 32;
+
 const AudioDemo = ({ active }: DemoProps) => {
-  const [heights, setHeights] = useState<number[]>(
-    Array.from({ length: 32 }, () => Math.random() * 40 + 10)
-  );
+  // Heights are mutated directly on the DOM in the rAF loop instead of going
+  // through React state — avoids 60 re-renders/second of 32 elements.
+  const barsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!active) return;
+    const bars = barsRef.current?.children;
+    if (!bars) return;
     let frame: number;
     let t = 0;
     const animate = () => {
       t += 0.05;
-      setHeights((prev) =>
-        prev.map((_, i) => 20 + Math.sin(t + i * 0.4) * 15 + Math.sin(t * 1.5 + i * 0.2) * 10)
-      );
+      for (let i = 0; i < bars.length; i++) {
+        const h = 20 + Math.sin(t + i * 0.4) * 15 + Math.sin(t * 1.5 + i * 0.2) * 10;
+        (bars[i] as HTMLElement).style.height = `${h}px`;
+      }
       frame = requestAnimationFrame(animate);
     };
     frame = requestAnimationFrame(animate);
@@ -36,13 +42,13 @@ const AudioDemo = ({ active }: DemoProps) => {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="flex items-end gap-0.5 h-16">
-        {heights.map((h, i) => (
+      <div ref={barsRef} className="flex items-end gap-0.5 h-16">
+        {Array.from({ length: BAR_COUNT }, (_, i) => (
           <div
             key={i}
             className="w-1.5 rounded-full transition-none"
             style={{
-              height: `${h}px`,
+              height: '20px',
               background: `hsl(${200 + i * 4}, 80%, 60%)`,
             }}
           />
@@ -553,7 +559,7 @@ interface HoverDemoProps {
 }
 
 export default function HoverDemo({ projectId, isHovered }: HoverDemoProps) {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = usePrefersReducedMotion();
   const demo = DEMOS[projectId];
   if (!demo) return null;
 

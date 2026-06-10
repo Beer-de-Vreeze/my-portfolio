@@ -9,22 +9,20 @@ export const ServiceWorkerInitializer: React.FC = () => {
     
     if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
       navigator.serviceWorker.ready.then((registration) => {
-        console.log('Service Worker registered successfully');
-        
         // Listen for updates
         registration.addEventListener('updatefound', () => {
           const newWorker = registration.installing;
           if (newWorker) {
             newWorker.addEventListener('statechange', () => {
               if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                console.log('New service worker available! Refresh to update.');
-                // You could show a toast notification here
+                // A new service worker is waiting; it activates on next load.
+                // A toast notification could be shown here.
               }
             });
           }
         });
       }).catch((error) => {
-        console.log('Service Worker registration failed:', error);
+        console.error('Service Worker registration failed:', error);
       });
     }
   }, []);

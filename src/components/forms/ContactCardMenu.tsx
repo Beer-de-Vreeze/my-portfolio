@@ -1,18 +1,13 @@
 "use client";
 import type React from "react";
-import { EnvelopeIcon, PaperAirplaneIcon } from "@heroicons/react/24/solid";
+import { HiEnvelope, HiPaperAirplane } from "react-icons/hi2";
 import BaseCard from "../cards/Card";
+import { GLASS_SURFACE_STYLE } from "@/styles/glassStyles";
 import styles from "./contactCardMenu.module.css";
 
 const CONTAINER_STYLE: React.CSSProperties = {
   width: 'clamp(160px, 20vw, 220px)',
   height: 'clamp(160px, 20vw, 220px)',
-};
-
-const GLASS_SURFACE_STYLE: React.CSSProperties = {
-  background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
-  backdropFilter: 'blur(12px)',
-  WebkitBackdropFilter: 'blur(12px)',
 };
 
 const GRADIENT_BORDER_STYLE: React.CSSProperties = {
@@ -54,10 +49,10 @@ export default function ContactCard() {
           {/* Main envelope container */}
           <div className="relative">
             {/* Envelope base */}
-            <EnvelopeIcon className={`${styles.envelopeIcon} w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 text-white/70 relative z-10`} />
+            <HiEnvelope className={`${styles.envelopeIcon} w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 text-white/70 relative z-10`} aria-hidden="true" />
 
             {/* Paper airplane that flies out */}
-            <PaperAirplaneIcon className={`${styles.paperPlane} absolute top-1/2 left-1/2 w-6 h-6 sm:w-8 sm:h-8 text-pink-400 z-20`} />
+            <HiPaperAirplane className={`${styles.paperPlane} absolute top-1/2 left-1/2 w-6 h-6 sm:w-8 sm:h-8 text-pink-400 z-20`} aria-hidden="true" />
           </div>
         </div>
       </div>

@@ -89,88 +89,6 @@ body.mobile-menu-open {
   border-color: var(--glass-border-hover);
 }
 
-/* Heavy blur variant for modals and overlays */
-.glass-heavy {
-  background: linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(10,10,10,0.8) 100%);
-  backdrop-filter: var(--glass-blur-heavy);
-  -webkit-backdrop-filter: var(--glass-blur-heavy);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-xl);
-}
-
-/* Glass with blue tint */
-.glass-blue {
-  background: linear-gradient(135deg,
-    rgba(59,130,246,0.08) 0%,
-    rgba(255,255,255,0.02) 50%,
-    rgba(59,130,246,0.04) 100%);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid rgba(59,130,246,0.15);
-  border-radius: var(--radius-xl);
-  transition: border-color var(--duration-base) ease,
-              box-shadow var(--duration-base) ease;
-}
-
-.glass-blue:hover {
-  border-color: rgba(59,130,246,0.3);
-  box-shadow: var(--glow-blue-subtle);
-}
-
-/* Glass with purple tint */
-.glass-purple {
-  background: linear-gradient(135deg,
-    rgba(139,92,246,0.08) 0%,
-    rgba(255,255,255,0.02) 50%,
-    rgba(139,92,246,0.04) 100%);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid rgba(139,92,246,0.15);
-  border-radius: var(--radius-xl);
-  transition: border-color var(--duration-base) ease,
-              box-shadow var(--duration-base) ease;
-}
-
-.glass-purple:hover {
-  border-color: rgba(139,92,246,0.3);
-  box-shadow: var(--glow-purple-subtle);
-}
-
-/* Glass with pink tint */
-.glass-pink {
-  background: linear-gradient(135deg,
-    rgba(236,72,153,0.08) 0%,
-    rgba(255,255,255,0.02) 50%,
-    rgba(236,72,153,0.04) 100%);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid rgba(236,72,153,0.15);
-  border-radius: var(--radius-xl);
-  transition: border-color var(--duration-base) ease,
-              box-shadow var(--duration-base) ease;
-}
-
-.glass-pink:hover {
-  border-color: rgba(236,72,153,0.3);
-  box-shadow: var(--glow-pink-subtle);
-}
-
-/* Gradient border wrapper technique
-   Use this as a wrapper div around a .glass-gradient-border-inner div
-   to achieve gradient borders without breaking border-radius */
-.glass-gradient-border {
-  background: var(--gradient-brand);
-  padding: 1px;
-  border-radius: var(--radius-xl);
-}
-
-.glass-gradient-border-inner {
-  background: linear-gradient(135deg, rgba(5,5,5,0.95) 0%, rgba(0,0,0,0.98) 100%);
-  border-radius: calc(var(--radius-xl) - 1px);
-  width: 100%;
-  height: 100%;
-}
-
 /* ============================================================
    Gradient text and glow utilities
    ============================================================ */
@@ -198,14 +116,6 @@ body.mobile-menu-open {
   50% { background-position: 100% 50%; }
 }
 
-/* Glow utilities */
-.glow-blue { box-shadow: var(--glow-blue); }
-.glow-purple { box-shadow: var(--glow-purple); }
-.glow-pink { box-shadow: var(--glow-pink); }
-.glow-blue-subtle { box-shadow: var(--glow-blue-subtle); }
-.glow-purple-subtle { box-shadow: var(--glow-purple-subtle); }
-.glow-pink-subtle { box-shadow: var(--glow-pink-subtle); }
-
 /* ============================================================
    NProgress loading bar
    ============================================================ */
@@ -222,74 +132,35 @@ body.mobile-menu-open {
 }
 
 /* ============================================================
-   Backgrounds
+   Loading and modal animations
    ============================================================ */
 
-/* Grid background styled exactly like hollowww.dev */
-.grid-background {
-  background-size: 40px 40px;
-  background-image: linear-gradient(
-      to right,
-      rgba(39, 39, 42, 0.1) 1px,
-      transparent 1px
-    ),
-    linear-gradient(to bottom, rgba(39, 39, 42, 0.1) 1px, transparent 1px);
-  background-attachment: fixed;
-}
-
-/* ============================================================
-   Loading, skeleton, and image states
-   ============================================================ */
-
-/* Shimmer animation for loading skeletons */
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-.animate-shimmer {
-  animation: shimmer 2s infinite linear;
-}
-
-/* Progressive loading animations */
-@keyframes fadeInUp {
+/* Project modal enter/exit (referenced by class and inline animation
+   names in ProjectCard/index.tsx) */
+@keyframes slideInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(2rem) scale(0.98);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
-.animate-fadeInUp {
-  animation: fadeInUp 0.6s ease-out forwards;
+@keyframes slideOutDown {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(2rem) scale(0.95);
+  }
 }
 
-/* Staggered animation delays */
-.animate-delay-100 {
-  animation-delay: 100ms;
-}
-
-.animate-delay-200 {
-  animation-delay: 200ms;
-}
-
-.animate-delay-300 {
-  animation-delay: 300ms;
-}
-
-.animate-delay-400 {
-  animation-delay: 400ms;
-}
-
-.animate-delay-500 {
-  animation-delay: 500ms;
+.animate-slideInUp {
+  animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Progress bar animation for media carousel */
@@ -310,70 +181,6 @@ body.mobile-menu-open {
   }
 }
 
-/* Skeleton loading specific styles */
-.skeleton {
-  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-.skeleton-dark {
-  background: linear-gradient(90deg, #1f2937 25%, #374151 50%, #1f2937 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-/* Image loading transitions */
-.image-loading {
-  transition: opacity 0.3s ease-in-out;
-}
-
-.image-loaded {
-  opacity: 1;
-}
-
-.image-loading:not(.image-loaded) {
-  opacity: 0;
-}
-
-/* Blur-up effect for images */
-.blur-up {
-  filter: blur(5px);
-  transition: filter 0.3s ease-in-out;
-}
-
-.blur-up.loaded {
-  filter: blur(0);
-}
-
-/* Offline indicator */
-.offline-indicator {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: #ef4444;
-  color: white;
-  text-align: center;
-  padding: 0.5rem;
-  z-index: 9999;
-  transform: translateY(-100%);
-  transition: transform 0.3s ease-in-out;
-}
-
-.offline-indicator.show {
-  transform: translateY(0);
-}
-
-/* Loading progress bar enhancements */
-.loading-progress {
-  height: 3px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-  border-radius: 0 0 2px 2px;
-  box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
-  transition: width 0.3s ease-out;
-}
-
 /* ============================================================
    Performance helpers
    ============================================================ */
@@ -389,22 +196,6 @@ body.mobile-menu-open {
 .notification-overlay {
   z-index: 999999;
   position: fixed;
-}
-
-/* ============================================================
-   Component animations
-   ============================================================ */
-
-/* About card icon – spin-flip animation on card hover */
-.about-card-icon {
-  transform: rotate(0deg) scale(1) rotateY(0deg);
-  transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  filter: drop-shadow(0 0 0px rgba(59, 130, 246, 0));
-}
-
-.group:hover .about-card-icon {
-  transform: rotate(720deg) scale(1.15) rotateY(180deg);
-  filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.8));
 }
 
 /* ============================================================

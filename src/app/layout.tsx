@@ -96,7 +96,7 @@ export default function RootLayout({
           What could it unlock? 🤔
         */}
       </head>
-      <body className="bg-black text-white custom-scrollbar min-h-screen" suppressHydrationWarning>
+      <body className="bg-black text-white min-h-screen" suppressHydrationWarning>
         <PerformanceWrapper>
           <LoadingProvider>
             <ModalProvider>

@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
+import { usePrefersReducedMotion } from './usePrefersReducedMotion';
 
 /**
  * Controls how scroll-lock is applied for the page.
@@ -28,22 +29,12 @@ export function usePageSetup(options: PageSetupOptions = {}): {
   const { scrollMode = 'always-on' } = options;
 
   const [isMounted, setIsMounted] = useState(false);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
-  const handleReducedMotionChange = useCallback(() => {
-    setPrefersReducedMotion(
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-    );
-  }, []);
-
-  // Mount flag + reduced-motion detection
+  // Mount flag (prevents hydration flicker)
   useEffect(() => {
     setIsMounted(true);
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setPrefersReducedMotion(mq.matches);
-    mq.addEventListener('change', handleReducedMotionChange);
-    return () => mq.removeEventListener('change', handleReducedMotionChange);
-  }, [handleReducedMotionChange]);
+  }, []);
 
   // Scroll-lock lifecycle
   useEffect(() => {

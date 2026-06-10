@@ -1,6 +1,7 @@
 import type React from "react";
-import { UserIcon } from "@heroicons/react/24/solid";
+import { HiUser } from "react-icons/hi2";
 import BaseCard from "./Card";
+import { GLASS_SURFACE_STYLE } from "@/styles/glassStyles";
 
 // Static class strings — defined at module level, never re-created per render
 const ICON_CLASSES =
@@ -15,12 +16,6 @@ const TEXT_CLASSES =
 const CONTAINER_STYLE: React.CSSProperties = {
   width: 'clamp(160px, 20vw, 220px)',
   height: 'clamp(160px, 20vw, 220px)',
-};
-
-const GLASS_SURFACE_STYLE: React.CSSProperties = {
-  background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
-  backdropFilter: 'blur(12px)',
-  WebkitBackdropFilter: 'blur(12px)',
 };
 
 const GRADIENT_BORDER_STYLE: React.CSSProperties = {
@@ -73,7 +68,7 @@ export default function AboutCard({ className, disabled = false }: AboutCardProp
           {/* Animated background gradient overlay on hover */}
           <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" aria-hidden="true"></div>
 
-          <UserIcon
+          <HiUser
             className={ICON_CLASSES}
             aria-hidden="true"
           />

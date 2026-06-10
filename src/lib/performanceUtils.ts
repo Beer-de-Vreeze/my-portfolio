@@ -134,14 +134,17 @@ export function measurePerformance<T>(
   
   const result = fn();
   
-  if (result instanceof Promise) {
-    return result.finally(() => {
+  const logDuration = () => {
+    if (process.env.NODE_ENV !== 'production') {
       const end = performance.now();
       console.log(`${name} took ${(end - start).toFixed(2)}ms`);
-    });
+    }
+  };
+
+  if (result instanceof Promise) {
+    return result.finally(logDuration);
   } else {
-    const end = performance.now();
-    console.log(`${name} took ${(end - start).toFixed(2)}ms`);
+    logDuration();
     return result;
   }
 }
@@ -190,7 +193,6 @@ export function registerServiceWorker(path: string = '/sw.js'): Promise<ServiceW
 
   return navigator.serviceWorker.register(path)
     .then(registration => {
-      console.log('Service Worker registered successfully');
       return registration;
     })
     .catch(error => {

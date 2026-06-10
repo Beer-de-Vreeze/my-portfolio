@@ -23,10 +23,6 @@ export const isVideoFormatSupported = (videoSrc: string): boolean => {
 
 /** Returns a compatible video source (attempts MP4 fallback for WebM on iOS/Safari) */
 export const getCompatibleVideoSource = (videoSrc: string): string => {
-  if (isIOSorSafari() && videoSrc.includes('.webm')) {
-    const mp4 = videoSrc.replace('.webm', '.mp4');
-    console.log(`iOS/Safari detected with WebM video. MP4 alternative would be: ${mp4}`);
-  }
   return videoSrc;
 };
 

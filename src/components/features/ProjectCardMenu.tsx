@@ -1,5 +1,5 @@
 import React from "react";
-import { FolderIcon } from "@heroicons/react/24/solid";
+import { HiFolder } from "react-icons/hi2";
 import BaseCard from "../cards/Card";
 import styles from "./projectCardMenu.module.css";
 
@@ -44,8 +44,9 @@ export default function ProjectsCard() {
             )}
 
             {index === 0 && (
-              <FolderIcon
+              <HiFolder
                 className={`w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 text-white relative z-10 ${styles.folderIcon}`}
+                aria-hidden="true"
               />
             )}
           </div>

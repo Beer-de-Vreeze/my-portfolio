@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo, useEffect, useState } from 'react';
+import { useMemo } from 'react';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import styles from '@/styles/page.module.css';
 
 interface StarfieldBackgroundProps {
@@ -66,15 +67,7 @@ function getParticleCount(prefersReducedMotion: boolean, density: number): numbe
  * never contributes to server HTML and never causes hydration mismatches.
  */
 export default function StarfieldBackground({ density = 1 }: StarfieldBackgroundProps) {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setPrefersReducedMotion(mq.matches);
-    const handler = () => setPrefersReducedMotion(mq.matches);
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
-  }, []);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   const count = useMemo(
     () => getParticleCount(prefersReducedMotion, density),
@@ -108,9 +101,6 @@ export default function StarfieldBackground({ density = 1 }: StarfieldBackground
     <>
       {/* Animated background grid */}
       <div className={styles.backgroundGrid} aria-hidden="true" />
-
-      {/* Cosmic dust layer */}
-      <div className={styles.cosmicDust} aria-hidden="true" />
 
       {/* Star particles */}
       <div

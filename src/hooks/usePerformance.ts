@@ -1,5 +1,6 @@
 import { useEffect, useCallback, useRef } from 'react';
 import { ResourcePreloader, MemoryManager } from '@/lib/performanceUtils';
+import { prefersReducedMotion } from './usePrefersReducedMotion';
 
 /**
  * Extended Navigator interface for device memory
@@ -33,11 +34,8 @@ export function usePerformance() {
     return cleanup;
   }, []);
 
-  // Optimize for reduced motion
-  const shouldReduceMotion = useCallback(() => {
-    if (typeof window === 'undefined') return false;
-    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  }, []);
+  // Optimize for reduced motion — delegates to the shared single source
+  const shouldReduceMotion = useCallback(() => prefersReducedMotion(), []);
 
   // Memory pressure detection
   const isLowMemory = useCallback((): boolean => {

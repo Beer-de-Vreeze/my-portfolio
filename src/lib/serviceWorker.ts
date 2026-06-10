@@ -2,6 +2,13 @@
 
 // Service Worker registration and management utilities
 
+// Informational logs are dev-only; errors still use console.error in production.
+const devLog = (...args: unknown[]) => {
+  if (process.env.NODE_ENV !== 'production') {
+    devLog(...args);
+  }
+};
+
 interface ServiceWorkerConfig {
   onSuccess?: (registration: ServiceWorkerRegistration) => void;
   onUpdate?: (registration: ServiceWorkerRegistration) => void;
@@ -21,13 +28,13 @@ class ServiceWorkerManager {
 
   async register(): Promise<ServiceWorkerRegistration | null> {
     if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
-      console.log('Service Worker not supported');
+      devLog('Service Worker not supported');
       return null;
     }
 
     // Skip service worker registration in development
     if (process.env.NODE_ENV !== 'production') {
-      console.log('Service Worker registration skipped in development mode');
+      devLog('Service Worker registration skipped in development mode');
       return null;
     }
 
@@ -56,7 +63,7 @@ class ServiceWorkerManager {
         this.config.onSuccess?.(registration);
       }
 
-      console.log('Service Worker registered successfully:', registration);
+      devLog('Service Worker registered successfully:', registration);
       return registration;
     } catch (error) {
       console.error('Service Worker registration failed:', error);
@@ -69,7 +76,7 @@ class ServiceWorkerManager {
       try {
         const result = await this.registration.unregister();
         this.registration = null;
-        console.log('Service Worker unregistered:', result);
+        devLog('Service Worker unregistered:', result);
         return result;
       } catch (error) {
         console.error('Service Worker unregistration failed:', error);
@@ -83,7 +90,7 @@ class ServiceWorkerManager {
     if (this.registration) {
       try {
         await this.registration.update();
-        console.log('Service Worker update triggered');
+        devLog('Service Worker update triggered');
       } catch (error) {
         console.error('Service Worker update failed:', error);
       }
@@ -103,7 +110,7 @@ class ServiceWorkerManager {
         await Promise.all(
           cacheNames.map(name => caches.delete(name))
         );
-        console.log('All caches cleared');
+        devLog('All caches cleared');
         
         // Re-register service worker to rebuild cache
         await this.register();
@@ -141,13 +148,13 @@ class ServiceWorkerManager {
     window.addEventListener('online', () => {
       this.isOnline = true;
       this.config.onOnline?.();
-      console.log('App is back online');
+      devLog('App is back online');
     });
 
     window.addEventListener('offline', () => {
       this.isOnline = false;
       this.config.onOffline?.();
-      console.log('App is offline');
+      devLog('App is offline');
     });
   }
 

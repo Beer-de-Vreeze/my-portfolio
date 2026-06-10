@@ -13,12 +13,6 @@ import '@/styles/performance.css';
 
 const StarfieldBackground = dynamic(() => import('@/components/features/StarfieldBackground'), { ssr: false });
 
-const SPLIT_CONTAINER_STYLE: React.CSSProperties = {
-  background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
-  backdropFilter: 'blur(12px)',
-  WebkitBackdropFilter: 'blur(12px)',
-};
-
 const PINK_TINT_STYLE: React.CSSProperties = {
   background: 'radial-gradient(circle at 80% 20%, rgba(236,72,153,0.06) 0%, transparent 50%)',
 };
@@ -135,10 +129,7 @@ export default function Contact() {
         </header>
 
         {/* Split glassmorphism container: info left, form right */}
-        <div
-          className="relative w-full max-w-5xl mx-auto rounded-[24px] border border-white/[0.08] p-5 lg:p-8 flex flex-col gap-8 lg:grid lg:grid-cols-[1fr_1px_1.5fr]"
-          style={SPLIT_CONTAINER_STYLE}
-        >
+        <div className="glass relative w-full max-w-5xl mx-auto p-5 lg:p-8 flex flex-col gap-8 lg:grid lg:grid-cols-[1fr_1px_1.5fr]">
           {/* Pink gradient tint */}
           <div
             className="absolute inset-0 rounded-[24px] pointer-events-none"

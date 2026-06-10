@@ -1,7 +1,7 @@
 'use client';
 
-import { motion, useReducedMotion } from 'framer-motion';
 import { FileDown } from 'lucide-react';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 // UPDATE THIS when availability changes (also shown on the contact page).
 const AVAILABILITY_TEXT = 'Available from 2025';
@@ -25,16 +25,19 @@ export function AvailabilityBadge() {
 /**
  * Recruiter-focused strip between the hero and the cards:
  * positioning statement, availability, stack, and CV download.
+ *
+ * Entrance is a plain CSS fadeInUp (Tailwind keyframes) rather than
+ * Framer Motion so the home page doesn't pull the motion bundle in.
  */
 export default function InfoStrip() {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   return (
-    <motion.div
-      className="w-full max-w-4xl mx-auto px-4 py-3 flex items-center gap-4 flex-wrap"
-      initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 1.8 }}
+    <div
+      className={`w-full max-w-4xl mx-auto px-4 py-3 flex items-center gap-4 flex-wrap ${
+        prefersReducedMotion ? '' : 'opacity-0 animate-fadeInUp'
+      }`}
+      style={prefersReducedMotion ? undefined : { animationDelay: '1.8s' }}
     >
       <p className="text-sm text-gray-400">{POSITIONING_TEXT}</p>
 
@@ -53,6 +56,6 @@ export default function InfoStrip() {
         <FileDown className="w-3.5 h-3.5" aria-hidden="true" />
         Download CV
       </a>
-    </motion.div>
+    </div>
   );
 }

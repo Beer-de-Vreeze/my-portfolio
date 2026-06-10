@@ -471,6 +471,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         onMouseUp={() => setIsClicked(false)}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => { setIsHovered(false); setIsClicked(false); }}
+        onFocus={() => setIsHovered(true)}
+        onBlur={() => setIsHovered(false)}
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(); } }}
         tabIndex={0}
         role="button"
