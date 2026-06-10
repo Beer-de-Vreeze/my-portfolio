@@ -1,6 +1,6 @@
 /* Mobile-specific optimizations */
 @media (max-width: 768px) {
-  /* Disable expensive animations on mobile */
+  /* Slower animation durations to save battery */
   .animate-spin,
   .animate-pulse,
   .animate-ping {
@@ -24,26 +24,12 @@
     -webkit-backdrop-filter: blur(2px);
   }
 
-  /* Optimize gradients for mobile */
+  /* Slower gradient text animation on mobile */
   .gradient-text {
-    background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    /* Reduce animation complexity */
-    animation-duration: 4s;
+    animation-duration: 6s;
   }
 
-  /* Reduce shadow complexity */
-  .shadow-lg {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  }
-
-  .shadow-xl {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  }
-
-  /* Optimize transforms */
+  /* Disable will-change hints on mobile */
   .transform {
     will-change: auto;
   }
@@ -54,17 +40,5 @@
       transform: none;
       backface-visibility: visible;
     }
-  }
-}
-
-/* Reduce animation complexity on lower-end devices */
-@media (max-width: 768px) and (max-resolution: 1.5dppx) {
-  .particle {
-    animation-duration: 6s;
-    opacity: 0.3;
-  }
-
-  .particle:nth-child(n + 16) {
-    display: none;
   }
 }

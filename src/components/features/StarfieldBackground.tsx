@@ -19,6 +19,35 @@ const WEIGHTED_TYPES = [
   'starXLarge',
 ] as const;
 
+// [top%, left%] for each of the 50 particles — matches the former
+// .particle1–.particle50 CSS classes exactly so the visual output is identical.
+const PARTICLE_POSITIONS: [number, number][] = [
+  [15, 8], [25, 85], [45, 15], [70, 75], [10, 60],
+  [80, 25], [35, 92], [65, 5], [20, 40], [55, 55],
+  [90, 45], [5, 20], [75, 10], [40, 70], [85, 80],
+  [30, 35], [60, 90], [12, 75], [95, 15], [50, 3],
+  [8, 45], [33, 88], [77, 52], [18, 12], [63, 78],
+  [41, 25], [87, 67], [26, 58], [72, 8], [14, 82],
+  [58, 38], [92, 73], [37, 18], [81, 93], [23, 48],
+  [67, 13], [11, 63], [54, 83], [96, 28], [42, 6],
+  [78, 48], [17, 73], [61, 23], [84, 88], [29, 53],
+  [74, 18], [6, 38], [48, 78], [89, 43], [35, 8],
+];
+
+// [twinkle seconds, float seconds] per particle — also lifted from the old CSS.
+const PARTICLE_DURATIONS: [number, number][] = [
+  [4, 8], [3, 10], [5, 12], [3.5, 9], [4.5, 11],
+  [2.8, 7], [3.2, 9.5], [4.8, 8.5], [3.7, 10.5], [5.2, 7.8],
+  [2.9, 12.5], [4.1, 9.2], [3.6, 11.8], [5.5, 8.8], [2.7, 10.2],
+  [4.3, 9.7], [3.4, 8.1], [5.1, 11.3], [3.8, 9.4], [4.6, 10.7],
+  [2.5, 8.9], [5.3, 12.1], [3.1, 7.6], [4.9, 11.7], [2.3, 9.8],
+  [5.7, 8.3], [3.9, 10.9], [4.2, 7.4], [2.8, 12.8], [5.4, 9.1],
+  [3.3, 11.2], [4.7, 8.7], [2.6, 10.4], [5.8, 9.6], [3.5, 8.2],
+  [4.4, 11.9], [2.9, 7.8], [5.2, 12.3], [3.7, 9.5], [4.8, 10.8],
+  [2.4, 8.6], [5.6, 11.4], [3.2, 9.7], [4.5, 7.9], [2.7, 12.6],
+  [5.9, 10.1], [3.4, 8.4], [4.1, 11.8], [2.2, 9.3], [5.5, 12.7],
+];
+
 function getParticleCount(prefersReducedMotion: boolean, density: number): number {
   if (prefersReducedMotion) return 0;
   if (typeof window === 'undefined') return 0;
@@ -56,10 +85,18 @@ export default function StarfieldBackground({ density = 1 }: StarfieldBackground
     () =>
       Array.from({ length: count }, (_, i) => {
         const starType = WEIGHTED_TYPES[i % WEIGHTED_TYPES.length];
+        const [top, left] = PARTICLE_POSITIONS[i % PARTICLE_POSITIONS.length];
+        const [twinkle, float] = PARTICLE_DURATIONS[i % PARTICLE_DURATIONS.length];
         return (
           <div
             key={i}
-            className={`${styles.particle} ${styles[starType]} ${styles[`particle${i + 1}`]}`}
+            className={`${styles.particle} ${styles[starType]} ${styles[`particleAnim${(i % 6) + 1}`]}`}
+            style={{
+              top: `${top}%`,
+              left: `${left}%`,
+              '--twinkle-duration': `${twinkle}s`,
+              '--float-duration': `${float}s`,
+            } as React.CSSProperties}
             aria-hidden="true"
           />
         );

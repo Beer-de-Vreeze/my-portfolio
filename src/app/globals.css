@@ -1,501 +1,229 @@
+@import "../styles/tokens.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 255, 255, 255;
-  --background-rgb: 0, 0, 0;
-}
-
-/* Standardized scrolling behavior for all devices */
+/* ============================================================
+   Base HTML and body — single source of truth
+   ============================================================ */
 html {
   height: 100%;
-  height: -webkit-fill-available;
-  scroll-behavior: smooth;
   overflow-x: hidden;
-  overflow-y: auto;
-  /* Performance optimizations */
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+  scroll-behavior: smooth;
   text-rendering: optimizeSpeed;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  max-width: 100vw;
+  /* Firefox scrollbar styling */
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
-  min-height: 100vh;
-  min-height: -webkit-fill-available;
-  width: 100%;
+  min-height: 100%;
+  background: var(--color-bg);
+  color: var(--text-primary);
   overflow-x: hidden;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  /* Use scroll for better mobile performance */
-  background-attachment: scroll;
   margin: 0;
   padding: 0;
+  max-width: 100vw;
 }
 
-/* Mobile-specific body adjustments */
-@media screen and (max-width: 768px) {
-  body {
-    min-height: 100vh !important;
-    height: auto !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-}
-
-/* Only disable scrolling on very large desktops where content actually fits */
-@media screen and (min-width: 1440px) and (min-height: 900px) {
-  html {
-    height: 100vh;
-    overflow: hidden;
-  }
-
-  body {
-    height: 100vh;
-    min-height: 100vh;
-    overflow: hidden;
-  }
-}
-
-/* Fallback class for manual scroll control if needed */
-@media screen and (min-width: 1440px) {
-  body.no-scroll {
-    overflow: hidden;
-  }
-
-  html.no-scroll {
-    overflow: hidden;
-  }
-}
-
-/* Laptop range - disable scrolling where content fits exactly */
-@media screen and (min-width: 1024px) and (max-width: 1439px) {
-  body.no-scroll {
-    overflow: hidden;
-  }
-
-  html.no-scroll {
-    overflow: hidden;
-  }
-}
-
-/* SIMPLIFIED MOBILE SCROLLING - CRITICAL FIX */
-@media screen and (max-width: 768px) {
-  html {
-    height: auto !important;
-    -webkit-text-size-adjust: 100%;
-  }
-
-  body {
-    height: auto !important;
-    min-height: 100vh !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    -webkit-overflow-scrolling: touch !important;
-    position: static !important;
-    /* Remove any constraints that prevent scrolling */
-    max-height: none !important;
-    /* Remove excessive padding on mobile */
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-  }
-
-  /* Ensure all main containers allow scrolling and have minimal padding */
-  main,
-  .container,
-  .containerScrollable {
-    height: auto !important;
-    min-height: auto !important;
-    max-height: none !important;
-    overflow: visible !important;
-    padding-top: 0.25rem !important;
-    padding-bottom: 0.25rem !important;
-  }
-}
-
-/* Support for iPhone X and newer with safe areas - minimal padding only when needed */
-body {
-  /* Only apply safe area padding on mobile devices that actually need it */
-  padding-bottom: 0;
-  padding-top: 0;
-  margin: 0 !important;
-}
-
-/* Apply safe area padding only on devices that need it and only at bottom */
-@supports (padding-bottom: env(safe-area-inset-bottom)) and (max-width: 768px) {
-  @media (max-width: 768px) {
-    body {
-      /* Only bottom padding for home indicator, no top padding */
-      padding-bottom: env(safe-area-inset-bottom);
-      padding-top: 0;
-    }
-  }
-}
-
-/* Prevent unwanted right-side spacing on all pages */
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
-html,
-body {
-  max-width: 100vw;
-  margin: 0;
-  padding-left: 0;
-  padding-right: 0;
+/* Scroll-lock helpers toggled from usePageSetup and the mobile menu */
+html.no-scroll,
+body.no-scroll {
+  overflow: hidden;
 }
 
-/* Ensure all main containers don't exceed viewport width */
-main,
-.container,
-.containerScrollable,
-#__next,
-[data-nextjs-scroll-focus-boundary] {
-  max-width: 100vw;
-  margin-left: 0;
-  margin-right: 0;
-  padding-left: 0;
-  padding-right: 0;
+body.mobile-menu-open {
+  overflow: hidden;
 }
 
-/* iOS Safari specific fixes */
-@supports (-webkit-appearance: none) {
-  html {
-    height: 100%;
-    height: -webkit-fill-available;
-  }
-
-  body {
-    height: 100%;
-    height: -webkit-fill-available;
-  }
-}
-
-/* Tablet and desktop optimizations */
-@media screen and (min-width: 769px) {
-  body {
-    /* Better scrolling experience on larger screens */
-    scroll-behavior: smooth;
-    overscroll-behavior: contain;
-  }
-
-  /* Re-enable text selection on desktop */
-  * {
-    -webkit-user-select: initial;
-    -khtml-user-select: initial;
-    -moz-user-select: initial;
-    -ms-user-select: initial;
-    user-select: initial;
-  }
-}
-
-/* Enhanced scrollbar styles for all devices */
+/* ============================================================
+   Scrollbar
+   ============================================================ */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: var(--scrollbar-width);
 }
 
 ::-webkit-scrollbar-track {
-  background: #111111;
-  border-radius: 4px;
+  background: var(--scrollbar-track);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2a2a2a;
-  border-radius: 4px;
-  /* Remove border that creates spacing from edge */
-  border: none !important;
-  transition: all 0.3s ease;
+  background: var(--scrollbar-thumb);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(to bottom, #3b82f6, #8b5cf6);
 }
 
-::-webkit-scrollbar-corner {
-  background: #111111;
+/* ============================================================
+   Glassmorphism surfaces
+   ============================================================ */
+
+/* Base glass surface */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  transition: border-color var(--duration-base) ease,
+              background var(--duration-base) ease,
+              box-shadow var(--duration-base) ease;
 }
 
-/* Firefox scrollbar styling */
-html {
-  scrollbar-width: thin;
-  scrollbar-color: #2a2a2a #111111;
+.glass:hover {
+  border-color: var(--glass-border-hover);
 }
 
-/* Mobile-specific scrollbar adjustments */
-@media (max-width: 768px) {
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: #3a3a3a;
-    /* Remove border that creates spacing from edge */
-    border: none !important;
-  }
-
-  ::-webkit-scrollbar-thumb:active {
-    background: linear-gradient(to bottom, #3b82f6, #8b5cf6);
-  }
+/* Heavy blur variant for modals and overlays */
+.glass-heavy {
+  background: linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(10,10,10,0.8) 100%);
+  backdrop-filter: var(--glass-blur-heavy);
+  -webkit-backdrop-filter: var(--glass-blur-heavy);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
 }
 
-/* Tablet-specific scrollbar adjustments */
-@media (min-width: 769px) and (max-width: 1024px) {
-  ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: #2a2a2a;
-    /* Remove border that creates spacing from edge */
-    border: none !important;
-  }
+/* Glass with blue tint */
+.glass-blue {
+  background: linear-gradient(135deg,
+    rgba(59,130,246,0.08) 0%,
+    rgba(255,255,255,0.02) 50%,
+    rgba(59,130,246,0.04) 100%);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(59,130,246,0.15);
+  border-radius: var(--radius-xl);
+  transition: border-color var(--duration-base) ease,
+              box-shadow var(--duration-base) ease;
 }
 
-/* Apply consistent scrollbar to all scrollable elements */
-.custom-scrollbar,
-.custom-scrollbar * {
-  scrollbar-width: thin;
-  scrollbar-color: #2a2a2a #111111;
+.glass-blue:hover {
+  border-color: rgba(59,130,246,0.3);
+  box-shadow: var(--glow-blue-subtle);
 }
 
-/* Common utility classes */
+/* Glass with purple tint */
+.glass-purple {
+  background: linear-gradient(135deg,
+    rgba(139,92,246,0.08) 0%,
+    rgba(255,255,255,0.02) 50%,
+    rgba(139,92,246,0.04) 100%);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(139,92,246,0.15);
+  border-radius: var(--radius-xl);
+  transition: border-color var(--duration-base) ease,
+              box-shadow var(--duration-base) ease;
+}
+
+.glass-purple:hover {
+  border-color: rgba(139,92,246,0.3);
+  box-shadow: var(--glow-purple-subtle);
+}
+
+/* Glass with pink tint */
+.glass-pink {
+  background: linear-gradient(135deg,
+    rgba(236,72,153,0.08) 0%,
+    rgba(255,255,255,0.02) 50%,
+    rgba(236,72,153,0.04) 100%);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(236,72,153,0.15);
+  border-radius: var(--radius-xl);
+  transition: border-color var(--duration-base) ease,
+              box-shadow var(--duration-base) ease;
+}
+
+.glass-pink:hover {
+  border-color: rgba(236,72,153,0.3);
+  box-shadow: var(--glow-pink-subtle);
+}
+
+/* Gradient border wrapper technique
+   Use this as a wrapper div around a .glass-gradient-border-inner div
+   to achieve gradient borders without breaking border-radius */
+.glass-gradient-border {
+  background: var(--gradient-brand);
+  padding: 1px;
+  border-radius: var(--radius-xl);
+}
+
+.glass-gradient-border-inner {
+  background: linear-gradient(135deg, rgba(5,5,5,0.95) 0%, rgba(0,0,0,0.98) 100%);
+  border-radius: calc(var(--radius-xl) - 1px);
+  width: 100%;
+  height: 100%;
+}
+
+/* ============================================================
+   Gradient text and glow utilities
+   ============================================================ */
+
+/* Animated gradient text — the main brand treatment */
 .gradient-text {
-  @apply bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 text-transparent bg-clip-text transition-all duration-300;
+  background: var(--gradient-brand-text);
   background-size: 200% 200%;
-  animation: gradientFlow 4s ease-in-out infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientFlow var(--duration-gradient) ease-in-out infinite;
+}
+
+/* Static gradient text — for when animation is too much */
+.gradient-text-static {
+  background: var(--gradient-brand-text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 @keyframes gradientFlow {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
-.card-hover {
-  @apply cursor-pointer transition-all duration-500;
-  transform-style: preserve-3d;
-}
+/* Glow utilities */
+.glow-blue { box-shadow: var(--glow-blue); }
+.glow-purple { box-shadow: var(--glow-purple); }
+.glow-pink { box-shadow: var(--glow-pink); }
+.glow-blue-subtle { box-shadow: var(--glow-blue-subtle); }
+.glow-purple-subtle { box-shadow: var(--glow-purple-subtle); }
+.glow-pink-subtle { box-shadow: var(--glow-pink-subtle); }
 
-.card-hover:hover {
-  transform: translateY(-8px) rotateX(5deg) rotateY(5deg);
-}
-
-/* Enhanced gradient styles */
-.gradient-bg {
-  @apply bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500;
-}
-
-.gradient-border {
-  @apply border-4 border-transparent bg-clip-padding;
-  background-image: linear-gradient(to right, #3b82f6, #8b5cf6, #ec4899);
-  background-origin: border-box;
-}
-
-/* Enhanced glow effects */
-.glow-blue {
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-}
-
-.glow-purple {
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
-}
-
-.glow-pink {
-  box-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
-}
-
-/* Card-specific grid hover effects */
-.card-grid-blue:hover {
-  background: radial-gradient(
-    circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    rgba(59, 130, 246, 0.05) 0%,
-    transparent 50%
-  );
-}
-
-.card-grid-purple:hover {
-  background: radial-gradient(
-    circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    rgba(139, 92, 246, 0.05) 0%,
-    transparent 50%
-  );
-}
-
-.card-grid-pink:hover {
-  background: radial-gradient(
-    circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    rgba(236, 72, 153, 0.05) 0%,
-    transparent 50%
-  );
-}
-
-/* Subtle animations for enhanced interactivity */
-@keyframes subtlePulse {
-  0%,
-  100% {
-    opacity: 0.6;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-}
-
-.animate-subtle-pulse {
-  animation: subtlePulse 3s ease-in-out infinite;
-}
-
-/* Grid animation keyframes for cards */
-@keyframes gridPulse {
-  0%,
-  100% {
-    opacity: 0.3;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.02);
-  }
-}
-
-@keyframes gridSlide {
-  0% {
-    transform: translateX(0) translateY(0);
-  }
-  100% {
-    transform: translateX(0) translateY(16px);
-  }
-}
-
-@keyframes gridWave {
-  0%,
-  100% {
-    transform: scale(1) rotate(0deg);
-    opacity: 0.4;
-  }
-  33% {
-    transform: scale(1.02) rotate(1deg);
-    opacity: 0.6;
-  }
-  66% {
-    transform: scale(0.98) rotate(-1deg);
-    opacity: 0.5;
-  }
-}
-
-/* New enhanced grid animations */
-@keyframes aboutGridDance {
-  0% {
-    transform: translateX(0) translateY(0) rotate(0deg) scale(1);
-    opacity: 0.4;
-  }
-  25% {
-    transform: translateX(0) translateY(-2px) rotate(0.5deg) scale(1.01);
-    opacity: 0.6;
-  }
-  50% {
-    transform: translateX(0) translateY(0) rotate(0deg) scale(1.02);
-    opacity: 0.8;
-  }
-  75% {
-    transform: translateX(0) translateY(2px) rotate(-0.5deg) scale(1.01);
-    opacity: 0.6;
-  }
-  100% {
-    transform: translateX(0) translateY(0) rotate(0deg) scale(1);
-    opacity: 0.4;
-  }
-}
-
-@keyframes projectGridFlow {
-  0% {
-    transform: translateX(0) translateY(0) skewX(0deg);
-    opacity: 0.5;
-  }
-  20% {
-    transform: translateX(0) translateY(2px) skewX(1deg);
-    opacity: 0.7;
-  }
-  40% {
-    transform: translateX(0) translateY(5px) skewX(0deg);
-    opacity: 0.9;
-  }
-  60% {
-    transform: translateX(0) translateY(3px) skewX(-1deg);
-    opacity: 0.7;
-  }
-  80% {
-    transform: translateX(0) translateY(8px) skewX(0deg);
-    opacity: 0.5;
-  }
-  100% {
-    transform: translateX(0) translateY(10px) skewX(0deg);
-    opacity: 0.3;
-  }
-}
-
-@keyframes contactGridSpiral {
-  0% {
-    transform: rotate(0deg) scale(1) translateX(0);
-    opacity: 0.3;
-  }
-  25% {
-    transform: rotate(90deg) scale(1.02) translateX(0);
-    opacity: 0.6;
-  }
-  50% {
-    transform: rotate(180deg) scale(1.04) translateX(0);
-    opacity: 0.8;
-  }
-  75% {
-    transform: rotate(270deg) scale(1.02) translateX(0);
-    opacity: 0.6;
-  }
-  100% {
-    transform: rotate(360deg) scale(1) translateX(0);
-    opacity: 0.3;
-  }
-}
-
-/* Enhanced backdrop blur effects */
-.backdrop-blur-subtle {
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-/* Improved text rendering */
-.text-crisp {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-}
-
-/* New gradient styles */
-.gradient-bg {
-  @apply bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500;
-}
-
-.gradient-border {
-  @apply border-4 border-transparent bg-clip-padding;
-  background-image: linear-gradient(to right, #3b82f6, #8b5cf6, #ec4899);
-  background-origin: border-box;
-}
-
-/* Custom NProgress styling for gradient loading bar */
+/* ============================================================
+   NProgress loading bar
+   ============================================================ */
 #nprogress .bar {
-  background: linear-gradient(to right, #3b82f6, #8b5cf6, #ec4899);
-  height: 3px;
+  background: var(--gradient-brand);
+  background-size: 200% 100%;
+  animation: gradientFlow 2s ease infinite;
+  height: 2px;
+  box-shadow: 0 0 8px rgba(139,92,246,0.6);
 }
+
+#nprogress .peg {
+  box-shadow: 0 0 10px rgba(139,92,246,0.8), 0 0 5px rgba(139,92,246,0.5);
+}
+
+/* ============================================================
+   Backgrounds
+   ============================================================ */
 
 /* Grid background styled exactly like hollowww.dev */
 .grid-background {
@@ -509,228 +237,9 @@ html {
   background-attachment: fixed;
 }
 
-/* Form styling to match hollowww.dev */
-input,
-textarea {
-  background-color: transparent;
-}
-
-input:focus,
-textarea:focus {
-  outline: none;
-}
-
-/* Subtle hover effect for form buttons only */
-form button:hover:not(:disabled) {
-  transition: all 0.2s ease;
-}
-
-/* Remove browser default focus styles */
-*:focus {
-  outline: none;
-}
-
-/* Form focus styles */
-input:focus,
-textarea:focus,
-select:focus {
-  outline: none;
-  border-color: rgba(156, 163, 175, 0.5); /* gray-500 with reduced opacity */
-}
-
-/* Select dropdown styling */
-select option {
-  background-color: #000;
-  color: white;
-}
-
-/* Button hover animation for form - only apply to form buttons */
-form button:not(:disabled):hover {
-  background-color: white;
-  color: black;
-}
-
-.text-3xl {
-  font-size: 1.5rem; /* Equivalent to text-3xl in Tailwind CSS */
-  line-height: 2.25rem; /* Equivalent to text-3xl in Tailwind CSS */
-  white-space: nowrap;
-}
-
-input,
-textarea,
-select {
-  background-color: transparent;
-  border: none;
-  border-bottom: 1px solid #333;
-  color: #fff;
-  padding: 0.5rem 0;
-  width: 100%;
-}
-
-input:focus,
-textarea:focus,
-select:focus {
-  outline: none;
-  border-bottom-color: #555;
-}
-
-/* Mobile touch target improvements - COMBINED */
-@media (max-width: 768px) {
-  .form-container {
-    padding: 1rem;
-  }
-
-  /* These rules are already handled above - removing duplicates */
-}
-
-/* Improve touch targets for tablets and mobile */
-@media (min-width: 481px) and (max-width: 1024px) {
-  button,
-  [role="button"] {
-    min-height: 44px; /* iOS recommended touch target size */
-  }
-}
-
-/* Mobile button accessibility */
-@media (max-width: 480px) {
-  button,
-  [role="button"] {
-    min-height: 44px;
-    min-width: 44px;
-  }
-}
-
-/* Prevent horizontal scrolling and content shifting - CRITICAL FIX */
-html {
-  overflow-x: hidden !important;
-  width: 100% !important;
-  max-width: 100vw !important;
-  position: relative !important;
-}
-
-body {
-  overflow-x: hidden !important;
-  width: 100% !important;
-  max-width: 100vw !important;
-  position: relative !important;
-  margin: 0 !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-  transform: none !important;
-}
-
-/* Ensure all containers and main elements don't cause horizontal overflow */
-main,
-#__next,
-[data-nextjs-scroll-focus-boundary] {
-  overflow-x: hidden !important;
-  width: 100% !important;
-  max-width: 100vw !important;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-  transform: none !important;
-  position: relative !important;
-}
-
-/* Allow specific containers to have max-width constraints for content layout */
-.container,
-.containerScrollable {
-  overflow-x: hidden !important;
-  width: 100% !important;
-  max-width: 100vw !important;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  transform: none !important;
-  position: relative !important;
-}
-
-/* Prevent any background elements from causing horizontal shifts */
-*::before,
-*::after {
-  max-width: 100vw !important;
-  overflow-x: hidden !important;
-}
-
-/* Contact form specific width constraints - made wider with more spacing */
-.contact-form-container,
-.contact-form-container > * {
-  max-width: 500px !important;
-}
-
-@media (max-width: 768px) {
-  .contact-form-container,
-  .contact-form-container > * {
-    max-width: 95% !important;
-    width: 95% !important;
-  }
-}
-
-/* Contact page specific width constraints - made wider */
-.contact-page-main {
-  max-width: 550px !important;
-  width: 100% !important;
-  margin: 0 auto !important;
-}
-
-@media (max-width: 768px) {
-  .contact-page-main {
-    max-width: 100% !important;
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-  }
-}
-
-/* Specific form element width constraints to prevent stretching */
-.contact-form-container input,
-.contact-form-container textarea,
-.contact-form-container .select-content {
-  max-width: 100% !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-/* Ensure contact form respects Tailwind max-width classes - restored to original */
-.max-w-xl {
-  max-width: 36rem !important; /* 576px */
-}
-
-.max-w-2xl {
-  max-width: 28rem !important; /* 448px - reduced for more compact design */
-}
-
-/* Add max-w-lg for compact contact form */
-.max-w-lg {
-  max-width: 32rem !important; /* 512px - wider design */
-}
-
-/* Add max-w-md for contact form wrapper */
-.max-w-md {
-  max-width: 32rem !important; /* 512px - wider size */
-}
-
-/* Mobile contact page fixes to prevent bottom cutoff */
-@media (max-width: 768px) {
-  .contact-page-main {
-    min-height: auto !important;
-    height: auto !important;
-    padding-bottom: 6rem !important; /* Extra space for social buttons */
-  }
-
-  /* Ensure the contact form container has enough bottom space */
-  .contact-form-container {
-    margin-bottom: 2rem !important;
-  }
-}
-
-/* Mobile viewport fixes for contact page */
-@media (max-height: 800px) and (max-width: 768px) {
-  .contact-page-main {
-    padding-top: 4rem !important;
-    padding-bottom: 8rem !important;
-  }
-}
+/* ============================================================
+   Loading, skeleton, and image states
+   ============================================================ */
 
 /* Shimmer animation for loading skeletons */
 @keyframes shimmer {
@@ -758,58 +267,6 @@ main,
   }
 }
 
-/* Progress bar animation for media carousel */
-@keyframes progressBar {
-  0% {
-    width: 0%;
-    opacity: 0.8;
-  }
-  5% {
-    opacity: 1;
-  }
-  95% {
-    opacity: 1;
-  }
-  100% {
-    width: 100%;
-    opacity: 0.9;
-  }
-}
-
-/* Enhanced progress bar pulse effect */
-@keyframes progressPulse {
-  0%,
-  100% {
-    box-shadow: 0 0 12px rgba(96, 165, 250, 0.6),
-      0 0 24px rgba(147, 51, 234, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 16px rgba(96, 165, 250, 0.8),
-      0 0 32px rgba(147, 51, 234, 0.5);
-  }
-}
-
-/* Progress bar container background enhancement */
-@keyframes progressBg {
-  0% {
-    background-position: 0% 50%;
-  }
-  100% {
-    background-position: 100% 50%;
-  }
-}
-
-/* Progress bar glow effect */
-@keyframes progressGlow {
-  0%,
-  100% {
-    filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.6));
-  }
-  50% {
-    filter: drop-shadow(0 0 12px rgba(96, 165, 250, 0.9));
-  }
-}
-
 .animate-fadeInUp {
   animation: fadeInUp 0.6s ease-out forwards;
 }
@@ -833,6 +290,24 @@ main,
 
 .animate-delay-500 {
   animation-delay: 500ms;
+}
+
+/* Progress bar animation for media carousel */
+@keyframes progressBar {
+  0% {
+    width: 0%;
+    opacity: 0.8;
+  }
+  5% {
+    opacity: 1;
+  }
+  95% {
+    opacity: 1;
+  }
+  100% {
+    width: 100%;
+    opacity: 0.9;
+  }
 }
 
 /* Skeleton loading specific styles */
@@ -899,380 +374,42 @@ main,
   transition: width 0.3s ease-out;
 }
 
-/* Accessibility improvements for loading states */
-@media (prefers-reduced-motion: reduce) {
-  .animate-shimmer,
-  .animate-fadeInUp,
-  .skeleton,
-  .skeleton-dark,
-  .image-loading,
-  .blur-up {
-    animation: none !important;
-    transition: none !important;
-  }
+/* ============================================================
+   Performance helpers
+   ============================================================ */
+
+/* Reduce repaints and reflows */
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
 }
 
-/* TARGETED SCROLLBAR POSITIONING - PRESERVE CONTENT LAYOUT */
-/* Only target elements that could actually interfere with scrollbar positioning */
-html {
-  /* Remove browser default spacing that could affect scrollbar */
-  margin: 0 !important;
-  padding: 0 !important;
-  border: none !important;
-  /* Ensure scrollbar is always visible and positioned correctly */
-  scrollbar-gutter: stable;
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
-  /* Ensure full viewport width is used */
-  width: 100vw !important;
-  max-width: 100vw !important;
+/* Ensure notifications always appear above everything else */
+.notification-overlay {
+  z-index: 999999;
+  position: fixed;
 }
 
-body {
-  /* Remove body spacing but preserve content padding */
-  margin: 0 !important;
-  border: none !important;
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
+/* ============================================================
+   Component animations
+   ============================================================ */
+
+/* About card icon – spin-flip animation on card hover */
+.about-card-icon {
+  transform: rotate(0deg) scale(1) rotateY(0deg);
+  transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  filter: drop-shadow(0 0 0px rgba(59, 130, 246, 0));
 }
 
-/* Force scrollbar to absolute edge - enhanced browser compatibility */
-::-webkit-scrollbar {
-  margin: 0 !important;
-  padding: 0 !important;
-  right: 0 !important;
-  border: none !important;
-  /* Ensure scrollbar is positioned at the absolute edge */
-  position: absolute !important;
+.group:hover .about-card-icon {
+  transform: rotate(720deg) scale(1.15) rotateY(180deg);
+  filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.8));
 }
 
-::-webkit-scrollbar-track {
-  margin: 0 !important;
-  padding: 0 !important;
-  border: none !important;
-  right: 0 !important;
-}
-
-::-webkit-scrollbar-thumb {
-  margin: 0 !important;
-  padding: 0 !important;
-  border: none !important;
-  /* Remove the border that was creating spacing */
-  border: none !important;
-}
-
-/* Ensure no margins/padding on any container can push scrollbar inward */
-/* Target specific scrollbar-affecting elements, but preserve content padding */
-body,
-html,
-#__next,
-[data-nextjs-scroll-focus-boundary] {
-  margin-right: 0 !important;
-  border-right: 0 !important;
-  /* Ensure containers don't constrain the viewport */
-  max-width: 100vw !important;
-}
-
-/* Minimal scrollbar positioning - preserve content layout */
-html {
-  /* Only target root element spacing and scrollbar behavior */
-  margin: 0 !important;
-  padding: 0 !important;
-  scrollbar-gutter: stable;
-  overflow-x: hidden !important;
-}
-
-/* Allow containers to have their natural padding for proper layout */
-
-/* Mobile Safari - minimal scrollbar positioning only */
-@supports (-webkit-appearance: none) {
-  html {
-    /* Only affect root element */
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-}
-
-/* Firefox - minimal scrollbar positioning only */
-@-moz-document url-prefix() {
-  html {
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-}
-
-/* Edge/IE - minimal scrollbar positioning only */
-@supports (-ms-overflow-style: none) {
-  html {
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-}
-
-/* Universal box-sizing for proper layout */
-*,
-*::before,
-*::after {
-  box-sizing: border-box !important;
-}
-
-/* Mobile scrollbar positioning - preserve content layout */
-@media (max-width: 768px) {
-  html {
-    /* Only affect root element for scrollbar positioning */
-    margin: 0 !important;
-    padding: 0 !important;
-    /* Enable smooth scrolling */
-    overflow-x: hidden !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-  }
-
-  body {
-    /* Preserve body content layout, only remove margins */
-    margin: 0 !important;
-    overflow-x: hidden !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-  }
-
-  /* Mobile scrollbar styling */
-  ::-webkit-scrollbar {
-    width: 6px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    right: 0 !important;
-    border: none !important;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: transparent !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    right: 0 !important;
-    border: none !important;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.3) !important;
-    border-radius: 3px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: none !important;
-    right: 0 !important;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.5) !important;
-  }
-}
-
-/* Desktop-specific enhancements */
-@media (min-width: 1024px) {
-  ::-webkit-scrollbar {
-    /* Ensure desktop scrollbar is properly positioned */
-    width: 8px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    right: 0 !important;
-    border: none !important;
-  }
-}
-
-/* Windows-specific scrollbar fixes */
-@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-  html,
-  body {
-    margin-right: 0 !important;
-    padding-right: 0 !important;
-    border-right: none !important;
-  }
-}
-
-/* Additional mobile scrolling fixes */
-@media (max-width: 768px) {
-  /* For browsers that don't support webkit scrollbars */
-  html {
-    scrollbar-width: thin !important;
-    scrollbar-gutter: stable !important;
-  }
-
-  /* Ensure main content areas don't interfere with scrolling */
-  main,
-  #__next,
-  [data-nextjs-scroll-focus-boundary] {
-    overflow-x: hidden !important;
-    width: 100% !important;
-    max-width: 100vw !important;
-  }
-
-  /* Mobile viewport fixes */
-  body {
-    touch-action: pan-y !important;
-    overscroll-behavior-x: none !important;
-    overscroll-behavior-y: auto !important;
-  }
-}
-
-/* Ensure no horizontal scrolling on any device */
-html,
-body {
-  max-width: 100vw !important;
-  overflow-x: hidden !important;
-}
-
-/* SCROLLBAR POSITIONING - TARGETED APPROACH */
-/* Ensure all elements respect the scrollbar position */
-*,
-*::before,
-*::after {
-  box-sizing: border-box !important;
-}
-
-/* Only affect the root elements for scrollbar positioning */
-html {
-  /* Remove any browser default margins that could affect scrollbar */
-  margin: 0 !important;
-  padding: 0 !important;
-  /* Force scrollbar to be always visible and positioned correctly */
-  scrollbar-gutter: stable force !important;
-  overflow-y: scroll !important;
-  overflow-x: hidden !important;
-}
-
-body {
-  /* Remove only body margins, preserve content padding */
-  margin: 0 !important;
-  /* Allow content to have its own padding */
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-}
-
-/* Mobile scroll fix - ensure scrolling works on touch devices */
-@media (max-width: 768px) {
-  body,
-  html {
-    /* Enable momentum scrolling on iOS */
-    -webkit-overflow-scrolling: touch !important;
-    /* Enable scrolling on mobile */
-    overflow-y: auto !important;
-    /* Prevent horizontal scrolling */
-    overflow-x: hidden !important;
-    /* Enable touch scrolling */
-    touch-action: pan-y !important;
-  }
-
-  /* Ensure main content doesn't interfere with scrolling */
-  main,
-  #__next {
-    height: auto !important;
-    min-height: 100vh !important;
-    overflow: visible !important;
-  }
-}
-
-/* Desktop scrollbar positioning */
-@media (min-width: 769px) {
-  /* Force scrollbar to be visible and at the right edge */
-  ::-webkit-scrollbar {
-    width: 8px !important;
-    background: transparent !important;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: transparent !important;
-    margin: 0 !important;
-    border: none !important;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.3) !important;
-    border-radius: 4px !important;
-    border: none !important;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.5) !important;
-  }
-}
-
-/* Mobile-specific fixes for fixed navbar and footer */
-@media screen and (max-width: 768px) {
-  /* Ensure fixed elements stay fixed on mobile */
-  nav[role="navigation"] {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    width: 100% !important;
-    z-index: 1000 !important;
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-  }
-
-  footer[role="contentinfo"] {
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    width: 100% !important;
-    z-index: 1000 !important;
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-  }
-
-  /* Prevent mobile browser from hiding fixed elements during scroll */
-  .mobile-viewport-fix {
-    -webkit-transform: translate3d(0, 0, 0);
-    transform: translate3d(0, 0, 0);
-    backface-visibility: hidden;
-    perspective: 1000px;
-  }
-
-  /* Ensure content has proper spacing for fixed navbar and footer */
-  main {
-    padding-top: 4rem !important; /* Account for navbar height */
-    padding-bottom: 5rem !important; /* Account for footer height */
-  }
-}
-
-/* Tablet specific adjustments */
-@media screen and (min-width: 769px) and (max-width: 1023px) {
-  nav[role="navigation"],
-  footer[role="contentinfo"] {
-    position: fixed !important;
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-  }
-}
-
-/* Performance optimizations for mobile */
-@media (max-width: 768px) {
-  /* Reduce GPU usage on mobile */
-  .will-change-transform {
-    will-change: auto;
-  }
-
-  /* Simplify animations on mobile */
-  .animate-pulse,
-  .animate-ping,
-  .animate-spin {
-    animation-duration: 2s; /* Slower animations to save battery */
-  }
-
-  /* Reduce backdrop blur on mobile for better performance */
-  .backdrop-blur-xl {
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-  }
-
-  .backdrop-blur-sm {
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
-  }
-}
-
-/* Respect user's motion preferences */
+/* ============================================================
+   Reduced motion
+   ============================================================ */
 @media (prefers-reduced-motion: reduce) {
   /* Disable all animations for users who prefer reduced motion */
   *,
@@ -1286,7 +423,7 @@ body {
 
   /* Static gradient fallback */
   .gradient-text {
-    background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
+    background: var(--gradient-brand-text);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -1299,40 +436,4 @@ body {
     animation: none !important;
     transform: none !important;
   }
-}
-
-/* Critical rendering optimizations */
-.performance-optimized {
-  contain: layout style paint;
-  content-visibility: auto;
-}
-
-/* Reduce repaints and reflows */
-.gpu-accelerated {
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000px;
-}
-
-/* Ensure notifications always appear above everything else */
-.notification-overlay {
-  z-index: 999999 !important;
-  position: fixed !important;
-}
-
-/* About card icon – spin-flip animation on card hover (centralised from inline <style jsx>) */
-.about-card-icon {
-  transform: rotate(0deg) scale(1) rotateY(0deg);
-  transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  filter: drop-shadow(0 0 0px rgba(59, 130, 246, 0));
-}
-
-.group:hover .about-card-icon {
-  transform: rotate(720deg) scale(1.15) rotateY(180deg);
-  filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.8));
-}
-
-/* Mobile navigation menu – single source of scroll-lock truth */
-body.mobile-menu-open {
-  overflow: hidden !important;
 }

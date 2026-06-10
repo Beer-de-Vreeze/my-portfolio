@@ -166,7 +166,7 @@
 
   .critical-animation {
     /* Remove animations in print */
-    animation: none !important;
+    animation: none;
     will-change: auto;
   }
 }
