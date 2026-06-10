@@ -19,7 +19,7 @@ const BunqVoice = () => {
           type: isMobile ? "youtube" : "video",
           src: isMobile
             ? "https://youtu.be/GSzQdi8VywA"
-            : "/images/Bunq Voice Images/Bunq Voice.mp4",
+            : "/images/Bunq Voice/Bunq Voice.mp4",
           alt: "Bunq Voice — speaking to your bank account to check balances and draft payments",
           thumbnail: "https://img.youtube.com/vi/GSzQdi8VywA/hqdefault.jpg",
         },
