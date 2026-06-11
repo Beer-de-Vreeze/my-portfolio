@@ -19,7 +19,7 @@ const FeaturesList: React.FC<FeaturesListProps> = ({
 }) => {
   return (
     <div className="mb-8">
-      <div className="bg-gradient-to-br from-gray-900/95 to-black/90 rounded-lg p-4 border border-blue-500/20 mb-4">
+      <div className="bg-linear-to-br from-gray-900/95 to-black/90 rounded-lg p-4 border border-blue-500/20 mb-4">
         <h2 className="text-xl font-bold text-white drop-shadow-lg">Features</h2>
       </div>
 
@@ -27,7 +27,7 @@ const FeaturesList: React.FC<FeaturesListProps> = ({
         {features.map((feature, index) => (
           <li
             key={index}
-            className="flex flex-col gap-3 bg-gradient-to-br from-gray-900/95 to-black/90 rounded-lg p-4 border border-blue-500/20"
+            className="flex flex-col gap-3 bg-linear-to-br from-gray-900/95 to-black/90 rounded-lg p-4 border border-blue-500/20"
           >
             <span className="text-blue-200 font-semibold text-sm sm:text-base drop-shadow-lg">
               {feature.title}

@@ -101,17 +101,17 @@ const BaseCard = memo(function BaseCard({
   const cardDimensions = useMemo(() => CARD_VARIANTS[variant], [variant]);
 
   const linkClassNames = useMemo(() => 
-    `group w-full flex justify-center md:w-auto transition-opacity duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded-lg ${
+    `group w-full flex justify-center md:w-auto transition-opacity duration-200 focus:outline-hidden focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded-lg ${
       disabled ? 'pointer-events-none opacity-50 cursor-not-allowed' : 'cursor-pointer'
     }`,
     [disabled]
   );
 
   const cardClassNames = useMemo(() => 
-    `relative ${cardDimensions} bg-gradient-to-br from-gray-900 via-black to-gray-900 border border-gray-800 rounded-xl flex flex-col items-center justify-center transition-all duration-500 will-change-transform shadow-lg ${
+    `relative ${cardDimensions} bg-linear-to-br from-gray-900 via-black to-gray-900 border border-gray-800 rounded-xl flex flex-col items-center justify-center transition-all duration-500 will-change-transform shadow-lg ${
       disabled 
         ? 'opacity-50' 
-        : `hover:border-gray-600 hover:shadow-2xl hover:shadow-black/50 hover:bg-gradient-to-br hover:from-gray-800 hover:via-gray-900 hover:to-black ${
+        : `hover:border-gray-600 hover:shadow-2xl hover:shadow-black/50 hover:bg-linear-to-br hover:from-gray-800 hover:via-gray-900 hover:to-black ${
             isHovered ? 'scale-[1.02] rotate-[0.5deg]' : ''
           } ${
             isPressed ? 'scale-95 rotate-0' : ''
@@ -153,7 +153,7 @@ const BaseCard = memo(function BaseCard({
       <div className={cardClassNames}>
         {/* Enhanced gradient overlay */}
         <div 
-          className="absolute inset-0 w-full h-full rounded-xl pointer-events-none opacity-0 group-hover:opacity-60 transition-opacity duration-700 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5"
+          className="absolute inset-0 w-full h-full rounded-xl pointer-events-none opacity-0 group-hover:opacity-60 transition-opacity duration-700 bg-linear-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5"
           aria-hidden="true"
         />
         
@@ -166,7 +166,7 @@ const BaseCard = memo(function BaseCard({
         
         {/* Subtle inner glow */}
         <div 
-          className="absolute inset-[1px] rounded-xl pointer-events-none opacity-0 group-hover:opacity-30 transition-opacity duration-500 bg-gradient-to-br from-white/5 via-transparent to-white/5"
+          className="absolute inset-px rounded-xl pointer-events-none opacity-0 group-hover:opacity-30 transition-opacity duration-500 bg-linear-to-br from-white/5 via-transparent to-white/5"
           aria-hidden="true"
         />
         

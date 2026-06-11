@@ -257,19 +257,19 @@ const ProfileCard: React.FC<ProfileCardProps> = React.memo(({
   ], []);
 
   return (
-    <div className={`w-full max-w-none sm:max-w-[500px] h-auto bg-gradient-to-br from-gray-900/80 to-black/90 border border-blue-500/20 rounded-2xl shadow-xl backdrop-blur-sm p-3 sm:p-4 md:p-6 ${className} 
+    <div className={`w-full max-w-none sm:max-w-[500px] h-auto bg-linear-to-br from-gray-900/80 to-black/90 border border-blue-500/20 rounded-2xl shadow-xl backdrop-blur-xs p-3 sm:p-4 md:p-6 ${className} 
                     transition-all duration-500 hover:border-blue-400/30 hover:shadow-2xl hover:shadow-blue-500/10 
                     relative overflow-visible group mx-auto`}>
       {/* Enhanced background pattern */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+      <div className="absolute inset-0 bg-linear-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
       
       {/* Subtle grid pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(59,130,246,0.03)_1px,transparent_1px),linear-gradient(-45deg,rgba(139,92,246,0.03)_1px,transparent_1px)] bg-[size:12px_12px] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+      <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(59,130,246,0.03)_1px,transparent_1px),linear-gradient(-45deg,rgba(139,92,246,0.03)_1px,transparent_1px)] bg-size-[12px_12px] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
       
       <div className="w-full relative z-10">
         {/* Profile header */}
         <div className="flex flex-col sm:flex-row items-center sm:items-center justify-center sm:justify-start gap-3 sm:gap-4 mb-4 text-center sm:text-left">
-          <div className="w-20 sm:w-24 h-20 sm:h-24 rounded-full overflow-hidden bg-gradient-to-br from-blue-500/20 to-purple-500/20 border-2 border-blue-400/30 shadow-xl relative flex-shrink-0">
+          <div className="w-20 sm:w-24 h-20 sm:h-24 rounded-full overflow-hidden bg-linear-to-br from-blue-500/20 to-purple-500/20 border-2 border-blue-400/30 shadow-xl relative shrink-0">
             <Image 
               src="/images/Beer.webp" 
               alt={`${name} profile picture`}
@@ -280,7 +280,7 @@ const ProfileCard: React.FC<ProfileCardProps> = React.memo(({
             />
           </div>
           <div className="flex flex-col justify-start gap-1 pt-0 sm:pt-2">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight bg-gradient-to-r from-white to-blue-100 bg-clip-text">{name}</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight bg-linear-to-r from-white to-blue-100 bg-clip-text">{name}</h2>
             <p className="text-base sm:text-lg text-blue-200/80 tracking-tight font-light flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
               <span>{username}</span>
               <span className="flex items-center gap-3" role="list" aria-label="Social media links">
@@ -290,7 +290,7 @@ const ProfileCard: React.FC<ProfileCardProps> = React.memo(({
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-blue-300 text-blue-200/60 transition-all duration-300 text-lg sm:text-xl hover:scale-110 focus:outline-none rounded p-1"
+                    className="hover:text-blue-300 text-blue-200/60 transition-all duration-300 text-lg sm:text-xl hover:scale-110 focus:outline-hidden rounded-sm p-1"
                     aria-label={link.label}
                     role="listitem"
                   >
@@ -308,7 +308,7 @@ const ProfileCard: React.FC<ProfileCardProps> = React.memo(({
             {bubbles.map((bubble) => (
               <div 
                 key={bubble.id}
-                className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-blue-900/40 to-purple-900/40 border border-blue-400/30 rounded-full flex items-center gap-1.5 sm:gap-2 relative cursor-pointer shadow-lg transition-all duration-300 hover:scale-105 hover:border-blue-300/50 hover:shadow-blue-500/20 hover:shadow-xl overflow-visible focus:outline-none focus:ring-2 focus:ring-blue-400/50 backdrop-blur-sm"
+                className="px-3 sm:px-4 py-1.5 sm:py-2 bg-linear-to-r from-blue-900/40 to-purple-900/40 border border-blue-400/30 rounded-full flex items-center gap-1.5 sm:gap-2 relative cursor-pointer shadow-lg transition-all duration-300 hover:scale-105 hover:border-blue-300/50 hover:shadow-blue-500/20 hover:shadow-xl overflow-visible focus:outline-hidden focus:ring-2 focus:ring-blue-400/50 backdrop-blur-xs"
                 onMouseEnter={() => handleMouseEnter(bubble.id)}
                 onMouseLeave={handleMouseLeave}
                 onTouchStart={(e) => handleBubbleInteraction(bubble.id, e)}
@@ -324,7 +324,7 @@ const ProfileCard: React.FC<ProfileCardProps> = React.memo(({
                 aria-label={bubble.additionalInfo ? `${bubble.label}: ${bubble.additionalInfo}` : bubble.label}
                 aria-expanded={hoveredBubble === bubble.id}
               >
-                <div className="flex-shrink-0 text-blue-200 text-sm sm:text-base" aria-hidden="true">
+                <div className="shrink-0 text-blue-200 text-sm sm:text-base" aria-hidden="true">
                   {bubble.icon}
                 </div>
                 <span className="tracking-tight font-medium text-xs sm:text-sm text-blue-100">{bubble.label}</span>
@@ -333,9 +333,9 @@ const ProfileCard: React.FC<ProfileCardProps> = React.memo(({
                   <div 
                     className={`
                       absolute
-                      bg-gradient-to-br from-gray-800/95 to-gray-900/95 border border-blue-400/30 rounded-xl 
+                      bg-linear-to-br from-gray-800/95 to-gray-900/95 border border-blue-400/30 rounded-xl 
                       text-blue-100 text-xs w-max max-w-[200px] shadow-2xl shadow-blue-500/20 z-50 
-                      transition-all duration-300 p-3 backdrop-blur-sm text-center
+                      transition-all duration-300 p-3 backdrop-blur-xs text-center
                       ${fadingBubble === bubble.id ? 'tooltip-close' : 'tooltip-popup'}
                     `}
                     style={{
@@ -348,7 +348,7 @@ const ProfileCard: React.FC<ProfileCardProps> = React.memo(({
                     aria-live="polite"
                   >
                     {bubble.additionalInfo}
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-45 w-2.5 h-2.5 bg-gradient-to-br from-gray-800 to-gray-900 border-r border-b border-blue-400/30" aria-hidden="true"></div>
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-45 w-2.5 h-2.5 bg-linear-to-br from-gray-800 to-gray-900 border-r border-b border-blue-400/30" aria-hidden="true"></div>
                   </div>
                 )}
               </div>

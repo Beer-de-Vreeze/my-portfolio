@@ -143,13 +143,13 @@ const EducationCard: React.FC = () => {
   return (
     <>
       <div className="w-full max-w-none sm:max-w-[800px] mx-auto">
-        <div className="w-full bg-gradient-to-br from-gray-900/60 to-black/80 border border-blue-500/20 rounded-2xl shadow-xl backdrop-blur-sm p-3 sm:p-4 md:p-6 relative overflow-hidden group">
+        <div className="w-full bg-linear-to-br from-gray-900/60 to-black/80 border border-blue-500/20 rounded-2xl shadow-xl backdrop-blur-xs p-3 sm:p-4 md:p-6 relative overflow-hidden group">
           {/* Enhanced background pattern */}
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div className="absolute inset-0 bg-linear-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
           
           <div className="relative z-10 w-full">
             <div className="flex justify-between items-center border-b border-blue-500/20 pb-3 sm:pb-4 mb-4 sm:mb-6">
-              <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-white bg-gradient-to-r from-white to-blue-100 bg-clip-text">Education</h1>
+              <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-white bg-linear-to-r from-white to-blue-100 bg-clip-text">Education</h1>
             </div>
         
         <div 
@@ -160,7 +160,7 @@ const EducationCard: React.FC = () => {
           {schools.map((school, index) => (
             <button
               key={`${school.name}-${index}`}
-              className="relative flex items-center p-3 sm:p-4 pb-8 sm:pb-10 bg-gradient-to-br from-blue-900/20 to-purple-900/20 border border-blue-400/20 rounded-xl shadow-lg transition-all duration-300 hover:scale-105 hover:border-blue-300/40 hover:shadow-blue-500/20 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-transparent cursor-pointer text-left w-full backdrop-blur-sm group/card"
+              className="relative flex items-center p-3 sm:p-4 pb-8 sm:pb-10 bg-linear-to-br from-blue-900/20 to-purple-900/20 border border-blue-400/20 rounded-xl shadow-lg transition-all duration-300 hover:scale-105 hover:border-blue-300/40 hover:shadow-blue-500/20 hover:shadow-xl focus:outline-hidden focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-transparent cursor-pointer text-left w-full backdrop-blur-xs group/card"
               onClick={() => toggleModal(school)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -172,7 +172,7 @@ const EducationCard: React.FC = () => {
               aria-describedby={`education-${index}`}
               type="button"
             >
-              <div className="rounded-xl mr-3 sm:mr-4 overflow-hidden border border-blue-400/20 shadow-lg group-hover/card:border-blue-300/40 transition-all duration-300 flex-shrink-0" aria-hidden="true">
+              <div className="rounded-xl mr-3 sm:mr-4 overflow-hidden border border-blue-400/20 shadow-lg group-hover/card:border-blue-300/40 transition-all duration-300 shrink-0" aria-hidden="true">
                 <Image 
                   src={school.logo} 
                   alt={`${school.name} logo`} 
@@ -187,7 +187,7 @@ const EducationCard: React.FC = () => {
                 <p className="text-blue-200/70 text-sm font-medium group-hover/card:text-blue-100 transition-colors duration-300">{school.subtitle}</p>
               </div>
               <div className="absolute bottom-2 sm:bottom-3 right-2 sm:right-3" aria-hidden="true">
-                <span className="px-2 sm:px-3 py-1 text-xs bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-400/30 rounded-full text-blue-200 backdrop-blur-sm group-hover/card:from-blue-400/30 group-hover/card:to-purple-400/30 group-hover/card:text-blue-100 transition-all duration-300">
+                <span className="px-2 sm:px-3 py-1 text-xs bg-linear-to-r from-blue-500/20 to-purple-500/20 border border-blue-400/30 rounded-full text-blue-200 backdrop-blur-xs group-hover/card:from-blue-400/30 group-hover/card:to-purple-400/30 group-hover/card:text-blue-100 transition-all duration-300">
                   {school.educationType || 'Education'}
                 </span>
               </div>
@@ -201,7 +201,7 @@ const EducationCard: React.FC = () => {
       {/* Enhanced Modal with improved accessibility, performance, and fade animations - Now positioned relative to viewport */}
       {modalState.isOpen && activeSchool && typeof document !== 'undefined' && createPortal(
         <div 
-          className={`fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[9999] transition-all duration-300 ${
+          className={`fixed inset-0 bg-black/80 backdrop-blur-xs flex items-center justify-center z-9999 transition-all duration-300 ${
             modalState.isAnimatingOut 
               ? 'animate-fadeOut opacity-0' 
               : 'animate-fadeIn opacity-100'
@@ -218,7 +218,7 @@ const EducationCard: React.FC = () => {
           style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
         >
           <div 
-            className={`bg-gradient-to-br from-gray-900/95 to-black/90 border border-blue-500/30 text-white rounded-2xl max-w-2xl w-full mx-3 sm:mx-4 max-h-[90vh] overflow-y-auto relative shadow-2xl backdrop-blur-md transform transition-all duration-300 ${
+            className={`bg-linear-to-br from-gray-900/95 to-black/90 border border-blue-500/30 text-white rounded-2xl max-w-2xl w-full mx-3 sm:mx-4 max-h-[90vh] overflow-y-auto relative shadow-2xl backdrop-blur-md transform transition-all duration-300 ${
               modalState.isAnimatingOut 
                 ? 'animate-fadeOut opacity-0 scale-95 translate-y-4' 
                 : 'animate-fadeIn opacity-100 scale-100 translate-y-0'
@@ -239,7 +239,7 @@ const EducationCard: React.FC = () => {
                 e.stopPropagation();
                 toggleModal(null);
               }}
-              className="sticky top-6 sm:top-2 left-full transform -translate-x-6 z-50 bg-gradient-to-r from-gray-900/90 to-black/90 backdrop-blur-sm hover:from-gray-800/90 hover:to-gray-900/90 text-gray-300 hover:text-white rounded-full p-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-transparent shadow-xl border border-gray-600/30 hover:border-gray-500/50 group"
+              className="sticky top-6 sm:top-2 left-full transform -translate-x-6 z-50 bg-linear-to-r from-gray-900/90 to-black/90 backdrop-blur-xs hover:from-gray-800/90 hover:to-gray-900/90 text-gray-300 hover:text-white rounded-full p-3 transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-transparent shadow-xl border border-gray-600/30 hover:border-gray-500/50 group"
               aria-label={`Close ${activeSchool.name} details dialog`}
               type="button"
             >
@@ -264,7 +264,7 @@ const EducationCard: React.FC = () => {
             
             <div className="p-4 sm:p-6 lg:p-8 relative z-10" id="modal-content">
               <div className="flex flex-col sm:flex-row items-center sm:items-center mb-4 sm:mb-6">
-                <div className="rounded-xl mb-3 sm:mb-0 sm:mr-4 lg:mr-6 overflow-hidden border border-blue-400/20 shadow-lg flex-shrink-0" aria-hidden="true">
+                <div className="rounded-xl mb-3 sm:mb-0 sm:mr-4 lg:mr-6 overflow-hidden border border-blue-400/20 shadow-lg shrink-0" aria-hidden="true">
                   <Image 
                     src={activeSchool.logo} 
                     alt={`${activeSchool.name} logo`} 
@@ -280,7 +280,7 @@ const EducationCard: React.FC = () => {
                     </h2>
                     {activeSchool.educationType && (
                       <span 
-                        className="px-2 sm:px-3 py-1 text-xs bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-400/30 rounded-full text-blue-200 shadow-md backdrop-blur-sm"
+                        className="px-2 sm:px-3 py-1 text-xs bg-linear-to-r from-blue-500/20 to-purple-500/20 border border-blue-400/30 rounded-full text-blue-200 shadow-md backdrop-blur-xs"
                         aria-label={`Education type: ${activeSchool.educationType}`}
                       >
                         {activeSchool.educationType}
@@ -304,7 +304,7 @@ const EducationCard: React.FC = () => {
                   <ul className="space-y-2 sm:space-y-3 text-blue-50/90 text-sm leading-relaxed">
                     {activeSchool.program.map((item, index) => (
                       <li key={`program-${index}`} className="flex items-start">
-                        <span className="inline-block w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-blue-400 mt-2 mr-2 sm:mr-3 flex-shrink-0"></span>
+                        <span className="inline-block w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-blue-400 mt-2 mr-2 sm:mr-3 shrink-0"></span>
                         <span>{item}</span>
                       </li>
                     ))}
@@ -319,7 +319,7 @@ const EducationCard: React.FC = () => {
                     {activeSchool.technologies.map((tech) => (
                       <div 
                         key={tech} 
-                        className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-400/30 rounded-full flex items-center gap-2 shadow-md backdrop-blur-sm hover:border-blue-300/50 transition-colors duration-200"
+                        className="px-3 sm:px-4 py-1.5 sm:py-2 bg-linear-to-r from-blue-900/30 to-purple-900/30 border border-blue-400/30 rounded-full flex items-center gap-2 shadow-md backdrop-blur-xs hover:border-blue-300/50 transition-colors duration-200"
                         role="listitem"
                       >
                         <span className="text-xs sm:text-sm font-medium text-blue-200">{tech}</span>

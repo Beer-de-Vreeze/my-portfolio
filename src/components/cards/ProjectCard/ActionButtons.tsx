@@ -48,7 +48,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
           target="_blank"
           rel="noopener noreferrer"
           download
-          className="w-full sm:flex-1 text-center py-3 px-4 bg-gradient-to-r from-green-600 to-teal-600
+          className="w-full sm:flex-1 text-center py-3 px-4 bg-linear-to-r from-green-600 to-teal-600
             hover:from-green-700 hover:to-teal-700 text-white rounded-xl text-sm font-medium
             transition-all duration-300 flex items-center justify-center gap-2 shadow-lg
             border border-green-500/20 hover:border-green-400/40"
@@ -73,7 +73,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
             href={liveLink}
             target="_blank"
             rel="noopener noreferrer"
-            className={`w-full sm:flex-1 text-center py-3 px-4 bg-gradient-to-r ${linkInfo.gradientFrom} ${linkInfo.gradientTo}
+            className={`w-full sm:flex-1 text-center py-3 px-4 bg-linear-to-r ${linkInfo.gradientFrom} ${linkInfo.gradientTo}
               ${linkInfo.hoverFrom} ${linkInfo.hoverTo} text-white rounded-xl text-sm font-medium
               transition-all duration-300 flex items-center justify-center gap-2 shadow-lg
               border ${linkInfo.borderColor} ${linkInfo.hoverBorderColor}`}
@@ -90,7 +90,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
           href={sourceLink}
           target="_blank"
           rel="noopener noreferrer"
-          className="w-full sm:flex-1 text-center py-3 px-4 bg-gradient-to-r from-gray-800 to-gray-900
+          className="w-full sm:flex-1 text-center py-3 px-4 bg-linear-to-r from-gray-800 to-gray-900
             hover:from-gray-700 hover:to-gray-800 text-white rounded-xl text-sm font-medium
             transition-all duration-300 flex items-center justify-center gap-2 shadow-lg
             border border-gray-600/20 hover:border-gray-500/40"

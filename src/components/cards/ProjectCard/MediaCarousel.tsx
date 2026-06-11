@@ -132,7 +132,7 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
       <button
         onClick={toggleFullscreen}
         className="absolute bottom-3 right-3 z-40 bg-black/60 hover:bg-black/80 rounded-full p-2.5
-          text-white transition-all duration-200 focus:outline-none pointer-events-auto
+          text-white transition-all duration-200 focus:outline-hidden pointer-events-auto
           flex items-center justify-center w-10 h-10"
         aria-label="Toggle fullscreen"
         style={{ pointerEvents: 'auto' }}
@@ -150,7 +150,7 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
         <button
           onClick={toggleFullscreen}
           className="bg-black/60 hover:bg-black/80 rounded-full p-2.5
-            text-white transition-all duration-200 focus:outline-none
+            text-white transition-all duration-200 focus:outline-hidden
             opacity-0 group-hover/carousel:opacity-100 hover:opacity-100 pointer-events-auto
             flex items-center justify-center w-10 h-10"
           aria-label={isFullscreen ? 'Exit fullscreen' : 'Enlarge image'}
@@ -166,14 +166,14 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
       {/* Media container */}
       <div
         ref={mediaContainerRef}
-        className="relative aspect-video w-full bg-gradient-to-br from-gray-900/50 to-black/70"
+        className="relative aspect-video w-full bg-linear-to-br from-gray-900/50 to-black/70"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
         {/* Loading overlay */}
         {isMediaLoading && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center bg-gradient-to-br from-gray-900/90 to-black/85 backdrop-blur-sm">
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-linear-to-br from-gray-900/90 to-black/85 backdrop-blur-xs">
             <div className="flex flex-col items-center gap-4">
               <div className="relative">
                 <div className="w-10 h-10 border-3 border-blue-400/20 border-t-blue-400 rounded-full animate-spin" />
@@ -222,7 +222,7 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
           ) : (
             <>
               {failedMedia.has(currentMedia.src) ? (
-                <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                <div className="w-full h-full bg-linear-to-br from-gray-800 to-gray-900 flex items-center justify-center">
                   <div className="text-gray-400 text-center text-sm">
                     <div>⚠️</div>
                     <div>Image failed to load</div>
@@ -253,11 +253,11 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
           <button
             onClick={(e) => { e.stopPropagation(); onNavigatePrev(); }}
             className={`absolute left-2 top-1/2 -translate-y-1/2 z-30
-              bg-gradient-to-r from-black/60 to-gray-900/60
-              backdrop-blur-sm rounded-full p-2.5 sm:p-3
+              bg-linear-to-r from-black/60 to-gray-900/60
+              backdrop-blur-xs rounded-full p-2.5 sm:p-3
               text-white/80 transition-all duration-300
               md:opacity-0 md:group-hover/carousel:opacity-100
-              border border-white/10 focus:outline-none focus:ring-2 focus:ring-blue-400/50 ${
+              border border-white/10 focus:outline-hidden focus:ring-2 focus:ring-blue-400/50 ${
               (isYouTube && isYouTubePlaying) ? 'opacity-0 pointer-events-none' : 'opacity-100'
             }`}
             aria-label="Previous image"
@@ -270,11 +270,11 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
           <button
             onClick={(e) => { e.stopPropagation(); onNavigateNext(); }}
             className={`absolute right-2 top-1/2 -translate-y-1/2 z-30
-              bg-gradient-to-r from-black/60 to-gray-900/60
-              backdrop-blur-sm rounded-full p-2.5 sm:p-3
+              bg-linear-to-r from-black/60 to-gray-900/60
+              backdrop-blur-xs rounded-full p-2.5 sm:p-3
               text-white/80 transition-all duration-300
               md:opacity-0 md:group-hover/carousel:opacity-100
-              border border-white/10 focus:outline-none focus:ring-2 focus:ring-blue-400/50 ${
+              border border-white/10 focus:outline-hidden focus:ring-2 focus:ring-blue-400/50 ${
               (isYouTube && isYouTubePlaying) ? 'opacity-0 pointer-events-none' : 'opacity-100'
             }`}
             aria-label="Next image"
@@ -289,25 +289,25 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
       {/* Dot indicators (desktop only) */}
       {media.length > 1 && (
         <div className="absolute bottom-1 sm:bottom-3 left-0 right-0 hidden sm:flex justify-center items-center gap-0.5 sm:gap-1.5 z-20 px-1 sm:px-4">
-          <div className="flex items-center gap-0.5 sm:gap-1.5 bg-black/30 backdrop-blur-sm rounded-full px-1.5 py-0.5 sm:px-3 sm:py-2 border border-white/5 sm:border-white/10">
+          <div className="flex items-center gap-0.5 sm:gap-1.5 bg-black/30 backdrop-blur-xs rounded-full px-1.5 py-0.5 sm:px-3 sm:py-2 border border-white/5 sm:border-white/10">
             {media.map((mediaItem, index) => (
               <button
                 key={index}
                 onClick={(e) => { e.stopPropagation(); onNavigateTo(index); }}
-                className={`relative rounded-full transition-all duration-300 focus:outline-none focus:ring-1 focus:ring-blue-400/30 ${
+                className={`relative rounded-full transition-all duration-300 focus:outline-hidden focus:ring-1 focus:ring-blue-400/30 ${
                   media.length > 12 ? 'w-0.5 h-0.5 sm:w-1.5 sm:h-1.5'
                   : media.length > 8 ? 'w-1 h-1 sm:w-2 sm:h-2'
                   : 'w-1 h-1 sm:w-2.5 sm:h-2.5'
                 } ${
                   index === currentMediaIndex
-                    ? 'bg-gradient-to-r from-blue-400 to-purple-400 scale-105 sm:scale-125 shadow-sm sm:shadow-lg shadow-blue-400/20 sm:shadow-blue-400/30'
+                    ? 'bg-linear-to-r from-blue-400 to-purple-400 scale-105 sm:scale-125 shadow-xs sm:shadow-lg shadow-blue-400/20 sm:shadow-blue-400/30'
                     : 'bg-white/30'
                 }`}
                 aria-label={`Go to media ${index + 1}${mediaItem.alt ? `: ${mediaItem.alt}` : ''}`}
                 title={mediaItem.alt || `Media ${index + 1}`}
               >
                 {index === currentMediaIndex && (
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 blur-[1px] sm:blur-sm opacity-40 sm:opacity-60 animate-pulse" />
+                  <div className="absolute inset-0 rounded-full bg-linear-to-r from-blue-400 to-purple-400 blur-[1px] sm:blur-xs opacity-40 sm:opacity-60 animate-pulse" />
                 )}
               </button>
             ))}
@@ -319,9 +319,9 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
       <div className={`absolute top-1 right-1 sm:top-3 sm:right-3 z-20 transition-all duration-300 hidden sm:block ${
         (isVideo && isPlaying) ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}>
-        <div className="bg-gradient-to-r from-black/50 to-gray-900/50 sm:from-black/60 sm:to-gray-900/60 backdrop-blur-sm
+        <div className="bg-linear-to-r from-black/50 to-gray-900/50 sm:from-black/60 sm:to-gray-900/60 backdrop-blur-xs
           px-1.5 py-0.5 sm:px-3 sm:py-1.5 rounded-full border border-white/5 sm:border-white/10
-          text-white font-medium text-[10px] sm:text-xs shadow-sm sm:shadow-lg">
+          text-white font-medium text-[10px] sm:text-xs shadow-xs sm:shadow-lg">
           <span className="text-blue-200">{currentMediaIndex + 1}</span>
           <span className="text-white/60 mx-0.5">/</span>
           <span className="text-white/80">{media.length}</span>
@@ -331,23 +331,23 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
       {/* Progress bar (desktop only) */}
       {media.length > 1 && (
         <div className="absolute bottom-0 left-0 right-0 z-20 group-hover/carousel:opacity-80 transition-opacity duration-300 hidden sm:block">
-          <div className="h-1.5 bg-gradient-to-r from-black/80 to-gray-900/80 backdrop-blur-sm border-t border-white/5">
+          <div className="h-1.5 bg-linear-to-r from-black/80 to-gray-900/80 backdrop-blur-xs border-t border-white/5">
             {autoplay && !isPlaying && !isYouTubePlaying && !isFullscreen && (
               <div
                 key={progressBarKey}
-                className="h-full bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 shadow-lg relative overflow-hidden"
+                className="h-full bg-linear-to-r from-blue-400 via-purple-400 to-blue-400 shadow-lg relative overflow-hidden"
                 style={{
                   width: '0%',
                   animation: isYouTube ? 'progressBar 8s linear forwards' : 'progressBar 5s linear forwards',
                   boxShadow: '0 0 12px rgba(96, 165, 250, 0.8), 0 0 24px rgba(147, 51, 234, 0.4)',
                 }}
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-300/20 via-purple-300/20 to-blue-300/20 blur-sm" />
+                <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
+                <div className="absolute inset-0 bg-linear-to-r from-blue-300/20 via-purple-300/20 to-blue-300/20 blur-xs" />
               </div>
             )}
             {(!autoplay || isPlaying || isYouTubePlaying || isFullscreen) && (
-              <div className="h-full bg-gradient-to-r from-gray-600/60 to-gray-500/60 w-0 transition-all duration-300" />
+              <div className="h-full bg-linear-to-r from-gray-600/60 to-gray-500/60 w-0 transition-all duration-300" />
             )}
           </div>
         </div>
@@ -355,7 +355,7 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
 
       {/* Error state for video */}
       {currentMedia && failedMedia.has(currentMedia.src) && isVideo && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-900 to-black">
+        <div className="absolute inset-0 flex items-center justify-center bg-linear-to-br from-gray-900 to-black">
           <div className="text-gray-400 text-center text-sm">
             <FaFileVideo className="mx-auto mb-2 text-2xl" />
             <div>Video Preview</div>

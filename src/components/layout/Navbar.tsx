@@ -119,10 +119,10 @@ const Navbar = () => {
             aria-label="Beer de Vreeze - Home"
             title="Home - Beer de Vreeze"
           >
-            <span className="relative z-10 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent bg-size-200 animate-gradient">
+            <span className="relative z-10 bg-linear-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent bg-size-200 animate-gradient">
               Beer de Vreeze
             </span>
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 via-purple-400/10 to-pink-400/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300" />
+            <div className="absolute inset-0 bg-linear-to-r from-blue-400/10 via-purple-400/10 to-pink-400/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300" />
           </Link>
         </motion.div>
 
@@ -146,7 +146,7 @@ const Navbar = () => {
         <motion.button 
           whileHover={!prefersReducedMotion ? { scale: 1.05 } : undefined}
           whileTap={!prefersReducedMotion ? { scale: 0.95 } : undefined}
-          className="md:hidden relative text-white p-2 rounded-lg bg-gradient-to-r from-gray-800/50 to-gray-700/50 border border-gray-600/30 backdrop-blur-sm hover:from-gray-700/60 hover:to-gray-600/60 focus:outline-none focus:ring-2 focus:ring-blue-400/50 transition-all duration-300" 
+          className="md:hidden relative text-white p-2 rounded-lg bg-linear-to-r from-gray-800/50 to-gray-700/50 border border-gray-600/30 backdrop-blur-xs hover:from-gray-700/60 hover:to-gray-600/60 focus:outline-hidden focus:ring-2 focus:ring-blue-400/50 transition-all duration-300" 
           onClick={handleToggle}
           aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
           aria-expanded={isOpen}
@@ -282,8 +282,8 @@ const NavLink = memo(({
         {/* Background effects */}
         <div className={`absolute inset-0 transition-all duration-300 rounded-lg ${
           isActive 
-            ? 'bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 scale-100' 
-            : 'bg-gradient-to-r from-gray-800/30 to-gray-700/30 scale-0 group-hover:scale-100'
+            ? 'bg-linear-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 scale-100' 
+            : 'bg-linear-to-r from-gray-800/30 to-gray-700/30 scale-0 group-hover:scale-100'
         }`} />
         
         {/* Animated border */}
@@ -312,7 +312,7 @@ const NavLink = memo(({
             {isActive && !isMobile && (
               <motion.span 
                 layoutId="activeTab"
-                className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-full"
+                className="absolute -bottom-1 left-0 right-0 h-0.5 bg-linear-to-r from-blue-400 via-purple-400 to-pink-400 rounded-full"
                 initial={false}
                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
               />
@@ -329,7 +329,7 @@ const NavLink = memo(({
         {isActive && isMobile && (
           <motion.div 
             layoutId="mobileActiveTab"
-            className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-blue-400 via-purple-400 to-pink-400 rounded-r-full"
+            className="absolute left-0 top-0 w-1 h-full bg-linear-to-b from-blue-400 via-purple-400 to-pink-400 rounded-r-full"
             initial={false}
             transition={{ type: "spring", stiffness: 500, damping: 30 }}
           />

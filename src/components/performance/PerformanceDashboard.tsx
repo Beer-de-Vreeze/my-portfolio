@@ -129,7 +129,7 @@ export function PerformanceDashboard({
 
   return (
     <div 
-      className={`fixed ${positionClasses[position]} z-50 bg-black/80 backdrop-blur-sm border border-gray-600 rounded-lg p-3 text-xs font-mono text-white shadow-lg min-w-[180px]`}
+      className={`fixed ${positionClasses[position]} z-50 bg-black/80 backdrop-blur-xs border border-gray-600 rounded-lg p-3 text-xs font-mono text-white shadow-lg min-w-[180px]`}
       role="complementary"
       aria-label="Performance Metrics Dashboard"
     >

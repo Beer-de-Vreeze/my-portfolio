@@ -253,7 +253,7 @@ const ContactForm = ({ onEmailSent, onNotification }: ContactFormProps) => {
               onChange={handleChange}
               placeholder={field.placeholder}
               className="rounded-2xl w-full h-10 sm:h-12 text-sm sm:text-base px-3 sm:px-4
-                         backdrop-blur-sm bg-gradient-to-br from-blue-950/90 to-gray-950/95 text-white border border-blue-500/30
+                         backdrop-blur-xs bg-linear-to-br from-blue-950/90 to-gray-950/95 text-white border border-blue-500/30
                          hover:border-blue-300/40 focus:border-blue-300/40 focus:ring-2 focus:ring-blue-500/20
                          transition-all duration-300 placeholder-blue-100/60"
               required={field.required}
@@ -290,7 +290,7 @@ const ContactForm = ({ onEmailSent, onNotification }: ContactFormProps) => {
             onChange={handleChange}
             placeholder="Message *"
             className="rounded-2xl resize-none w-full h-28 sm:h-32 md:h-36 text-sm sm:text-base px-3 sm:px-4 py-2
-                       backdrop-blur-sm bg-gradient-to-br from-blue-950/90 to-gray-950/95 text-white border border-blue-500/30
+                       backdrop-blur-xs bg-linear-to-br from-blue-950/90 to-gray-950/95 text-white border border-blue-500/30
                        hover:border-blue-300/40 focus:border-blue-300/40 focus:ring-2 focus:ring-blue-500/20
                        transition-all duration-300 placeholder-blue-100/60"
             maxLength={maxCharLimit}
@@ -334,9 +334,9 @@ const ContactForm = ({ onEmailSent, onNotification }: ContactFormProps) => {
           disabled={isSubmitting}
           className="rounded-2xl w-full h-10 sm:h-12 text-sm sm:text-base text-center cursor-pointer 
                      disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2
-                     backdrop-blur-sm bg-gradient-to-r from-blue-600/80 to-purple-600/80 border border-blue-500/30
+                     backdrop-blur-xs bg-linear-to-r from-blue-600/80 to-purple-600/80 border border-blue-500/30
                      hover:from-blue-500/90 hover:to-purple-500/90 hover:border-blue-400/50 hover:shadow-lg hover:shadow-blue-500/25
-                     focus:ring-2 focus:ring-blue-500/50 focus:outline-none"
+                     focus:ring-2 focus:ring-blue-500/50 focus:outline-hidden"
           whileHover={{ scale: isSubmitting ? 1 : 1.05 }}
           whileTap={{ scale: isSubmitting ? 1 : 0.95 }}
           initial={{ opacity: 0, y: 20 }}

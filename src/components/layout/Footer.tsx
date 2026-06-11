@@ -32,14 +32,14 @@ const Footer: React.FC = () => {
           role="text"
           aria-label="Copyright information"
         >
-          <div className="relative px-2 sm:px-4 py-2 bg-gradient-to-r from-gray-900/80 to-gray-800/80 border border-gray-700/50 rounded-full flex items-center justify-center backdrop-blur-sm">
+          <div className="relative px-2 sm:px-4 py-2 bg-linear-to-r from-gray-900/80 to-gray-800/80 border border-gray-700/50 rounded-full flex items-center justify-center backdrop-blur-xs">
             <span className="relative tracking-tighter font-extralight text-xs sm:text-sm lg:text-lg text-gray-300 cursor-help">
               © Beer de Vreeze
             </span>
             
             {/* Hidden Konami Code Easter Egg - Only shows on direct text hover and hidden on mobile */}
             <div className="hidden sm:block absolute -top-10 left-1/2 transform -translate-x-1/2 opacity-0 group-hover/copyright:opacity-100 transition-opacity duration-500 pointer-events-none z-50">
-              <div className="bg-black/95 border border-green-500/70 rounded-lg px-3 py-2 text-xs text-green-400 font-mono whitespace-nowrap shadow-xl backdrop-blur-sm">
+              <div className="bg-black/95 border border-green-500/70 rounded-lg px-3 py-2 text-xs text-green-400 font-mono whitespace-nowrap shadow-xl backdrop-blur-xs">
                 <span className="text-green-200">↑↑↓↓←→←→BA</span>
               </div>
               {/* Small arrow pointing down */}
@@ -52,14 +52,14 @@ const Footer: React.FC = () => {
           href="mailto:beer@vreeze.com"
           whileHover={{ scale: 1.02, y: -1 }}
           whileTap={{ scale: 0.98 }}
-          className="group relative flex-shrink min-w-0"
+          className="group relative shrink min-w-0"
           aria-label="Send email to Beer de Vreeze"
           title="Contact Beer de Vreeze via email"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300" />
-          <div className="relative px-2 sm:px-4 py-2 bg-gradient-to-r from-gray-900/80 to-gray-800/80 border border-gray-700/50 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-300 group-hover:border-blue-500/30 group-hover:bg-gradient-to-r group-hover:from-gray-800/90 group-hover:to-gray-700/90">
+          <div className="absolute inset-0 bg-linear-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300" />
+          <div className="relative px-2 sm:px-4 py-2 bg-linear-to-r from-gray-900/80 to-gray-800/80 border border-gray-700/50 rounded-full flex items-center justify-center backdrop-blur-xs transition-all duration-300 group-hover:border-blue-500/30 group-hover:bg-linear-to-r group-hover:from-gray-800/90 group-hover:to-gray-700/90">
             {/* Enhanced glow effect for email */}
-            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500/0 to-purple-500/0 group-hover:from-blue-500/10 group-hover:to-purple-500/10 transition-all duration-300" />
+            <div className="absolute inset-0 rounded-full bg-linear-to-r from-blue-500/0 to-purple-500/0 group-hover:from-blue-500/10 group-hover:to-purple-500/10 transition-all duration-300" />
             
             <Mail size={16} className="mr-2 text-gray-400 group-hover:text-blue-400 transition-all duration-300 group-hover:scale-110" />
             <span className="relative tracking-tighter font-extralight text-xs sm:text-sm lg:text-lg truncate text-gray-300 group-hover:text-white transition-colors duration-300">

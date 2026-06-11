@@ -39,7 +39,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
       <button
         onClick={() => onToggle(snippetId)}
         className="group w-full flex items-center justify-between p-4
-          bg-gradient-to-r from-gray-900/50 to-gray-800/50
+          bg-linear-to-r from-gray-900/50 to-gray-800/50
           hover:from-blue-900/30 hover:to-purple-900/30
           border border-blue-400/20 hover:border-blue-300/40
           transition-all duration-300 text-left rounded-xl shadow-lg"
@@ -52,11 +52,11 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
 
       {/* Collapsible content */}
       <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
-        collapsed ? 'max-h-0' : 'max-h-[72rem]'
+        collapsed ? 'max-h-0' : 'max-h-288'
       }`}>
         <div className="relative overflow-hidden border border-blue-400/20 rounded-xl mt-2 shadow-lg">
-          <div className="max-h-[32rem] overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500/50 scrollbar-track-gray-800/50">
-            <pre className="w-full overflow-x-auto p-5 text-sm sm:text-[14px] leading-relaxed bg-gradient-to-br from-gray-900/80 to-black/90">
+          <div className="max-h-128 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500/50 scrollbar-track-gray-800/50">
+            <pre className="w-full overflow-x-auto p-5 text-sm sm:text-[14px] leading-relaxed bg-linear-to-br from-gray-900/80 to-black/90">
               <code className={`language-${language || 'javascript'} font-mono text-gray-100`}>
                 {code}
               </code>

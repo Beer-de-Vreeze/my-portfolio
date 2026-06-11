@@ -25,7 +25,7 @@ export function RouteError({ error, reset, pageName = 'Page' }: RouteErrorProps)
         <div className="text-6xl">⚡</div>
 
         {/* Heading */}
-        <h1 className="text-5xl font-bold bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+        <h1 className="text-5xl font-bold bg-linear-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
           Something went wrong
         </h1>
 
@@ -48,7 +48,7 @@ export function RouteError({ error, reset, pageName = 'Page' }: RouteErrorProps)
         <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
           <button
             onClick={reset}
-            className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-semibold rounded-lg hover:opacity-90 transition-opacity"
+            className="px-6 py-3 bg-linear-to-r from-cyan-500 to-purple-600 text-white font-semibold rounded-lg hover:opacity-90 transition-opacity"
           >
             Try again
           </button>

@@ -32,7 +32,7 @@ export default function ProjectsCard() {
             className={`
               absolute flex items-center justify-center p-5 rounded-2xl border-2
               ${index === 0
-                ? 'border-white/[0.08] group-hover:border-white/[0.15]'
+                ? 'border-white/8 group-hover:border-white/15'
                 : `${styles.backCard} border-purple-600/20`}
               ${styles.stackCard} ${STACK_CLASSES[index]}
             `}
@@ -46,7 +46,7 @@ export default function ProjectsCard() {
             {/* Purple gradient tint on the front card */}
             {index === 0 && (
               <div
-                className="absolute inset-0 rounded-2xl pointer-events-none opacity-[0.57] group-hover:opacity-100 transition-opacity duration-[400ms]"
+                className="absolute inset-0 rounded-2xl pointer-events-none opacity-[0.57] group-hover:opacity-100 transition-opacity duration-400"
                 style={TINT_STYLE}
                 aria-hidden="true"
               ></div>

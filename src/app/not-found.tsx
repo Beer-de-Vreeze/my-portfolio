@@ -80,7 +80,7 @@ function NotFoundContent() {
       <div className="flex flex-col items-center justify-center text-center max-w-2xl mx-auto space-y-8 relative z-40">
         {/* Error Number */}
         <div className="relative">
-          <h1 className="text-8xl md:text-9xl font-bold bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+          <h1 className="text-8xl md:text-9xl font-bold bg-linear-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
             {currentError.code}
           </h1>
         </div>
@@ -102,18 +102,18 @@ function NotFoundContent() {
         <div className="flex flex-col sm:flex-row gap-4 items-center justify-center relative z-50">
           <Link 
             href="/"
-            className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-lg font-semibold text-white transition-all duration-300 hover:from-cyan-600 hover:to-purple-700 hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/25 cursor-pointer z-50"
+            className="group relative px-8 py-4 bg-linear-to-r from-cyan-500 to-purple-600 rounded-lg font-semibold text-white transition-all duration-300 hover:from-cyan-600 hover:to-purple-700 hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/25 cursor-pointer z-50"
           >
             <span className="relative z-10">🚀 Return to Home Base</span>
-            <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+            <div className="absolute inset-0 bg-linear-to-r from-cyan-400 to-purple-500 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
           </Link>
           
           <Link 
             href="/projects"
-            className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg font-semibold text-white transition-all duration-300 hover:from-purple-700 hover:to-pink-700 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/25 cursor-pointer z-50"
+            className="group relative px-8 py-4 bg-linear-to-r from-purple-600 to-pink-600 rounded-lg font-semibold text-white transition-all duration-300 hover:from-purple-700 hover:to-pink-700 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/25 cursor-pointer z-50"
           >
             <span className="relative z-10">🎯 Explore Projects</span>
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+            <div className="absolute inset-0 bg-linear-to-r from-purple-500 to-pink-500 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
           </Link>
         </div>
 
@@ -149,7 +149,7 @@ function NotFoundFallback() {
       {/* Loading Content */}
       <div className="flex flex-col items-center justify-center text-center max-w-2xl mx-auto space-y-8 relative z-40">
         <div className="relative">
-          <h1 className="text-8xl md:text-9xl font-bold bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+          <h1 className="text-8xl md:text-9xl font-bold bg-linear-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
             404
           </h1>
         </div>

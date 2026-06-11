@@ -26,7 +26,7 @@ const GRID_CLASSES = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:ga
 
 // Glassmorphism skeleton matching the card surface style
 const ProjectSkeleton = () => (
-  <div className="w-full h-64 rounded-2xl border border-white/[0.08] backdrop-blur-sm animate-pulse"
+  <div className="w-full h-64 rounded-2xl border border-white/8 backdrop-blur-xs animate-pulse"
     style={{ background: 'var(--glass-bg)' }}
   />
 );

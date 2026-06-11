@@ -452,7 +452,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     techStack.slice(0, 4).map((tech, index) => (
       <span
         key={index}
-        className="px-2 py-1.5 bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-400/30 rounded-full flex items-center justify-center text-blue-200 text-xs shadow-md hover:border-blue-300/50 transition-all duration-300 whitespace-nowrap flex-shrink-0 cursor-pointer group-hover/card:from-blue-400/30 group-hover/card:to-purple-400/30 group-hover/card:text-blue-100"
+        className="px-2 py-1.5 bg-linear-to-r from-blue-900/30 to-purple-900/30 border border-blue-400/30 rounded-full flex items-center justify-center text-blue-200 text-xs shadow-md hover:border-blue-300/50 transition-all duration-300 whitespace-nowrap shrink-0 cursor-pointer group-hover/card:from-blue-400/30 group-hover/card:to-purple-400/30 group-hover/card:text-blue-100"
         onClick={(e) => { e.stopPropagation(); openModal(); void tech; }}
         aria-label={`Technology: ${tech}`}
       >
@@ -489,15 +489,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         tabIndex={0}
         role="button"
         aria-label={`Open ${title} project details`}
-        className={`relative flex flex-col justify-between p-4 sm:p-6 bg-gradient-to-br from-gray-900/60 to-black/80 border border-blue-500/20 rounded-2xl shadow-xl ${motionSettings.transitionClass} ${motionSettings.hoverScaleClass} hover:border-blue-300/40 hover:shadow-blue-500/20 hover:shadow-xl overflow-hidden cursor-pointer w-full max-w-[400px] mx-auto h-56 sm:h-64 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-transparent group/card ${isClicked ? 'scale-95' : ''}`}
+        className={`relative flex flex-col justify-between p-4 sm:p-6 bg-linear-to-br from-gray-900/60 to-black/80 border border-blue-500/20 rounded-2xl shadow-xl ${motionSettings.transitionClass} ${motionSettings.hoverScaleClass} hover:border-blue-300/40 hover:shadow-blue-500/20 hover:shadow-xl overflow-hidden cursor-pointer w-full max-w-[400px] mx-auto h-56 sm:h-64 focus:outline-hidden focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-transparent group/card ${isClicked ? 'scale-95' : ''}`}
       >
-        <div className={`absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover/card:opacity-100 ${motionSettings.shouldReduceMotion ? 'transition-none' : 'transition-opacity duration-500'}`} />
+        <div className={`absolute inset-0 bg-linear-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover/card:opacity-100 ${motionSettings.shouldReduceMotion ? 'transition-none' : 'transition-opacity duration-500'}`} />
 
         {/* Thumbnail */}
         <div className="absolute top-0 left-0 w-full h-full z-0 opacity-50">
           {shouldLoadMedia ? (
             failedMedia.has(thumbnailImage) ? (
-              <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+              <div className="w-full h-full bg-linear-to-br from-gray-800 to-gray-900 flex items-center justify-center">
                 <div className="text-gray-400 text-center text-sm">⚠️ Image failed to load</div>
               </div>
             ) : (
@@ -524,15 +524,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               />
             )
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+            <div className="w-full h-full bg-linear-to-br from-gray-800 to-gray-900 flex items-center justify-center">
               <div className="text-gray-400">Loading...</div>
             </div>
           )}
         </div>
 
         {/* Gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-transparent to-purple-900/20" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/50 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-br from-blue-900/20 via-transparent to-purple-900/20" />
 
         {/* Card text */}
         <div className="relative z-10">
@@ -556,7 +556,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       {/* ── Modal ────────────────────────────────────────────────────────── */}
       {isModalOpen && typeof document !== 'undefined' && createPortal(
         <div
-          className={`fixed inset-0 z-[100] flex items-start sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm transition-all duration-500 ease-out overflow-hidden ${
+          className={`fixed inset-0 z-100 flex items-start sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-xs transition-all duration-500 ease-out overflow-hidden ${
             isClosing ? 'opacity-0 backdrop-blur-none' : 'opacity-100 animate-fadeIn'
           }`}
           onClick={closeModal}
@@ -567,7 +567,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             animation: isClosing ? 'fadeOut 0.3s ease-out forwards' : 'fadeIn 0.5s ease-out forwards' }}
         >
           <div
-            className={`relative w-full max-w-7xl bg-gradient-to-br from-gray-900/95 to-black/90 backdrop-blur-md rounded-none sm:rounded-2xl shadow-2xl transition-all duration-500 ease-out border-0 sm:border border-blue-500/30 min-h-screen sm:min-h-0 sm:max-h-[95vh] my-0 sm:my-4 ${
+            className={`relative w-full max-w-7xl bg-linear-to-br from-gray-900/95 to-black/90 backdrop-blur-md rounded-none sm:rounded-2xl shadow-2xl transition-all duration-500 ease-out border-0 sm:border border-blue-500/30 min-h-screen sm:min-h-0 sm:max-h-[95vh] my-0 sm:my-4 ${
               isClosing ? 'scale-95 opacity-0 translate-y-4' : 'scale-100 opacity-100 translate-y-0 animate-slideInUp'
             }`}
             onClick={(e) => e.stopPropagation()}
@@ -580,7 +580,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             {/* Close button */}
             <button
               onClick={closeModal}
-              className="sticky top-6 sm:top-6 left-full transform -translate-x-2 sm:-translate-x-6 z-50 bg-gradient-to-r from-gray-900/90 to-black/90 backdrop-blur-sm hover:from-gray-800/90 hover:to-gray-900/90 text-gray-300 hover:text-white rounded-full p-2 sm:p-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-transparent shadow-xl border border-gray-600/30 hover:border-gray-500/50 group flex items-center justify-center"
+              className="sticky top-6 sm:top-6 left-full transform -translate-x-2 sm:-translate-x-6 z-50 bg-linear-to-r from-gray-900/90 to-black/90 backdrop-blur-xs hover:from-gray-800/90 hover:to-gray-900/90 text-gray-300 hover:text-white rounded-full p-2 sm:p-3 transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-transparent shadow-xl border border-gray-600/30 hover:border-gray-500/50 group flex items-center justify-center"
               aria-label="Close modal"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
@@ -594,7 +594,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               <div className="w-full lg:w-1/2 flex flex-col">
                 {/* Mobile title */}
                 <div className="mb-6 lg:hidden">
-                  <div className="bg-gradient-to-br from-gray-900/90 to-black/85 rounded-lg p-4 border border-blue-500/20">
+                  <div className="bg-linear-to-br from-gray-900/90 to-black/85 rounded-lg p-4 border border-blue-500/20">
                     <h2 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-lg leading-tight">{title}</h2>
                   </div>
                 </div>
@@ -639,7 +639,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
                 {/* Mobile description */}
                 <div className="mt-6 mb-4 lg:hidden">
-                  <div className="bg-gradient-to-br from-gray-900/95 to-black/90 rounded-lg p-4 border border-blue-500/20">
+                  <div className="bg-linear-to-br from-gray-900/95 to-black/90 rounded-lg p-4 border border-blue-500/20">
                     <h3 className="text-lg font-semibold mb-3 text-white drop-shadow-lg">About</h3>
                     <p className="text-gray-100 leading-relaxed text-base sm:text-[1rem]">{description}</p>
                   </div>
@@ -647,14 +647,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
                 {/* Built with */}
                 <div className="mt-6 mb-6">
-                  <div className="bg-gradient-to-br from-gray-900/95 to-black/90 rounded-lg p-4 border border-blue-500/20 mb-4">
+                  <div className="bg-linear-to-br from-gray-900/95 to-black/90 rounded-lg p-4 border border-blue-500/20 mb-4">
                     <h2 className="text-xl font-bold text-white drop-shadow-lg">Built with</h2>
                   </div>
                   <div className="flex flex-wrap gap-2.5 max-w-full">
                     {techStack.map((tech, index) => (
                       <span
                         key={index}
-                        className="px-4 py-2.5 bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-400/30 rounded-full flex items-center justify-center text-blue-200 text-base whitespace-nowrap flex-shrink-0 min-w-0 cursor-pointer hover:border-blue-300/50 transition-all duration-300 shadow-md"
+                        className="px-4 py-2.5 bg-linear-to-r from-blue-900/30 to-purple-900/30 border border-blue-400/30 rounded-full flex items-center justify-center text-blue-200 text-base whitespace-nowrap shrink-0 min-w-0 cursor-pointer hover:border-blue-300/50 transition-all duration-300 shadow-md"
                         onClick={(e) => e.stopPropagation()}
                       >
                         {techIcons[tech] || null}
@@ -669,7 +669,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               <div className="w-full lg:w-1/2 mt-4 lg:mt-0">
                 {/* Desktop title + description */}
                 <div className="mb-8 hidden lg:block">
-                  <div className="bg-gradient-to-br from-gray-900/95 to-black/90 rounded-lg p-4 border border-blue-500/20">
+                  <div className="bg-linear-to-br from-gray-900/95 to-black/90 rounded-lg p-4 border border-blue-500/20">
                     <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-white drop-shadow-lg leading-tight">{title}</h2>
                     <p className="text-gray-100 leading-relaxed text-base sm:text-[1rem]">{description}</p>
                   </div>
@@ -689,7 +689,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 {/* Main code snippet */}
                 {codeSnippet && (
                   <div className="mb-8">
-                    <div className="bg-gradient-to-br from-gray-900/95 to-black/90 rounded-lg p-4 border border-blue-500/20 mb-4">
+                    <div className="bg-linear-to-br from-gray-900/95 to-black/90 rounded-lg p-4 border border-blue-500/20 mb-4">
                       <h2 className="text-xl font-bold text-white drop-shadow-lg">Code Snippet</h2>
                     </div>
                     <CodeBlock

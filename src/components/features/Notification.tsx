@@ -56,7 +56,7 @@ const Notification = ({ message, type, isVisible, onClose, duration = 5000 }: No
           onClick={(e) => e.stopPropagation()}
         >
           <div className={`
-            flex items-center justify-between p-4 sm:p-5 rounded-2xl shadow-lg backdrop-blur-sm border
+            flex items-center justify-between p-4 sm:p-5 rounded-2xl shadow-lg backdrop-blur-xs border
             ${type === 'success' 
               ? 'bg-green-900/90 border-green-500/30 text-green-100' 
               : 'bg-red-900/90 border-red-500/30 text-red-100'
@@ -64,14 +64,14 @@ const Notification = ({ message, type, isVisible, onClose, duration = 5000 }: No
           `}>
             <div className="flex items-center space-x-3 sm:space-x-4">
               {type === 'success' ? (
-                <FaCheckCircle className="text-green-400 text-xl sm:text-2xl flex-shrink-0" />
+                <FaCheckCircle className="text-green-400 text-xl sm:text-2xl shrink-0" />
               ) : (
-                <FaTimes className="text-red-400 text-xl sm:text-2xl flex-shrink-0" />
+                <FaTimes className="text-red-400 text-xl sm:text-2xl shrink-0" />
               )}
               <p className="text-sm sm:text-base font-medium">{message}</p>
             </div>            <button
               onClick={onClose}
-              className="text-current hover:opacity-70 transition-opacity ml-2 sm:ml-3 flex-shrink-0"
+              className="text-current hover:opacity-70 transition-opacity ml-2 sm:ml-3 shrink-0"
               aria-label="Close notification"
             >
               <FaTimes className="text-sm sm:text-base" />

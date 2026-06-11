@@ -97,7 +97,7 @@ const DialogueDemo = ({ active }: DemoProps) => {
   const line = LINES[lineIndex];
 
   return (
-    <div className="bg-black/80 border border-white/10 rounded-xl px-4 py-3 w-48 backdrop-blur-sm">
+    <div className="bg-black/80 border border-white/10 rounded-xl px-4 py-3 w-48 backdrop-blur-xs">
       <p className="text-xs font-bold text-blue-400 mb-1">{line.speaker}</p>
       <p className="text-xs text-gray-200">
         {line.text.slice(0, charIndex)}
@@ -652,7 +652,7 @@ export default function HoverDemo({ projectId, isHovered }: HoverDemoProps) {
       aria-hidden="true"
     >
       {/* dark gradient overlay so demo is visible over thumbnail */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/80 to-black/60" />
+      <div className="absolute inset-0 bg-linear-to-t from-black/95 via-black/80 to-black/60" />
       {/* demo content */}
       <div className="absolute inset-0 flex items-center justify-center">
         {prefersReducedMotion ? (

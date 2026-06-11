@@ -32,12 +32,12 @@ export default function ContactCard() {
 
         {/* Frosted glass surface */}
         <div
-          className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-[23px] bg-black border border-white/[0.08] group-hover:border-white/[0.15] transition-colors duration-300"
+          className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-[23px] bg-black border border-white/8 group-hover:border-white/15 transition-colors duration-300"
           style={GLASS_SURFACE_STYLE}
         >
           {/* Pink gradient tint bleeding into the surface — 0.08 at rest, 0.14 on hover */}
           <div
-            className="absolute inset-0 rounded-[23px] pointer-events-none opacity-[0.57] group-hover:opacity-100 transition-opacity duration-[400ms]"
+            className="absolute inset-0 rounded-[23px] pointer-events-none opacity-[0.57] group-hover:opacity-100 transition-opacity duration-400"
             style={TINT_STYLE}
             aria-hidden="true"
           />
