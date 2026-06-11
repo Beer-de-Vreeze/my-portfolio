@@ -9,7 +9,6 @@ import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import styles from '@/styles/page.module.css';
 import { useResponsiveSize } from '@/hooks/useScrolling';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
-import '@/styles/performance.css';
 
 const StarfieldBackground = dynamic(() => import('@/components/features/StarfieldBackground'), { ssr: false });
 

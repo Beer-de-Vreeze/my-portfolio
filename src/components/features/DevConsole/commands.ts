@@ -717,6 +717,9 @@ Itch.io: <a href="https://bjeerpeer.itch.io" target="_blank">https://bjeerpeer.i
                      totalTime < 2500 ? '🟡 Good' : 
                      totalTime < 4000 ? '🟠 Needs Improvement' : '🔴 Poor';
         
+        // Chrome-only, non-standard API
+        const memory = (performance as Performance & { memory?: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number } }).memory;
+
         return `📊 Performance Metrics:
 
 <div style="padding: 15px; border-radius: 8px; margin: 10px 0;">
@@ -725,10 +728,10 @@ Itch.io: <a href="https://bjeerpeer.itch.io" target="_blank">https://bjeerpeer.i
 </div>
 
 📈 Memory Usage:
-${(window as Window & { performance: Performance & { memory?: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number } } }).performance.memory ? `
-Used: ${Math.round((window as Window & { performance: Performance & { memory: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number } } }).performance.memory.usedJSHeapSize / 1048576)}MB
-Total: ${Math.round((window as Window & { performance: Performance & { memory: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number } } }).performance.memory.totalJSHeapSize / 1048576)}MB
-Limit: ${Math.round((window as Window & { performance: Performance & { memory: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number } } }).performance.memory.jsHeapSizeLimit / 1048576)}MB` : 'Memory data not available (Chrome only)'}
+${memory ? `
+Used: ${Math.round(memory.usedJSHeapSize / 1048576)}MB
+Total: ${Math.round(memory.totalJSHeapSize / 1048576)}MB
+Limit: ${Math.round(memory.jsHeapSizeLimit / 1048576)}MB` : 'Memory data not available (Chrome only)'}
 
 🎯 Summary:
 • Total page load time: ${totalTime}ms

@@ -1,13 +1,9 @@
-import "../app/globals.css"; 
+import "../app/globals.css";
 import "../styles/mobile.css";
 import "../styles/performance.css";
-import "../styles/critical.css";
 import LoadingBar from "@/components/performance/loadingbar";
 import { ClientOnlyFeatures } from "@/components/features/ClientOnlyFeatures";
-import { LoadingProvider } from "@/context/LoadingContext";
 import { ModalProvider } from "@/context/ModalContext";
-import { ServiceWorkerInitializer } from "@/components/features/ServiceWorkerInitializer";
-import { PerformanceWrapper } from "@/components/performance/PerformanceWrapper";
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Metadata, Viewport } from 'next';
@@ -97,20 +93,15 @@ export default function RootLayout({
         */}
       </head>
       <body className="bg-black text-white min-h-screen" suppressHydrationWarning>
-        <PerformanceWrapper>
-          <LoadingProvider>
-            <ModalProvider>
-              <ServiceWorkerInitializer />
-              <LoadingBar />
-              <ClientOnlyFeatures />
-              <main>
-                {children}
-              </main>
-              <Analytics />
-              <SpeedInsights />
-            </ModalProvider>
-          </LoadingProvider>
-        </PerformanceWrapper>
+        <ModalProvider>
+          <LoadingBar />
+          <ClientOnlyFeatures />
+          <main>
+            {children}
+          </main>
+          <Analytics />
+          <SpeedInsights />
+        </ModalProvider>
       </body>
     </html>
   );

@@ -1,5 +1,5 @@
-import { useEffect, useCallback, useRef } from 'react';
-import { ResourcePreloader, MemoryManager } from '@/lib/performanceUtils';
+import { useCallback, useRef } from 'react';
+import { ResourcePreloader } from '@/lib/performanceUtils';
 import { prefersReducedMotion } from './usePrefersReducedMotion';
 
 /**
@@ -23,15 +23,6 @@ export function usePerformance() {
   // Preload a single resource
   const preloadResource = useCallback((src: string, priority: 'high' | 'low' = 'low') => {
     return resourcePreloader.current.preloadImage(src, priority);
-  }, []);
-
-  // Clean up memory on unmount
-  useEffect(() => {
-    const cleanup = () => {
-      MemoryManager.cleanup();
-    };
-    
-    return cleanup;
   }, []);
 
   // Optimize for reduced motion — delegates to the shared single source

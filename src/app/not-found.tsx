@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useHasMounted } from '@/hooks/useHasMounted';
 import styles from "@/styles/page.module.css";
-import '@/styles/performance.css';
 
 const StarfieldBackground = dynamic(() => import('@/components/features/StarfieldBackground'), { ssr: false });
 

@@ -127,12 +127,6 @@
   transform: translate3d(0, 0, 0);
 }
 
-/* Critical above-the-fold optimizations */
-.above-fold {
-  contain: layout style paint;
-  will-change: auto;
-}
-
 /* Optimized image containers */
 .image-container {
   position: relative;
