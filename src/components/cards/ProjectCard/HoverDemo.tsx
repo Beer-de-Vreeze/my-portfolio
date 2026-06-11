@@ -71,24 +71,22 @@ const LINES = [
 const DialogueDemo = ({ active }: DemoProps) => {
   const [lineIndex, setLineIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
+
+  // The pause is implied by a fully revealed line — no separate state needed.
+  const isPaused = charIndex >= LINES[lineIndex].text.length;
 
   useEffect(() => {
     if (!active) return;
-    const line = LINES[lineIndex];
     let timeout: ReturnType<typeof setTimeout>;
 
     if (isPaused) {
       // Pause 1.5s on the completed line, then move to the next one.
       timeout = setTimeout(() => {
-        setIsPaused(false);
         setCharIndex(0);
         setLineIndex((i) => (i + 1) % LINES.length);
       }, 1500);
-    } else if (charIndex < line.text.length) {
-      timeout = setTimeout(() => setCharIndex((c) => c + 1), 40);
     } else {
-      setIsPaused(true);
+      timeout = setTimeout(() => setCharIndex((c) => c + 1), 40);
     }
 
     return () => clearTimeout(timeout);

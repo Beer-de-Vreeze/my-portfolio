@@ -47,8 +47,6 @@ export interface ErrorState {
 
 export interface LoadingState {
   media: boolean;
-  fileSize: boolean;
-  modal: boolean;
 }
 
 export interface ProjectFeature {

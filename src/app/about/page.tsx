@@ -4,14 +4,12 @@ import dynamic from 'next/dynamic';
 import ProfileCard from "@/components/about/ProfileCard";
 import Stack from "@/components/about/Stack";
 import { useResponsiveSize } from "@/hooks/useScrolling";
-import { usePageSetup } from "@/hooks/usePageSetup";
 import styles from "@/styles/page.module.css";
 
 const StarfieldBackground = dynamic(() => import('@/components/features/StarfieldBackground'), { ssr: false });
 
 export default function About() {
   const { isMobile, isDesktop } = useResponsiveSize();
-  usePageSetup({ scrollMode: 'always-on' });
 
   return (
     // The About page has more content than fits in one viewport, so override the

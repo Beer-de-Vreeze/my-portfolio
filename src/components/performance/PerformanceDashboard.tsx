@@ -27,16 +27,14 @@ export function PerformanceDashboard({
     ttfb: null,
   });
 
-  const [isVisible, setIsVisible] = useState(false);
+  // Shown by default in development (the component is client-only)
+  const [isVisible, setIsVisible] = useState(process.env.NODE_ENV === 'development');
 
   useEffect(() => {
     // Only work in development environment
     if (process.env.NODE_ENV !== 'development') {
       return;
     }
-
-    // Always show dashboard in development
-    setIsVisible(true);
 
     // Import and setup Web Vitals directly
     const setupWebVitals = async () => {

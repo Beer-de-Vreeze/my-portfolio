@@ -16,8 +16,15 @@ import { useEffect, useState } from 'react';
 export function useTypewriter(text: string, speed: number = 35, delay: number = 800): string {
   const [visibleCount, setVisibleCount] = useState(0);
 
-  useEffect(() => {
+  // Restart from zero when the inputs change. Adjusting state during render
+  // (instead of in the effect) avoids painting a stale frame of the old text.
+  const [prev, setPrev] = useState({ text, speed, delay });
+  if (prev.text !== text || prev.speed !== speed || prev.delay !== delay) {
+    setPrev({ text, speed, delay });
     setVisibleCount(0);
+  }
+
+  useEffect(() => {
     let count = 0;
     let timeout: ReturnType<typeof setTimeout>;
 

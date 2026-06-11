@@ -32,13 +32,7 @@ const JourneyCard: React.FC<JourneyCardProps> = ({
   const currentStepData = useMemo(() => steps[activeStep - 1], [steps, activeStep]);
   const { title, category, date, description } = currentStepData;
 
-  const [progressWidth, setProgressWidth] = useState(
-    `${((currentStep - 1) / (totalSteps - 1)) * 100}%`
-  );
-
-  useEffect(() => {
-    setProgressWidth(`${((activeStep - 1) / (totalSteps - 1)) * 100}%`);
-  }, [activeStep, totalSteps]);
+  const progressWidth = `${((activeStep - 1) / (totalSteps - 1)) * 100}%`;
 
   // Auto-play functionality
   useEffect(() => {

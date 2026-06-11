@@ -104,9 +104,6 @@ const nextConfig = {
     ], // Tree-shake these packages
   },
 
-  // External packages for server components
-  serverExternalPackages: ["highlight.js"], // Keep heavy packages external
-
   // Compiler optimizations
   compiler: {
     // Only strip non-critical console calls in production; keep error/warn for observability

@@ -102,7 +102,9 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
   const isYouTube = currentMedia?.type === 'youtube';
 
   // ── Video play overlay ──────────────────────────────────────────────────────
-  const VideoPlayOverlay = () => {
+  // Plain render helpers (not nested components): nested component definitions
+  // remount on every render and trip react-hooks/static-components.
+  const renderVideoPlayOverlay = () => {
     if (!isVideo || isYouTube) return null;
     return (
       <div className="absolute inset-0 z-20 pointer-events-none">
@@ -125,7 +127,7 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
   };
 
   // ── Fullscreen button ───────────────────────────────────────────────────────
-  const FullscreenButton = () => {
+  const renderFullscreenButton = () => {
     if (!(isVideo || isYouTube)) return null;
     if (isMobile) return null;
     return (
@@ -143,7 +145,7 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
   };
 
   // ── Image fullscreen button ─────────────────────────────────────────────────
-  const ImageFullscreenButton = () => {
+  const renderImageFullscreenButton = () => {
     if (isVideo || isMobile) return null;
     return (
       <div className="absolute bottom-3 right-3 z-30 pointer-events-none">
@@ -199,8 +201,8 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
                 preload={shouldLoadMedia ? 'metadata' : 'none'}
                 key={currentMediaIndex}
               />
-              <VideoPlayOverlay />
-              <FullscreenButton />
+              {renderVideoPlayOverlay()}
+              {renderFullscreenButton()}
             </>
           ) : isYouTube ? (
             <>
@@ -217,7 +219,7 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
                 onError={() => onError(`Failed to load YouTube video: ${currentMedia.src}`, 'media')}
                 key={currentMediaIndex}
               />
-              <FullscreenButton />
+              {renderFullscreenButton()}
             </>
           ) : (
             <>
@@ -241,7 +243,7 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
                   key={currentMediaIndex}
                 />
               )}
-              <ImageFullscreenButton />
+              {renderImageFullscreenButton()}
             </>
           )}
         </div>

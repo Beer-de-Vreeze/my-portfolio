@@ -458,9 +458,8 @@
   .containerScrollable {
     padding-left: 2rem;
     padding-right: 2rem;
-    /* Scroll-locking on laptops is governed per-page by the JS `no-scroll`
-       class (see usePageSetup scrollMode). Don't force overflow here, or
-       scrollable pages like Projects get stuck when content exceeds 100vh. */
+    /* Don't force an overflow lock here, or scrollable pages like Projects
+       get stuck when content exceeds 100vh. */
     overflow: visible;
     min-height: 100vh;
     justify-content: flex-start;

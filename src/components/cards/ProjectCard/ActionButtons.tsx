@@ -1,5 +1,5 @@
 import React from 'react';
-import type { DownloadLinkObject, LoadingState } from './types';
+import type { DownloadLinkObject } from './types';
 import { getFileTypeInfo, getLinkTypeInfo } from './utils';
 
 interface ActionButtonsProps {
@@ -7,7 +7,6 @@ interface ActionButtonsProps {
   liveLink?: string;
   sourceLink?: string;
   isMobile: boolean;
-  loading: LoadingState;
   autoFileSize: string | null;
 }
 
@@ -16,7 +15,6 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
   liveLink,
   sourceLink,
   isMobile,
-  loading,
   autoFileSize,
 }) => {
   if (!downloadLink && (!liveLink || liveLink === '#') && (!sourceLink || sourceLink === '#')) {
@@ -56,11 +54,9 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
           {downloadFileInfo.icon}
           <span>
             {downloadInfo.label}
-            {!isMobile && (loading.fileSize ? (
-              <span className="text-xs opacity-75 ml-1">(Loading...)</span>
-            ) : downloadInfo.fileSize ? (
+            {!isMobile && downloadInfo.fileSize && (
               <span className="text-xs opacity-75 ml-1">({downloadInfo.fileSize})</span>
-            ) : null)}
+            )}
           </span>
         </a>
       )}

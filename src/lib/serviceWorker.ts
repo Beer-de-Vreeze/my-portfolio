@@ -5,7 +5,7 @@
 // Informational logs are dev-only; errors still use console.error in production.
 const devLog = (...args: unknown[]) => {
   if (process.env.NODE_ENV !== 'production') {
-    devLog(...args);
+    console.log(...args);
   }
 };
 
@@ -201,71 +201,5 @@ export const getServiceWorkerManager = (): ServiceWorkerManager | null => {
 export const isOffline = (): boolean => {
   return serviceWorkerManager?.isAppOffline() ?? !navigator.onLine;
 };
-
-// Utility hook for service worker management
-export const useServiceWorker = (config: ServiceWorkerConfig = {}) => {
-  const [isRegistered, setIsRegistered] = useState(false);
-  const [isUpdateAvailable, setIsUpdateAvailable] = useState(false);
-  const [isOfflineMode, setIsOfflineMode] = useState(false);
-
-  useEffect(() => {
-    // Skip in development to avoid conflicts with Turbopack HMR
-    if (process.env.NODE_ENV !== 'production') {
-      return;
-    }
-
-    const swConfig: ServiceWorkerConfig = {
-      ...config,
-      onSuccess: (registration) => {
-        setIsRegistered(true);
-        config.onSuccess?.(registration);
-      },
-      onUpdate: (registration) => {
-        setIsUpdateAvailable(true);
-        config.onUpdate?.(registration);
-      },
-      onOffline: () => {
-        setIsOfflineMode(true);
-        config.onOffline?.();
-      },
-      onOnline: () => {
-        setIsOfflineMode(false);
-        config.onOnline?.();
-      }
-    };
-
-    initServiceWorker(swConfig);
-
-    // Initial offline state
-    setIsOfflineMode(!navigator.onLine);
-  }, [config]);
-
-  const updateServiceWorker = useCallback(async () => {
-    const manager = getServiceWorkerManager();
-    if (manager) {
-      await manager.update();
-      setIsUpdateAvailable(false);
-    }
-  }, []);
-
-  const refreshCache = useCallback(async () => {
-    const manager = getServiceWorkerManager();
-    if (manager) {
-      await manager.refreshCache();
-    }
-  }, []);
-
-  return {
-    isRegistered,
-    isUpdateAvailable,
-    isOfflineMode,
-    updateServiceWorker,
-    refreshCache,
-    manager: serviceWorkerManager
-  };
-};
-
-// React import for the hook
-import { useState, useEffect, useCallback } from 'react';
 
 export default ServiceWorkerManager;

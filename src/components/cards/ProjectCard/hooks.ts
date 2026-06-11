@@ -17,12 +17,10 @@ export const useErrorHandler = () => {
   return { error, handleError, clearError };
 };
 
-/** Manages loading states for media, fileSize, and modal */
+/** Manages loading states for media */
 export const useLoadingState = () => {
   const [loading, setLoading] = useState<LoadingState>({
     media: false,
-    fileSize: false,
-    modal: false,
   });
 
   const setLoadingState = useCallback((key: keyof LoadingState, value: boolean) => {
@@ -42,14 +40,12 @@ export const useIntersectionObserver = (
   useEffect(() => {
     if (!elementRef.current) return;
 
-    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
-    if (isMobile) {
-      setIsIntersecting(true);
-      return;
-    }
-
+    // On narrow screens treat the element as always visible. The observer
+    // still drives the update (it always fires once on observe), which keeps
+    // state changes inside the subscription callback.
+    const isMobile = window.innerWidth <= 768;
     const observer = new IntersectionObserver(([entry]) => {
-      setIsIntersecting(entry.isIntersecting);
+      setIsIntersecting(isMobile || entry.isIntersecting);
     }, options);
 
     observer.observe(elementRef.current);

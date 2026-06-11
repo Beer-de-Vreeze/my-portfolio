@@ -5,7 +5,7 @@ import AboutCard from "../components/cards/AboutCard";
 import ContactCard from "@/components/forms/ContactCardMenu";
 import { PerformanceLoading } from "@/components/performance/PerformanceLoading";
 import { useResponsiveSize } from "@/hooks/useScrolling";
-import { usePageSetup } from "@/hooks/usePageSetup";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { useTypewriter } from "@/hooks/useTypewriter";
 import styles from "@/styles/page.module.css";
 
@@ -32,7 +32,7 @@ const ROLE_SPLIT_INDEX = "Software developer specializing in ".length;
 
 export default function Home() {
   const { isDesktop } = useResponsiveSize();
-  const { prefersReducedMotion } = usePageSetup({ scrollMode: 'home' });
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   // Typing effect for the role line — types once, never repeats.
   const typedRole = useTypewriter(ROLE_TEXT);

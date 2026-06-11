@@ -1,20 +1,19 @@
 'use client'
-import { useState, useEffect, Suspense } from 'react';
+import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { useHasMounted } from '@/hooks/useHasMounted';
 import styles from "@/styles/page.module.css";
 import '@/styles/performance.css';
 
 const StarfieldBackground = dynamic(() => import('@/components/features/StarfieldBackground'), { ssr: false });
 
 function NotFoundContent() {
-  const [time, setTime] = useState('--:--:--');
   const searchParams = useSearchParams();
 
-  useEffect(() => {
-    setTime(new Date().toLocaleTimeString());
-  }, []);
+  // Placeholder during SSR/hydration, the real clock once mounted
+  const time = useHasMounted() ? new Date().toLocaleTimeString() : '--:--:--';
 
   // Get error type from URL params or default to 404
   const errorType = searchParams?.get('error') || '404';

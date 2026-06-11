@@ -2,7 +2,7 @@
 import React, { Suspense } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
-import { usePageSetup } from "@/hooks/usePageSetup";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 // Add highlight.js import and style
 import "highlight.js/styles/monokai.css";
 // Import custom highlighting styles
@@ -89,7 +89,7 @@ const ProjectsContent = ({ prefersReducedMotion }: { prefersReducedMotion: boole
 
 export default function Projects() {
   const { isDesktop } = useResponsiveSize();
-  const { prefersReducedMotion } = usePageSetup({ scrollMode: 'subpage' });
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   return (
     <div className={`flex flex-col ${styles.containerScrollable} ${styles.enhancedBackground}`}>

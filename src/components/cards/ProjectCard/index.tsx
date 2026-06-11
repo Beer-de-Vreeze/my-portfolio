@@ -323,13 +323,17 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   }, []);
 
   // ── YouTube slide-change state sync ────────────────────────────────────────
-  useEffect(() => {
+  // Adjusted during render (not in an effect) so the corrected state paints in
+  // the same frame as the slide change.
+  const [prevMediaSync, setPrevMediaSync] = useState({ index: currentMediaIndex, type: currentMedia?.type, ytPlaying: isYouTubePlaying });
+  if (prevMediaSync.index !== currentMediaIndex || prevMediaSync.type !== currentMedia?.type || prevMediaSync.ytPlaying !== isYouTubePlaying) {
+    setPrevMediaSync({ index: currentMediaIndex, type: currentMedia?.type, ytPlaying: isYouTubePlaying });
     if (currentMedia?.type !== 'youtube') {
       if (isYouTubePlaying) { setIsYouTubePlaying(false); setAutoplay(true); setProgressBarKey((p) => p + 1); }
     } else {
       setAutoplay(true);
     }
-  }, [currentMediaIndex, currentMedia?.type, isYouTubePlaying]);
+  }
 
   // ── Autoplay timer ──────────────────────────────────────────────────────────
   useEffect(() => {
@@ -399,7 +403,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
   // ── Restore body styles when closing starts ─────────────────────────────────
   useEffect(() => {
-    if (isClosing && !document.body.classList.contains('no-scroll')) {
+    if (isClosing) {
       document.body.style.overflow = '';
       document.body.style.position = '';
       document.body.style.top = '';
@@ -432,20 +436,16 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     return '';
   }, []);
 
-  const getDownloadFileSize = useCallback(async () => {
+  useEffect(() => {
     if (!downloadLink) return;
     const url = typeof downloadLink === 'string' ? downloadLink : downloadLink.url;
     if (!url?.startsWith('/')) return;
-    try {
-      setLoadingState('fileSize', true);
-      const size = await fetchFileSize(url);
-      if (size) { setAutoFileSize(size); clearError(); }
-    } catch { handleError(`Failed to fetch file size for ${url}`, 'fileSize'); }
-    finally { setLoadingState('fileSize', false); }
-  }, [downloadLink, fetchFileSize, setLoadingState, handleError, clearError]);
-
-  useEffect(() => { getDownloadFileSize(); }, [getDownloadFileSize]);
-  useEffect(() => { if (isModalOpen) getDownloadFileSize(); }, [isModalOpen, getDownloadFileSize]);
+    fetchFileSize(url)
+      .then((size) => {
+        if (size) { setAutoFileSize(size); clearError(); }
+      })
+      .catch(() => handleError(`Failed to fetch file size for ${url}`, 'fileSize'));
+  }, [downloadLink, fetchFileSize, handleError, clearError]);
 
   // ── Memos ───────────────────────────────────────────────────────────────────
   const memoizedTechStack = useMemo(() => (
@@ -633,7 +633,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                   liveLink={liveLink}
                   sourceLink={sourceLink}
                   isMobile={isMobile}
-                  loading={loading}
                   autoFileSize={autoFileSize}
                 />
 

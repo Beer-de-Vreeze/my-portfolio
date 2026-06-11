@@ -33,6 +33,4 @@ export interface CommandContext {
   pageLoadTime: number | null;
   pendingTrivia: PendingTrivia | null;
   setPendingTrivia: Dispatch<SetStateAction<PendingTrivia | null>>;
-  /** Lazy getter — returns the full commands array after it has been assembled */
-  getCommands: () => Command[];
 }

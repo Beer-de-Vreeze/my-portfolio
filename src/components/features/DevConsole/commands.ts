@@ -65,7 +65,9 @@ const lorem = new LoremIpsum({
 const pokedex = new Pokedex();
 
 export function createCommands(ctx: CommandContext): Command[] {
-  return [    {
+  // The list is self-referential: help/search handlers close over `commands`.
+  // Handlers only run after the array is fully constructed, so this is safe.
+  const commands: Command[] = [    {
       name: 'help',
       description: 'Show all available commands',
       execute: () => {
@@ -176,7 +178,7 @@ export function createCommands(ctx: CommandContext): Command[] {
         // Track help command usage to understand feature discovery
         track('dev_console_help_viewed', {
           timestamp: new Date().toISOString(),
-          total_commands: ctx.getCommands().length
+          total_commands: commands.length
         });
 
         return output;
@@ -2529,7 +2531,7 @@ This uses fuzzy matching, so approximate spelling works too:
 
         try {
           // Create Fuse instance for searching commands
-          const fuse = new Fuse(ctx.getCommands(), {
+          const fuse = new Fuse(commands, {
             keys: ['name', 'description'],
             threshold: 0.4, // Allow for some fuzziness
             includeScore: true
@@ -6660,4 +6662,5 @@ Try again or check your internet connection.`;
       }
     },
   ];
+  return commands;
 }

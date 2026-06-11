@@ -7,7 +7,8 @@ import Fuse from 'fuse.js';
 import stringArgv from 'string-argv';
 import styles from '../../../styles/DevConsole.module.css';
 
-import { Command, ConsoleHistory, PendingTrivia, CommandContext } from './types';
+import { ConsoleHistory, PendingTrivia, CommandContext } from './types';
+import { useHasMounted } from '@/hooks/useHasMounted';
 import { makeLinksClickable, useIsMobile } from './utils';
 import { createCommands } from './commands';
 import ConsoleHeader from './ConsoleHeader';
@@ -21,30 +22,31 @@ const DevConsoleDesktop: React.FC = () => {
   const router = useRouter();
 
   // ── state ──────────────────────────────────────────────────────────
-  const [isOpen, setIsOpen] = useState(false);
-  const [consoleSessionStart, setConsoleSessionStart] = useState<number | null>(null);
-  const [history, setHistory] = useState<ConsoleHistory[]>([]);
+  // This component is client-only (the wrapper renders null until mounted),
+  // so localStorage is safe to read in state initializers.
+  const [reopenedAfterReload] = useState(
+    () => localStorage.getItem('devConsole_reopenAfterReload') === 'true'
+  );
+  const [isOpen, setIsOpen] = useState(reopenedAfterReload);
+  const [consoleSessionStart, setConsoleSessionStart] = useState<number | null>(
+    () => (reopenedAfterReload ? Date.now() : null)
+  );
+  const [history, setHistory] = useState<ConsoleHistory[]>(() =>
+    reopenedAfterReload
+      ? [{ input: '', output: 'Console reopened after page reload.', timestamp: new Date(), type: 'info' }]
+      : []
+  );
   const [currentInput, setCurrentInput] = useState('');
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [konamiSequence, setKonamiSequence] = useState<string[]>([]);
-  const [pageLoadTime, setPageLoadTime] = useState<number | null>(null);
+  const [pageLoadTime] = useState<number | null>(() => Date.now());
   const [pendingTrivia, setPendingTrivia] = useState<PendingTrivia | null>(null);
   const [suggestions, setSuggestions] = useState<{ name: string; description: string }[]>([]);
   const [selectedSuggestion, setSelectedSuggestion] = useState<number>(-1);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const historyRef = useRef<HTMLDivElement>(null);
-
-  // commandsRef breaks the circular dependency: commands need to know the
-  // full list (for help / search), but the list can only be built after
-  // getCommands is defined.  We update commandsRef right after creation.
-  const commandsRef = useRef<Command[]>([]);
-
-  // ── initialize page load time ────────────────────────────────────
-  useEffect(() => {
-    setPageLoadTime(Date.now());
-  }, []);
 
   // ── argument parser ───────────────────────────────────────────────
   const parseArgs = (input: string) => {
@@ -118,23 +120,19 @@ const DevConsoleDesktop: React.FC = () => {
     [],
   );
 
-  // ── check if console should reopen after reload ────────────────────
+  // ── side effects of reopening after a reload ───────────────────────
+  // (the open/session/history state itself is set in the initializers above)
   useEffect(() => {
-    const shouldReopen = localStorage.getItem('devConsole_reopenAfterReload');
-    if (shouldReopen === 'true') {
-      localStorage.removeItem('devConsole_reopenAfterReload');
-      setIsOpen(true);
-      track('dev_console_opened', {
-        method: 'reload_reopen',
-        timestamp: new Date().toISOString(),
-        user_agent: navigator.userAgent,
-        screen_resolution: `${window.screen.width}x${window.screen.height}`,
-        viewport_size: `${window.innerWidth}x${window.innerHeight}`,
-      });
-      setConsoleSessionStart(Date.now());
-      addToHistory('Console reopened after page reload.', 'info');
-    }
-  }, [addToHistory]);
+    if (!reopenedAfterReload) return;
+    localStorage.removeItem('devConsole_reopenAfterReload');
+    track('dev_console_opened', {
+      method: 'reload_reopen',
+      timestamp: new Date().toISOString(),
+      user_agent: navigator.userAgent,
+      screen_resolution: `${window.screen.width}x${window.screen.height}`,
+      viewport_size: `${window.innerWidth}x${window.innerHeight}`,
+    });
+  }, [reopenedAfterReload]);
 
   // ── build CommandContext + commands ───────────────────────────────
   // ctx is rebuilt every render so commands always read up-to-date state.
@@ -149,33 +147,25 @@ const DevConsoleDesktop: React.FC = () => {
     pageLoadTime,
     pendingTrivia,
     setPendingTrivia,
-    getCommands: () => commandsRef.current,
   };
 
   const commands = createCommands(ctx);
-  // Keep the ref up-to-date so help/search can read the current list
-  commandsRef.current = commands;
 
   // ── autocomplete ──────────────────────────────────────────────────
-  useEffect(() => {
-    if (!currentInput) {
-      setSuggestions([]);
-      setSelectedSuggestion(-1);
-      return;
-    }
+  // Recompute when the input text changes, during render rather than in an
+  // effect. Handlers still clear/adjust the suggestion state independently.
+  const [prevInputForSuggestions, setPrevInputForSuggestions] = useState(currentInput);
+  if (prevInputForSuggestions !== currentInput) {
+    setPrevInputForSuggestions(currentInput);
     const input = currentInput.trim().toLowerCase();
-    if (!input) {
-      setSuggestions([]);
-      setSelectedSuggestion(-1);
-      return;
-    }
-    const matches = commands
-      .filter((cmd) => cmd.name.startsWith(input))
-      .map((cmd) => ({ name: cmd.name, description: cmd.description }));
+    const matches = input
+      ? commands
+          .filter((cmd) => cmd.name.startsWith(input))
+          .map((cmd) => ({ name: cmd.name, description: cmd.description }))
+      : [];
     setSuggestions(matches);
     setSelectedSuggestion(matches.length ? 0 : -1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentInput]); // `commands` intentionally omitted — recreated every render, never changes meaningfully
+  }
 
   // ── Konami code detection ─────────────────────────────────────────
   useEffect(() => {
@@ -450,12 +440,8 @@ const DevConsoleDesktop: React.FC = () => {
 // DevConsoleWrapper — skips render on mobile / SSR
 // ─────────────────────────────────────────────────────────────────────
 const DevConsoleWrapper: React.FC = () => {
-  const [isMounted, setIsMounted] = useState(false);
+  const isMounted = useHasMounted();
   const isMobile = useIsMobile();
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   if (!isMounted || isMobile) return null;
 
