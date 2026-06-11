@@ -34,7 +34,6 @@
     "date-fns": "^4.1.0",
     "devicon": "^2.17.0",
     "dotenv": "^17.3.1",
-    "firebase": "^11.10.0",
     "framer-motion": "^12.36.0",
     "fuse.js": "^7.1.0",
     "generate-password": "^1.7.1",

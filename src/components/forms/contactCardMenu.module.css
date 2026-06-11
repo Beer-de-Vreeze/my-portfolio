@@ -2,14 +2,14 @@
 
 .envelopeIcon {
   transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), color 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), filter 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  filter: drop-shadow(0 0 0px rgba(236, 72, 153, 0));
+  filter: drop-shadow(0 0 0px rgba(var(--rgb-pink),0));
   will-change: transform;
 }
 
 :global(.group):hover .envelopeIcon {
   transform: scale(1.1);
-  color: rgb(236, 72, 153);
-  filter: drop-shadow(0 0 15px rgba(236, 72, 153, 0.6));
+  color: rgb(var(--rgb-pink));
+  filter: drop-shadow(0 0 15px rgba(var(--rgb-pink),0.6));
 }
 
 /* Paper plane flies out of the envelope on hover */

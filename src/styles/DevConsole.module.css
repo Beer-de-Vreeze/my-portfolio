@@ -7,9 +7,9 @@
   bottom: 0;
   background: linear-gradient(
     135deg,
-    rgba(59, 130, 246, 0.1) 0%,
-    rgba(139, 92, 246, 0.2) 50%,
-    rgba(236, 72, 153, 0.1) 100%
+    rgba(var(--rgb-blue),0.1) 0%,
+    rgba(var(--rgb-purple),0.2) 50%,
+    rgba(var(--rgb-pink),0.1) 100%
   );
   backdrop-filter: blur(8px);
   z-index: 10000;
@@ -39,10 +39,10 @@
     rgba(0, 0, 0, 0.95) 100%
   );
   border: 2px solid;
-  border-image: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899) 1;
+  border-image: linear-gradient(45deg, var(--color-blue), var(--color-purple), var(--color-pink)) 1;
   border-radius: 12px;
-  box-shadow: 0 0 30px rgba(59, 130, 246, 0.3), 0 0 60px rgba(139, 92, 246, 0.2),
-    0 0 90px rgba(236, 72, 153, 0.1), inset 0 0 30px rgba(59, 130, 246, 0.05);
+  box-shadow: 0 0 30px rgba(var(--rgb-blue),0.3), 0 0 60px rgba(var(--rgb-purple),0.2),
+    0 0 90px rgba(var(--rgb-pink),0.1), inset 0 0 30px rgba(var(--rgb-blue),0.05);
   display: flex;
   flex-direction: column;
   font-family: "Courier New", monospace;
@@ -69,11 +69,11 @@
   padding: 16px 20px;
   background: linear-gradient(
     90deg,
-    rgba(59, 130, 246, 0.2) 0%,
-    rgba(139, 92, 246, 0.3) 50%,
-    rgba(236, 72, 153, 0.2) 100%
+    rgba(var(--rgb-blue),0.2) 0%,
+    rgba(var(--rgb-purple),0.3) 50%,
+    rgba(var(--rgb-pink),0.2) 100%
   );
-  border-bottom: 1px solid rgba(139, 92, 246, 0.5);
+  border-bottom: 1px solid rgba(var(--rgb-purple),0.5);
   border-radius: 10px 10px 0 0;
   backdrop-filter: blur(10px);
 }
@@ -84,7 +84,7 @@
   gap: 8px;
   font-weight: bold;
   font-size: 16px;
-  background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
+  background: linear-gradient(45deg, var(--color-blue), var(--color-purple), var(--color-pink));
   background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -105,7 +105,7 @@
 .icon {
   font-size: 18px;
   animation: pulse 2s infinite;
-  filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.6));
+  filter: drop-shadow(0 0 8px rgba(var(--rgb-purple),0.6));
 }
 
 @keyframes pulse {
@@ -123,10 +123,10 @@
 .closeButton {
   background: linear-gradient(
     135deg,
-    rgba(59, 130, 246, 0.2),
-    rgba(236, 72, 153, 0.3)
+    rgba(var(--rgb-blue),0.2),
+    rgba(var(--rgb-pink),0.3)
   );
-  border: 1px solid rgba(139, 92, 246, 0.5);
+  border: 1px solid rgba(var(--rgb-purple),0.5);
   color: #ffffff;
   width: 32px;
   height: 32px;
@@ -144,11 +144,11 @@
 .closeButton:hover {
   background: linear-gradient(
     135deg,
-    rgba(236, 72, 153, 0.4),
-    rgba(59, 130, 246, 0.4)
+    rgba(var(--rgb-pink),0.4),
+    rgba(var(--rgb-blue),0.4)
   );
-  border-color: rgba(236, 72, 153, 0.8);
-  box-shadow: 0 0 20px rgba(236, 72, 153, 0.4);
+  border-color: rgba(var(--rgb-pink),0.8);
+  box-shadow: 0 0 20px rgba(var(--rgb-pink),0.4);
   transform: scale(1.1);
 }
 
@@ -177,7 +177,7 @@
 }
 
 .history::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+  background: linear-gradient(135deg, var(--color-blue), var(--color-purple), var(--color-pink));
   border-radius: 4px;
   box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
 }
@@ -236,7 +236,7 @@
 }
 
 .prompt {
-  background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
+  background: linear-gradient(45deg, var(--color-blue), var(--color-purple), var(--color-pink));
   background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -244,7 +244,7 @@
   font-weight: bold;
   flex-shrink: 0;
   animation: gradientFlow 3s ease-in-out infinite;
-  text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+  text-shadow: 0 0 10px rgba(var(--rgb-purple),0.5);
 }
 
 .inputForm {
@@ -254,11 +254,11 @@
   padding: 16px 20px;
   background: linear-gradient(
     90deg,
-    rgba(59, 130, 246, 0.15) 0%,
-    rgba(139, 92, 246, 0.2) 50%,
-    rgba(236, 72, 153, 0.15) 100%
+    rgba(var(--rgb-blue),0.15) 0%,
+    rgba(var(--rgb-purple),0.2) 50%,
+    rgba(var(--rgb-pink),0.15) 100%
   );
-  border-top: 1px solid rgba(139, 92, 246, 0.3);
+  border-top: 1px solid rgba(var(--rgb-purple),0.3);
   border-radius: 0 0 10px 10px;
   backdrop-filter: blur(10px);
 }
@@ -266,7 +266,7 @@
 .inputForm .input {
   flex: 1;
   background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(139, 92, 246, 0.3);
+  border: 1px solid rgba(var(--rgb-purple),0.3);
   border-radius: 6px;
   color: #ffffff;
   font-family: inherit;
@@ -282,9 +282,9 @@
 }
 
 .inputForm .input:focus {
-  border-color: rgba(139, 92, 246, 0.6);
-  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2),
-    inset 0 0 10px rgba(59, 130, 246, 0.1);
+  border-color: rgba(var(--rgb-purple),0.6);
+  box-shadow: 0 0 0 2px rgba(var(--rgb-purple),0.2),
+    inset 0 0 10px rgba(var(--rgb-blue),0.1);
   background: rgba(0, 0, 0, 0.5);
 }
 
@@ -296,7 +296,7 @@
     rgba(30, 30, 30, 0.4) 50%,
     rgba(0, 0, 0, 0.6) 100%
   );
-  border-top: 1px solid rgba(59, 130, 246, 0.2);
+  border-top: 1px solid rgba(var(--rgb-blue),0.2);
   font-size: 11px;
   text-align: center;
   color: rgba(255, 255, 255, 0.7);
@@ -382,11 +382,11 @@
 
 /* Link Styles for DevConsole */
 .history a {
-  color: #60a5fa;
+  color: var(--color-blue-light);
   text-decoration: none;
   border-bottom: 1px solid rgba(96, 165, 250, 0.3);
   transition: all 0.3s ease;
-  background: linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+  background: linear-gradient(45deg, rgba(var(--rgb-blue),0.1), rgba(var(--rgb-purple),0.1));
   padding: 2px 4px;
   border-radius: 4px;
   display: inline-block;
@@ -397,7 +397,7 @@
 .history a:hover {
   color: #93c5fd;
   border-bottom-color: rgba(147, 197, 253, 0.6);
-  background: linear-gradient(45deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+  background: linear-gradient(45deg, rgba(var(--rgb-blue),0.2), rgba(var(--rgb-purple),0.2));
   box-shadow: 0 0 10px rgba(96, 165, 250, 0.3);
   transform: translateY(-1px);
   text-shadow: 0 0 5px rgba(96, 165, 250, 0.5);
@@ -423,7 +423,7 @@
 }
 
 .history a[href^="https://github.com"] {
-  color: #a78bfa;
+  color: var(--color-purple-light);
   background: linear-gradient(45deg, rgba(167, 139, 250, 0.1), rgba(196, 181, 253, 0.1));
   border-bottom-color: rgba(167, 139, 250, 0.3);
 }
@@ -523,8 +523,8 @@
 .history a[href*="stackoverflow.com"],
 .history a[href*="mdn."],
 .history a[href*="w3schools"] {
-  color: #a78bfa;
-  background: linear-gradient(45deg, rgba(167, 139, 250, 0.1), rgba(139, 92, 246, 0.1));
+  color: var(--color-purple-light);
+  background: linear-gradient(45deg, rgba(167, 139, 250, 0.1), rgba(var(--rgb-purple),0.1));
   border-bottom-color: rgba(167, 139, 250, 0.3);
 }
 
@@ -535,7 +535,7 @@
 .history a[href*="w3schools"]:hover {
   color: #c4b5fd;
   border-bottom-color: rgba(196, 181, 253, 0.6);
-  background: linear-gradient(45deg, rgba(167, 139, 250, 0.2), rgba(139, 92, 246, 0.2));
+  background: linear-gradient(45deg, rgba(167, 139, 250, 0.2), rgba(var(--rgb-purple),0.2));
   box-shadow: 0 0 10px rgba(167, 139, 250, 0.3);
 }
 
@@ -581,18 +581,18 @@
 .history a[href*="discord."],
 .history a[href*="steam"],
 .history a[href*="twitch.tv"] {
-  color: #8b5cf6;
-  background: linear-gradient(45deg, rgba(139, 92, 246, 0.1), rgba(124, 58, 237, 0.1));
-  border-bottom-color: rgba(139, 92, 246, 0.3);
+  color: var(--color-purple);
+  background: linear-gradient(45deg, rgba(var(--rgb-purple),0.1), rgba(124, 58, 237, 0.1));
+  border-bottom-color: rgba(var(--rgb-purple),0.3);
 }
 
 .history a[href*="discord."]:hover,
 .history a[href*="steam"]:hover,
 .history a[href*="twitch.tv"]:hover {
-  color: #a78bfa;
+  color: var(--color-purple-light);
   border-bottom-color: rgba(167, 139, 250, 0.6);
-  background: linear-gradient(45deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.2));
-  box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+  background: linear-gradient(45deg, rgba(var(--rgb-purple),0.2), rgba(124, 58, 237, 0.2));
+  box-shadow: 0 0 10px rgba(var(--rgb-purple),0.3);
 }
 
 /* File download links */

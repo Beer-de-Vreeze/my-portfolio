@@ -61,13 +61,13 @@
 .folderIcon {
   transform: rotate(0deg) scale(1);
   transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  filter: drop-shadow(0 0 0px rgba(139, 92, 246, 0));
+  filter: drop-shadow(0 0 0px rgba(var(--rgb-purple),0));
   will-change: transform;
 }
 
 :global(.group):hover .folderIcon {
   transform: rotate(-15deg) scale(1.2);
-  filter: drop-shadow(0 0 25px rgba(139, 92, 246, 0.9));
+  filter: drop-shadow(0 0 25px rgba(var(--rgb-purple),0.9));
 }
 
 @media (prefers-reduced-motion: reduce) {

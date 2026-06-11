@@ -66,7 +66,7 @@ body.mobile-menu-open {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #3b82f6, #8b5cf6);
+  background: linear-gradient(to bottom, var(--color-blue), var(--color-purple));
 }
 
 /* ============================================================
@@ -124,11 +124,11 @@ body.mobile-menu-open {
   background-size: 200% 100%;
   animation: gradientFlow 2s ease infinite;
   height: 2px;
-  box-shadow: 0 0 8px rgba(139,92,246,0.6);
+  box-shadow: 0 0 8px rgba(var(--rgb-purple),0.6);
 }
 
 #nprogress .peg {
-  box-shadow: 0 0 10px rgba(139,92,246,0.8), 0 0 5px rgba(139,92,246,0.5);
+  box-shadow: 0 0 10px rgba(var(--rgb-purple),0.8), 0 0 5px rgba(var(--rgb-purple),0.5);
 }
 
 /* ============================================================

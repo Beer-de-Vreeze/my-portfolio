@@ -36,27 +36,19 @@ export function usePageSetup(options: PageSetupOptions = {}): {
     setIsMounted(true);
   }, []);
 
-  // Scroll-lock lifecycle
+  // Scroll lifecycle.
+  //
+  // We no longer hard-lock the page. The previous behaviour added a
+  // `no-scroll` class that set `overflow: hidden` on the document, which
+  // trapped content whenever it was taller than the viewport (e.g. the
+  // Projects grid on laptops). The rule now is simple: if content fits, the
+  // browser shows no scrollbar anyway; if it overflows, the user can scroll.
+  // We keep this effect only to clear any stale `no-scroll` class.
   useEffect(() => {
     if (!isMounted) return;
 
-    const width = window.innerWidth;
-    const shouldLock =
-      (scrollMode === 'home' && width >= 1024) ||
-      (scrollMode === 'subpage' && width >= 1440);
-
-    if (shouldLock) {
-      document.documentElement.classList.add('no-scroll');
-      document.body.classList.add('no-scroll');
-    } else {
-      document.documentElement.classList.remove('no-scroll');
-      document.body.classList.remove('no-scroll');
-    }
-
-    return () => {
-      document.documentElement.classList.remove('no-scroll');
-      document.body.classList.remove('no-scroll');
-    };
+    document.documentElement.classList.remove('no-scroll');
+    document.body.classList.remove('no-scroll');
   }, [isMounted, scrollMode]);
 
   return { isMounted, prefersReducedMotion };
