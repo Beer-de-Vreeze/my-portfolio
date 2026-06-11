@@ -4,7 +4,8 @@ import dynamic from 'next/dynamic';
 import ContactForm from '@/components/forms/ContactForm';
 import Notification from '@/components/features/Notification';
 import { motion } from 'framer-motion';
-import { Mail, Github, Linkedin, FileDown, ArrowUpRight } from 'lucide-react';
+import { Mail, FileDown, ArrowUpRight } from 'lucide-react';
+import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import styles from '@/styles/page.module.css';
 import { useResponsiveSize } from '@/hooks/useScrolling';
 import { usePageSetup } from '@/hooks/usePageSetup';
@@ -42,14 +43,14 @@ const CONTACT_LINKS = [
     href: 'https://github.com/Beer-de-Vreeze',
     external: true,
     accent: 'text-gray-400',
-    Icon: Github,
+    Icon: FaGithub,
   },
   {
     label: 'beer-de-vreeze',
     href: 'https://www.linkedin.com/in/beer-de-vreeze-59040919a/',
     external: true,
     accent: 'text-blue-400',
-    Icon: Linkedin,
+    Icon: FaLinkedin,
   },
   {
     label: 'bjeerpeer',
