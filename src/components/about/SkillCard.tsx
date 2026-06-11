@@ -1,7 +1,8 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import {
   SiReact, SiUnity, SiGit, SiJavascript, SiTypescript, SiHtml5, SiCss, SiNextdotjs, SiTailwindcss,
-  SiDotnet, SiPython, SiGooglecloud, SiPhp, SiMysql, SiFirebase, SiLua, SiRoblox, SiVercel, SiAudacity
+  SiDotnet, SiPython, SiGooglecloud, SiPhp, SiMysql, SiFirebase, SiLua, SiRoblox, SiVercel,
+  SiFastapi, SiFramer, SiEslint, SiClaude
 } from 'react-icons/si';
 import { FiRefreshCw } from 'react-icons/fi';
 
@@ -75,8 +76,10 @@ const SkillCard: React.FC<TechStackProps> = ({ title = "Tech Stack" }) => {
     { icon: <SiTailwindcss />, name: 'Tailwind CSS', category: 'Frontend' },
     { icon: <SiReact />, name: 'React', category: 'Frontend' },
     { icon: <SiReact />, name: 'React Native', category: 'Frontend' },
+    { icon: <SiFramer />, name: 'Framer Motion', category: 'Frontend' },
     // Backend
     { icon: <SiNextdotjs />, name: 'Next.js', category: 'Backend' },
+    { icon: <SiFastapi />, name: 'FastAPI', category: 'Backend' },
     { icon: <SiPhp />, name: 'PHP', category: 'Backend' },
     { icon: <SiMysql />, name: 'SQL', category: 'Backend' },
     { icon: <SiFirebase />, name: 'Google Firebase', category: 'Backend' },
@@ -86,7 +89,8 @@ const SkillCard: React.FC<TechStackProps> = ({ title = "Tech Stack" }) => {
     { icon: <SiGooglecloud />, name: 'Azure', category: 'DevOps' },
     { icon: <SiVercel />, name: 'Vercel', category: 'DevOps' },
     // Tools
-    { icon: <SiAudacity />, name: 'Audacity', category: 'Tools' },
+    { icon: <SiClaude />, name: 'Claude (MCP)', category: 'Tools' },
+    { icon: <SiEslint />, name: 'ESLint', category: 'Tools' },
   ], []);
 
   const filteredTechnologies = useMemo(
