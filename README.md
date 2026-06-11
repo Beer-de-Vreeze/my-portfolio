@@ -55,7 +55,6 @@ A modern, responsive portfolio website showcasing my game development projects a
 - **Color Manipulation**: [Chroma.js](https://gka.github.io/chroma.js/)
 - **Math Operations**: [Math.js](https://mathjs.org/)
 - **Text Processing**: Various utilities (Lorem Ipsum, HE encoding, Password generation)
-- **Progress Bar**: [NProgress](https://ricostacruz.com/nprogress/)
 - **Routing**: [React Router DOM](https://reactrouter.com/)
 - **Hooks**: [React Use](https://github.com/streamich/react-use) & custom performance hooks
 - **Debouncing**: [use-debounce](https://github.com/xnimorz/use-debounce)

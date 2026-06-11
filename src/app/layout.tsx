@@ -1,6 +1,5 @@
 import "../app/globals.css";
 import "../styles/mobile.css";
-import LoadingBar from "@/components/performance/loadingbar";
 import { ClientOnlyFeatures } from "@/components/features/ClientOnlyFeatures";
 import { ModalProvider } from "@/context/ModalContext";
 import { Analytics } from '@vercel/analytics/react';
@@ -93,7 +92,6 @@ export default function RootLayout({
       </head>
       <body className="bg-black text-white min-h-screen" suppressHydrationWarning>
         <ModalProvider>
-          <LoadingBar />
           <ClientOnlyFeatures />
           <main>
             {children}
