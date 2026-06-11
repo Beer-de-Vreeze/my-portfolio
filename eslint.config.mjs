@@ -1,3 +1,4 @@
+import { fixupConfigRules } from "@eslint/compat";
 import coreWebVitals from "eslint-config-next/core-web-vitals";
 import typescript from "eslint-config-next/typescript";
 
@@ -14,8 +15,12 @@ const eslintConfig = [
       "tsconfig.tsbuildinfo",
     ],
   },
-  ...coreWebVitals,
-  ...typescript,
+  // fixupConfigRules bridges plugins that still use context APIs removed in
+  // ESLint 10 (eslint-plugin-react inside eslint-config-next calls
+  // context.getFilename()). Drop it once eslint-config-next ships an
+  // ESLint 10-ready eslint-plugin-react.
+  ...fixupConfigRules(coreWebVitals),
+  ...fixupConfigRules(typescript),
   {
     // react-hooks v6 (bundled with eslint-config-next 16) promotes these new
     // React Compiler-era rules to errors. The flagged patterns (initial reads
