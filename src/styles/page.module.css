@@ -1424,11 +1424,6 @@
 
 /* Mobile performance optimizations */
 @media (max-width: 768px) {
-  .backgroundParticles {
-    contain: strict;
-    content-visibility: auto;
-  }
-
   .particle {
     will-change: auto; /* Disable will-change on mobile */
     animation-duration: 4s; /* Slower animations for better performance */

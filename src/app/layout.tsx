@@ -1,6 +1,5 @@
 import "../app/globals.css";
 import "../styles/mobile.css";
-import "../styles/performance.css";
 import LoadingBar from "@/components/performance/loadingbar";
 import { ClientOnlyFeatures } from "@/components/features/ClientOnlyFeatures";
 import { ModalProvider } from "@/context/ModalContext";

@@ -158,6 +158,12 @@ body.mobile-menu-open {
   50% { background-position: 100% 50%; }
 }
 
+/* Drifting grid pattern used by the Navbar and Footer backgrounds */
+@keyframes gridShift {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(20px, 20px); }
+}
+
 /* ============================================================
    NProgress loading bar
    ============================================================ */
@@ -221,17 +227,6 @@ body.mobile-menu-open {
     width: 100%;
     opacity: 0.9;
   }
-}
-
-/* ============================================================
-   Performance helpers
-   ============================================================ */
-
-/* Reduce repaints and reflows */
-.gpu-accelerated {
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000px;
 }
 
 /* Ensure notifications always appear above everything else */

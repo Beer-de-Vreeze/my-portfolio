@@ -218,16 +218,9 @@ const Navbar = () => {
       </AnimatePresence>
 
       <style jsx>{`
-        @keyframes gridShift {
-          0% { transform: translate(0, 0); }
-          100% { transform: translate(20px, 20px); }
-        }
-        @keyframes gradient {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-        }
         .bg-size-200 { background-size: 200% 200%; }
-        .animate-gradient { animation: gradient 3s ease infinite; }
+        /* gradientFlow and gridShift live in globals.css */
+        .animate-gradient { animation: gradientFlow 3s ease infinite; }
       `}</style>
     </nav>
   );

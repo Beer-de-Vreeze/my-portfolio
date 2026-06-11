@@ -181,8 +181,8 @@ const Website = () => (
             <span className="text-sm text-blue-100">{bubble.label}</span>
             
             {bubble.additionalInfo && hoveredBubble === bubble.id && (
-              <div className="absolute bottom-full left-1/2 transform 
-                -translate-x-1/2 mb-2 bg-gray-800/95 border 
+              <div className="absolute bottom-full left-1/2
+                -translate-x-1/2 mb-2 bg-gray-800/95 border
                 border-blue-400/30 rounded-xl text-blue-100 text-xs 
                 w-max max-w-[200px] p-3 tooltip-popup"
                 role="tooltip"

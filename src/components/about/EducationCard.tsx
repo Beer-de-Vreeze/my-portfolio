@@ -239,7 +239,7 @@ const EducationCard: React.FC = () => {
                 e.stopPropagation();
                 toggleModal(null);
               }}
-              className="sticky top-6 sm:top-2 left-full transform -translate-x-6 z-50 bg-linear-to-r from-gray-900/90 to-black/90 backdrop-blur-xs hover:from-gray-800/90 hover:to-gray-900/90 text-gray-300 hover:text-white rounded-full p-3 transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-transparent shadow-xl border border-gray-600/30 hover:border-gray-500/50 group"
+              className="sticky top-6 sm:top-2 left-full -translate-x-6 z-50 bg-linear-to-r from-gray-900/90 to-black/90 backdrop-blur-xs hover:from-gray-800/90 hover:to-gray-900/90 text-gray-300 hover:text-white rounded-full p-3 transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-transparent shadow-xl border border-gray-600/30 hover:border-gray-500/50 group"
               aria-label={`Close ${activeSchool.name} details dialog`}
               type="button"
             >

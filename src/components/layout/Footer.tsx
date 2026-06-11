@@ -38,12 +38,12 @@ const Footer: React.FC = () => {
             </span>
             
             {/* Hidden Konami Code Easter Egg - Only shows on direct text hover and hidden on mobile */}
-            <div className="hidden sm:block absolute -top-10 left-1/2 transform -translate-x-1/2 opacity-0 group-hover/copyright:opacity-100 transition-opacity duration-500 pointer-events-none z-50">
+            <div className="hidden sm:block absolute -top-10 left-1/2 -translate-x-1/2 opacity-0 group-hover/copyright:opacity-100 transition-opacity duration-500 pointer-events-none z-50">
               <div className="bg-black/95 border border-green-500/70 rounded-lg px-3 py-2 text-xs text-green-400 font-mono whitespace-nowrap shadow-xl backdrop-blur-xs">
                 <span className="text-green-200">↑↑↓↓←→←→BA</span>
               </div>
               {/* Small arrow pointing down */}
-              <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-green-500/70"></div>
+              <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-green-500/70"></div>
             </div>
           </div>
         </div>
@@ -82,12 +82,6 @@ const Footer: React.FC = () => {
         </motion.a>
       </div>
 
-      <style jsx>{`
-        @keyframes gridShift {
-          0% { transform: translate(0, 0); }
-          100% { transform: translate(20px, 20px); }
-        }
-      `}</style>
     </footer>
   );
 };
