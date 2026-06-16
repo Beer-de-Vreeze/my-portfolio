@@ -126,6 +126,19 @@ export const getLinkTypeInfo = (url: string) => {
     };
   }
 
+  if (url.includes('devpost')) {
+    return {
+      text: 'Devpost', gradientFrom: 'from-sky-500', gradientTo: 'to-cyan-600',
+      hoverFrom: 'hover:from-sky-600', hoverTo: 'hover:to-cyan-700',
+      borderColor: 'border-sky-400/20', hoverBorderColor: 'hover:border-sky-300/40',
+      icon: (
+        <svg width="16" height="16" viewBox="0 0 512 512" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M256 0L46 121v270l210 121 210-121V121L256 0zm0 56l161 93v186l-161 93-161-93V149l161-93zm-66 116v168h78c46 0 84-38 84-84s-38-84-84-84h-78zm40 36h38c26 0 48 22 48 48s-22 48-48 48h-38v-96z" />
+        </svg>
+      ),
+    };
+  }
+
   if (url.includes('github.io') || url.includes('netlify') || url.includes('vercel')) {
     return {
       text: 'Demo', gradientFrom: 'from-green-600', gradientTo: 'to-emerald-600',

@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(npm audit 2>&1)",
+      "PowerShell(if \\($env:GITHUB_TOKEN -or $env:GH_TOKEN\\) { \"env token present\" } else { \"no env token\" }; \"protocol=https`nhost=github.com`n\" | git credential fill 2>$null | ForEach-Object { if \\($_ -match '^password=\\(.+\\)'\\) { $script:tok = $Matches[1]; \"git credential: found token \\(len $\\($tok.Length\\)\\)\" } elseif \\($_ -match '^username='\\) { $_ } })"
+    ]
+  }
+}
