@@ -213,8 +213,16 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
-                onLoad={() => {
+                onLoad={(e) => {
                   onSetMediaLoading(false);
+                  // Subscribe to the YouTube iframe API so it posts back
+                  // playback state events. Without this `listening` handshake,
+                  // `enablejsapi=1` alone emits nothing and the carousel keeps
+                  // auto-advancing while a video plays.
+                  e.currentTarget.contentWindow?.postMessage(
+                    JSON.stringify({ event: 'listening', id: currentMediaIndex, channel: 'widget' }),
+                    'https://www.youtube.com',
+                  );
                 }}
                 onError={() => onError(`Failed to load YouTube video: ${currentMedia.src}`, 'media')}
                 key={currentMediaIndex}

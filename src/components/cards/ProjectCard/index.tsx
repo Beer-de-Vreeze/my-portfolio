@@ -125,8 +125,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           setIsYouTubePlaying(true);
           setAutoplay(false);
           setProgressBarKey((p) => p + 1);
-        } else if (data.event === 'onStateChange') {
-          const s = data.info?.playerState;
+        } else if (data.event === 'onStateChange' || data.event === 'infoDelivery') {
+          // YouTube's widget protocol is inconsistent: `onStateChange` carries
+          // the state directly in `info` (a number), while `infoDelivery`
+          // nests it under `info.playerState`. Read whichever is present.
+          const s = typeof data.info === 'number' ? data.info : data.info?.playerState;
+          if (s === undefined) return;
           if (s === 1) { setIsYouTubePlaying(true); setAutoplay(false); setProgressBarKey((p) => p + 1); }
           else if (s === 2) { setIsYouTubePlaying(false); setAutoplay(false); }
           else if (s === 0) { setIsYouTubePlaying(false); setAutoplay(true); setProgressBarKey((p) => p + 1); }
