@@ -9,6 +9,8 @@ import { fileURLToPath } from "node:url";
 export default defineConfig({
   site: "https://www.beerdevreeze.com",
   adapter: vercel(),
+  // Shorter address for the CMS admin.
+  redirects: { "/admin": { status: 302, destination: "/keystatic" } },
   integrations: [react(), keystatic(), sitemap({ filter: (page) => !page.includes("/keystatic") })],
   vite: {
     resolve: {

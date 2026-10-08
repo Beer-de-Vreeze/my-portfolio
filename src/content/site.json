@@ -2,6 +2,7 @@
   "name": "Beer de Vreeze",
   "role": "Junior AI Engineer at ASAPCLOUD",
   "line": "AI engineer building agents, agent skills and the tools around them.",
+  "subline": "Junior AI Engineer at ASAPCLOUD. Before that: game developer, and before that, a chef.",
   "email": "beer@vreeze.com",
   "links": [
     {
@@ -21,6 +22,10 @@
       "href": "https://www.beerdevreeze.com/downloads/beer-de-vreeze-cv.pdf"
     }
   ],
+  "earlierTitle": "Earlier: games and tools",
+  "earlierLede": "Where I learned to build systems: Unity, C#, enemy AI and editor tooling.",
+  "contactTitle": "Get in touch",
+  "contactLine": "Hiring for AI engineering, or need an agent, skill or MCP server built?",
   "aboutLead": "I'm Beer, a Junior AI Engineer at ASAPCLOUD in the Netherlands.",
   "about": [
     "I started in professional kitchens: chef training at ROC Midden Nederland, then shifts at Camping Ganspoort, Winkel van Sinkel and Ruby Rose. Kitchens taught me mise en place, which turns out to be most of agent engineering.",

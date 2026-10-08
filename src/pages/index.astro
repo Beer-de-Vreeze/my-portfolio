@@ -16,7 +16,7 @@ const description = `${site.line} ${site.role}. Projects: showhow, bunq Voice, S
     <Hero name={site.name} lines={["BEER DE", "VREEZE"]} mobileLines={["BEER", "DE", "VREEZE"]}>
       <div class="intro" slot="intro">
         <h1><span class="sr-only">{site.name}. </span>{site.line}</h1>
-        <p class="role">{site.role}. Before that: game developer, and before that, a chef.</p>
+        {site.subline && <p class="role">{site.subline}</p>}
         <a class="control action" href={`mailto:${site.email}`}>Email {site.email}</a>
       </div>
 
@@ -110,8 +110,8 @@ const description = `${site.line} ${site.role}. Projects: showhow, bunq Voice, S
       </section>
 
       <section id="earlier" class="earlier" aria-labelledby="earlier-title">
-        <h2 id="earlier-title" class="rule section-title"><span>Earlier: games and tools</span></h2>
-        <p class="lede">Where I learned to build systems: Unity, C#, enemy AI and editor tooling.</p>
+        <h2 id="earlier-title" class="rule section-title"><span>{site.earlierTitle}</span></h2>
+        {site.earlierLede && <p class="lede">{site.earlierLede}</p>}
         <ul class="cells">
           {earlier.map((g) => (
             <li>
@@ -138,8 +138,8 @@ const description = `${site.line} ${site.role}. Projects: showhow, bunq Voice, S
     </main>
 
     <footer class="contact" id="contact" aria-labelledby="contact-title">
-      <h2 id="contact-title" class="rule section-title"><span>Get in touch</span></h2>
-      <p class="contact-line">Hiring for AI engineering, or need an agent, skill or MCP server built?</p>
+      <h2 id="contact-title" class="rule section-title"><span>{site.contactTitle}</span></h2>
+      {site.contactLine && <p class="contact-line">{site.contactLine}</p>}
       <a class="email" href={`mailto:${site.email}`}>{site.email}</a>
       <p class="links">
         {site.links.map((l) => <a class="control" href={l.href} rel="noopener">{l.label}</a>)}

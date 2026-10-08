@@ -19,6 +19,7 @@ export default config({
         name: fields.text({ label: "Name", validation: { isRequired: true } }),
         role: fields.text({ label: "Role", description: "Shown under the headline and in the about section." }),
         line: fields.text({ label: "Headline", validation: { isRequired: true } }),
+        subline: multiline("Line under the headline"),
         email: fields.text({ label: "Email", validation: { isRequired: true } }),
         links: fields.array(
           fields.object({
@@ -27,6 +28,10 @@ export default config({
           }),
           { label: "Links", itemLabel: (p) => p.fields.label.value },
         ),
+        earlierTitle: fields.text({ label: "Earlier work: heading" }),
+        earlierLede: multiline("Earlier work: intro line"),
+        contactTitle: fields.text({ label: "Contact: heading" }),
+        contactLine: multiline("Contact: intro line"),
         aboutLead: fields.text({ label: "About: first line" }),
         about: fields.array(multiline("Paragraph"), { label: "About: paragraphs", itemLabel: (p) => p.value.slice(0, 60) }),
         portrait: fields.image({ label: "Portrait", directory: "public/images", publicPath: "/images/" }),
