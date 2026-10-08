@@ -9,7 +9,7 @@ web
 ## Stack
 
 Astro, static output, deployed on Vercel at beerdevreeze.com.
-Replaces the previous Next.js game-dev portfolio in this repo.
+Content is edited through Keystatic at /admin.
 
 ## Users
 
@@ -33,7 +33,7 @@ They give the page seconds before deciding whether to read a case study.
 
 ## Capabilities and Constraints
 
-- Single main page plus project detail; no backend, no contact form, no dev console, no PWA.
+- One page plus 404 and 500 pages; the only server routes are the Keystatic admin.
 - Contact is email and links only.
 - Current role: Junior AI Engineer at ASAPCLOUD (hired on after the Data & AI internship; graduated from GLU).
 - The CV PDF in `public/downloads/` is the game-dev version and may need replacing.
