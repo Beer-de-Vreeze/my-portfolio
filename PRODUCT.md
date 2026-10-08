@@ -8,7 +8,7 @@ web
 
 ## Stack
 
-Astro, static output, deployed on Vercel at beerdvreeze.nl.
+Astro, static output, deployed on Vercel at beerdevreeze.com.
 Replaces the previous Next.js game-dev portfolio in this repo.
 
 ## Users
@@ -40,7 +40,7 @@ They give the page seconds before deciding whether to read a case study.
 
 ## Brand Commitments
 
-Name: Beer de Vreeze. Domain: beerdvreeze.nl.
+Name: Beer de Vreeze. Domain: beerdevreeze.com.
 Writing follows `~/VOICE.md`: plain hyphens, no em dashes, direct sentences.
 
 ## Evidence on Hand

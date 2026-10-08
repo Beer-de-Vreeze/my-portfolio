@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Beer de Vreeze - CV</title>
+    <style>
+      @font-face {
+        font-family: "Martian Mono";
+        src: url("../node_modules/@fontsource-variable/martian-mono/files/martian-mono-latin-wdth-normal.woff2") format("woff2-variations");
+        font-weight: 100 800;
+        font-stretch: 75% 112.5%;
+      }
+
+      @page {
+        size: A4;
+        margin: 0;
+      }
+
+      :root {
+        --paper: #fbf8f1;
+        --band: #0d0f0b;
+        --amber: #e8b04a;
+        --ink: #1d160a;
+        --accent: #8a4b00;
+        --muted: #5e4a28;
+        --line: #c4b089;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "Martian Mono", ui-monospace, monospace;
+        font-size: 7.6pt;
+        line-height: 1.55;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .page {
+        width: 210mm;
+        height: 297mm;
+        display: grid;
+        grid-template-rows: auto 1fr;
+        overflow: hidden;
+      }
+
+      /* Header band: the website's dark ground with the name drawn in glyphs. */
+      header {
+        background: var(--band);
+        color: #f2ead6;
+        padding: 9mm 14mm 7mm;
+        display: grid;
+        gap: 3mm;
+      }
+
+      #banner {
+        display: block;
+        width: 100%;
+        height: 25mm;
+      }
+
+      .title {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 2mm 6mm;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 13pt;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      h1 span {
+        color: var(--amber);
+        font-weight: 600;
+      }
+
+      .contact {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1mm 4mm;
+        color: #cdb98c;
+        font-size: 7pt;
+      }
+
+      .contact a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      main {
+        display: grid;
+        grid-template-columns: 1fr 58mm;
+        gap: 9mm;
+        padding: 8mm 14mm 10mm;
+      }
+
+      section + section {
+        margin-top: 5.5mm;
+      }
+
+      h2 {
+        display: flex;
+        align-items: baseline;
+        gap: 2mm;
+        margin: 0 0 2.5mm;
+        font-size: 8pt;
+        font-weight: 700;
+        color: var(--accent);
+        white-space: nowrap;
+        overflow: hidden;
+      }
+
+      /* Section rules drawn as a run of characters, like on the site. */
+      h2::after {
+        content: "--------------------------------------------------------------------------------------------------------";
+        flex: 1 1 0;
+        width: 0;
+        overflow: hidden;
+        color: var(--line);
+        font-weight: 400;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      .lead {
+        margin-bottom: 1.6mm;
+        font-size: 8.4pt;
+        line-height: 1.6;
+        font-weight: 600;
+      }
+
+      .item + .item {
+        margin-top: 3.2mm;
+      }
+
+      .item-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 3mm;
+      }
+
+      .item-head h3 {
+        margin: 0;
+        font-size: 8pt;
+        font-weight: 700;
+      }
+
+      .when {
+        color: var(--muted);
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .where {
+        color: var(--accent);
+      }
+
+      .item p,
+      .item ul {
+        color: var(--muted);
+      }
+
+      ul {
+        margin: 1mm 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      li {
+        position: relative;
+        padding-left: 3mm;
+      }
+
+      li::before {
+        content: ">";
+        position: absolute;
+        left: 0;
+        color: var(--accent);
+      }
+
+      .tags {
+        margin-top: 1mm;
+        color: var(--ink);
+        font-size: 6.8pt;
+      }
+
+      aside dl {
+        margin: 0;
+        display: grid;
+        gap: 1.6mm;
+      }
+
+      aside dt {
+        color: var(--accent);
+        font-size: 6.8pt;
+      }
+
+      aside dd {
+        margin: 0;
+        overflow-wrap: anywhere;
+      }
+
+      aside a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .stack div + div {
+        margin-top: 2mm;
+      }
+
+      .stack h3 {
+        margin: 0;
+        font-size: 6.8pt;
+        font-weight: 600;
+        color: var(--accent);
+      }
+
+      .stack p {
+        color: var(--ink);
+      }
+
+      .edu .item + .item {
+        margin-top: 2.4mm;
+      }
+
+      .edu h3 {
+        margin: 0;
+        font-size: 7.6pt;
+        font-weight: 700;
+      }
+
+      .edu p {
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header>
+        <canvas id="banner" aria-hidden="true"></canvas>
+        <div class="title">
+          <h1>Beer de Vreeze <span>Junior AI Engineer</span></h1>
+          <p class="contact">
+            <a href="mailto:beer@vreeze.com">beer@vreeze.com</a>
+            <a href="https://www.beerdevreeze.com">beerdevreeze.com</a>
+            <a href="https://github.com/Beer-de-Vreeze">github.com/Beer-de-Vreeze</a>
+            <a href="https://www.linkedin.com/in/beer-de-vreeze-59040919a/">linkedin.com/in/beer-de-vreeze-59040919a</a>
+          </p>
+        </div>
+      </header>
+
+      <main>
+        <div>
+          <section>
+            <h2>Profile</h2>
+            <p class="lead">AI engineer building agents, agent skills and the tools around them.</p>
+            <p>
+              I build MCP servers and agent workflows, and I publish open-source agent skills. I judge an agent by whether it finishes real work,
+              not by the demo. I came to AI through game development, and to software through professional kitchens.
+            </p>
+          </section>
+
+          <section>
+            <h2>Experience</h2>
+            <div class="item">
+              <div class="item-head"><h3>Junior AI Engineer</h3><span class="when">Aug 2026 - present</span></div>
+              <p class="where">ASAPCLOUD, Houten</p>
+            </div>
+            <div class="item">
+              <div class="item-head"><h3>Software Development Intern, Data &amp; AI team</h3><span class="when">until Mar 2026</span></div>
+              <p class="where">ASAPCLOUD, Houten</p>
+              <ul>
+                <li>Built tools and systems in TypeScript, including MCP servers.</li>
+              </ul>
+            </div>
+            <div class="item">
+              <div class="item-head"><h3>Apprentice Chef</h3><span class="when">Aug 2021 - Jun 2023</span></div>
+              <p class="where">Ruby Rose, Winkel van Sinkel, Camping Ganspoort, Utrecht</p>
+            </div>
+            <div class="item">
+              <div class="item-head"><h3>Support Technician</h3><span class="when">Aug 2019 - May 2021</span></div>
+              <p class="where">ASAPCLOUD, Houten</p>
+            </div>
+          </section>
+
+          <section>
+            <h2>Projects</h2>
+            <div class="item">
+              <div class="item-head"><h3>showhow</h3><span class="when">open source</span></div>
+              <p>
+                Agent skill that turns a codebase into a narrated how-to or what's-new video. It reads the code, docs and git history, writes the
+                script, rebuilds the real UI and renders an MP4 with voice-over and captions. Runs in Claude Code, Codex and OpenCode.
+              </p>
+              <p class="tags">Python, Hyperframes, agent skills - github.com/Beer-de-Vreeze/showhow</p>
+            </div>
+            <div class="item">
+              <div class="item-head"><h3>bunq Voice</h3><span class="when">bunq Hackathon 7.0, 24 h</span></div>
+              <p>
+                Voice-first banking for blind and motor-disabled people. A FastMCP server exposes bunq's API to Claude as tools; payments are only
+                ever drafts that need biometric approval in the bunq app. Team of four.
+              </p>
+              <p class="tags">Python, FastMCP, Claude Sonnet, xAI Grok, TypeScript, React</p>
+            </div>
+            <div class="item">
+              <div class="item-head"><h3>Sable</h3><span class="when">personal product</span></div>
+              <p>
+                Wardrobe planner with a Claude-backed stylist and its own MCP server, so agents can read and update the wardrobe. Syncs across
+                devices and works offline.
+              </p>
+              <p class="tags">TypeScript, React 19, Vite, Neon Postgres, Vercel Blob, Claude</p>
+            </div>
+            <div class="item">
+              <div class="item-head"><h3>Games and tools</h3><span class="when">2023 - 2025</span></div>
+              <p>Unity and C#: stealth game with multi-state enemy AI, a dialogue engine, a drawing roguelike, ML-Agents training, editor tooling.</p>
+            </div>
+          </section>
+        </div>
+
+        <aside>
+          <section>
+            <h2>Details</h2>
+            <dl>
+              <div><dt>Location</dt><dd>Beusichem, Netherlands</dd></div>
+              <div><dt>Date of birth</dt><dd>19 August 2005</dd></div>
+              <div><dt>Languages</dt><dd>Dutch, English</dd></div>
+              <div><dt>Website</dt><dd><a href="https://www.beerdevreeze.com">beerdevreeze.com</a></dd></div>
+            </dl>
+          </section>
+
+          <section class="stack">
+            <h2>Skills</h2>
+            <div><h3>AI and agents</h3><p>MCP servers, agent skills, Claude, tool design, agent workflows</p></div>
+            <div><h3>Languages</h3><p>TypeScript, Python, C#</p></div>
+            <div><h3>Web</h3><p>React, Astro, Vite, Node.js, Postgres</p></div>
+            <div><h3>Tools</h3><p>Git, Docker, Vercel, Unity</p></div>
+          </section>
+
+          <section class="edu">
+            <h2>Education</h2>
+            <div class="item">
+              <h3>Creative Software Development</h3>
+              <p>Game Development profile, MBO</p>
+              <p>Grafisch Lyceum Utrecht</p>
+              <p class="when">Sep 2023 - 2026</p>
+            </div>
+            <div class="item">
+              <h3>Culinary Arts, MBO</h3>
+              <p>ROC Midden Nederland, Nieuwegein</p>
+              <p class="when">Sep 2021 - Jun 2023</p>
+            </div>
+            <div class="item">
+              <h3>VMBO TL</h3>
+              <p>Lek en Linge, Culemborg</p>
+              <p class="when">Sep 2017 - Aug 2021</p>
+            </div>
+          </section>
+
+          <section>
+            <h2>Outside work</h2>
+            <p>Scuba diving, cocktails from scratch, gaming.</p>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <script>
+      // Draws the name as glyph density, the same treatment as the website's hero.
+      const RAMP = " .:-=+*#%@";
+      async function drawBanner() {
+        await document.fonts.load('800 100px "Martian Mono"');
+        const canvas = document.getElementById("banner");
+        const box = canvas.getBoundingClientRect();
+        const scale = 4;
+        canvas.width = box.width * scale;
+        canvas.height = box.height * scale;
+        const ctx = canvas.getContext("2d");
+        ctx.scale(scale, scale);
+
+        const mask = document.createElement("canvas");
+        mask.width = box.width * 2;
+        mask.height = box.height * 2;
+        const m = mask.getContext("2d", { willReadFrequently: true });
+        m.fillStyle = "#fff";
+        m.font = '800 semi-expanded 100px "Martian Mono"';
+        const text = "BEER DE VREEZE";
+        const size = Math.min((100 * mask.width) / m.measureText(text).width, mask.height * 1.25);
+        m.font = `800 semi-expanded ${size}px "Martian Mono"`;
+        m.fillText(text, 0, mask.height * 0.86);
+
+        const fontSize = 3.1;
+        ctx.font = `600 ${fontSize}px "Martian Mono"`;
+        const cw = ctx.measureText("M").width;
+        const ch = fontSize * 1.18;
+        const cols = Math.ceil(box.width / cw);
+        const rows = Math.ceil(box.height / ch);
+        const data = m.getImageData(0, 0, mask.width, mask.height).data;
+        ctx.fillStyle = "#e8b04a";
+        ctx.textBaseline = "top";
+        for (let r = 0; r < rows; r++) {
+          let line = "";
+          for (let c = 0; c < cols; c++) {
+            const x0 = Math.floor((c / cols) * mask.width), x1 = Math.max(x0 + 1, Math.floor(((c + 1) / cols) * mask.width));
+            const y0 = Math.floor((r / rows) * mask.height), y1 = Math.max(y0 + 1, Math.floor(((r + 1) / rows) * mask.height));
+            let s = 0;
+            for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) s += data[(y * mask.width + x) * 4];
+            const v = s / ((x1 - x0) * (y1 - y0) * 255);
+            // Light from the left, so the name reads like the site's lit field.
+            const lit = v * (0.55 + 0.45 * Math.exp(-((c / cols - 0.22) ** 2) / 0.12));
+            line += RAMP[Math.round(Math.min(1, lit) * (RAMP.length - 1))];
+          }
+          ctx.fillText(line, 0, r * ch);
+        }
+        document.body.dataset.ready = "true";
+      }
+      drawBanner();
+    </script>
+  </body>
+</html>

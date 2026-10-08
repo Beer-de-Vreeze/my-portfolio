@@ -1,5 +1,5 @@
 {
-  "name": "beerdvreeze",
+  "name": "beerdevreeze",
   "version": "2.0.0",
   "private": true,
   "type": "module",
@@ -7,7 +7,8 @@
     "dev": "astro dev",
     "build": "astro check && astro build",
     "preview": "astro preview",
-    "test": "vitest run --dir src"
+    "test": "vitest run --dir src",
+    "cv": "node scripts/build-cv.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^7.0.1",
@@ -24,6 +25,7 @@
     "@astrojs/check": "^0.9.10",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "puppeteer-core": "^25.13.0",
     "typescript": "^6.0.3",
     "vitest": "^5.0.3"
   }

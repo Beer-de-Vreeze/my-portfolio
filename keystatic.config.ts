@@ -7,7 +7,7 @@ export default config({
   storage: import.meta.env.PROD
     ? { kind: "github", repo: { owner: "Beer-de-Vreeze", name: "my-portfolio" } }
     : { kind: "local" },
-  ui: { brand: { name: "beerdvreeze.nl" } },
+  ui: { brand: { name: "beerdevreeze.com" } },
 
   singletons: {
     site: singleton({

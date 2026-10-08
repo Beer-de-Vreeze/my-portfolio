@@ -1,4 +1,4 @@
-# beerdvreeze.nl
+# beerdevreeze.com
 
 Portfolio of Beer de Vreeze, AI engineer building agents, agent skills and the tools around them.
 
