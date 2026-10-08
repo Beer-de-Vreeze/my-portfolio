@@ -4,7 +4,8 @@ const multiline = (label: string) => fields.text({ label, multiline: true });
 
 export default config({
   // Local files while developing; in production the admin commits to GitHub and Vercel redeploys.
-  storage: import.meta.env.PROD
+  // PUBLIC_KEYSTATIC_GITHUB=1 runs the local admin in GitHub mode, for the one-time GitHub App setup.
+  storage: import.meta.env.PROD || import.meta.env.PUBLIC_KEYSTATIC_GITHUB === "1"
     ? { kind: "github", repo: { owner: "Beer-de-Vreeze", name: "my-portfolio" } }
     : { kind: "local" },
   ui: { brand: { name: "beerdevreeze.com" } },

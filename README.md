@@ -45,12 +45,17 @@ Locally: run `npm run dev` and open http://localhost:4321/keystatic. Saves write
 In production, `/keystatic` signs in with GitHub and commits to `master`, which redeploys the site.
 One-time setup:
 
-1. Run `npm run dev` with `storage` temporarily set to GitHub mode (or open `/keystatic` on the deployed site) and follow Keystatic's "Create GitHub App" flow. It writes these to `.env`:
+1. Start the admin in GitHub mode, open http://127.0.0.1:4321/keystatic and follow "Create GitHub App" (it signs in to GitHub and writes four variables to `.env`):
+
+   ```powershell
+   $env:PUBLIC_KEYSTATIC_GITHUB = "1"; npm run dev
+   ```
+
+2. Copy the four variables from `.env` into Vercel (Production), then redeploy:
    - `KEYSTATIC_GITHUB_CLIENT_ID`
    - `KEYSTATIC_GITHUB_CLIENT_SECRET`
    - `KEYSTATIC_SECRET`
    - `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG`
-2. Add the same four variables in Vercel under Project Settings > Environment Variables (Production), then redeploy.
 
 Images uploaded in the CMS are stored as `public/images/<collection>/<slug>/...`; keep that layout when adding files by hand, or the CMS will not see them.
 
