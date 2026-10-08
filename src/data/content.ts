@@ -3,7 +3,7 @@ import { createReader } from "@keystatic/core/reader";
 import keystaticConfig from "../../keystatic.config";
 
 export type RunLine = { tool: string; detail: string };
-export type Run = { id: string; project: string; prompt: string; steps: RunLine[]; result: string };
+export type Run = { id: string; project: string; prompt: string; steps: RunLine[]; result: string; status?: "ok" | "err" };
 
 const byOrder = <T extends { entry: { order: number | null } }>(a: T, b: T) => (a.entry.order ?? 0) - (b.entry.order ?? 0);
 

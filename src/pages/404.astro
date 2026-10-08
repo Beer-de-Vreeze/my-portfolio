@@ -1,45 +1,20 @@
 ---
-import "@fontsource-variable/martian-mono/wdth.css";
-import "../styles/global.css";
+import ErrorScreen from "../components/ErrorScreen.astro";
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Not found - Beer de Vreeze</title>
-    <meta name="robots" content="noindex" />
-    <link rel="icon" href="/favicon/favicon.ico" sizes="any" />
-  </head>
-  <body>
-    <main>
-      <pre aria-hidden="true">{`  _  _    ___   _  _
- | || |  / _ \ | || |
- | || |_| | | || || |_
- |__   _| |_| ||__   _|
-    |_|  \___/    |_|`}</pre>
-      <h1>This page does not exist.</h1>
-      <p><a class="control" href="/">Back to the home page</a></p>
-    </main>
-  </body>
-</html>
-
-<style>
-  main {
-    min-height: 100svh;
-    display: grid;
-    place-content: center;
-    gap: 1.5rem;
-    padding: var(--gutter);
-  }
-  pre {
-    margin: 0;
-    color: var(--ink);
-    font: inherit;
-    line-height: 1.2;
-  }
-  h1 {
-    font-size: var(--step-2);
-  }
-</style>
+<ErrorScreen
+  code="404"
+  title="This page does not exist."
+  message="It may have moved when the site was rebuilt. Everything that is left lives on the home page."
+  run={{
+    id: "404",
+    project: "404",
+    prompt: "open {path}",
+    steps: [
+      { tool: "resolve_route", detail: "{path}" },
+      { tool: "search_site", detail: "no page by that name" },
+    ],
+    result: "404 page not found",
+    status: "err",
+  }}
+/>

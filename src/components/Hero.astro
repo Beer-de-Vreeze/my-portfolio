@@ -1,0 +1,211 @@
+---
+// Full-viewport glyph field with the top bar; pages fill the "intro" and "run" panels.
+interface Props {
+  name: string;
+  lines: string[];
+  mobileLines?: string[];
+  home?: boolean;
+  as?: "header" | "main";
+}
+const { name, lines, mobileLines = lines, home = true, as: Tag = "header" } = Astro.props;
+const prefix = home ? "" : "/";
+---
+
+<Tag class="hero" data-hero>
+  <canvas class="field" aria-hidden="true" data-field data-lines={JSON.stringify(lines)} data-mobile-lines={JSON.stringify(mobileLines)}></canvas>
+
+  <div class="top" data-hero-top>
+    {home ? <p class="wordmark">{name}</p> : <a class="wordmark" href="/">{name}</a>}
+    <nav aria-label="Sections">
+      <a href={`${prefix}#work`}>Work</a>
+      <a href={`${prefix}#earlier`}>Earlier</a>
+      <a href={`${prefix}#about`}>About</a>
+    </nav>
+  </div>
+
+  <div class="base" data-hero-base>
+    <slot name="intro" />
+    <slot name="run" />
+  </div>
+</Tag>
+
+<script>
+  import { startHeroField } from "../scripts/hero";
+
+  const field = document.querySelector<HTMLCanvasElement>("[data-field]");
+  if (field) {
+    const lines = JSON.parse(field.dataset.lines || "[]");
+    const mobile = JSON.parse(field.dataset.mobileLines || "[]");
+    document.fonts.ready.then(() => startHeroField(field, (w) => (w < 600 ? mobile : lines)));
+  }
+</script>
+
+<style is:global>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding: 0 var(--gutter);
+    isolation: isolate;
+  }
+
+  .hero .field {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
+
+  .hero .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 2ch;
+    padding: 1.25rem 0;
+  }
+
+  .hero .wordmark {
+    margin: 0;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+  }
+
+  .hero nav {
+    display: flex;
+    gap: 2.5ch;
+  }
+
+  .hero nav a {
+    text-decoration: none;
+    color: var(--muted);
+  }
+
+  .hero nav a:hover {
+    color: var(--ink);
+  }
+
+  .hero .base {
+    grid-row: 3;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: clamp(1.5rem, 4vw, 4rem);
+    align-items: end;
+    padding-bottom: clamp(1.25rem, 4vh, 2.5rem);
+  }
+
+  .hero .intro,
+  .hero .run {
+    background: var(--ground);
+    padding: 1.25rem 1.5rem;
+  }
+
+  .hero .intro {
+    display: grid;
+    gap: 0.9rem;
+    justify-items: start;
+    max-width: 44ch;
+  }
+
+  .hero h1 {
+    font-size: var(--step-2);
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .hero .role {
+    color: var(--muted);
+  }
+
+  .hero .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 2.5ch;
+  }
+
+  .hero .action {
+    font-weight: 600;
+  }
+
+  .hero .run {
+    display: grid;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+
+  .hero .run-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem 2ch;
+  }
+
+  .hero .run-title {
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .hero .run-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5ch;
+    font-size: var(--step--1);
+  }
+
+  .hero .run-tabs .control {
+    padding-inline: 0.4ch;
+  }
+
+  .hero .run-log {
+    margin: 0;
+    min-height: calc(8 * 1.7em);
+    font: inherit;
+    font-size: var(--step--1);
+    line-height: 1.7;
+    color: var(--text);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 60rem) {
+    .hero .base {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1rem;
+    }
+  }
+
+  @media (max-width: 36rem) {
+    .hero {
+      min-height: auto;
+      grid-template-rows: auto minmax(34svh, 1fr) auto;
+    }
+
+    .hero nav {
+      gap: 1.5ch;
+      font-size: var(--step--1);
+    }
+
+    .hero .wordmark {
+      font-size: var(--step--1);
+    }
+
+    .hero .intro,
+    .hero .run {
+      padding: 1rem;
+    }
+
+    .hero .run-log {
+      font-size: 0.6875rem;
+    }
+
+    .hero .run-tabs {
+      gap: 0.5ch;
+    }
+  }
+</style>

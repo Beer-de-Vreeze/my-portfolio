@@ -4,17 +4,17 @@ const pad = (s: string, n: number) => (s.length >= n ? s + " " : s + " ".repeat(
 
 export function runLines(run: Run): string[] {
   const width = Math.max(...run.steps.map((s) => s.tool.length)) + 2;
-  return [`> ${run.prompt}`, ...run.steps.map((s) => `  ${pad(s.tool, width)}${s.detail}`), `ok ${run.result}`];
+  return [`> ${run.prompt}`, ...run.steps.map((s) => `  ${pad(s.tool, width)}${s.detail}`), `${run.status ?? "ok"} ${run.result}`];
 }
 
 /** Types demo runs into the log, one line at a time, and pulses the hero field per tool call. */
-export function startRuns(root: HTMLElement, runs: Run[]) {
+export function startRuns(root: HTMLElement, runs: Run[], loop = true) {
   const log = root.querySelector<HTMLElement>("[data-run-log]")!;
   const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-run-tab]"));
   const reduced = matchMedia("(prefers-reduced-motion: reduce)");
   let index = 0;
   let timer = 0;
-  let auto = true;
+  let auto = loop;
 
   function select(i: number) {
     index = i;

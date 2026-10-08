@@ -9,6 +9,8 @@ import { fileURLToPath } from "node:url";
 export default defineConfig({
   site: "https://www.beerdevreeze.com",
   adapter: vercel(),
+  // Old Next.js routes now live as sections of the home page.
+  redirects: { "/about": "/#about", "/projects": "/#work", "/contact": "/#contact" },
   integrations: [react(), keystatic(), sitemap({ filter: (page) => !page.includes("/keystatic") })],
   vite: {
     resolve: {

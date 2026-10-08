@@ -1,7 +1,7 @@
 ---
-import "@fontsource-variable/martian-mono/wdth.css";
-import "../styles/global.css";
+import Base from "../layouts/Base.astro";
 import GlyphFigure from "../components/GlyphFigure.astro";
+import Hero from "../components/Hero.astro";
 import { loadContent } from "../data/content";
 
 const { site, runs, projects, earlier } = await loadContent();
@@ -10,62 +10,30 @@ const title = `${site.name} - AI Engineer`;
 const description = `${site.line} ${site.role}. Projects: showhow, bunq Voice, Sable.`;
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <link rel="canonical" href={new URL("/", Astro.site)} />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={Astro.site} />
-    <meta name="theme-color" content="#0d0f0b" media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content="#efe7d2" media="(prefers-color-scheme: light)" />
-    <link rel="icon" href="/favicon/favicon.ico" sizes="any" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
-    <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" />
-    <link rel="manifest" href="/favicon/site.webmanifest" />
-  </head>
-  <body>
+<Base title={title} description={description}>
     <a class="skip" href="#work">Skip to work</a>
 
-    <header class="hero" data-hero>
-      <canvas class="field" aria-hidden="true" data-field></canvas>
-
-      <div class="top" data-hero-top>
-        <p class="wordmark">{site.name}</p>
-        <nav aria-label="Sections">
-          <a href="#work">Work</a>
-          <a href="#earlier">Earlier</a>
-          <a href="#about">About</a>
-        </nav>
+    <Hero name={site.name} lines={["BEER DE", "VREEZE"]} mobileLines={["BEER", "DE", "VREEZE"]}>
+      <div class="intro" slot="intro">
+        <h1><span class="sr-only">{site.name}. </span>{site.line}</h1>
+        <p class="role">{site.role}. Before that: game developer, and before that, a chef.</p>
+        <a class="control action" href={`mailto:${site.email}`}>Email {site.email}</a>
       </div>
 
-      <div class="base" data-hero-base>
-        <div class="intro">
-          <h1><span class="sr-only">{site.name}. </span>{site.line}</h1>
-          <p class="role">{site.role}. Before that: game developer, and before that, a chef.</p>
-          <a class="control action" href={`mailto:${site.email}`}>Email {site.email}</a>
-        </div>
-
-        <section class="run" aria-labelledby="run-title" data-run data-runs={JSON.stringify(runs)}>
-          <div class="run-head">
-            <h2 id="run-title" class="run-title">Demo run</h2>
-            <div class="run-tabs" role="group" aria-label="Choose a demo run">
-              {runs.map((run, i) => (
-                <button type="button" class="control" data-run-tab aria-pressed={i === 0 ? "true" : "false"}>
-                  {run.project}
-                </button>
-              ))}
-            </div>
+      <section class="run" slot="run" aria-labelledby="run-title" data-run data-runs={JSON.stringify(runs)}>
+        <div class="run-head">
+          <h2 id="run-title" class="run-title">Demo run</h2>
+          <div class="run-tabs" role="group" aria-label="Choose a demo run">
+            {runs.map((run, i) => (
+              <button type="button" class="control" data-run-tab aria-pressed={i === 0 ? "true" : "false"}>
+                {run.project}
+              </button>
+            ))}
           </div>
-          <pre class="run-log" data-run-log>{`> ${runs[0].prompt}`}</pre>
-        </section>
-      </div>
-    </header>
+        </div>
+        <pre class="run-log" data-run-log>{`> ${runs[0].prompt}`}</pre>
+      </section>
+    </Hero>
 
     <main>
       <section id="work" class="work" aria-labelledby="work-title">
@@ -169,7 +137,7 @@ const description = `${site.line} ${site.role}. Projects: showhow, bunq Voice, S
       </section>
     </main>
 
-    <footer class="contact" aria-labelledby="contact-title">
+    <footer class="contact" id="contact" aria-labelledby="contact-title">
       <h2 id="contact-title" class="rule section-title"><span>Get in touch</span></h2>
       <p class="contact-line">Hiring for AI engineering, or need an agent, skill or MCP server built?</p>
       <a class="email" href={`mailto:${site.email}`}>{site.email}</a>
@@ -179,146 +147,16 @@ const description = `${site.line} ${site.role}. Projects: showhow, bunq Voice, S
     </footer>
 
     <script>
-      import { startHeroField } from "../scripts/hero";
       import { startRuns } from "../scripts/run";
       import { startGlyphMedia } from "../scripts/media";
 
-      const field = document.querySelector<HTMLCanvasElement>("[data-field]");
       const run = document.querySelector<HTMLElement>("[data-run]");
-      document.fonts.ready.then(() => {
-        if (field) startHeroField(field, (w) => (w < 600 ? ["BEER", "DE", "VREEZE"] : ["BEER DE", "VREEZE"]));
-        startGlyphMedia();
-      });
+      document.fonts.ready.then(() => startGlyphMedia());
       if (run) startRuns(run, JSON.parse(run.dataset.runs || "[]"));
     </script>
-  </body>
-</html>
+</Base>
 
 <style>
-  .hero {
-    position: relative;
-    min-height: 100svh;
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    padding: 0 var(--gutter);
-    isolation: isolate;
-  }
-
-  .field {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-  }
-
-  .top {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 2ch;
-    padding: 1.25rem 0;
-  }
-
-  .wordmark {
-    font-weight: 700;
-    letter-spacing: 0.02em;
-  }
-
-  nav {
-    display: flex;
-    gap: 2.5ch;
-  }
-
-  nav a {
-    text-decoration: none;
-    color: var(--muted);
-  }
-
-  nav a:hover {
-    color: var(--ink);
-  }
-
-  .base {
-    grid-row: 3;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
-    gap: clamp(1.5rem, 4vw, 4rem);
-    align-items: end;
-    padding-bottom: clamp(1.25rem, 4vh, 2.5rem);
-  }
-
-  .intro,
-  .run {
-    background: var(--ground);
-    padding: 1.25rem 1.5rem;
-  }
-
-  .intro {
-    display: grid;
-    gap: 0.9rem;
-    justify-items: start;
-    max-width: 44ch;
-  }
-
-  h1 {
-    font-size: var(--step-2);
-    font-weight: 700;
-    line-height: 1.25;
-    letter-spacing: -0.02em;
-    text-wrap: balance;
-  }
-
-  .role {
-    color: var(--muted);
-  }
-
-  .action {
-    font-weight: 600;
-  }
-
-  .run {
-    display: grid;
-    gap: 0.75rem;
-    min-width: 0;
-  }
-
-  .run-head {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 0.5rem 2ch;
-  }
-
-  .run-title {
-    font-size: var(--step--1);
-    font-weight: 600;
-    color: var(--ink);
-  }
-
-  .run-tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5ch;
-    font-size: var(--step--1);
-  }
-
-  .run-tabs .control {
-    padding-inline: 0.4ch;
-  }
-
-  .run-log {
-    margin: 0;
-    min-height: calc(8 * 1.7em);
-    font: inherit;
-    font-size: var(--step--1);
-    line-height: 1.7;
-    color: var(--text);
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-  }
-
   main,
   .contact {
     max-width: var(--max);
@@ -646,46 +484,13 @@ const description = `${site.line} ${site.role}. Projects: showhow, bunq Voice, S
   }
 
   @media (max-width: 60rem) {
-    .base,
     .project-grid,
     .about-grid {
       grid-template-columns: minmax(0, 1fr);
     }
-
-    .base {
-      gap: 1rem;
-    }
-
   }
 
   @media (max-width: 36rem) {
-    .hero {
-      min-height: auto;
-      grid-template-rows: auto minmax(34svh, 1fr) auto;
-    }
-
-    nav {
-      gap: 1.5ch;
-      font-size: var(--step--1);
-    }
-
-    .wordmark {
-      font-size: var(--step--1);
-    }
-
-    .intro,
-    .run {
-      padding: 1rem;
-    }
-
-    .run-log {
-      font-size: 0.6875rem;
-    }
-
-    .run-tabs {
-      gap: 0.5ch;
-    }
-
     .facts div,
     .manifest dl div {
       grid-template-columns: minmax(0, 1fr);

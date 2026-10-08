@@ -1,0 +1,58 @@
+---
+// Error pages in the site's own world: the status code drawn in glyphs and an agent run that failed.
+import Base from "../layouts/Base.astro";
+import Hero from "./Hero.astro";
+import type { Run } from "../data/content";
+
+interface Props {
+  code: string;
+  title: string;
+  message: string;
+  run: Run;
+  retry?: boolean;
+}
+const { code, title, message, run, retry = false } = Astro.props;
+---
+
+<Base title={`${code} - ${title} - Beer de Vreeze`} description={message} noindex>
+  <Hero name="Beer de Vreeze" lines={[code]} home={false} as="main">
+    <div class="intro" slot="intro">
+      <h1>{title}</h1>
+      <p class="role">{message}</p>
+      <p class="actions">
+        {retry && <button type="button" class="control action" data-retry>Try again</button>}
+        <a class="control action" href="/">Back to the home page</a>
+        <a class="control" href="/#contact">Contact</a>
+      </p>
+    </div>
+
+    <section class="run" slot="run" aria-label="What happened" data-run data-runs={JSON.stringify([run])}>
+      <div class="run-head">
+        <p class="run-title">What happened</p>
+      </div>
+      <pre class="run-log" data-run-log>{`> ${run.prompt}`}</pre>
+    </section>
+  </Hero>
+</Base>
+
+<script>
+  import { startRuns } from "../scripts/run";
+
+  const root = document.querySelector<HTMLElement>("[data-run]");
+  if (root) {
+    const runs = JSON.parse(root.dataset.runs || "[]");
+    // Show the path the visitor actually asked for; textContent keeps it inert.
+    let path = location.pathname;
+    try {
+      path = decodeURIComponent(path);
+    } catch {
+      // keep the raw path when it has a malformed escape
+    }
+    for (const r of runs) {
+      r.prompt = r.prompt.replace("{path}", path);
+      for (const s of r.steps) s.detail = s.detail.replace("{path}", path);
+    }
+    startRuns(root, runs, false);
+  }
+  document.querySelector("[data-retry]")?.addEventListener("click", () => location.reload());
+</script>
