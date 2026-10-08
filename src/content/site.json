@@ -1,0 +1,28 @@
+{
+  "name": "Beer de Vreeze",
+  "role": "Junior AI Engineer at ASAPCLOUD",
+  "line": "AI engineer building agents, agent skills and the tools around them.",
+  "email": "beer@vreeze.com",
+  "links": [
+    {
+      "label": "GitHub",
+      "href": "https://github.com/Beer-de-Vreeze"
+    },
+    {
+      "label": "LinkedIn",
+      "href": "https://www.linkedin.com/in/beer-de-vreeze-59040919a/"
+    },
+    {
+      "label": "itch.io",
+      "href": "https://bjeerpeer.itch.io/"
+    }
+  ],
+  "aboutLead": "I'm Beer, a Junior AI Engineer at ASAPCLOUD in the Netherlands.",
+  "about": [
+    "I started in professional kitchens: chef training at ROC Midden Nederland, then shifts at Camping Ganspoort, Winkel van Sinkel and Ruby Rose. Kitchens taught me mise en place, which turns out to be most of agent engineering.",
+    "I switched to Creative Software Development at Grafisch Lyceum Utrecht and built games in Unity and C#. Enemy AI and ML-Agents pulled me toward AI. An internship in ASAPCLOUD's Data & AI team, building MCP servers in TypeScript, turned into the job I have now.",
+    "Today I build agents, agent skills and the tools around them, and I judge them by whether they finish real work, not by the demo. Outside work I scuba dive and make cocktails from scratch."
+  ],
+  "portrait": "/images/portrait.webp",
+  "portraitAlt": "Beer de Vreeze, long brown hair and a black leather jacket"
+}

@@ -1,0 +1,59 @@
+{
+  "title": "showhow",
+  "order": 10,
+  "summary": "An agent skill that turns a codebase into a narrated how-to or what's-new video, straight from the code.",
+  "body": [
+    "You type /showhow how to export a report. The agent reads the code, docs and git history, writes a script and storyboard, rebuilds the real UI, and renders an MP4 with voice-over, captions, music and sound effects.",
+    "No screen recording, no live URL, no video editor. It runs in Claude Code, Codex, OpenCode and any agent that loads SKILL.md skills, and the video here was made by showhow itself."
+  ],
+  "facts": [
+    {
+      "label": "Kind",
+      "value": "Open-source agent skill"
+    },
+    {
+      "label": "Built on",
+      "value": "Hyperframes, Python"
+    },
+    {
+      "label": "Install",
+      "value": "npx skills add Beer-de-Vreeze/showhow"
+    }
+  ],
+  "manifestTitle": "One run writes",
+  "manifest": [
+    {
+      "name": "<video>.mp4",
+      "does": "the rendered video"
+    },
+    {
+      "name": "captions.srt",
+      "does": "captions that match the narration word for word"
+    },
+    {
+      "name": "chapters.txt",
+      "does": "chapter timestamps for YouTube or an LMS"
+    },
+    {
+      "name": "showhow.md",
+      "does": "a written companion with the same steps"
+    },
+    {
+      "name": "composition/",
+      "does": "the Hyperframes project, editable and re-renderable"
+    }
+  ],
+  "links": [
+    {
+      "label": "Repo",
+      "href": "https://github.com/Beer-de-Vreeze/showhow"
+    }
+  ],
+  "media": [],
+  "video": {
+    "src": "/media/showhow-demo.mp4",
+    "poster": "/media/showhow-demo.jpg",
+    "captions": "/media/showhow-demo.vtt",
+    "label": "How showhow works, made with showhow."
+  }
+}

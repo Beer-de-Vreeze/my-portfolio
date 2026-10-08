@@ -1,0 +1,84 @@
+{
+  "runs": [
+    {
+      "id": "showhow",
+      "project": "showhow",
+      "prompt": "/showhow how to export a report",
+      "steps": [
+        {
+          "tool": "read_repo",
+          "detail": "src/ docs/ README"
+        },
+        {
+          "tool": "git_log",
+          "detail": "recent commits"
+        },
+        {
+          "tool": "write_script",
+          "detail": "script + storyboard"
+        },
+        {
+          "tool": "rebuild_ui",
+          "detail": "real screens, no recording"
+        },
+        {
+          "tool": "tts",
+          "detail": "voice-over + captions"
+        },
+        {
+          "tool": "render",
+          "detail": "hyperframes -> mp4"
+        }
+      ],
+      "result": "export-report.mp4 + captions.srt"
+    },
+    {
+      "id": "bunq",
+      "project": "bunq Voice",
+      "prompt": "\"send twenty euros to Mink\"",
+      "steps": [
+        {
+          "tool": "speech_to_text",
+          "detail": "push-to-talk audio"
+        },
+        {
+          "tool": "find_counterparty",
+          "detail": "\"Mink\" -> IBAN from history"
+        },
+        {
+          "tool": "create_draft",
+          "detail": "EUR 20.00, pending"
+        },
+        {
+          "tool": "text_to_speech",
+          "detail": "reads the draft back"
+        }
+      ],
+      "result": "draft waits for biometric approval in bunq"
+    },
+    {
+      "id": "sable",
+      "project": "Sable",
+      "prompt": "what should I buy next?",
+      "steps": [
+        {
+          "tool": "get_wardrobe_overview",
+          "detail": "collections + plan"
+        },
+        {
+          "tool": "list_outfits",
+          "detail": "every saved look"
+        },
+        {
+          "tool": "get_catalog",
+          "detail": "owned + planned pieces"
+        },
+        {
+          "tool": "rank",
+          "detail": "by looks unlocked"
+        }
+      ],
+      "result": "the piece that opens the most new looks"
+    }
+  ]
+}
