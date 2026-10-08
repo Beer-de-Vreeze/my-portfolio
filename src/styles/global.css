@@ -73,8 +73,10 @@ a {
   text-underline-offset: 0.3em;
 }
 
-a:hover {
-  color: var(--ink);
+@media (hover: hover) {
+  a:hover {
+    color: var(--ink);
+  }
 }
 
 :focus-visible {
@@ -150,8 +152,11 @@ canvas {
   content: "]";
 }
 
-.control:hover {
-  color: var(--text);
+/* Touch screens keep :hover after a tap, so only real pointers get the hover colour. */
+@media (hover: hover) {
+  .control:hover {
+    color: var(--text);
+  }
 }
 
 .control[aria-pressed="true"] {
