@@ -154,6 +154,7 @@ const person = {
       <p class="links">
         {site.links.map((l) => <a class="control" href={l.href} rel="noopener">{l.label}</a>)}
       </p>
+      <p class="privacy">No cookies. Anonymous visit counts by Vercel.</p>
     </footer>
 
     <script>
@@ -482,6 +483,12 @@ const person = {
   .contact-line {
     color: var(--muted);
     max-width: 52ch;
+  }
+
+  .privacy {
+    margin-top: 3rem;
+    font-size: var(--step--1);
+    color: var(--muted);
   }
 
   .email {

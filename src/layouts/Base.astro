@@ -1,6 +1,7 @@
 ---
 import "@fontsource-variable/martian-mono/wdth.css";
 import "../styles/global.css";
+import Analytics from "@vercel/analytics/astro";
 
 interface Props {
   title: string;
@@ -35,9 +36,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
     <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" />
     <link rel="manifest" href="/favicon/site.webmanifest" />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="Summary for language models" />
     <slot name="head" />
   </head>
   <body>
     <slot />
+    <Analytics />
   </body>
 </html>
