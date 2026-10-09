@@ -1,0 +1,63 @@
+{
+  "title": "Sable",
+  "order": 30,
+  "summary": "A wardrobe planner with its own AI stylist and an MCP server, so agents can work with it as well.",
+  "body": [
+    "I built Sable because I needed one place for everything I wanted to get, and to figure out where I wanted to go with fashion. It tracks a phased, priced wardrobe plan, stores photos of the pieces I own, builds outfits and syncs across devices, working offline along the way.",
+    "One number drives it: how many looks each piece unlocks, computed from the live outfit data and never typed by hand. The Oracle, a Claude-backed stylist, reasons with that number when I ask what to buy next.",
+    "An MCP server exposes the catalog, outfits and collections as tools, so an agent like Claude can read and update the wardrobe directly. The repo is private."
+  ],
+  "facts": [
+    {
+      "label": "Kind",
+      "value": "Personal product, in daily use"
+    },
+    {
+      "label": "Stack",
+      "value": "TypeScript, React 19, Vite, Neon Postgres, Vercel Blob, Claude"
+    },
+    {
+      "label": "Status",
+      "value": "Private repo"
+    }
+  ],
+  "manifestTitle": "MCP tools include",
+  "manifest": [
+    {
+      "name": "get_wardrobe_overview",
+      "does": "collections, plan and progress"
+    },
+    {
+      "name": "get_catalog",
+      "does": "every owned and planned piece"
+    },
+    {
+      "name": "add_outfit",
+      "does": "save a look from an agent"
+    },
+    {
+      "name": "set_item_status",
+      "does": "mark a piece bought, wanted or archived"
+    },
+    {
+      "name": "get_oracle_memory",
+      "does": "what the stylist remembers about you"
+    }
+  ],
+  "links": [],
+  "media": [
+    {
+      "image": "/images/projects/sable/media/0/image.webp",
+      "alt": "Sable's wardrobe view: item cards for boots, a silver pendant and a chain necklace, each showing how many looks it opens",
+      "caption": "The Lens: every piece ranked by how many looks it opens.",
+      "ratio": "16 / 10"
+    },
+    {
+      "image": "/images/projects/sable/media/1/image.webp",
+      "alt": "Sable's home page: the SABLE wordmark in gold on a dark starfield, above the thesis 'One wardrobe, considered.'",
+      "caption": "Home: plan in phases, track what you own, build outfits.",
+      "ratio": "2 / 1"
+    }
+  ],
+  "video": {}
+}

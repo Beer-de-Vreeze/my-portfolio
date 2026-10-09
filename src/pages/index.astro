@@ -1,0 +1,521 @@
+---
+import Base from "../layouts/Base.astro";
+import GlyphFigure from "../components/GlyphFigure.astro";
+import Hero from "../components/Hero.astro";
+import { loadContent } from "../data/content";
+
+const { site, runs, projects, earlier } = await loadContent();
+
+const title = `${site.name} - AI Engineer`;
+const description = `${site.line} ${site.role}. Projects: showhow, bunq Voice, Sable.`;
+const person = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: site.name,
+  jobTitle: site.role,
+  url: Astro.site?.href,
+  image: new URL("/og.png", Astro.site).href,
+  sameAs: site.links.map((l) => l.href).filter((h): h is string => !!h && !h.endsWith(".pdf")),
+};
+---
+
+<Base title={title} description={description}>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(person).replace(/</g, String.raw`\u003c`)} />
+    <a class="skip" href="#work">Skip to work</a>
+
+    <Hero name={site.name} lines={["BEER DE", "VREEZE"]} mobileLines={["BEER", "DE", "VREEZE"]}>
+      <div class="intro" slot="intro">
+        <h1><span class="sr-only">{site.name}. </span>{site.line}</h1>
+        {site.subline && <p class="role">{site.subline}</p>}
+        <a class="control action" href={`mailto:${site.email}`}>Email {site.email}</a>
+      </div>
+
+      <section class="run" slot="run" aria-labelledby="run-title" data-run data-runs={JSON.stringify(runs)}>
+        <div class="run-head">
+          <h2 id="run-title" class="run-title">Demo run</h2>
+          <div class="run-tabs" role="group" aria-label="Choose a demo run">
+            {runs.map((run, i) => (
+              <button type="button" class="control" data-run-tab aria-pressed={i === 0 ? "true" : "false"}>
+                {run.project}
+              </button>
+            ))}
+          </div>
+        </div>
+        <pre class="run-log" data-run-log>{`> ${runs[0].prompt}`}</pre>
+      </section>
+    </Hero>
+
+    <main>
+      <section id="work" class="work" aria-labelledby="work-title">
+        <h2 id="work-title" class="rule section-title"><span>Work</span></h2>
+
+        {projects.map((p) => (
+          <article class="project" id={p.id} aria-labelledby={`${p.id}-title`}>
+            <h3 id={`${p.id}-title`} class="project-title">{p.title}</h3>
+            <div class="project-grid">
+              <div class="copy">
+                <p class="summary">{p.summary}</p>
+                {p.body.map((para) => <p>{para}</p>)}
+                <dl class="facts">
+                  {p.facts.map((f) => (
+                    <div>
+                      <dt>{f.label}</dt>
+                      <dd>{f.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+                {p.links.length > 0 && (
+                  <p class="links">
+                    {p.links.map((l) => (
+                      <a class="control" href={l.href ?? "#"} rel="noopener">{l.label}<span class="sr-only"> for {p.title}</span></a>
+                    ))}
+                  </p>
+                )}
+              </div>
+
+              <div class="side">
+                {p.video && (
+                  <figure class="video" data-glyph-video data-glyph-size="6">
+                    <div class="screen">
+                      <video playsinline preload="metadata" poster={p.video.poster}>
+                        <source src={p.video.src} type="video/mp4" />
+                        <track kind="captions" src={p.video.captions} srclang="en" label="English" default={!p.video.burnedCaptions} />
+                      </video>
+                      <canvas aria-hidden="true"></canvas>
+                      <button type="button" class="control play" data-video-play aria-label={`Play demo: ${p.title}`}>Play demo</button>
+                    </div>
+                    <div class="vbar" role="group" aria-label={`${p.title} video controls`}>
+                      <input type="range" class="seek" min="0" max="0" step="0.1" value="0" aria-label={`Seek ${p.title} video`} data-v-seek />
+                      <button type="button" class="control" data-v-toggle>Play</button>
+                      <span class="time" data-v-time>0:00</span>
+                      <button type="button" class="control" data-v-mute>Mute</button>
+                      <button type="button" class="control" data-v-cc>{p.video.burnedCaptions ? "CC off" : "CC on"}</button>
+                      <button type="button" class="control" aria-pressed="false" data-v-full>Fullscreen</button>
+                    </div>
+                    <figcaption>{p.video.label}</figcaption>
+                  </figure>
+                )}
+
+                <div class="manifest">
+                  <h4 class="rule"><span>{p.manifestTitle}</span></h4>
+                  <dl>
+                    {p.manifest.map((m) => (
+                      <div>
+                        <dt>{m.name}</dt>
+                        <dd>{m.does}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+
+                {p.media.length > 0 && (
+                  <div class:list={["shots", { wide: p.media.some((m) => { const [w, h] = (m.ratio || "4 / 3").split("/").map(Number); return w > h; }) }]}>
+                    {p.media.map((m) => m.image && <GlyphFigure src={m.image} alt={m.alt} caption={m.caption || undefined} ratio={m.ratio || "4 / 3"} position="50% 0%" glyphSize={5} width={1280} />)}
+                  </div>
+                )}
+              </div>
+            </div>
+          </article>
+        ))}
+      </section>
+
+      <section id="earlier" class="earlier" aria-labelledby="earlier-title">
+        <h2 id="earlier-title" class="rule section-title"><span>{site.earlierTitle}</span></h2>
+        {site.earlierLede && <p class="lede">{site.earlierLede}</p>}
+        <ul class="cells">
+          {earlier.map((g) => (
+            <li>
+              <a href={g.href} rel="noopener">
+                {g.image && <GlyphFigure src={g.image} alt={g.alt} ratio="4 / 3" glyphSize={6} interactive={false} />}
+                <span class="cell-title">{g.title}</span>
+              </a>
+              <p>{g.what}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section id="about" class="about" aria-labelledby="about-title">
+        <h2 id="about-title" class="rule section-title"><span>About</span></h2>
+        <div class="about-grid">
+          {site.portrait && <GlyphFigure src={site.portrait} alt={site.portraitAlt} ratio="3 / 4" glyphSize={6} width={960} />}
+          <div class="about-copy">
+            <p class="summary">{site.aboutLead}</p>
+            {site.about.map((para) => <p>{para}</p>)}
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="contact" id="contact" aria-labelledby="contact-title">
+      <h2 id="contact-title" class="rule section-title"><span>{site.contactTitle}</span></h2>
+      {site.contactLine && <p class="contact-line">{site.contactLine}</p>}
+      <a class="email" href={`mailto:${site.email}`}>{site.email}</a>
+      <p class="links">
+        {site.links.map((l) => <a class="control" href={l.href} rel="noopener">{l.label}</a>)}
+      </p>
+      <p class="privacy">No cookies. Anonymous visit counts by Vercel.</p>
+    </footer>
+
+    <script>
+      import { startRuns } from "../scripts/run";
+      import { startGlyphMedia } from "../scripts/media";
+
+      const run = document.querySelector<HTMLElement>("[data-run]");
+      document.fonts.ready.then(() => startGlyphMedia());
+      if (run) startRuns(run, JSON.parse(run.dataset.runs || "[]"));
+    </script>
+</Base>
+
+<style>
+  main,
+  .contact {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+
+  .section-title {
+    font-size: var(--step-1);
+    font-weight: 700;
+    color: var(--ink);
+    margin: clamp(5rem, 12vw, 9rem) 0 2.5rem;
+  }
+
+  .project + .project {
+    margin-top: clamp(4rem, 9vw, 7rem);
+  }
+
+  .project-title {
+    font-size: var(--step-3);
+    font-weight: 800;
+    font-stretch: 87.5%;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.75rem;
+  }
+
+  .project-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: start;
+  }
+
+  .copy {
+    display: grid;
+    gap: 1rem;
+    max-width: 62ch;
+  }
+
+  .summary {
+    font-size: var(--step-1);
+    line-height: 1.6;
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .copy > p:not(.summary):not(.links) {
+    color: var(--muted);
+  }
+
+  .facts {
+    display: grid;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+    font-size: var(--step--1);
+  }
+
+  .facts div,
+  .manifest dl div {
+    display: grid;
+    grid-template-columns: 12ch minmax(0, 1fr);
+    gap: 2ch;
+  }
+
+  .facts dt {
+    color: var(--ink);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 2.5ch;
+    margin-top: 0.5rem;
+  }
+
+  .side {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+    min-width: 0;
+  }
+
+  /* Tall phone screens pair up; wide frames get a full row each. */
+  .shots {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+
+  .shots.wide {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .video {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .screen {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: var(--ground-raised);
+  }
+
+  .screen video,
+  .screen canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .screen canvas {
+    background: var(--ground-raised);
+    cursor: pointer;
+    transition: opacity 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Hovering a paused video shows the real frame under the glyphs. */
+  @media (hover: hover) {
+    .screen:hover canvas {
+      opacity: 0;
+    }
+  }
+
+  .play {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    padding: 0.4em 1ch;
+    background: var(--ground);
+    font-weight: 600;
+  }
+
+  /* Glyphs while stopped or paused; the real video, with its controls, while it plays. */
+  .video.is-playing canvas,
+  .video.is-playing .play {
+    display: none;
+  }
+
+  .screen:fullscreen {
+    background: var(--ground);
+  }
+
+  .screen:fullscreen video {
+    object-fit: contain;
+  }
+
+  /* Controls in the page's own grammar: bracket buttons and a seek line drawn in ink. */
+  .vbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 1ch;
+    font-size: var(--step--1);
+  }
+
+  .vbar .control {
+    padding-inline: 0.4ch;
+  }
+
+  .vbar [data-v-toggle] {
+    min-width: 9ch;
+    justify-content: center;
+  }
+
+  .time {
+    margin-right: auto;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .seek {
+    flex: 1 0 100%;
+    height: 1.5rem;
+    margin: 0;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .seek::-webkit-slider-runnable-track {
+    height: 2px;
+    background: linear-gradient(to right, var(--ink) var(--p, 0%), var(--line) var(--p, 0%));
+  }
+
+  .seek::-moz-range-track {
+    height: 2px;
+    background: linear-gradient(to right, var(--ink) var(--p, 0%), var(--line) var(--p, 0%));
+  }
+
+  .seek::-webkit-slider-thumb {
+    appearance: none;
+    width: 0.6rem;
+    height: 1rem;
+    margin-top: calc(-0.5rem + 1px);
+    background: var(--ink);
+    border: 0;
+  }
+
+  .seek::-moz-range-thumb {
+    width: 0.6rem;
+    height: 1rem;
+    background: var(--ink);
+    border: 0;
+    border-radius: 0;
+  }
+
+  .video figcaption {
+    display: grid;
+    gap: 0.25rem;
+    font-size: var(--step--1);
+    color: var(--muted);
+  }
+
+  .manifest h4 {
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 0.75rem;
+  }
+
+  .manifest dl {
+    display: grid;
+    gap: 0.5rem;
+    font-size: var(--step--1);
+    line-height: 1.6;
+  }
+
+  .manifest dl div {
+    grid-template-columns: minmax(0, 22ch) minmax(0, 1fr);
+  }
+
+  .manifest dt {
+    color: var(--text);
+    overflow-wrap: anywhere;
+  }
+
+  .manifest dd {
+    color: var(--muted);
+  }
+
+  .lede {
+    max-width: 62ch;
+    color: var(--muted);
+    margin-bottom: 2.5rem;
+  }
+
+  .cells {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    gap: 2.5rem 1.5rem;
+  }
+
+  .cells li {
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+  }
+
+  .cells a {
+    display: grid;
+    gap: 0.75rem;
+    text-decoration: none;
+  }
+
+  .cells :global(.frame) {
+    cursor: pointer;
+  }
+
+  .cell-title {
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-color: var(--ink);
+    text-underline-offset: 0.3em;
+  }
+
+  .cells a:hover .cell-title {
+    color: var(--ink);
+  }
+
+  .cells p {
+    font-size: var(--step--1);
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: start;
+  }
+
+  .about-copy {
+    display: grid;
+    gap: 1rem;
+    max-width: 62ch;
+  }
+
+  .about-copy p:not(.summary) {
+    color: var(--muted);
+  }
+
+  .contact {
+    padding-bottom: clamp(4rem, 10vw, 7rem);
+  }
+
+  .contact-line {
+    color: var(--muted);
+    max-width: 52ch;
+  }
+
+  .privacy {
+    margin-top: 3rem;
+    font-size: var(--step--1);
+    color: var(--muted);
+  }
+
+  .email {
+    display: inline-block;
+    margin: 1.25rem 0 1.5rem;
+    font-size: var(--step-3);
+    font-weight: 800;
+    font-stretch: 87.5%;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    overflow-wrap: anywhere;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.18em;
+  }
+
+  @media (max-width: 60rem) {
+    .project-grid,
+    .about-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 36rem) {
+    .facts div,
+    .manifest dl div {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+    }
+  }
+</style>

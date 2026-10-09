@@ -1,185 +1,93 @@
-# Beer de Vreeze - Game Portfolio
+# beerdevreeze.com
 
-A modern, responsive portfolio website showcasing my game development projects and software engineering journey. Built with Next.js, TypeScript, and Tailwind CSS.
+Portfolio of Beer de Vreeze, AI engineer building agents, agent skills and the tools around them.
 
-## Key Features
+A static [Astro](https://astro.build/) site with a [Keystatic](https://keystatic.com/) CMS, deployed on Vercel.
+The design is a glyph-density render: the name, the demo agent runs, the photos and the showhow video are drawn as monospace characters, and hovering an image shows the real one.
 
-- **Interactive Project Cards**: Detailed modals with media carousels, code snippets, and download links
-- **Touch Gesture Support**: Swipe navigation for mobile devices
-- **Video & YouTube Integration**: Embedded media with custom controls and fullscreen support
-- **Dynamic Tech Stack Display**: Visual technology badges with hover effects
-- **Contact Form**: Server-side email integration for direct communication
-- **File Downloads**: Direct access to game builds and project files
-- **SEO Optimized**: Proper meta tags and semantic HTML structure
-
-## Tech Stack
-
-### Core Framework & Language
-
-- **Framework**: [Next.js 15](https://nextjs.org/) with App Router & Turbopack
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **Runtime**: [React 18](https://react.dev/) with modern hooks and concurrent features
-
-### Styling & UI
-
-- **CSS Framework**: [Tailwind CSS](https://tailwindcss.com/)
-- **UI Components**: [Shadcn/UI](https://ui.shadcn.com/) & [Bootstrap 5](https://getbootstrap.com/)
-- **Icons**: [React Icons](https://react-icons.github.io/react-icons/), [Lucide React](https://lucide.dev/), [Heroicons](https://heroicons.com/), & [Devicons](https://devicon.dev/)
-- **Animations**: [Framer Motion](https://www.framer.com/motion/)
-
-### Development & Performance
-
-- **Code Highlighting**: [Highlight.js](https://highlightjs.org/)
-- **Bundle Analysis**: [Webpack Bundle Analyzer](https://github.com/webpack-contrib/webpack-bundle-analyzer)
-- **Linting**: [ESLint](https://eslint.org/) with Next.js configuration
-- **Performance Monitoring**: [Web Vitals](https://web.dev/vitals/)
-- **SEO**: [Next SEO](https://github.com/garmeeh/next-seo)
-
-### Progressive Web App (PWA)
-
-- **PWA**: [@ducanh2912/next-pwa](https://github.com/DuCanhGH/next-pwa) with Workbox
-- **Service Worker**: Custom service worker implementation
-- **Offline Support**: Advanced caching strategies for fonts, images, and static assets
-
-### Backend & Authentication
-
-- **Email Service**: [Nodemailer](https://nodemailer.com/) with Microsoft Graph API
-- **Authentication**: [Azure MSAL Node](https://github.com/AzureAD/microsoft-authentication-library-for-js) for Microsoft OAuth
-- **API Routes**: Next.js API routes for server-side functionality
-
-### Utilities & Tools
-
-- **HTTP Client**: [Axios](https://axios-http.com/)
-- **Date Handling**: [date-fns](https://date-fns.org/)
-- **Search**: [Fuse.js](https://fusejs.io/) for fuzzy search functionality
-- **Color Manipulation**: [Chroma.js](https://gka.github.io/chroma.js/)
-- **Math Operations**: [Math.js](https://mathjs.org/)
-- **Text Processing**: Various utilities (Lorem Ipsum, HE encoding, Password generation)
-- **Routing**: [React Router DOM](https://reactrouter.com/)
-- **Hooks**: [React Use](https://github.com/streamich/react-use) & custom performance hooks
-- **Debouncing**: [use-debounce](https://github.com/xnimorz/use-debounce)
-
-### Deployment & Infrastructure
-
-- **Hosting**: [Vercel](https://vercel.com/) with optimized configuration
-- **Analytics**: [Vercel Analytics](https://vercel.com/analytics) for user behavior tracking
-- **Performance Monitoring**: [Vercel Speed Insights](https://vercel.com/docs/speed-insights) for real-world performance metrics
-- **CDN**: Global content delivery with caching strategies
-- **Security**: CSP headers, XSS protection, and frame options
-
-## Project Structure
-
-```text
-src/
-├── app/                 # Next.js App Router pages
-│   ├── about/          # About page with personal info
-│   ├── contact/        # Contact page with form
-│   ├── projects/       # Projects showcase page
-│   ├── lib/            # Utility functions and configurations
-│   ├── globals.css     # Global styles
-│   ├── layout.tsx      # Root layout component
-│   └── page.tsx        # Home page
-├── components/         # Reusable React components
-│   ├── about/          # About page specific components
-│   ├── projects/       # Project related components
-│   ├── types/          # TypeScript type definitions
-│   ├── utils/          # Utility components and functions
-│   └── ...             # Other shared components
-├── pages/api/          # API routes for server-side functionality
-├── styles/             # CSS modules and component styles
-└── public/             # Static assets (images, downloads, favicon)
-    ├── images/         # Project screenshots and media
-    ├── downloads/      # Downloadable files (games, CV)
-    └── favicon/        # Favicon and app icons
-```
-
-## Featured Projects
-
-- **Bearly Stealth**: A stealth-based game featuring intelligent AI hunters and environmental interactions
-- **AI Movement Training**: Machine learning experiments demonstrating game AI behavior and training
-- **LP Cafe**: Interactive visual novel with dialogue system and character interactions
-- **Sketching Spells**: Creative spell-casting game with drawing-based mechanics
-- **Better Tetris**: Enhanced Tetris implementation with modern features
-- **Audio Previewer**: Desktop application for efficient audio file management and preview
-
-## Design Features
-
-- **Modern UI/UX**: Clean, dark-themed interface with glass morphism effects
-- **Interactive Media Carousel**: Touch-friendly slideshow with autoplay and gesture controls
-- **Responsive Design**: Mobile-first approach optimized for all device sizes
-- **Advanced Animations**: Smooth transitions powered by Framer Motion
-- **Code Syntax Highlighting**: Collapsible code snippets with copy functionality
-- **Progressive Loading**: Optimized image loading with blur placeholders
-- **Accessibility**: Keyboard navigation and screen reader support
-- **Modern Typography**: Beautiful font hierarchy with proper contrast ratios
-
-## Responsive Design
-
-The portfolio is fully responsive and tested across:
-
-- Desktop (1440px+)
-- Laptop (1024px - 1439px)
-- Tablet (768px - 1023px)
-- Mobile (< 768px)
-
-## Development
-
-### Available Scripts
-
-- `npm run dev` - Start development server with Turbopack
-- `npm run build` - Build optimized production version
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint for code quality checks
-
-### Code Quality & Performance
-
-- **TypeScript**: Full type safety across the entire codebase
-- **ESLint**: Automated code quality and consistency checks
-- **Tailwind CSS**: Utility-first CSS with purging for optimal bundle size
-- **Next.js 15**: Latest features including App Router and Turbopack for fast development
-- **Component Architecture**: Modular, reusable React components with clear separation of concerns
-- **Performance Optimizations**: Image optimization, lazy loading, and efficient bundle splitting
-
-## Deployment
-
-This project is optimized for deployment on Vercel with automatic optimizations:
-
-### Vercel Deployment
-
-1. Fork or clone this repository
-2. Connect your repository to [Vercel](https://vercel.com/)
-3. Configure environment variables for email functionality
-4. Deploy with automatic CI/CD on every push
-
-### Environment Variables
+## Run it
 
 ```bash
-# Email configuration (optional - for contact form)
-EMAIL_USER=your-email@gmail.com
-EMAIL_PASS=your-app-password
-EMAIL_TO=recipient@gmail.com
+npm install
+npm run dev
 ```
 
-### Performance Features
+Open http://localhost:4321 for the site and http://localhost:4321/admin for the CMS.
 
-- Automatic image optimization and WebP conversion
-- Edge runtime for API routes
-- Static generation for optimal loading speeds
-- Automatic code splitting and tree shaking
+## Commands
 
-## Contact
+| Command | What it does |
+|---|---|
+| `npm run dev` | Dev server on port 4321, with the CMS at `/admin` |
+| `npm run build` | Type-check with `astro check`, then build for Vercel |
+| `npm test` | Unit tests for the glyph math, the hover hint and the demo-run formatting (Vitest) |
+| `npm run cv` | Render `cv/cv.html` to `public/downloads/beer-de-vreeze-cv.pdf` with your installed Chrome |
 
-- **Email**: [beer@vreeze.com](mailto:beer@vreeze.com)
-- **GitHub**: [Beer-de-Vreeze](https://github.com/bjeer.peer)
-- **LinkedIn**: [beer-de-vreeze](https://www.linkedin.com/in/beer-de-vreeze-59040919a/)
-- **Itch.io**: [bjeerpeer](https://bjeerpeer.itch.io/)
+`npm run cv` looks for Chrome in the usual places.
+Set `CHROME_PATH` if yours lives somewhere else.
 
-## License
+## Edit content
 
-This project is personal portfolio work. Please contact me if you'd like to use any part of this code.
+All copy lives in `src/content/` as JSON and is edited through Keystatic.
 
----
+- `/admin` redirects to `/keystatic`.
+- Locally (`npm run dev`), saves write straight to `src/content/` and `public/images/`; commit them like any other change.
+- On the live site, the admin signs in with GitHub and commits to `master`, which redeploys the site.
+  Only GitHub accounts with write access to this repo can save.
+- GitHub sign-in only works on `www.beerdevreeze.com`, not on Vercel preview URLs, because the GitHub App's callback is registered for that domain.
 
-Built with love by Beer de Vreeze
+Images uploaded through the CMS are stored as `public/images/<collection>/<slug>/...`.
+Keep that layout when adding files by hand, or the CMS will not find them and will drop them on the next save.
 
-> **P.S.** try the konami code: ! ↑↑↓↓←→←→BA
+The CV is not in the CMS: edit `cv/cv.html`, run `npm run cv`, and commit the PDF.
+
+## Where things live
+
+| Path | Contents |
+|---|---|
+| `src/content/` | Page copy as JSON: site and about, demo runs, projects, earlier work |
+| `keystatic.config.ts` | The CMS schema for everything in `src/content/` |
+| `src/data/content.ts` | Reads `src/content/` through Keystatic's reader at build time |
+| `src/pages/index.astro` | The home page |
+| `src/pages/404.astro`, `src/pages/500.astro` | Error pages, built on `src/components/ErrorScreen.astro` |
+| `src/layouts/Base.astro` | `<head>`, fonts and global styles shared by every page |
+| `src/components/Hero.astro` | Full-screen glyph field with the top bar, used by home and error pages |
+| `src/components/GlyphFigure.astro` | Image shown as glyphs, photo on hover (tap on touch screens) |
+| `src/scripts/hero.ts` | Hero canvas: text drawn as glyph density, light that follows the pointer |
+| `src/scripts/run.ts` | Demo agent runs typed into the hero |
+| `src/scripts/media.ts` | Glyph rendering for images and the showhow video, plus its custom controls |
+| `src/scripts/glyph.ts` | Shared luminance-to-glyph math |
+| `cv/cv.html`, `scripts/build-cv.mjs` | The CV source and its PDF build |
+| `public/sw.js` | Clears and unregisters a service worker an earlier version of the site installed |
+| `DESIGN.md`, `PRODUCT.md`, `.impeccable/` | Design system and product notes |
+
+## Deploy
+
+Vercel builds every push.
+Pushes to `master` go to production; other branches get preview URLs.
+
+- `vercel.json` pins the framework preset to Astro.
+- Pages are prerendered; only the Keystatic routes run as functions (`@astrojs/vercel` adapter).
+- Production and Preview need four environment variables from the Keystatic GitHub App: `KEYSTATIC_GITHUB_CLIENT_ID`, `KEYSTATIC_GITHUB_CLIENT_SECRET`, `KEYSTATIC_SECRET` and `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG`.
+  Locally they live in `.env`, which is not committed.
+- Do not put media in Git LFS: Vercel serves the LFS pointer file instead of the media.
+
+### Known workaround
+
+`astro.config.mjs` aliases `rolldown` to `src/stubs/empty.js`.
+`@astrojs/vercel` 11.0.13 leaks a bare `import "rolldown"` into the server bundle, and Vercel's file tracing leaves out rolldown's native binary, so the CMS function crashed on boot.
+Remove the alias once a newer adapter stops importing its build code from the serverless entrypoint.
+
+### Setting up the CMS GitHub App again
+
+Only needed if the app or its keys are lost.
+
+1. Start the admin in GitHub mode and open http://127.0.0.1:4321/keystatic/setup:
+
+   ```powershell
+   $env:PUBLIC_KEYSTATIC_GITHUB = "1"; npm run dev
+   ```
+
+2. Enter `https://www.beerdevreeze.com` as the deployed URL, click "Create GitHub App", and confirm on GitHub.
+   Keystatic writes the four variables to `.env`.
+3. Add them to Vercel for Production and Preview with `vercel env add <NAME> production,preview`, then redeploy.

@@ -1,0 +1,20 @@
+---
+import ErrorScreen from "../components/ErrorScreen.astro";
+---
+
+<ErrorScreen
+  code="404"
+  title="This page does not exist."
+  message="It may have moved when the site was rebuilt. Everything that is left lives on the home page."
+  run={{
+    id: "404",
+    project: "404",
+    prompt: "open {path}",
+    steps: [
+      { tool: "resolve_route", detail: "{path}" },
+      { tool: "search_site", detail: "no page by that name" },
+    ],
+    result: "404 page not found",
+    status: "err",
+  }}
+/>

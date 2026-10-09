@@ -1,0 +1,120 @@
+---
+import { getImage } from "astro:assets";
+
+interface Props {
+  src: string;
+  alt: string;
+  caption?: string;
+  ratio?: string;
+  position?: string;
+  glyphSize?: number;
+  eager?: boolean;
+  /** Pixel width to request; about twice the largest displayed width. */
+  width?: number;
+  /** False when the figure sits inside a link, which then owns focus and reveals the photo itself. */
+  interactive?: boolean;
+}
+const { src, alt, caption, ratio = "16 / 10", position = "50% 50%", glyphSize = 7, eager = false, width = 640, interactive = true } = Astro.props;
+const parts = ratio.split("/").map(Number);
+// The ratio is free text in the CMS; anything that is not "w / h" falls back to 4 / 3 instead of failing the build.
+const [rw, rh] = parts.length === 2 && parts.every((n) => n > 0) ? parts : [4, 3];
+// Files in public/ cannot be measured, so the height comes from the frame's ratio.
+const image = await getImage({ src, width, height: Math.round((width * rh) / rw), quality: 75 });
+---
+
+<figure class="glyph" data-glyph-figure data-glyph-size={glyphSize} style={`--ratio: ${rw} / ${rh}`}>
+  <div class="frame" {...interactive && { role: "button", tabindex: 0, "aria-pressed": "false", "aria-label": `Show photo: ${alt}` }}>
+    <img src={image.src} alt={alt} width={image.attributes.width} height={image.attributes.height} loading={eager ? "eager" : "lazy"} decoding="async" style={`object-position: ${position}`} />
+    <canvas aria-hidden="true"></canvas>
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .glyph {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .frame {
+    position: relative;
+    cursor: crosshair;
+    aspect-ratio: var(--ratio);
+    overflow: hidden;
+    background: var(--ground-raised);
+  }
+
+  img,
+  canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  img {
+    object-fit: cover;
+    transition: opacity 320ms cubic-bezier(0.16, 1, 0.3, 1), filter 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  canvas {
+    background: var(--ground-raised);
+    opacity: 0;
+    transition: opacity 320ms cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+  }
+
+  /* Glyphs lead once rendered; the photo is one hover (or tap) away. */
+  [data-glyph="ready"] canvas {
+    opacity: 1;
+  }
+
+  [data-glyph="ready"] img {
+    opacity: 0;
+    filter: blur(6px);
+  }
+
+  @media (hover: hover) {
+    [data-glyph="ready"] .frame:hover canvas {
+      opacity: 0;
+    }
+    [data-glyph="ready"] .frame:hover img {
+      opacity: 1;
+      filter: none;
+    }
+  }
+
+  /* Keyboard: focusing the figure (or the link around it) reveals the photo too. */
+  [data-glyph="ready"] .frame:focus-visible canvas,
+  :global(a:focus-visible) [data-glyph="ready"] canvas {
+    opacity: 0;
+  }
+
+  [data-glyph="ready"] .frame:focus-visible img,
+  :global(a:focus-visible) [data-glyph="ready"] img {
+    opacity: 1;
+    filter: none;
+  }
+
+  [data-glyph="ready"].is-photo canvas {
+    opacity: 0;
+  }
+
+  [data-glyph="ready"].is-photo img {
+    opacity: 1;
+    filter: none;
+  }
+
+  figcaption {
+    color: var(--muted);
+    font-size: var(--step--1);
+    line-height: 1.6;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    img,
+    canvas {
+      transition: none;
+    }
+  }
+</style>

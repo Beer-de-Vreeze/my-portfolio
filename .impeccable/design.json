@@ -1,0 +1,422 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-08T22:40:00.826Z",
+  "title": "Design System: Beer de Vreeze",
+  "extensions": {
+    "colorMeta": {
+      "ground": {
+        "role": "neutral",
+        "displayName": "Green-Black Ground",
+        "canonical": "#0d0f0b",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.009 129.1)",
+          "oklch(26% 0.009 129.1)",
+          "oklch(38% 0.009 129.1)",
+          "oklch(50% 0.009 129.1)",
+          "oklch(62% 0.009 129.1)",
+          "oklch(74% 0.009 129.1)",
+          "oklch(85% 0.009 129.1)",
+          "oklch(95% 0.009 129.1)"
+        ]
+      },
+      "ground-raised": {
+        "role": "neutral",
+        "displayName": "Raised Ground",
+        "canonical": "#15170f",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.016 119.2)",
+          "oklch(26% 0.016 119.2)",
+          "oklch(38% 0.016 119.2)",
+          "oklch(50% 0.016 119.2)",
+          "oklch(62% 0.016 119.2)",
+          "oklch(74% 0.016 119.2)",
+          "oklch(85% 0.016 119.2)",
+          "oklch(95% 0.016 119.2)"
+        ]
+      },
+      "ink": {
+        "role": "primary",
+        "displayName": "Phosphor Amber",
+        "canonical": "#e8b04a",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.134 79.5)",
+          "oklch(26% 0.134 79.5)",
+          "oklch(38% 0.134 79.5)",
+          "oklch(50% 0.134 79.5)",
+          "oklch(62% 0.134 79.5)",
+          "oklch(74% 0.134 79.5)",
+          "oklch(85% 0.134 79.5)",
+          "oklch(95% 0.134 79.5)"
+        ]
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "Phosphor Cream",
+        "canonical": "#f2ead6",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.028 88.8)",
+          "oklch(26% 0.028 88.8)",
+          "oklch(38% 0.028 88.8)",
+          "oklch(50% 0.028 88.8)",
+          "oklch(62% 0.028 88.8)",
+          "oklch(74% 0.028 88.8)",
+          "oklch(85% 0.028 88.8)",
+          "oklch(95% 0.028 88.8)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Dim Brass",
+        "canonical": "#b8a37a",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.061 83.8)",
+          "oklch(26% 0.061 83.8)",
+          "oklch(38% 0.061 83.8)",
+          "oklch(50% 0.061 83.8)",
+          "oklch(62% 0.061 83.8)",
+          "oklch(74% 0.061 83.8)",
+          "oklch(85% 0.061 83.8)",
+          "oklch(95% 0.061 83.8)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Burnt Line",
+        "canonical": "#4a3d22",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.045 84.5)",
+          "oklch(26% 0.045 84.5)",
+          "oklch(38% 0.045 84.5)",
+          "oklch(50% 0.045 84.5)",
+          "oklch(62% 0.045 84.5)",
+          "oklch(74% 0.045 84.5)",
+          "oklch(85% 0.045 84.5)",
+          "oklch(95% 0.045 84.5)"
+        ]
+      },
+      "focus": {
+        "role": "neutral",
+        "displayName": "Hot Amber",
+        "canonical": "#ffd27a",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.118 82.9)",
+          "oklch(26% 0.118 82.9)",
+          "oklch(38% 0.118 82.9)",
+          "oklch(50% 0.118 82.9)",
+          "oklch(62% 0.118 82.9)",
+          "oklch(74% 0.118 82.9)",
+          "oklch(85% 0.118 82.9)",
+          "oklch(95% 0.118 82.9)"
+        ]
+      },
+      "paper-ground": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "#efe7d2",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.029 89.6)",
+          "oklch(26% 0.029 89.6)",
+          "oklch(38% 0.029 89.6)",
+          "oklch(50% 0.029 89.6)",
+          "oklch(62% 0.029 89.6)",
+          "oklch(74% 0.029 89.6)",
+          "oklch(85% 0.029 89.6)",
+          "oklch(95% 0.029 89.6)"
+        ]
+      },
+      "paper-ground-raised": {
+        "role": "neutral",
+        "displayName": "Paper Raised",
+        "canonical": "#e6dcc2",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.036 89.5)",
+          "oklch(26% 0.036 89.5)",
+          "oklch(38% 0.036 89.5)",
+          "oklch(50% 0.036 89.5)",
+          "oklch(62% 0.036 89.5)",
+          "oklch(74% 0.036 89.5)",
+          "oklch(85% 0.036 89.5)",
+          "oklch(95% 0.036 89.5)"
+        ]
+      },
+      "paper-ink": {
+        "role": "primary",
+        "displayName": "Burnt Umber",
+        "canonical": "#8a4b00",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.112 59.9)",
+          "oklch(26% 0.112 59.9)",
+          "oklch(38% 0.112 59.9)",
+          "oklch(50% 0.112 59.9)",
+          "oklch(62% 0.112 59.9)",
+          "oklch(74% 0.112 59.9)",
+          "oklch(85% 0.112 59.9)",
+          "oklch(95% 0.112 59.9)"
+        ]
+      },
+      "paper-text": {
+        "role": "neutral",
+        "displayName": "Ink Black",
+        "canonical": "#1d160a",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.024 80.2)",
+          "oklch(26% 0.024 80.2)",
+          "oklch(38% 0.024 80.2)",
+          "oklch(50% 0.024 80.2)",
+          "oklch(62% 0.024 80.2)",
+          "oklch(74% 0.024 80.2)",
+          "oklch(85% 0.024 80.2)",
+          "oklch(95% 0.024 80.2)"
+        ]
+      },
+      "paper-muted": {
+        "role": "neutral",
+        "displayName": "Sepia",
+        "canonical": "#5e4a28",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.057 79.6)",
+          "oklch(26% 0.057 79.6)",
+          "oklch(38% 0.057 79.6)",
+          "oklch(50% 0.057 79.6)",
+          "oklch(62% 0.057 79.6)",
+          "oklch(74% 0.057 79.6)",
+          "oklch(85% 0.057 79.6)",
+          "oklch(95% 0.057 79.6)"
+        ]
+      },
+      "paper-line": {
+        "role": "neutral",
+        "displayName": "Tan Line",
+        "canonical": "#c4b089",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.058 83.9)",
+          "oklch(26% 0.058 83.9)",
+          "oklch(38% 0.058 83.9)",
+          "oklch(50% 0.058 83.9)",
+          "oklch(62% 0.058 83.9)",
+          "oklch(74% 0.058 83.9)",
+          "oklch(85% 0.058 83.9)",
+          "oklch(95% 0.058 83.9)"
+        ]
+      },
+      "paper-focus": {
+        "role": "neutral",
+        "displayName": "Umber Focus",
+        "canonical": "#8a4b00",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.112 59.9)",
+          "oklch(26% 0.112 59.9)",
+          "oklch(38% 0.112 59.9)",
+          "oklch(50% 0.112 59.9)",
+          "oklch(62% 0.112 59.9)",
+          "oklch(74% 0.112 59.9)",
+          "oklch(85% 0.112 59.9)",
+          "oklch(95% 0.112 59.9)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Project titles and the contact email; 800 at 87.5% width."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "The hero role line (h1)."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Section titles in ink drawn as rules; summaries at 600."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Paragraphs, max 62ch; tabular numbers."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Demo run title, manifest headings, video controls, facts, captions."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "reveal",
+        "value": "320ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Glyph-to-photo and glyph-to-frame opacity (and 6px blur) swaps."
+      },
+      {
+        "name": "spring-light",
+        "value": "stiffness 18, damping 7",
+        "purpose": "Hero light follows the pointer, or an idle drift, with mass."
+      },
+      {
+        "name": "pulse-ring",
+        "value": "0.55 field-widths/s, 2.2s fade, +0.7 density",
+        "purpose": "One ring per completed demo-run tool call, inside the name mask only."
+      },
+      {
+        "name": "field-rate",
+        "value": "30fps",
+        "purpose": "Hero field redraw cap; paused offscreen or when the tab is hidden."
+      },
+      {
+        "name": "run-typing",
+        "value": "34ms prompt chars, 3 chars per 14ms on tool lines, 500ms then 380ms line gaps, 4200ms auto-advance",
+        "purpose": "Demo run typing cadence."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "prefers-reduced-motion: reduce",
+        "purpose": "Static hero frame, no pulses, full log at once, no figure transitions, no smooth scroll."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "stack",
+        "value": "60rem"
+      },
+      {
+        "name": "compact",
+        "value": "36rem"
+      },
+      {
+        "name": "hero-three-line",
+        "value": "600px (hero width)"
+      }
+    ],
+    "glyph": {
+      "ramp": " .:-=+*#%@",
+      "heroCell": "hero width / 105 clamped 8-14px, row 1.32em, weight 400",
+      "figureCell": "7px default, 6px for earlier-work cells, portrait and video; row 1.25em, weight 500",
+      "hint": "viewfinder corners +-- and --+ stamped into the grid, with hover or tap in the bottom-right corner"
+    }
+  },
+  "components": [
+    {
+      "name": "Bracket Control",
+      "kind": "button",
+      "refersTo": "control",
+      "description": "The world button: ink text framed by literal brackets.",
+      "html": "<button class=\"ds-control\" type=\"button\">Play</button>",
+      "css": ".ds-control{display:inline-flex;align-items:center;gap:.5ch;padding:.25em 0;font:inherit;color:var(--ink);background:none;border:0;cursor:pointer;white-space:nowrap;text-decoration:none}.ds-control::before{content:\"[\"}.ds-control::after{content:\"]\"}.ds-control:hover{color:var(--text)}.ds-control:focus-visible{outline:2px solid var(--focus);outline-offset:3px}.ds-control[aria-pressed=\"true\"]{color:var(--ground);background:var(--ink)}"
+    },
+    {
+      "name": "Bracket Control Pressed",
+      "kind": "button",
+      "refersTo": "control-pressed",
+      "description": "Toggle on: demo-run tab, Mute, CC, Fullscreen.",
+      "html": "<button class=\"ds-control\" type=\"button\" aria-pressed=\"true\">showhow</button>",
+      "css": ".ds-control{display:inline-flex;align-items:center;gap:.5ch;padding:.25em 0;font:inherit;color:var(--ink);background:none;border:0;cursor:pointer;white-space:nowrap;text-decoration:none}.ds-control::before{content:\"[\"}.ds-control::after{content:\"]\"}.ds-control:hover{color:var(--text)}.ds-control:focus-visible{outline:2px solid var(--focus);outline-offset:3px}.ds-control[aria-pressed=\"true\"]{color:var(--ground);background:var(--ink)}"
+    },
+    {
+      "name": "Section Rule",
+      "kind": "custom",
+      "refersTo": "title",
+      "description": "Section title followed by a character-run rule, never a border.",
+      "html": "<h2 class=\"ds-rule\"><span>Work</span></h2>",
+      "css": ".ds-rule{display:flex;align-items:baseline;gap:1ch;overflow:hidden;white-space:nowrap;font-size:var(--step-1);font-weight:700;color:var(--ink);margin:0}.ds-rule::after{content:\"----------------------------------------------------------------------------------------------------\";flex:1 1 0;width:0;min-width:0;overflow:hidden;color:var(--line);font-weight:400}"
+    },
+    {
+      "name": "Navigation",
+      "kind": "nav",
+      "description": "Muted text links, 2.5ch apart, ink on hover.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#\">Work</a><a href=\"#\">Earlier</a><a href=\"#\">About</a></nav>",
+      "css": ".ds-nav{display:flex;gap:2.5ch;font-family:var(--font)}.ds-nav a{color:var(--muted);text-decoration:none}.ds-nav a:hover{color:var(--ink)}.ds-nav a:focus-visible{outline:2px solid var(--focus);outline-offset:3px}"
+    },
+    {
+      "name": "Glyph Figure",
+      "kind": "card",
+      "refersTo": "glyph-frame",
+      "description": "Image shown as glyphs with a stamped hover hint; hover or tap reveals the photo with a 320ms expo-out fade.",
+      "html": "<figure class=\"ds-glyph\"><div class=\"ds-frame\"><pre class=\"ds-glyphs\" aria-hidden=\"true\"> +--               --+\n   .:-=+*#%@%#*+=-:.\n   :=*#%@@@@@%#*=-:\n +--         hover --+</pre></div><figcaption>Caption in muted step--1.</figcaption></figure>",
+      "css": ".ds-glyph{display:grid;gap:.6rem;margin:0}.ds-frame{position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--ground-raised);cursor:crosshair}.ds-glyphs{margin:0;padding:.5rem;font:500 7px/1.25 var(--font);color:var(--ink);transition:opacity 320ms cubic-bezier(0.16,1,0.3,1)}.ds-frame:hover .ds-glyphs{opacity:.15}.ds-glyph figcaption{color:var(--muted);font-size:var(--step--1);line-height:1.6}"
+    },
+    {
+      "name": "Video Control Bar",
+      "kind": "custom",
+      "description": "Seek line drawn in ink, bracket controls and a muted clock.",
+      "html": "<div class=\"ds-vbar\"><input class=\"ds-seek\" type=\"range\" min=\"0\" max=\"45\" value=\"3\" aria-label=\"Seek\" style=\"--p:7%\"><button class=\"ds-control\" type=\"button\">Play</button><span class=\"ds-time\">0:03 / 0:45</span><button class=\"ds-control\" type=\"button\" aria-pressed=\"true\">Mute</button><button class=\"ds-control\" type=\"button\" aria-pressed=\"false\">CC</button><button class=\"ds-control\" type=\"button\" aria-pressed=\"false\">Fullscreen</button></div>",
+      "css": ".ds-control{display:inline-flex;align-items:center;gap:.5ch;padding:.25em 0;font:inherit;color:var(--ink);background:none;border:0;cursor:pointer;white-space:nowrap;text-decoration:none}.ds-control::before{content:\"[\"}.ds-control::after{content:\"]\"}.ds-control:hover{color:var(--text)}.ds-control:focus-visible{outline:2px solid var(--focus);outline-offset:3px}.ds-control[aria-pressed=\"true\"]{color:var(--ground);background:var(--ink)}.ds-vbar{display:flex;flex-wrap:wrap;align-items:center;gap:.25rem 1ch;font-family:var(--font);font-size:var(--step--1)}.ds-vbar .ds-control{padding-inline:.4ch}.ds-time{color:var(--muted);white-space:nowrap;margin-right:auto}.ds-seek{flex:1 0 100%;height:1.5rem;margin:0;appearance:none;background:transparent;cursor:pointer}.ds-seek::-webkit-slider-runnable-track{height:2px;background:linear-gradient(to right,var(--ink) var(--p,0%),var(--line) var(--p,0%))}.ds-seek::-moz-range-track{height:2px;background:linear-gradient(to right,var(--ink) var(--p,0%),var(--line) var(--p,0%))}.ds-seek::-webkit-slider-thumb{appearance:none;width:.6rem;height:1rem;margin-top:calc(-.5rem + 1px);background:var(--ink);border:0}.ds-seek::-moz-range-thumb{width:.6rem;height:1rem;background:var(--ink);border:0;border-radius:0}.ds-seek:focus-visible{outline:2px solid var(--focus);outline-offset:3px}"
+    },
+    {
+      "name": "Hero Panel",
+      "kind": "card",
+      "refersTo": "hero-panel",
+      "description": "Ground-colored panel that keeps text off the glyph field.",
+      "html": "<div class=\"ds-panel\"><p class=\"ds-run-title\">Demo run</p><pre class=\"ds-log\">&gt; /showhow how to connect Confluence\n  read_repo     src/ docs/ README</pre></div>",
+      "css": ".ds-panel{background:var(--ground);padding:1.25rem 1.5rem;display:grid;gap:.75rem;font-family:var(--font)}.ds-run-title{margin:0;font-size:var(--step--1);font-weight:600;color:var(--ink)}.ds-log{margin:0;font:inherit;font-size:var(--step--1);line-height:1.7;color:var(--text);white-space:pre-wrap}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Phosphor Terminal",
+    "overview": "Everything on the page is drawn on one monospace character grid in a single amber phosphor ink on near-black.\nTone comes from glyph density, not from color, gradients or imagery: the ramp ` .:-=+*#%@` turns luminance into characters.\nAt a distance the hero reads as sculpture; up close it is readable trace.\n\nThe page is sparse and long-form.\nEach case study pairs a column of copy with a side column of proof: a glyph video, a tool manifest and glyph figures.\nPhotos and video frames are shown as glyphs first and reveal the real picture on hover or tap.\n\nMotion has mass.\nThe hero light follows a damped spring, tool calls send pulse rings through the name, and every reveal is a 320ms expo-out fade.\nReduced motion freezes all of it to a single static frame.",
+    "keyCharacteristics": [
+      "One face, Martian Mono Variable, at every size.",
+      "One accent, the ink, which also carries links, controls and section titles.",
+      "Square corners everywhere; no shadows, no borders, no radius.",
+      "Rules drawn as runs of `-` characters in the line color.",
+      "Buttons are bracketed text: `[ Label ]`.",
+      "Glyph rendering on canvas for the hero, every figure and the video poster."
+    ],
+    "rules": [
+      {
+        "name": "The One Ink Rule",
+        "body": "There is exactly one chromatic color per theme; every emphasis is ink, weight or density, never a second hue.",
+        "section": "colors"
+      },
+      {
+        "name": "The Invert On Paper Rule",
+        "body": "Glyph photos invert their luminance on the light theme so dark pixels carry the ink; the video keeps its tones so its dark background stays empty.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Face Rule",
+        "body": "Never introduce a second family; a new role is a new weight, width or step of Martian Mono.",
+        "section": "typography"
+      },
+      {
+        "name": "The Character Grid Rule",
+        "body": "Measure horizontal rhythm in `ch` where it touches text: label columns are 12ch or 22ch, nav gaps 2.5ch, link gaps 2.5ch.",
+        "section": "typography"
+      },
+      {
+        "name": "The Density Not Shadow Rule",
+        "body": "Separation comes from ground versus raised ground and from glyph density, never from box-shadow.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Drawn Rule Rule",
+        "body": "A divider is a run of `-` characters in the line color that fills the remaining width after its label; never a CSS border or hr.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "**Do** use the ink for every interactive and emphasized element and nothing else chromatic.",
+      "**Do** frame every button as a bracket control and show pressed state as an ink fill.",
+      "**Do** draw dividers as character runs in the line color.",
+      "**Do** render new imagery as a glyph figure with the stamped `hover`/`tap` hint and a 320ms expo-out reveal.",
+      "**Do** put text that overlays the glyph field on a ground panel.",
+      "**Do** honour `prefers-reduced-motion` with a static frame, not a slower animation."
+    ],
+    "donts": [
+      "**Don't** add a second font family, a second accent hue, gradients or shadows.",
+      "**Don't** round corners or draw CSS borders around content.",
+      "**Don't** let light or pulses add glyphs outside the name's mask.",
+      "**Don't** split a repeated unit (a log row, an earlier-work cell, a manifest entry) across columns."
+    ]
+  }
+}

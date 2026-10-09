@@ -1,0 +1,83 @@
+{
+  "title": "bunq Voice",
+  "order": 20,
+  "summary": "Voice-first banking for people who are blind or partially sighted. Built in 24 hours at bunq Hackathon 7.0.",
+  "body": [
+    "The hackathon challenge was to build something inside bunq with multimodal AI. We built it for people who are blind or partially sighted: many of them struggle to manage their money on their own, and bunq's security blocked screen readers, which shut them out even further.",
+    "With bunq Voice you talk to your account: check balances, review transactions and set up payments, and it speaks the answers back.",
+    "The model never moves money. Every payment it proposes becomes a pending draft that still needs biometric approval in the bunq app, so accessibility does not cost security.",
+    "Speech-to-text, Claude's reasoning and text-to-speech run concurrently, so the next sentence is already on its way while the current one plays. I worked on the MCP server and the voice pipeline, with Giuseppe Dotto, Mink Quispel and Joshua Ross."
+  ],
+  "facts": [
+    {
+      "label": "Kind",
+      "value": "Hackathon team project, 24 hours, multimodal AI challenge"
+    },
+    {
+      "label": "My part",
+      "value": "MCP server, voice pipeline"
+    },
+    {
+      "label": "Stack",
+      "value": "Python, FastMCP, Claude Sonnet, xAI Grok, TypeScript, React"
+    },
+    {
+      "label": "Safety",
+      "value": "AI proposes, a human approves"
+    }
+  ],
+  "manifestTitle": "MCP server exposes",
+  "manifest": [
+    {
+      "name": "accounts",
+      "does": "which accounts are in your name"
+    },
+    {
+      "name": "balances",
+      "does": "what is in each one"
+    },
+    {
+      "name": "transactions",
+      "does": "recent history, read aloud"
+    },
+    {
+      "name": "find_counterparty",
+      "does": "a spoken name resolved to an IBAN"
+    },
+    {
+      "name": "drafts",
+      "does": "payments that wait for biometric approval"
+    }
+  ],
+  "links": [
+    {
+      "label": "Devpost",
+      "href": "https://devpost.com/software/bunq-voice"
+    },
+    {
+      "label": "Repo",
+      "href": "https://github.com/GiuseppeDotto/bunq-voice"
+    }
+  ],
+  "media": [
+    {
+      "image": "/images/projects/bunq-voice/media/0/image.jpg",
+      "alt": "bunq Voice answering which accounts the user has: two accounts with their balances, read out loud",
+      "caption": "Which accounts do I have? It looks them up and reads the balances back.",
+      "ratio": "8 / 15"
+    },
+    {
+      "image": "/images/projects/bunq-voice/media/1/image.jpg",
+      "alt": "bunq Voice confirming a pending draft payment of 100 euros that still needs approval in the bunq app",
+      "caption": "A payment by voice stays a draft until you approve it in bunq.",
+      "ratio": "8 / 15"
+    }
+  ],
+  "video": {
+    "src": "/media/bunq-voice-demo.mp4",
+    "poster": "/media/bunq-voice-demo.webp",
+    "captions": "/media/bunq-voice-demo.vtt",
+    "label": "bunq Voice demo from the hackathon: asking about accounts, then drafting a payment by voice.",
+    "burnedCaptions": false
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "title": "Unity Audio Previewer",
+  "order": 50,
+  "what": "Unity editor extension: waveforms, playback and clip organization inside Unity. C#.",
+  "image": "/images/earlier/unity-audio-previewer/image.webp",
+  "alt": "The audio previewer panel inside the Unity editor",
+  "href": "/downloads/audio-previewer.zip"
+}

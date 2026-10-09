@@ -1,0 +1,21 @@
+---
+import ErrorScreen from "../components/ErrorScreen.astro";
+---
+
+<ErrorScreen
+  code="500"
+  title="Something broke on my side."
+  message="The server hit an error. Try again in a moment; if it keeps happening, let me know."
+  retry
+  run={{
+    id: "500",
+    project: "500",
+    prompt: "render {path}",
+    steps: [
+      { tool: "handle_request", detail: "{path}" },
+      { tool: "server", detail: "threw an error" },
+    ],
+    result: "500 internal server error",
+    status: "err",
+  }}
+/>
