@@ -45,6 +45,19 @@
     }
   ],
   "links": [],
-  "media": [],
+  "media": [
+    {
+      "image": "/images/projects/sable/media/0/image.webp",
+      "alt": "Sable's wardrobe view: item cards for boots, a silver pendant and a chain necklace, each showing how many looks it opens",
+      "caption": "The Lens: every piece ranked by how many looks it opens.",
+      "ratio": "16 / 10"
+    },
+    {
+      "image": "/images/projects/sable/media/1/image.webp",
+      "alt": "Sable's home page: the SABLE wordmark in gold on a dark starfield, above the thesis 'One wardrobe, considered.'",
+      "caption": "Home: plan in phases, track what you own, build outfits.",
+      "ratio": "2 / 1"
+    }
+  ],
   "video": {}
 }
