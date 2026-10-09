@@ -2,6 +2,8 @@ import { RAMP, Spring, luminanceGrid } from "./glyph";
 
 const FONT_FAMILY = '"Martian Mono Variable", ui-monospace, monospace';
 const FPS = 30;
+// Stop animating after this long without a pointer move or a pulse, so an idle tab costs no battery.
+const IDLE_MS = 20000;
 
 type Pulse = { x: number; y: number; born: number };
 
@@ -24,6 +26,7 @@ export function startHeroField(canvas: HTMLCanvasElement, nameLinesFor: (width: 
   let visible = true;
   let raf = 0;
   let last = 0;
+  let lastActive = performance.now();
 
   function layout() {
     const rect = hero.getBoundingClientRect();
@@ -128,6 +131,7 @@ export function startHeroField(canvas: HTMLCanvasElement, nameLinesFor: (width: 
     raf = 0;
     if (!visible || document.hidden || reduced.matches) return;
     if (now - last >= 1000 / FPS - 1) frame(now);
+    if (now - lastActive > IDLE_MS && !pulses.length) return;
     raf = requestAnimationFrame(loop);
   }
 
@@ -147,11 +151,14 @@ export function startHeroField(canvas: HTMLCanvasElement, nameLinesFor: (width: 
   hero.addEventListener("pointermove", (e) => {
     const rect = hero.getBoundingClientRect();
     target = { x: (e.clientX - rect.left) / rect.width, y: (e.clientY - rect.top) / rect.height };
+    lastActive = performance.now();
+    kick();
   });
   hero.addEventListener("pointerleave", () => (target = null));
 
   window.addEventListener("glyph:pulse", () => {
     pulses.push({ x: lightX.value, y: lightY.value, born: performance.now() / 1000 });
+    lastActive = performance.now();
     if (reduced.matches) return;
     kick();
   });

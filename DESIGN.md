@@ -147,7 +147,7 @@ Numbers are tabular site-wide.
 - **Body** (400, step-0, 1.75): paragraphs, capped at 62ch in copy columns and 44ch in the hero intro.
 - **Label** (600, step--1): demo run title, manifest headings, video controls, facts, captions (400 there).
 
-The full scale is step--1 0.8125rem, step-0 0.9375rem, step-1 1.125rem, step-2 clamp(1.375rem, 1.1rem + 1.2vw, 1.875rem), step-3 clamp(2rem, 1.3rem + 3vw, 3.75rem).
+The full scale is step--2 0.6875rem (the demo run log on phones only), step--1 0.8125rem, step-0 0.9375rem, step-1 1.125rem, step-2 clamp(1.375rem, 1.1rem + 1.2vw, 1.875rem), step-3 clamp(2rem, 1.3rem + 3vw, 3.75rem).
 The demo log drops to 0.6875rem below 36rem.
 
 ### Named Rules

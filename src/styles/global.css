@@ -9,6 +9,7 @@
   color-scheme: dark;
 
   --font: "Martian Mono Variable", ui-monospace, "Cascadia Mono", Menlo, monospace;
+  --step--2: 0.6875rem;
   --step--1: 0.8125rem;
   --step-0: 0.9375rem;
   --step-1: 1.125rem;
@@ -156,6 +157,13 @@ canvas {
 @media (hover: hover) {
   .control:hover {
     color: var(--text);
+  }
+}
+
+/* Fingers need bigger targets than pointers: 44px tall controls on touch screens. */
+@media (pointer: coarse) {
+  .control {
+    min-height: 44px;
   }
 }
 

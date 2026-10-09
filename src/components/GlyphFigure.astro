@@ -11,8 +11,10 @@ interface Props {
   eager?: boolean;
   /** Pixel width to request; about twice the largest displayed width. */
   width?: number;
+  /** False when the figure sits inside a link, which then owns focus and reveals the photo itself. */
+  interactive?: boolean;
 }
-const { src, alt, caption, ratio = "16 / 10", position = "50% 50%", glyphSize = 7, eager = false, width = 640 } = Astro.props;
+const { src, alt, caption, ratio = "16 / 10", position = "50% 50%", glyphSize = 7, eager = false, width = 640, interactive = true } = Astro.props;
 const parts = ratio.split("/").map(Number);
 // The ratio is free text in the CMS; anything that is not "w / h" falls back to 4 / 3 instead of failing the build.
 const [rw, rh] = parts.length === 2 && parts.every((n) => n > 0) ? parts : [4, 3];
@@ -21,7 +23,7 @@ const image = await getImage({ src, width, height: Math.round((width * rh) / rw)
 ---
 
 <figure class="glyph" data-glyph-figure data-glyph-size={glyphSize} style={`--ratio: ${rw} / ${rh}`}>
-  <div class="frame">
+  <div class="frame" {...interactive && { role: "button", tabindex: 0, "aria-pressed": "false", "aria-label": `Show photo: ${alt}` }}>
     <img src={image.src} alt={alt} width={image.attributes.width} height={image.attributes.height} loading={eager ? "eager" : "lazy"} decoding="async" style={`object-position: ${position}`} />
     <canvas aria-hidden="true"></canvas>
   </div>
@@ -80,6 +82,18 @@ const image = await getImage({ src, width, height: Math.round((width * rh) / rw)
       opacity: 1;
       filter: none;
     }
+  }
+
+  /* Keyboard: focusing the figure (or the link around it) reveals the photo too. */
+  [data-glyph="ready"] .frame:focus-visible canvas,
+  :global(a:focus-visible) [data-glyph="ready"] canvas {
+    opacity: 0;
+  }
+
+  [data-glyph="ready"] .frame:focus-visible img,
+  :global(a:focus-visible) [data-glyph="ready"] img {
+    opacity: 1;
+    filter: none;
   }
 
   [data-glyph="ready"].is-photo canvas {

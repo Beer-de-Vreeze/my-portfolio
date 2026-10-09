@@ -81,8 +81,15 @@ function setupFigure(fig: HTMLElement) {
   };
   if (img.complete) render();
   else img.addEventListener("load", render, { once: true });
-  // Touch screens have no hover: a tap swaps glyphs and photo.
-  fig.querySelector(".frame")?.addEventListener("click", () => fig.classList.toggle("is-photo"));
+  // Touch screens have no hover: a tap swaps glyphs and photo. Enter or Space does the same from the keyboard.
+  const frame = fig.querySelector<HTMLElement>(".frame")!;
+  const flip = () => frame.setAttribute("aria-pressed", String(fig.classList.toggle("is-photo")));
+  frame.addEventListener("click", flip);
+  frame.addEventListener("keydown", (e) => {
+    if (frame.getAttribute("role") !== "button" || (e.key !== "Enter" && e.key !== " ")) return;
+    e.preventDefault();
+    flip();
+  });
   return render;
 }
 
@@ -134,10 +141,12 @@ function setupVideo(fig: HTMLElement) {
     if (!playing) render();
   };
 
-  const playPause = () => (video.paused ? video.play() : video.pause());
-  bigPlay.addEventListener("click", () => video.play());
+  // play() rejects when the browser blocks playback; the controls simply stay on "Play".
+  const play = () => void video.play().catch(() => {});
+  const playPause = () => (video.paused ? play() : video.pause());
+  bigPlay.addEventListener("click", play);
   toggle.addEventListener("click", playPause);
-  canvas.addEventListener("click", () => video.play());
+  canvas.addEventListener("click", play);
   video.addEventListener("click", playPause);
   video.addEventListener("play", () => setPlaying(true));
   video.addEventListener("pause", () => setPlaying(false));

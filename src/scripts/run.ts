@@ -34,7 +34,8 @@ export function startRuns(root: HTMLElement, runs: Run[], loop = true) {
     let char = 0;
     const tick = () => {
       if (line >= lines.length) {
-        if (auto) timer = window.setTimeout(() => play((index + 1) % runs.length), 4200);
+        // Auto-play goes through each run once, then rests.
+        if (auto && index + 1 < runs.length) timer = window.setTimeout(() => play(index + 1), 4200);
         return;
       }
       const text = lines[line];

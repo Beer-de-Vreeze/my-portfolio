@@ -81,7 +81,9 @@ const prefix = home ? "" : "/";
   }
 
   .hero nav a {
-    padding-block: 0.3rem;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     text-decoration: none;
     color: var(--muted);
   }
@@ -204,7 +206,7 @@ const prefix = home ? "" : "/";
     }
 
     .hero .run-log {
-      font-size: 0.6875rem;
+      font-size: var(--step--2);
     }
 
     .hero .run-tabs {

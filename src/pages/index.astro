@@ -126,7 +126,7 @@ const person = {
           {earlier.map((g) => (
             <li>
               <a href={g.href} rel="noopener">
-                {g.image && <GlyphFigure src={g.image} alt={g.alt} ratio="4 / 3" glyphSize={6} />}
+                {g.image && <GlyphFigure src={g.image} alt={g.alt} ratio="4 / 3" glyphSize={6} interactive={false} />}
                 <span class="cell-title">{g.title}</span>
               </a>
               <p>{g.what}</p>
@@ -306,7 +306,7 @@ const person = {
   }
 
   .screen:fullscreen {
-    background: #000;
+    background: var(--ground);
   }
 
   .screen:fullscreen video {
