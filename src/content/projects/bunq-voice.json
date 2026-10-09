@@ -57,15 +57,15 @@
   "media": [
     {
       "image": "/images/projects/bunq-voice/media/0/image.jpg",
-      "alt": "A woman asks bunq Voice which accounts she has; the app on the right lists two accounts and their balances",
+      "alt": "bunq Voice answering which accounts the user has: two accounts with their balances, read out loud",
       "caption": "Which accounts do I have? It looks them up and reads the balances back.",
-      "ratio": "16 / 9"
+      "ratio": "8 / 15"
     },
     {
       "image": "/images/projects/bunq-voice/media/1/image.jpg",
-      "alt": "A man drafts a payment by voice; the app on the right confirms a pending draft that still needs approval in bunq",
+      "alt": "bunq Voice confirming a pending draft payment of 100 euros that still needs approval in the bunq app",
       "caption": "A payment by voice stays a draft until you approve it in bunq.",
-      "ratio": "16 / 9"
+      "ratio": "8 / 15"
     }
   ],
   "video": {
