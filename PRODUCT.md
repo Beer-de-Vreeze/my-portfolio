@@ -14,7 +14,7 @@ Content is edited through Keystatic at /admin.
 ## Users
 
 Primary: hiring managers and recruiters filling AI-engineer roles, skimming for proof of shipped AI work.
-Secondary: companies looking for freelance help building agents, agent skills, MCP servers and AI tools.
+No freelance work: the site does not invite freelance requests.
 
 ## Product Purpose
 
