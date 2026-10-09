@@ -8,7 +8,8 @@ import { fileURLToPath } from "node:url";
 // The site is prerendered; only Keystatic's /keystatic admin and /api/keystatic routes run on demand.
 export default defineConfig({
   site: "https://www.beerdevreeze.com",
-  adapter: vercel(),
+  // Vercel's image optimizer resizes images on request, including ones uploaded later through the CMS.
+  adapter: vercel({ imageService: true, imagesConfig: { sizes: [640, 960, 1280] } }),
   // Shorter address for the CMS admin.
   redirects: { "/admin": { status: 302, destination: "/keystatic" } },
   integrations: [react(), keystatic(), sitemap({ filter: (page) => !page.includes("/keystatic") })],

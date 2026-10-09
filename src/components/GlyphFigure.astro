@@ -1,4 +1,6 @@
 ---
+import { getImage } from "astro:assets";
+
 interface Props {
   src: string;
   alt: string;
@@ -7,13 +9,18 @@ interface Props {
   position?: string;
   glyphSize?: number;
   eager?: boolean;
+  /** Pixel width to request; about twice the largest displayed width. */
+  width?: number;
 }
-const { src, alt, caption, ratio = "16 / 10", position = "50% 50%", glyphSize = 7, eager = false } = Astro.props;
+const { src, alt, caption, ratio = "16 / 10", position = "50% 50%", glyphSize = 7, eager = false, width = 640 } = Astro.props;
+const [rw, rh] = ratio.split("/").map(Number);
+// Files in public/ cannot be measured, so the height comes from the frame's ratio.
+const image = await getImage({ src, width, height: Math.round((width * rh) / rw), quality: 75 });
 ---
 
 <figure class="glyph" data-glyph-figure data-glyph-size={glyphSize} style={`--ratio: ${ratio}`}>
   <div class="frame">
-    <img src={src} alt={alt} loading={eager ? "eager" : "lazy"} decoding="async" style={`object-position: ${position}`} />
+    <img src={image.src} alt={alt} width={image.attributes.width} height={image.attributes.height} loading={eager ? "eager" : "lazy"} decoding="async" style={`object-position: ${position}`} />
     <canvas aria-hidden="true"></canvas>
   </div>
   {caption && <figcaption>{caption}</figcaption>}

@@ -8,9 +8,19 @@ const { site, runs, projects, earlier } = await loadContent();
 
 const title = `${site.name} - AI Engineer`;
 const description = `${site.line} ${site.role}. Projects: showhow, bunq Voice, Sable.`;
+const person = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: site.name,
+  jobTitle: site.role,
+  url: Astro.site?.href,
+  image: new URL("/og.png", Astro.site).href,
+  sameAs: site.links.map((l) => l.href).filter((h): h is string => !!h && !h.endsWith(".pdf")),
+};
 ---
 
 <Base title={title} description={description}>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(person)} />
     <a class="skip" href="#work">Skip to work</a>
 
     <Hero name={site.name} lines={["BEER DE", "VREEZE"]} mobileLines={["BEER", "DE", "VREEZE"]}>
@@ -128,7 +138,7 @@ const description = `${site.line} ${site.role}. Projects: showhow, bunq Voice, S
       <section id="about" class="about" aria-labelledby="about-title">
         <h2 id="about-title" class="rule section-title"><span>About</span></h2>
         <div class="about-grid">
-          {site.portrait && <GlyphFigure src={site.portrait} alt={site.portraitAlt} ratio="3 / 4" glyphSize={6} />}
+          {site.portrait && <GlyphFigure src={site.portrait} alt={site.portraitAlt} ratio="3 / 4" glyphSize={6} width={960} />}
           <div class="about-copy">
             <p class="summary">{site.aboutLead}</p>
             {site.about.map((para) => <p>{para}</p>)}
