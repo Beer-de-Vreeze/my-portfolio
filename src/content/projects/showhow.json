@@ -3,13 +3,18 @@
   "order": 10,
   "summary": "An agent skill that turns a codebase into a narrated how-to or what's-new video, straight from the code.",
   "body": [
-    "You type /showhow how to export a report. The agent reads the code, docs and git history, writes a script and storyboard, rebuilds the real UI, and renders an MP4 with voice-over, captions, music and sound effects.",
-    "No screen recording, no live URL, no video editor. It runs in Claude Code, Codex, OpenCode and any agent that loads SKILL.md skills, and the video here was made by showhow itself."
+    "I built showhow because nobody reads documentation. You type /showhow how to export a report, and the agent reads the code, docs and git history, writes a script and storyboard, rebuilds the real UI, and renders an MP4 with voice-over, captions, music and sound effects.",
+    "No screen recording, no live URL, no video editor. It runs in Claude Code, Codex, OpenCode and any agent that loads SKILL.md skills.",
+    "ASAPCLOUD uses it for the how-to and update videos of its AI harness. The video here was made by showhow itself."
   ],
   "facts": [
     {
       "label": "Kind",
       "value": "Open-source agent skill"
+    },
+    {
+      "label": "In use",
+      "value": "ASAPCLOUD, how-to and update videos"
     },
     {
       "label": "Built on",
