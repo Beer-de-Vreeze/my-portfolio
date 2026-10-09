@@ -65,6 +65,17 @@ function objectPosition(el: Element): [number, number] {
   return [Number.isNaN(x) ? 0.5 : x, Number.isNaN(y) ? 0.5 : y];
 }
 
+/** Shows a photo in the page's zoom dialog; the native dialog handles Esc, focus trapping and returning focus. */
+function openZoom(src: string, alt: string, caption: string) {
+  const dialog = document.querySelector<HTMLDialogElement>("[data-zoom]");
+  if (!dialog) return;
+  const img = dialog.querySelector<HTMLImageElement>("[data-zoom-img]")!;
+  img.src = src;
+  img.alt = alt;
+  dialog.querySelector("[data-zoom-caption]")!.textContent = caption;
+  dialog.showModal();
+}
+
 /** Image figures: glyphs lead; hover (or a tap on touch screens) reveals the photo. */
 function setupFigure(fig: HTMLElement) {
   const img = fig.querySelector("img")!;
@@ -81,15 +92,17 @@ function setupFigure(fig: HTMLElement) {
   };
   if (img.complete) render();
   else img.addEventListener("load", render, { once: true });
-  // Touch screens have no hover: a tap swaps glyphs and photo. Enter or Space does the same from the keyboard.
+  // Click, tap, Enter or Space opens the photo large; figures inside links are left to the link.
   const frame = fig.querySelector<HTMLElement>(".frame")!;
-  const flip = () => frame.setAttribute("aria-pressed", String(fig.classList.toggle("is-photo")));
-  frame.addEventListener("click", flip);
-  frame.addEventListener("keydown", (e) => {
-    if (frame.getAttribute("role") !== "button" || (e.key !== "Enter" && e.key !== " ")) return;
-    e.preventDefault();
-    flip();
-  });
+  if (frame.dataset.zoomSrc) {
+    const open = () => openZoom(frame.dataset.zoomSrc!, img.alt, fig.querySelector("figcaption")?.textContent ?? "");
+    frame.addEventListener("click", open);
+    frame.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      e.preventDefault();
+      open();
+    });
+  }
   return render;
 }
 

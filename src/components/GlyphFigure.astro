@@ -11,7 +11,7 @@ interface Props {
   eager?: boolean;
   /** Pixel width to request; about twice the largest displayed width. */
   width?: number;
-  /** False when the figure sits inside a link, which then owns focus and reveals the photo itself. */
+  /** False when the figure sits inside a link: the link owns clicks and focus reveals the photo; no zoom. */
   interactive?: boolean;
 }
 const { src, alt, caption, ratio = "16 / 10", position = "50% 50%", glyphSize = 7, eager = false, width = 640, interactive = true } = Astro.props;
@@ -23,7 +23,7 @@ const image = await getImage({ src, width, height: Math.round((width * rh) / rw)
 ---
 
 <figure class="glyph" data-glyph-figure data-glyph-size={glyphSize} style={`--ratio: ${rw} / ${rh}`}>
-  <div class="frame" {...interactive && { role: "button", tabindex: 0, "aria-pressed": "false", "aria-label": `Show photo: ${alt}` }}>
+  <div class="frame" {...interactive && { role: "button", tabindex: 0, "aria-haspopup": "dialog", "aria-label": `Enlarge photo: ${alt}`, "data-zoom-src": src }}>
     <img src={image.src} alt={alt} width={image.attributes.width} height={image.attributes.height} loading={eager ? "eager" : "lazy"} decoding="async" style={`object-position: ${position}`} />
     <canvas aria-hidden="true"></canvas>
   </div>
@@ -96,13 +96,8 @@ const image = await getImage({ src, width, height: Math.round((width * rh) / rw)
     filter: none;
   }
 
-  [data-glyph="ready"].is-photo canvas {
-    opacity: 0;
-  }
-
-  [data-glyph="ready"].is-photo img {
-    opacity: 1;
-    filter: none;
+  .frame[role="button"] {
+    cursor: zoom-in;
   }
 
   figcaption {

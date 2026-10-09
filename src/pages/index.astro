@@ -156,12 +156,25 @@ const person = {
       </p>
     </footer>
 
+    <dialog class="zoom" data-zoom aria-label="Enlarged photo">
+      <figure>
+        <img data-zoom-img alt="" />
+        <figcaption data-zoom-caption></figcaption>
+      </figure>
+      <form method="dialog"><button class="control" autofocus>Close</button></form>
+    </dialog>
+
     <script>
       import { startRuns } from "../scripts/run";
       import { startGlyphMedia } from "../scripts/media";
 
       const run = document.querySelector<HTMLElement>("[data-run]");
       document.fonts.ready.then(() => startGlyphMedia());
+      // A click on the backdrop (outside the photo) closes the zoom dialog.
+      const zoom = document.querySelector<HTMLDialogElement>("[data-zoom]");
+      zoom?.addEventListener("click", (e) => {
+        if (e.target === zoom) zoom.close();
+      });
       if (run) startRuns(run, JSON.parse(run.dataset.runs || "[]"));
     </script>
 </Base>
@@ -482,6 +495,48 @@ const person = {
   .contact-line {
     color: var(--muted);
     max-width: 52ch;
+  }
+
+  .zoom {
+    max-width: none;
+    max-height: none;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: var(--gutter);
+    border: 0;
+    background: transparent;
+    color: var(--text);
+  }
+
+  .zoom[open] {
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 1rem;
+  }
+
+  .zoom::backdrop {
+    background: var(--ground);
+  }
+
+  .zoom figure {
+    display: grid;
+    gap: 0.75rem;
+    justify-items: center;
+  }
+
+  .zoom img {
+    max-width: min(100%, 1600px);
+    max-height: 80svh;
+    object-fit: contain;
+  }
+
+  .zoom figcaption {
+    max-width: 62ch;
+    color: var(--muted);
+    font-size: var(--step--1);
+    text-align: center;
   }
 
   .email {
