@@ -14,6 +14,9 @@ export default defineConfig({
   redirects: { "/admin": { status: 302, destination: "/keystatic" } },
   integrations: [react(), keystatic(), sitemap({ filter: (page) => !page.includes("/keystatic") })],
   vite: {
+    // Pre-bundle the CMS admin's dependencies at startup; discovering them on the first visit to /admin
+    // makes Vite re-bundle mid-load ("504 Outdated Optimize Dep") and the admin renders blank.
+    optimizeDeps: { include: ["@keystatic/core", "@keystatic/core/ui", "@keystatic/astro/ui", "react", "react-dom/client"] },
     resolve: {
       // shortcut: @astrojs/vercel 11.0.13 leaks a bare `import "rolldown"` into the server bundle, and Vercel's
       // file tracing leaves out rolldown's native binary, so the function crashes on boot. Nothing at runtime
