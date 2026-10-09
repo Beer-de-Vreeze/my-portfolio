@@ -57,7 +57,7 @@
   "media": [],
   "video": {
     "src": "/media/showhow-demo.mp4",
-    "poster": "/media/showhow-demo.jpg",
+    "poster": "/media/showhow-demo.webp",
     "captions": "/media/showhow-demo.vtt",
     "label": "How showhow works, made with showhow.",
     "burnedCaptions": true

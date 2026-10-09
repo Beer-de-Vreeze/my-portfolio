@@ -75,7 +75,7 @@
   ],
   "video": {
     "src": "/media/bunq-voice-demo.mp4",
-    "poster": "/media/bunq-voice-demo.jpg",
+    "poster": "/media/bunq-voice-demo.webp",
     "captions": "/media/bunq-voice-demo.vtt",
     "label": "bunq Voice demo from the hackathon: asking about accounts, then drafting a payment by voice.",
     "burnedCaptions": false
