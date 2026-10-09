@@ -46,10 +46,6 @@
   ],
   "links": [
     {
-      "label": "Demo video",
-      "href": "https://youtu.be/GSzQdi8VywA"
-    },
-    {
       "label": "Devpost",
       "href": "https://devpost.com/software/bunq-voice"
     },
@@ -61,16 +57,22 @@
   "media": [
     {
       "image": "/images/projects/bunq-voice/media/0/image.jpg",
-      "alt": "bunq Voice reading out the accounts and balances in the user's name",
+      "alt": "A woman asks bunq Voice which accounts she has; the app on the right lists two accounts and their balances",
       "caption": "Which accounts do I have? It looks them up and reads the balances back.",
-      "ratio": "328 / 560"
+      "ratio": "16 / 9"
     },
     {
       "image": "/images/projects/bunq-voice/media/1/image.jpg",
-      "alt": "bunq Voice creating a pending draft payment that still needs biometric approval",
+      "alt": "A man drafts a payment by voice; the app on the right confirms a pending draft that still needs approval in bunq",
       "caption": "A payment by voice stays a draft until you approve it in bunq.",
-      "ratio": "328 / 560"
+      "ratio": "16 / 9"
     }
   ],
-  "video": {}
+  "video": {
+    "src": "/media/bunq-voice-demo.mp4",
+    "poster": "/media/bunq-voice-demo.jpg",
+    "captions": "/media/bunq-voice-demo.vtt",
+    "label": "bunq Voice demo from the hackathon: asking about accounts, then drafting a payment by voice.",
+    "burnedCaptions": false
+  }
 }

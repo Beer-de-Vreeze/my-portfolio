@@ -138,6 +138,8 @@ function setupVideo(fig: HTMLElement) {
     fig.classList.toggle("is-playing", playing);
     toggle.textContent = playing ? "Pause" : "Play";
     bigPlay.textContent = video.currentTime > 0 && !video.ended ? "Resume" : "Play demo";
+    // Keep the project in the accessible name so two players on one page stay distinguishable.
+    bigPlay.setAttribute("aria-label", `${bigPlay.textContent}: ${(bigPlay.getAttribute("aria-label") ?? "").split(": ").slice(1).join(": ")}`);
     if (!playing) render();
   };
 

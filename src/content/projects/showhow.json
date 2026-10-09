@@ -54,6 +54,7 @@
     "src": "/media/showhow-demo.mp4",
     "poster": "/media/showhow-demo.jpg",
     "captions": "/media/showhow-demo.vtt",
-    "label": "How showhow works, made with showhow."
+    "label": "How showhow works, made with showhow.",
+    "burnedCaptions": true
   }
 }

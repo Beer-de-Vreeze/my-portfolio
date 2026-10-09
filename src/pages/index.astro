@@ -79,17 +79,17 @@ const person = {
                     <div class="screen">
                       <video playsinline preload="metadata" poster={p.video.poster}>
                         <source src={p.video.src} type="video/mp4" />
-                        <track kind="captions" src={p.video.captions} srclang="en" label="English" />
+                        <track kind="captions" src={p.video.captions} srclang="en" label="English" default={!p.video.burnedCaptions} />
                       </video>
                       <canvas aria-hidden="true"></canvas>
-                      <button type="button" class="control play" data-video-play>Play demo</button>
+                      <button type="button" class="control play" data-video-play aria-label={`Play demo: ${p.title}`}>Play demo</button>
                     </div>
-                    <div class="vbar" role="group" aria-label="Video controls">
-                      <input type="range" class="seek" min="0" max="46.5" step="0.1" value="0" aria-label="Seek" data-v-seek />
+                    <div class="vbar" role="group" aria-label={`${p.title} video controls`}>
+                      <input type="range" class="seek" min="0" max="0" step="0.1" value="0" aria-label={`Seek ${p.title} video`} data-v-seek />
                       <button type="button" class="control" data-v-toggle>Play</button>
-                      <span class="time" data-v-time>0:00 / 0:46</span>
+                      <span class="time" data-v-time>0:00</span>
                       <button type="button" class="control" data-v-mute>Mute</button>
-                      <button type="button" class="control" data-v-cc>CC off</button>
+                      <button type="button" class="control" data-v-cc>{p.video.burnedCaptions ? "CC off" : "CC on"}</button>
                       <button type="button" class="control" aria-pressed="false" data-v-full>Fullscreen</button>
                     </div>
                     <figcaption>{p.video.label}</figcaption>
@@ -109,8 +109,8 @@ const person = {
                 </div>
 
                 {p.media.length > 0 && (
-                  <div class="shots">
-                    {p.media.map((m) => m.image && <GlyphFigure src={m.image} alt={m.alt} caption={m.caption || undefined} ratio={m.ratio || "4 / 3"} position="50% 0%" glyphSize={5} />)}
+                  <div class:list={["shots", { wide: p.media.some((m) => { const [w, h] = (m.ratio || "4 / 3").split("/").map(Number); return w > h; }) }]}>
+                    {p.media.map((m) => m.image && <GlyphFigure src={m.image} alt={m.alt} caption={m.caption || undefined} ratio={m.ratio || "4 / 3"} position="50% 0%" glyphSize={5} width={1280} />)}
                   </div>
                 )}
               </div>
@@ -250,11 +250,15 @@ const person = {
     min-width: 0;
   }
 
+  /* Tall phone screens pair up; wide frames get a full row each. */
   .shots {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1.5rem;
-    max-width: 40rem;
+  }
+
+  .shots.wide {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .video {

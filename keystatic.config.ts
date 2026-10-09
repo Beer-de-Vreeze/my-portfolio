@@ -95,6 +95,10 @@ export default config({
             src: fields.text({ label: "Video file path", description: "e.g. /media/showhow-demo.mp4 (put the file in public/media)." }),
             poster: fields.text({ label: "Poster image path" }),
             captions: fields.text({ label: "Captions (.vtt) path" }),
+            burnedCaptions: fields.checkbox({
+              label: "Captions burned into the video",
+              description: "Leave off when the video has no captions in the picture; the captions file then starts switched on.",
+            }),
             label: fields.text({ label: "Caption under the video" }),
           },
           { label: "Video (optional)" },
