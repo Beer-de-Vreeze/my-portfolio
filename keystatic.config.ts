@@ -17,7 +17,7 @@ export default config({
       format: { data: "json" },
       schema: {
         name: fields.text({ label: "Name", validation: { isRequired: true } }),
-        role: fields.text({ label: "Role", description: "Shown under the headline and in the about section." }),
+        role: fields.text({ label: "Role", description: "Used in search results and link previews." }),
         line: fields.text({ label: "Headline", validation: { isRequired: true } }),
         subline: multiline("Line under the headline"),
         email: fields.text({ label: "Email", validation: { isRequired: true } }),

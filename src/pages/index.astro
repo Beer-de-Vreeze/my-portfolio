@@ -20,7 +20,7 @@ const person = {
 ---
 
 <Base title={title} description={description}>
-  <script type="application/ld+json" slot="head" set:html={JSON.stringify(person)} />
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(person).replace(/</g, String.raw`\u003c`)} />
     <a class="skip" href="#work">Skip to work</a>
 
     <Hero name={site.name} lines={["BEER DE", "VREEZE"]} mobileLines={["BEER", "DE", "VREEZE"]}>

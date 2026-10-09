@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro check && astro build",
-    "preview": "astro preview",
     "test": "vitest run --dir src",
     "cv": "node scripts/build-cv.mjs"
   },

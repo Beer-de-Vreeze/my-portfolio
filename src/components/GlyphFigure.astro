@@ -13,12 +13,14 @@ interface Props {
   width?: number;
 }
 const { src, alt, caption, ratio = "16 / 10", position = "50% 50%", glyphSize = 7, eager = false, width = 640 } = Astro.props;
-const [rw, rh] = ratio.split("/").map(Number);
+const parts = ratio.split("/").map(Number);
+// The ratio is free text in the CMS; anything that is not "w / h" falls back to 4 / 3 instead of failing the build.
+const [rw, rh] = parts.length === 2 && parts.every((n) => n > 0) ? parts : [4, 3];
 // Files in public/ cannot be measured, so the height comes from the frame's ratio.
 const image = await getImage({ src, width, height: Math.round((width * rh) / rw), quality: 75 });
 ---
 
-<figure class="glyph" data-glyph-figure data-glyph-size={glyphSize} style={`--ratio: ${ratio}`}>
+<figure class="glyph" data-glyph-figure data-glyph-size={glyphSize} style={`--ratio: ${rw} / ${rh}`}>
   <div class="frame">
     <img src={image.src} alt={alt} width={image.attributes.width} height={image.attributes.height} loading={eager ? "eager" : "lazy"} decoding="async" style={`object-position: ${position}`} />
     <canvas aria-hidden="true"></canvas>
