@@ -54,7 +54,9 @@ Earlier work (compact strip): Bearly Stealthy, LP Cafe, Sketchin' Spells, Better
 
 Links: mailto:beer@vreeze.com, github.com/Beer-de-Vreeze, linkedin.com/in/beer-de-vreeze-59040919a/, bjeerpeer.itch.io.
 
-Absent, never fabricate: testimonials, client names, metrics, or details of ASAPCLOUD work beyond the title.
+ASAPCLOUD work (confirmed by Beer): building the company's own AI harness, MCP servers, agent skills and automations, and AI consulting that helps companies bring AI into their workflows.
+
+Absent, never fabricate: testimonials, client names, metrics, or ASAPCLOUD details beyond the above.
 
 ## Product Principles
 
