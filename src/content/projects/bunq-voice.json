@@ -1,16 +1,17 @@
 {
   "title": "bunq Voice",
   "order": 20,
-  "summary": "Voice-first banking for blind, sight-impaired and motor-disabled people. Built in 24 hours at bunq Hackathon 7.0.",
+  "summary": "Voice-first banking for people who are blind or partially sighted. Built in 24 hours at bunq Hackathon 7.0.",
   "body": [
-    "bunq's security blocked screen readers, which locked out the people who most need another way in. With bunq Voice you talk to your account: check balances, review transactions and set up payments, and it speaks the answers back.",
+    "The hackathon challenge was to build something inside bunq with multimodal AI. We built it for people who are blind or partially sighted: many of them struggle to manage their money on their own, and bunq's security blocked screen readers, which shut them out even further.",
+    "With bunq Voice you talk to your account: check balances, review transactions and set up payments, and it speaks the answers back.",
     "The model never moves money. Every payment it proposes becomes a pending draft that still needs biometric approval in the bunq app, so accessibility does not cost security.",
     "Speech-to-text, Claude's reasoning and text-to-speech run concurrently, so the next sentence is already on its way while the current one plays. Built with Giuseppe Dotto, Mink Quispel and Joshua Ross."
   ],
   "facts": [
     {
       "label": "Kind",
-      "value": "Hackathon team project, 24 hours"
+      "value": "Hackathon team project, 24 hours, multimodal AI challenge"
     },
     {
       "label": "Stack",
