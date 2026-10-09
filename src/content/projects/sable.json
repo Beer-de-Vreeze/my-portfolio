@@ -3,8 +3,8 @@
   "order": 30,
   "summary": "A wardrobe planner with its own AI stylist and an MCP server, so agents can work with it as well.",
   "body": [
-    "Sable tracks a phased, priced wardrobe plan, stores photos of the pieces you own, builds outfits and syncs across devices, working offline along the way.",
-    "One number drives it: how many looks each piece unlocks, computed from the live outfit data and never typed by hand. The Oracle, a Claude-backed stylist, reasons with that number when you ask what to buy next.",
+    "I built Sable because I needed one place for everything I wanted to get, and to figure out where I wanted to go with fashion. It tracks a phased, priced wardrobe plan, stores photos of the pieces I own, builds outfits and syncs across devices, working offline along the way.",
+    "One number drives it: how many looks each piece unlocks, computed from the live outfit data and never typed by hand. The Oracle, a Claude-backed stylist, reasons with that number when I ask what to buy next.",
     "An MCP server exposes the catalog, outfits and collections as tools, so an agent like Claude can read and update the wardrobe directly. The repo is private."
   ],
   "facts": [
