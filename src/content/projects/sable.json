@@ -54,14 +54,20 @@
   "media": [
     {
       "image": "/images/projects/sable/media/0/image.webp",
-      "alt": "Sable's home page: the headline 'A closet that counts what each piece lets you wear.' next to the demo closet, each piece tagged with how many looks it opens",
-      "caption": "Home: every piece gets a tag with how many looks it opens.",
+      "alt": "Sable's closet: a grid of photographed pieces, each with a red tag showing how many looks it opens, from a silver signet ring at 4 down",
+      "caption": "Closet: every piece tagged with how many looks it opens.",
       "ratio": "16 / 10"
     },
     {
       "image": "/images/projects/sable/media/1/image.webp",
-      "alt": "Sable's Plan page: a Buy next list ranked by looks opened, and collections with how many pieces are owned and what is left to spend",
-      "caption": "Plan: what to buy next, ranked by how many looks it would open.",
+      "alt": "A piece opened in Sable: the silver signet ring, 4 looks include it, marked owned, worn 11 times at 6 euros a wear, with the looks it appears in",
+      "caption": "A piece: the looks it is in, and what each wear has cost.",
+      "ratio": "16 / 10"
+    },
+    {
+      "image": "/images/projects/sable/media/2/image.webp",
+      "alt": "Sable's Looks page: saved outfits shown as four-photo collages, tagged Everyday, Work or Evening, each with a Wear today button",
+      "caption": "Looks: saved outfits, logged with one tap.",
       "ratio": "16 / 10"
     }
   ],
