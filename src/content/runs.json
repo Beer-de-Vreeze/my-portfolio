@@ -62,20 +62,20 @@
       "prompt": "what should I buy next?",
       "steps": [
         {
-          "tool": "get_wardrobe_overview",
-          "detail": "collections + plan"
-        },
-        {
-          "tool": "list_outfits",
-          "detail": "every saved look"
-        },
-        {
-          "tool": "get_catalog",
+          "tool": "list_pieces",
           "detail": "owned + planned pieces"
         },
         {
+          "tool": "list_looks",
+          "detail": "every saved look"
+        },
+        {
+          "tool": "list_wears",
+          "detail": "what actually gets worn"
+        },
+        {
           "tool": "rank",
-          "detail": "by looks unlocked"
+          "detail": "by looks opened"
         }
       ],
       "result": "the piece that opens the most new looks"

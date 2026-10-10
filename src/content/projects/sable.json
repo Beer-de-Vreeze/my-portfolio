@@ -1,21 +1,21 @@
 {
   "title": "Sable",
   "order": 30,
-  "summary": "A wardrobe planner with its own AI stylist and an MCP server, so agents can work with it as well.",
+  "summary": "A wardrobe app with its own AI stylist and an MCP server, so agents can work with it as well.",
   "body": [
-    "I built Sable because I needed one place for everything I wanted to get, and to figure out where I wanted to go with fashion. It tracks a phased, priced wardrobe plan, stores photos of the pieces I own, builds outfits and syncs across devices, working offline along the way.",
-    "One number drives it: how many looks each piece unlocks, computed from the live outfit data and never typed by hand. The Oracle, a Claude-backed stylist, reasons with that number when I ask what to buy next.",
-    "An MCP server exposes the catalog, outfits and collections as tools, so an agent like Claude can read and update the wardrobe directly.",
-    "You can open it yourself: skip the passphrase screen with \"Continue without syncing\" and you get the starter plan, without my photos and outfits."
+    "I built Sable because I needed one place for everything I wanted to get, and to figure out where I wanted to go with fashion. Then I rebuilt it from the ground up so anyone can make an account: photograph your clothes, save looks, log what you wear and plan what to buy. It installs on your phone and keeps working offline.",
+    "One number drives it: how many looks each piece opens, computed from your saved looks and never typed by hand. The Oracle, a Claude-backed stylist, works on your closet through the same operations as the app and reasons with that number when you ask what to buy next.",
+    "The same tools are served as a remote MCP server with sign-in, so Claude Desktop or Claude Code can read and update your closet directly.",
+    "You can try it without an account: open Sable and choose \"Look around the demo closet first\". Nothing you change in the demo is saved."
   ],
   "facts": [
     {
       "label": "Kind",
-      "value": "Personal product, in daily use"
+      "value": "Personal product, open to sign-ups"
     },
     {
       "label": "Stack",
-      "value": "TypeScript, React 19, Vite, Neon Postgres, Vercel Blob, Claude"
+      "value": "TypeScript, React 19, Hono, Better Auth, Neon Postgres, Claude"
     },
     {
       "label": "Status",
@@ -25,23 +25,23 @@
   "manifestTitle": "MCP tools include",
   "manifest": [
     {
-      "name": "get_wardrobe_overview",
-      "does": "collections, plan and progress"
+      "name": "list_pieces",
+      "does": "every owned, wished-for and planned piece"
     },
     {
-      "name": "get_catalog",
-      "does": "every owned and planned piece"
-    },
-    {
-      "name": "add_outfit",
+      "name": "create_look",
       "does": "save a look from an agent"
     },
     {
-      "name": "set_item_status",
-      "does": "mark a piece bought, wanted or archived"
+      "name": "log_wear",
+      "does": "record what you wore today"
     },
     {
-      "name": "get_oracle_memory",
+      "name": "set_piece_status",
+      "does": "mark a piece owned, wishlist or planned"
+    },
+    {
+      "name": "update_memory",
       "does": "what the stylist remembers about you"
     }
   ],
@@ -54,15 +54,15 @@
   "media": [
     {
       "image": "/images/projects/sable/media/0/image.webp",
-      "alt": "Sable's wardrobe view: item cards for boots, a silver pendant and a chain necklace, each showing how many looks it opens",
-      "caption": "The Lens: every piece ranked by how many looks it opens.",
+      "alt": "Sable's home page: the headline 'A closet that counts what each piece lets you wear.' next to the demo closet, each piece tagged with how many looks it opens",
+      "caption": "Home: every piece gets a tag with how many looks it opens.",
       "ratio": "16 / 10"
     },
     {
       "image": "/images/projects/sable/media/1/image.webp",
-      "alt": "Sable's home page: the SABLE wordmark in gold on a dark starfield, above the thesis 'One wardrobe, considered.'",
-      "caption": "Home: plan in phases, track what you own, build outfits.",
-      "ratio": "2 / 1"
+      "alt": "Sable's Plan page: a Buy next list ranked by looks opened, and collections with how many pieces are owned and what is left to spend",
+      "caption": "Plan: what to buy next, ranked by how many looks it would open.",
+      "ratio": "16 / 10"
     }
   ],
   "video": {}
