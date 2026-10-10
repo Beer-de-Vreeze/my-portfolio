@@ -7,7 +7,7 @@ const IDLE_MS = 20000;
 
 type Pulse = { x: number; y: number; born: number };
 
-export function startHeroField(canvas: HTMLCanvasElement, nameLinesFor: (width: number) => string[]) {
+export function startHeroField(canvas: HTMLCanvasElement, layouts: string[][]) {
   const hero = canvas.parentElement as HTMLElement;
   const base = hero.querySelector<HTMLElement>("[data-hero-base]");
   const top = hero.querySelector<HTMLElement>("[data-hero-top]");
@@ -37,7 +37,8 @@ export function startHeroField(canvas: HTMLCanvasElement, nameLinesFor: (width: 
     canvas.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    fontSize = Math.max(8, Math.min(14, W / 105));
+    // Smaller glyphs on narrow screens, so the name gets enough cells to stay readable.
+    fontSize = Math.max(6, Math.min(14, W / 105));
     ctx.font = `400 ${fontSize}px ${FONT_FAMILY}`;
     cw = ctx.measureText("M").width;
     ch = fontSize * 1.32;
@@ -68,13 +69,16 @@ export function startHeroField(canvas: HTMLCanvasElement, nameLinesFor: (width: 
     const CAP = 0.72; // Martian Mono cap height in em; the name is all caps
     const lineGap = 0.98;
 
-    const nameLines = nameLinesFor(W);
     m.fillStyle = "#fff";
     m.textBaseline = "alphabetic";
     m.font = `800 semi-expanded 100px ${FONT_FAMILY}`;
-    const widest = Math.max(...nameLines.map((l) => m.measureText(l).width));
-    const capsBlock = lineGap * (nameLines.length - 1) + CAP;
-    const size = Math.min((100 * (mw - padX * 2)) / widest, (areaH * 0.9) / capsBlock);
+    // Use whichever line split draws the name largest in the space there is.
+    const fit = (lines: string[]) => {
+      const widest = Math.max(...lines.map((l) => m.measureText(l).width));
+      const capsBlock = lineGap * (lines.length - 1) + CAP;
+      return { lines, capsBlock, size: Math.min((100 * (mw - padX * 2)) / widest, (areaH * 0.9) / capsBlock) };
+    };
+    const { lines: nameLines, capsBlock, size } = layouts.map(fit).reduce((a, b) => (b.size > a.size ? b : a));
     m.font = `800 semi-expanded ${size}px ${FONT_FAMILY}`;
     const y0 = areaTop + (areaH - size * capsBlock) / 2 + size * CAP;
     nameLines.forEach((line, i) => m.fillText(line, padX, y0 + i * size * lineGap));

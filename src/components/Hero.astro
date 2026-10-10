@@ -36,7 +36,7 @@ const prefix = home ? "" : "/";
   if (field) {
     const lines = JSON.parse(field.dataset.lines || "[]");
     const mobile = JSON.parse(field.dataset.mobileLines || "[]");
-    document.fonts.ready.then(() => startHeroField(field, (w) => (w < 600 ? mobile : lines)));
+    document.fonts.ready.then(() => startHeroField(field, [lines, mobile]));
   }
 </script>
 
@@ -179,6 +179,12 @@ const prefix = home ? "" : "/";
   }
 
   @media (max-width: 60rem) {
+    /* Stacked, the panels would fill the screen and squeeze the name out. */
+    .hero {
+      min-height: auto;
+      grid-template-rows: auto minmax(34svh, 1fr) auto;
+    }
+
     .hero .base {
       grid-template-columns: minmax(0, 1fr);
       gap: 1rem;
@@ -186,11 +192,6 @@ const prefix = home ? "" : "/";
   }
 
   @media (max-width: 36rem) {
-    .hero {
-      min-height: auto;
-      grid-template-rows: auto minmax(34svh, 1fr) auto;
-    }
-
     .hero nav {
       gap: 1.25ch;
       font-size: var(--step--1);
