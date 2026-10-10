@@ -11,7 +11,13 @@ export default defineConfig({
   // Vercel's image optimizer resizes images on request, including ones uploaded later through the CMS.
   adapter: vercel({ imageService: true, imagesConfig: { sizes: [640, 960, 1280] } }),
   // Shorter address for the CMS admin.
-  redirects: { "/admin": { status: 302, destination: "/keystatic" } },
+  redirects: {
+    "/admin": { status: 302, destination: "/keystatic" },
+    // Pages from the old Next.js site that search results and old links still point at.
+    "/projects": { status: 301, destination: "/#work" },
+    "/about": { status: 301, destination: "/#about" },
+    "/contact": { status: 301, destination: "/#contact" },
+  },
   integrations: [react(), keystatic(), sitemap({ filter: (page) => !page.includes("/keystatic") })],
   vite: {
     // Pre-bundle the CMS admin's dependencies at startup; discovering them on the first visit to /admin
